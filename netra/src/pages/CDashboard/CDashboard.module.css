@@ -61,7 +61,7 @@
     }
   }
   
-  .blinkingChart .content {
+  .blinkingChart {
     animation: blinking 1s infinite;
     border: 2px solid red;
   }
