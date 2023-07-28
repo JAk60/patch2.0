@@ -1,0 +1,56 @@
+.phaseTable,
+.LMphaseTable {
+  grid-row: 4/5;
+  grid-column: 2/13;
+  width: 98%;
+  justify-self: center;
+  /* align-self: center; */
+  height: 300px;
+  overflow-y: scroll;
+}
+.phaseTable {
+  margin-top: 90px;
+}
+.LMphaseTable {
+  margin-top: 5rem;
+}
+.addForm {
+  grid-row: 3/5;
+  grid-column: 2/13;
+  margin-top: 2%;
+  margin-left: 2%;
+  /* justify-self: center;
+    align-self: center; */
+  overflow-y: scroll;
+}
+.flex,
+.flex1,
+.flex2 {
+  width: 98%;
+  margin-left: 1%;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.flex1,
+.flex2 {
+  grid-row: 3/4;
+  grid-column: 2/13;
+}
+.flex1 {
+  margin-top: 10px;
+  height: fit-content;
+  box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+  border-radius: 10px;
+  padding: 20px 10px;
+}
+.flex2 {
+  margin-top: 250px;
+}
+
+.addFlex {
+  grid-row: 3/4;
+  grid-column: 2/13;
+  margin-right: 1%;
+}

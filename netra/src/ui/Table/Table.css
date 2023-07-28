@@ -1,0 +1,30 @@
+.ag-theme-alpine {
+    /* use theme parameters where possible */
+    --ag-header-background-color: #56bcec;
+    --ag-header-foreground-color: #fff;
+  }
+  .ag-theme-alpine .ag-root-wrapper {
+    border: 0;
+}
+  .ag-theme-alpine .ag-header {
+    border-radius: 10px;
+  }
+  .ag-theme-alpine .ag-row {
+    border-radius: 10px;
+  } 
+.ag-theme-alpine .ag-header-group-cell-label {
+  justify-content: center;
+}
+.ag-header-cell-label {
+  justify-content: center;
+}
+.ag-cell{
+  text-align: center;
+}
+.ag-header-cell-resize{
+  background: white;
+  width: 1px;
+}
+.ag-grid-lmu{
+  background: cyan;
+}

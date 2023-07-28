@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg transform="scale(-1, 1) translate(0, 0)" viewBox="0 0 1366 913" style="z-index:1;margin-right:-2px;display:block;background-repeat-y:initial;background-repeat-x:initial;animation-play-state:paused" xmlns="http://www.w3.org/2000/svg" xmlns:bx="https://boxy-svg.com">
+  <g style="transform:matrix(1, 0, 0, 1, 0, 0);animation-play-state:paused">
+    <linearGradient id="gradient-fill" x1="0" y1="0" x2="1400" y2="-400" gradientUnits="userSpaceOnUse">
+						
+							<stop offset="0" stop-color="#2a2a72" />
+						
+							<stop offset="0.14285714285714285" stop-color="#292c78" />
+						
+							<stop offset="0.2857142857142857" stop-color="#263289" />
+						
+							<stop offset="0.42857142857142855" stop-color="#2040a2" />
+						
+							<stop offset="0.5714285714285714" stop-color="#1757c0" />
+						
+							<stop offset="0.7142857142857142" stop-color="#0c76dd" />
+						
+							<stop offset="0.8571428571428571" stop-color="#0492f4" />
+						
+							<stop offset="1" stop-color="#009ffd" />
+						
+					</linearGradient>
+    <path d="M 0 0 L 0 814.596 C 113.833 811.464 227.667 802.775 341.5 788.53 C 455.333 774.285 569.167 724.353 683 638.735 C 796.833 553.117 910.667 539.158 1024.5 596.859 C 1138.333 654.56 1249.865 617.284 1363.698 525.334 L 1366 0 L 0 0 Z" fill="url(#gradient-fill)" opacity="0.7" style="opacity:0.7;animation-play-state:paused" transform="matrix(2.0619971544611675e-16, -0.6734992861747742, 1, 3.0616177932074097e-16, 0, 920.0000249147415)"/>
+    <path d="M 0 0 L 0 835.441 Q 170.75 811.923 341.5 794.266 T 683 666.155 T 1024.5 565.197 T 1366 508.341 L 1366 0 Z" fill="url(#gradient-fill)" opacity="0.6" style="opacity:0.6;animation-play-state:paused" transform="matrix(4.1239933163056e-17, -0.6734992861747742, 1, 6.123233601181349e-17, -1.262177448353619e-29, 920.0000249147415)"/>
+    <path d="M 0 0 L 0 760.93 C 113.833 763.432 227.667 754.147 341.5 733.076 C 455.333 712.005 578.467 730.65 692.3 714.609 C 806.134 698.568 910.667 645.722 1024.5 630.477 C 1138.333 615.232 1249.865 527.492 1363.698 509.251 L 1366 0 L 0 0 Z" fill="url(#gradient-fill)" opacity="0.6" style="opacity:0.6;animation-play-state:paused" transform="matrix(8.102304605017707e-9, -0.6734992861747742, 0.9824933409690857, 1.1819550671532397e-8, -1.6940658945086007e-21, 920.0000249147415)" bx:origin="0.5 0.510695"/>
+  </g>
+</svg>

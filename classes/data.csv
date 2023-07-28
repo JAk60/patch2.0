@@ -1,0 +1,230 @@
+,id,component_name,part_code,is_lmu,parent_name,parent_id,ship_name,ship_category,ship_class,command,department,system
+0,973afbdd-31bd-417e-ac8d-27071c92da91,DA2,A1,0,Talwar 1,,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+1,e6ccc046-9c7b-4a06-ae56-50b67329ec70,Fresh Water Cooling,A2,0,DA2,973afbdd-31bd-417e-ac8d-27071c92da91,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+2,318a0f25-d050-4cc2-81d7-e8dfced3583b,HE Top Tank,A3,0,Fresh Water Cooling,e6ccc046-9c7b-4a06-ae56-50b67329ec70,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+3,0ec99c86-c5df-4782-865a-e573d2571bba,Pressure Cap,A4,1,HE Top Tank,318a0f25-d050-4cc2-81d7-e8dfced3583b,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+4,f415a896-51c7-404f-90e0-eeb6e744d1aa,Tank,A5,1,HE Top Tank,318a0f25-d050-4cc2-81d7-e8dfced3583b,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+5,af79f072-3f17-4c6f-85a0-cfcb7e4ae573,Water Pump and Water Bypass,A6,0,Fresh Water Cooling,e6ccc046-9c7b-4a06-ae56-50b67329ec70,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+6,49eda53b-6ab2-4cbb-9d17-5dafc651bfde,Water Pump Mounting Support,A7,1,Water Pump and Water Bypass,af79f072-3f17-4c6f-85a0-cfcb7e4ae573,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+7,276bc905-d0cd-4214-8b1f-a09a48080143,Water Pump,A8,0,Water Pump and Water Bypass,af79f072-3f17-4c6f-85a0-cfcb7e4ae573,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+8,e14a11ea-1279-4e35-a95b-4e0f63540d41,Impeller,A9,1,Water Pump,276bc905-d0cd-4214-8b1f-a09a48080143,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+9,b1817e34-8134-4faf-a055-cb337f57f1ec,Mechanical seal,A10,1,Water Pump,276bc905-d0cd-4214-8b1f-a09a48080143,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+10,6937c914-b160-4ac9-8fc7-7f6ba315aebc,Shaft,A11,1,Water Pump,276bc905-d0cd-4214-8b1f-a09a48080143,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+11,2c34b801-10f5-40d2-8538-320ce6182eaf,Ball bearing (2),A12,1,Water Pump,276bc905-d0cd-4214-8b1f-a09a48080143,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+12,3b55e792-dbad-4a0d-97b4-c69de3e8164d,Oil seal,A13,1,Water Pump,276bc905-d0cd-4214-8b1f-a09a48080143,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+13,a93efb43-7ef6-4ca4-8a86-c756143141d4,Water Pump Connection,A14,0,Water Pump and Water Bypass,af79f072-3f17-4c6f-85a0-cfcb7e4ae573,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+14,1d34c726-d063-49f8-bd04-05efbdad78b0,O-rings (03),A15,1,Water Pump Connection,a93efb43-7ef6-4ca4-8a86-c756143141d4,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+15,c9df5407-9e7f-4559-8cf6-29cb157e0ccf,Gasket,A16,1,Water Pump Connection,a93efb43-7ef6-4ca4-8a86-c756143141d4,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+16,9cfdf927-62ce-40cb-b43a-5d24344a61b7,Water Manifold,A17,0,Fresh Water Cooling,e6ccc046-9c7b-4a06-ae56-50b67329ec70,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+17,daa5a871-565e-439e-adf8-16f4fa372cef,O-rings (17),A18,1,Water Manifold,9cfdf927-62ce-40cb-b43a-5d24344a61b7,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+18,7eb8d98e-d414-4732-b7fc-c874629a35e0,Thermostat Housing and Support,A19,0,Fresh Water Cooling,e6ccc046-9c7b-4a06-ae56-50b67329ec70,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+19,6bd23f07-3664-467b-a9de-6b5994b2e987,Water Outlet Connection,A20,0,Thermostat Housing and Support,7eb8d98e-d414-4732-b7fc-c874629a35e0,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+20,3cae7fdf-198a-4538-ab3f-21fd1c9f8906,Gasket (2),A21,1,Water Outlet Connection,6bd23f07-3664-467b-a9de-6b5994b2e987,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+21,b6f2f7c5-76f6-40d7-b120-419d5ca981dd,O-rings (04),A22,1,Water Outlet Connection,6bd23f07-3664-467b-a9de-6b5994b2e987,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+22,787df5ef-4d81-40bc-9fc8-fce944b30937,Thermostat Housing Mounting Support,A23,1,Thermostat Housing and Support,7eb8d98e-d414-4732-b7fc-c874629a35e0,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+23,a38976f8-f3e5-4902-80b9-ecf671c0e8fc,Water Inlet Connection Mounting,A24,1,Thermostat Housing and Support,7eb8d98e-d414-4732-b7fc-c874629a35e0,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+24,adb800a3-f7bb-4fe2-9650-d769200f62bc,Thermostat,A25,1,Thermostat Housing and Support,7eb8d98e-d414-4732-b7fc-c874629a35e0,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+25,dd6c87e6-3e69-4896-a8d7-75de32385295,Water Temperature gauge,A26,1,Fresh Water Cooling,e6ccc046-9c7b-4a06-ae56-50b67329ec70,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+26,ee5cd500-1125-4485-a7bc-3fd38a726b06,Heat Exchanger,A27,0,Fresh Water Cooling,e6ccc046-9c7b-4a06-ae56-50b67329ec70,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+27,5ff6bc82-5e30-415c-a8d8-a81648a7405b,Heat Transfer Core,A28,1,Heat Exchanger,ee5cd500-1125-4485-a7bc-3fd38a726b06,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+28,94ad53fe-569e-4bab-befe-88a7d653cce3,Inlet Tank,A29,1,Heat Exchanger,ee5cd500-1125-4485-a7bc-3fd38a726b06,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+29,7a932501-8132-4ac3-8339-7f4260ba5013,Outlet Tank,A30,1,Heat Exchanger,ee5cd500-1125-4485-a7bc-3fd38a726b06,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+30,fb5274e6-03e9-4320-9e06-2f03fe15fe36,Zinc Plugs,A31,1,Heat Exchanger,ee5cd500-1125-4485-a7bc-3fd38a726b06,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+31,c51f09b0-e4a1-4643-8628-04dd09217075,Rubber Hoses,A32,1,Fresh Water Cooling,e6ccc046-9c7b-4a06-ae56-50b67329ec70,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+32,56ceb3e1-245d-4ae2-b225-9dde8528e310,Turbocooler Plumbing,A33,1,Fresh Water Cooling,e6ccc046-9c7b-4a06-ae56-50b67329ec70,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+33,f436c570-8565-448b-93e8-663bfa2047bf,Water Tranfer Tubes,A34,1,Fresh Water Cooling,e6ccc046-9c7b-4a06-ae56-50b67329ec70,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+34,33ef53ce-f177-44e9-89cd-f1c191f5d5ec,Coolant Heater Assy,A35,0,Fresh Water Cooling,e6ccc046-9c7b-4a06-ae56-50b67329ec70,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+35,11378e0c-523c-4a21-b24d-2009e8000bed,Coolant Heater,A36,1,Coolant Heater Assy,33ef53ce-f177-44e9-89cd-f1c191f5d5ec,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+36,be8433f9-906d-4a0b-a1cc-2ced254f5b46,Coolant Heater Plumbing,A37,0,Coolant Heater Assy,33ef53ce-f177-44e9-89cd-f1c191f5d5ec,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+37,4ee4c872-dced-431d-83b5-70180a7db859,Adapter (04),A38,1,Coolant Heater Plumbing,be8433f9-906d-4a0b-a1cc-2ced254f5b46,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+38,71f46306-5fbf-4b97-8aae-039f35f2551b,Hoses (02),A39,1,Coolant Heater Plumbing,be8433f9-906d-4a0b-a1cc-2ced254f5b46,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+39,77ad30bd-f745-49c6-9d32-10dcf13b9d9e,Coolant Pressure Guage,A40,1,Fresh Water Cooling,e6ccc046-9c7b-4a06-ae56-50b67329ec70,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+40,97bfd515-90dd-48fd-8cba-92b061e38c06,Lubricant Oil Cooler,A41,1,Fresh Water Cooling,e6ccc046-9c7b-4a06-ae56-50b67329ec70,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+41,67e85c81-f4d2-44aa-aa46-cbfb61dd9b23,Sea Water Cooling,A42,0,DA2,973afbdd-31bd-417e-ac8d-27071c92da91,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+42,6312a8f9-1a28-4d58-a946-6f42914e12cc,Sea Water Pump,A43,0,Sea Water Cooling,67e85c81-f4d2-44aa-aa46-cbfb61dd9b23,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+43,badc3a80-fef3-4cf2-8c99-8c078a4862fa,Hydraullic Pump Drive,A44,1,Sea Water Pump,6312a8f9-1a28-4d58-a946-6f42914e12cc,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+44,74f2ea81-37a7-47a4-af4a-67ba87c9b277,Rubber Impeller,A45,1,Sea Water Pump,6312a8f9-1a28-4d58-a946-6f42914e12cc,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+45,8ecf800a-ff18-4a1d-a99d-85b5c3cc556b,Brass Impeller,A46,1,Sea Water Pump,6312a8f9-1a28-4d58-a946-6f42914e12cc,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+46,940d460a-e4d0-48e5-8fce-f8b0b9fc34c8,Shaft,A47,1,Sea Water Pump,6312a8f9-1a28-4d58-a946-6f42914e12cc,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+47,80230104-8c07-4d5d-932f-df36d992c4fe,Bearings (02),A48,1,Sea Water Pump,6312a8f9-1a28-4d58-a946-6f42914e12cc,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+48,320ab2c0-a784-4de2-95cc-4a2cc77d6389,Mechanical Seal ,A49,1,Sea Water Pump,6312a8f9-1a28-4d58-a946-6f42914e12cc,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+49,03e4c594-c080-46d0-a195-df23402c4315,Oil Seal,A50,1,Sea Water Pump,6312a8f9-1a28-4d58-a946-6f42914e12cc,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+50,01919081-2ad7-4f38-9f00-8fe26f7f9645,O-rings (04),A51,1,Sea Water Pump,6312a8f9-1a28-4d58-a946-6f42914e12cc,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+51,37adc7bb-d42e-42b7-82e4-7fd928696602,Gasket (2),A52,1,Sea Water Pump,6312a8f9-1a28-4d58-a946-6f42914e12cc,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+52,4deb1717-4eae-44b8-a7fe-06241ab8cea7,Sea Water Piping,A53,0,Sea Water Cooling,67e85c81-f4d2-44aa-aa46-cbfb61dd9b23,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+53,a61769a3-a3f7-4b72-8ee5-caaa06d566bc,O-rings (02),A54,1,Sea Water Piping,4deb1717-4eae-44b8-a7fe-06241ab8cea7,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+54,9a1a4abb-1368-466f-9fb9-a742ac4d0394,Gasket (04),A55,1,Sea Water Piping,4deb1717-4eae-44b8-a7fe-06241ab8cea7,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+55,a7f8ae2f-081f-44cf-bcd5-b5fb809aa3fd,Overboard Discharge Assembly,A56,0,Sea Water Piping,4deb1717-4eae-44b8-a7fe-06241ab8cea7,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+56,3bb35b5b-13a2-4ee8-88f3-50495665d500,Gasket (04),A57,1,Overboard Discharge Assembly,a7f8ae2f-081f-44cf-bcd5-b5fb809aa3fd,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+57,f6c55f5a-e7bc-4534-9fc1-4e5e08f5fbe2,Screwdown Valve (02),A58,1,Overboard Discharge Assembly,a7f8ae2f-081f-44cf-bcd5-b5fb809aa3fd,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+58,1bbb1999-be69-4ea4-b577-c49775002052,Sea water suction,A59,0,Sea Water Piping,4deb1717-4eae-44b8-a7fe-06241ab8cea7,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+59,7b7b6204-a59f-4bc8-867f-2bf6bdaa35f8,Gasket (04),A60,1,Sea water suction,1bbb1999-be69-4ea4-b577-c49775002052,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+60,570e831d-941c-49ee-a473-e59da1519db3,Screwdown Valve (02),A61,1,Sea water suction,1bbb1999-be69-4ea4-b577-c49775002052,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+61,75c38d7b-fe3e-4dcc-b851-19eb83d5039e,Stainer,A62,1,Sea water suction,1bbb1999-be69-4ea4-b577-c49775002052,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+62,87e38233-b7b1-476e-9a1e-64a7ae0d7bce,Sea Water Pressure Guage,A63,1,Sea Water Cooling,67e85c81-f4d2-44aa-aa46-cbfb61dd9b23,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+63,1be81a94-3638-4bd7-b078-5f9b1ebad973,Lubrication System,A64,1,DA2,973afbdd-31bd-417e-ac8d-27071c92da91,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+64,64deefd1-ac2e-421d-8488-505c1ee10c3a,Oil Pan - Immersion Heater,A65,1,Lubrication System,1be81a94-3638-4bd7-b078-5f9b1ebad973,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+65,8674b213-c659-40e2-b15b-32047543aa46,Lubricating Oil Pump Assy,A66,0,Lubrication System,1be81a94-3638-4bd7-b078-5f9b1ebad973,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+66,6068cf01-7b6f-49d8-87e6-dc5bf71b90ed,Lubricating Oil Pump,A67,0,Lubricating Oil Pump Assy,8674b213-c659-40e2-b15b-32047543aa46,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+67,d71bcb2e-eb04-4267-8dbc-832d48a11efe,Gear (04),A68,1,Lubricating Oil Pump,6068cf01-7b6f-49d8-87e6-dc5bf71b90ed,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+68,987b6e67-3cc1-4d11-9c2a-76d066732bf3,Shaft (02),A69,1,Lubricating Oil Pump,6068cf01-7b6f-49d8-87e6-dc5bf71b90ed,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+69,22d5157d-e886-43cb-a32a-256f14a5ceba,Bush (04),A70,1,Lubricating Oil Pump,6068cf01-7b6f-49d8-87e6-dc5bf71b90ed,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+70,3e739367-4bc1-410d-98af-1622db540a03,Lube Oil Pump Mounting,A71,1,Lubricating Oil Pump Assy,8674b213-c659-40e2-b15b-32047543aa46,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+71,8582062c-4492-4117-b6fa-4d0f6ced3dbd,Oil Suction Tube Mounting,A72,1,Lubricating Oil Pump Assy,8674b213-c659-40e2-b15b-32047543aa46,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+72,c424328e-ee87-4ecb-b069-3052c250cea2,Oil Transfer Tube Mounting,A73,1,Lubricating Oil Pump Assy,8674b213-c659-40e2-b15b-32047543aa46,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+73,a9530c47-0e5c-4b1c-bc28-63d72be48dc9,Lube Oil Transfer Tube,A74,0,Lubricating Oil Pump Assy,8674b213-c659-40e2-b15b-32047543aa46,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+74,bdefdae4-f5a7-4931-b19e-8630c543914c,O-rings (04),A75,1,Lube Oil Transfer Tube,a9530c47-0e5c-4b1c-bc28-63d72be48dc9,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+75,d63d5962-d71c-4fa4-beea-9fd3531c12bc,Tube (02),A76,1,Lube Oil Transfer Tube,a9530c47-0e5c-4b1c-bc28-63d72be48dc9,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+76,c8b91af8-4c60-411a-97d0-ef2d1a580b4b,Filter Head,A77,0,Lubrication System,1be81a94-3638-4bd7-b078-5f9b1ebad973,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+77,6fc72dba-38bd-4d9d-ab73-6d4174648168,Pressure regulator,A78,1,Filter Head,c8b91af8-4c60-411a-97d0-ef2d1a580b4b,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+78,e437fdd7-5d2f-470a-a7bc-eeb626976db4,Lubricating Oil Filter,A79,1,Filter Head,c8b91af8-4c60-411a-97d0-ef2d1a580b4b,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+79,f7a5bb33-8e08-4573-8041-4ad467e228a6,Super by-pass filter,A80,1,Lubrication System,1be81a94-3638-4bd7-b078-5f9b1ebad973,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+80,f08a7b36-fe97-405c-9bec-30a7a928904c,Piston Cooling Nozzles,A81,1,Lubrication System,1be81a94-3638-4bd7-b078-5f9b1ebad973,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+81,351eb932-30f1-4e83-a19d-de5289ff1cb5,Pressure Guage,A82,1,Lubrication System,1be81a94-3638-4bd7-b078-5f9b1ebad973,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+82,bfbcc5a9-6e69-4e73-8586-6150f6a7427a,Temperature Guage,A83,1,Lubrication System,1be81a94-3638-4bd7-b078-5f9b1ebad973,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+83,0da1a7c4-db63-4747-834b-f21a7545b731,Oil Supply Connection Assembly,A84,0,Lubrication System,1be81a94-3638-4bd7-b078-5f9b1ebad973,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+84,e73722f3-5308-4360-8fda-245c32316ac5,LB Oil Supply Connection,A85,1,Oil Supply Connection Assembly,0da1a7c4-db63-4747-834b-f21a7545b731,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+85,d957b6e6-407b-4ab9-a1a6-b757c9e8c013,LB Oil Control Connection,A86,1,Oil Supply Connection Assembly,0da1a7c4-db63-4747-834b-f21a7545b731,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+86,dbff4d7c-bea2-41e5-adcb-368d454dbc98,RB Oil Control Connection,A87,1,Oil Supply Connection Assembly,0da1a7c4-db63-4747-834b-f21a7545b731,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+87,7738630d-eeab-4b22-9f28-2598290c1d6f,RB Fuel Block Connection,A88,1,Oil Supply Connection Assembly,0da1a7c4-db63-4747-834b-f21a7545b731,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+88,78044593-9a7f-44ba-a155-ccfc6dae14d1,STC Oil Drain Connection,A89,1,Oil Supply Connection Assembly,0da1a7c4-db63-4747-834b-f21a7545b731,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+89,3f6241cf-c3e2-4d56-8134-3437579b2d7e,RB Oil Supply Connection,A90,1,Oil Supply Connection Assembly,0da1a7c4-db63-4747-834b-f21a7545b731,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+90,a6f81c12-96e1-43d8-933f-76d723d9e443,Oil Manifold,A91,1,Oil Supply Connection Assembly,0da1a7c4-db63-4747-834b-f21a7545b731,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+91,4b3cd6d7-70a6-47a6-99d7-68ae58a14b0b,Oil Supply Connection,A92,1,Oil Supply Connection Assembly,0da1a7c4-db63-4747-834b-f21a7545b731,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+92,50576d1c-6b29-4325-82f1-97c3e7721514,Oil Control Valve,A93,1,Oil Supply Connection Assembly,0da1a7c4-db63-4747-834b-f21a7545b731,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+93,426cb016-44d5-40d4-8fc2-356327e263ab,Cover Handle Hole,A94,0,Lubrication System,1be81a94-3638-4bd7-b078-5f9b1ebad973,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+94,be0f0713-e9c2-4ea6-98f4-d8ab17521f97,Breather,A95,1,Cover Handle Hole,426cb016-44d5-40d4-8fc2-356327e263ab,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+95,4c6bdec7-74eb-4255-97ae-d48348243879,Cam bush,A96,1,Lubrication System,1be81a94-3638-4bd7-b078-5f9b1ebad973,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+96,569c9fa9-a203-4ac4-8d96-7e2ec70e25a0,Main Oil Gallery,A97,0,Lubrication System,1be81a94-3638-4bd7-b078-5f9b1ebad973,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+97,7b54fdc8-3a93-4bea-af41-f6769acd21fe,Crankshaft main journal,A98,1,Main Oil Gallery,569c9fa9-a203-4ac4-8d96-7e2ec70e25a0,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+98,878f86e0-20e7-4ba1-95a1-2507a3c57ce0,Connecting Rod Journal,A99,1,Main Oil Gallery,569c9fa9-a203-4ac4-8d96-7e2ec70e25a0,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+99,3a6849cc-7289-46f4-a5e0-5a247511bbd8,Fuel System,A100,0,DA2,973afbdd-31bd-417e-ac8d-27071c92da91,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+100,729b5c02-0191-4452-b908-ee8edd233632,Fuel Tank,A101,1,Fuel System,3a6849cc-7289-46f4-a5e0-5a247511bbd8,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+101,f63303ce-aee4-4622-8632-5718467e85b3,Float Tank,A102,1,Fuel System,3a6849cc-7289-46f4-a5e0-5a247511bbd8,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+102,31635a52-a35f-4840-bd40-c730fc428dd8,Suction Line,A103,1,Fuel System,3a6849cc-7289-46f4-a5e0-5a247511bbd8,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+103,e901efa7-02b4-4ffa-96a5-b3fe6eb94063,Fuel Filter,A104,1,Fuel System,3a6849cc-7289-46f4-a5e0-5a247511bbd8,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+104,c7224247-deb5-4c6f-8289-d32c3ac058d5,Breather/Vent,A105,1,Fuel System,3a6849cc-7289-46f4-a5e0-5a247511bbd8,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+105,b4dae50d-caa3-428d-a563-39065034c3e3,Drain Valve,A106,1,Fuel System,3a6849cc-7289-46f4-a5e0-5a247511bbd8,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+106,dac2d3d9-b093-47b8-8650-34450b662294,Pressure-Time Pump,A107,0,Fuel System,3a6849cc-7289-46f4-a5e0-5a247511bbd8,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+107,31830b49-fc1c-4233-abb9-4bdbe4790577,Pump,A108,0,Pressure-Time Pump,dac2d3d9-b093-47b8-8650-34450b662294,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+108,8babf3c5-40d9-49a0-9e44-d7949419c961,Ball bearing,A109,1,Pump,31830b49-fc1c-4233-abb9-4bdbe4790577,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+109,92eee3db-a06c-4042-9acc-12079e8d6705,shaft,A110,1,Pump,31830b49-fc1c-4233-abb9-4bdbe4790577,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+110,310a9197-69f0-4ba4-8b3e-1579c96165fa,Oil seal,A111,1,Pump,31830b49-fc1c-4233-abb9-4bdbe4790577,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+111,dcb5bfda-f60a-4c9d-9444-322ca0d0ec25,Mechanical Seal,A112,1,Pump,31830b49-fc1c-4233-abb9-4bdbe4790577,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+112,d77756f4-e7b7-467b-87c1-8cf4961b103f,Brass Bush (02),A113,1,Pump,31830b49-fc1c-4233-abb9-4bdbe4790577,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+113,1c186fcf-1fc6-4767-9652-743691a48ac9,Gear (02),A114,1,Pump,31830b49-fc1c-4233-abb9-4bdbe4790577,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+114,6d88af60-4f4f-492b-9f01-34fddfb1f247,Gear Shaft,A115,1,Pump,31830b49-fc1c-4233-abb9-4bdbe4790577,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+115,be58019d-d46e-4257-9ce1-9d99200c9da7,EFC Governor,A116,1,Fuel System,3a6849cc-7289-46f4-a5e0-5a247511bbd8,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+116,74707613-1717-4ace-a2fd-6f450013b245,Fuel Manifold,A117,1,Fuel System,3a6849cc-7289-46f4-a5e0-5a247511bbd8,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+117,a04b5212-bc1c-4424-9763-38ac077e01ab,Fuel Filter Plumbing,A118,1,Fuel System,3a6849cc-7289-46f4-a5e0-5a247511bbd8,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+118,30d08599-06c6-4e7e-aaee-c309d081b285,Fuel Tubing,A119,1,Fuel System,3a6849cc-7289-46f4-a5e0-5a247511bbd8,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+119,3f85fdc1-28b5-4f01-81cc-f1a02ad891e9,Fuel Valve,A120,1,Fuel System,3a6849cc-7289-46f4-a5e0-5a247511bbd8,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+120,72c68244-f324-4bd2-9e63-5497b6ffaf30,Injector Assy,A121,0,Fuel System,3a6849cc-7289-46f4-a5e0-5a247511bbd8,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+121,6908e79e-adf2-4d70-9668-4bb83b7dfe13,Barrel Plunger,A122,1,Injector Assy,72c68244-f324-4bd2-9e63-5497b6ffaf30,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+122,38ea0567-9e1d-43de-9a2e-920126174708,Cup,A123,1,Injector Assy,72c68244-f324-4bd2-9e63-5497b6ffaf30,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+123,923bafee-f27e-47b6-bb8d-29445e5f8367,Spring,A124,1,Injector Assy,72c68244-f324-4bd2-9e63-5497b6ffaf30,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+124,e29fb1d1-09ce-4fa7-89ba-54862afd385a,Check Valve,A125,1,Injector Assy,72c68244-f324-4bd2-9e63-5497b6ffaf30,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+125,290de832-6ce8-4e29-80a6-f332964ed73c,Fuel Pressure Guage,A126,1,Fuel System,3a6849cc-7289-46f4-a5e0-5a247511bbd8,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+126,624c5a79-ed57-4d6b-a1a4-9f939c5c5a4f,Air Starting System,A127,0,DA2,973afbdd-31bd-417e-ac8d-27071c92da91,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+127,5dfa9ec5-0631-4456-9a0f-81d5231dc972,Air Starter Plumbing,A128,1,Air Starting System,624c5a79-ed57-4d6b-a1a4-9f939c5c5a4f,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+128,0becba2b-1be9-4926-a66d-c693ac0cb02b,Starter,A129,0,Air Starting System,624c5a79-ed57-4d6b-a1a4-9f939c5c5a4f,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+129,4e2fecc4-f642-4116-8ed2-cc06f65a94a9,Pinion,A130,1,Starter,0becba2b-1be9-4926-a66d-c693ac0cb02b,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+130,2a447578-d0d9-4a65-abf2-6ba7ae721ef9,Shaft,A131,1,Starter,0becba2b-1be9-4926-a66d-c693ac0cb02b,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+131,57d1d77d-cf1c-4f15-8ff4-3432b2264574,Gear (02),A132,1,Starter,0becba2b-1be9-4926-a66d-c693ac0cb02b,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+132,543d1e6c-83f0-4be3-84c1-b6af68fd1471,O-rings (06),A133,1,Starter,0becba2b-1be9-4926-a66d-c693ac0cb02b,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+133,2540ef88-f096-4931-9b3a-3052d6da78d5,Fings (06),A134,1,Starter,0becba2b-1be9-4926-a66d-c693ac0cb02b,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+134,7a3d8ce4-da1a-4e43-94ac-b39d459d4d66,Air Pressure Guage,A135,1,Air Starting System,624c5a79-ed57-4d6b-a1a4-9f939c5c5a4f,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+135,8559fc93-30b3-48d2-8572-05a3779d9820,Air System for Combustion,A136,0,DA2,973afbdd-31bd-417e-ac8d-27071c92da91,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+136,8a26aec4-133c-4af2-841f-e5e79bd35fa3,Air Cleaner Housing,A137,1,Air System for Combustion,8559fc93-30b3-48d2-8572-05a3779d9820,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+137,e6904496-7a8a-484c-8417-567c8324bf52,Air Cleaner Element,A138,1,Air System for Combustion,8559fc93-30b3-48d2-8572-05a3779d9820,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+138,047a9017-ade0-4a20-971f-e411b778d916,Intake Manifold Mounting,A139,0,Air System for Combustion,8559fc93-30b3-48d2-8572-05a3779d9820,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+139,b0b63c3d-1a7c-47c0-be59-fe11b2240b50,Aftercooler Mouting Core,A140,1,Intake Manifold Mounting,047a9017-ade0-4a20-971f-e411b778d916,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+140,77f36fc5-46aa-4676-a9a4-c8e95346464a,LB Aftercooler Mounting,A141,1,Intake Manifold Mounting,047a9017-ade0-4a20-971f-e411b778d916,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+141,fd7d530c-89ff-4f2d-9555-f7d25edc9a03,RB Aftercooler Mounting,A142,1,Intake Manifold Mounting,047a9017-ade0-4a20-971f-e411b778d916,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+142,c1849e37-f212-4712-954b-000e67131ef5,Intake Manifold,A143,1,Air System for Combustion,8559fc93-30b3-48d2-8572-05a3779d9820,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+143,1cf7042f-5eb4-4835-af80-3afa4bc24747,Vacuum Guage,A144,1,Air System for Combustion,8559fc93-30b3-48d2-8572-05a3779d9820,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+144,86097e2c-f310-49e3-9a84-ca08f1857a67,Turbocharger and Mounting,A145,0,Air System for Combustion,8559fc93-30b3-48d2-8572-05a3779d9820,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+145,a979a3f0-368a-4693-bb68-36a78023f1ea,Turbocharger,A146,0,Turbocharger and Mounting,86097e2c-f310-49e3-9a84-ca08f1857a67,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+146,7eaa4f9a-4a8d-4155-a36b-dfc3e4d11c7a,Turbine Wheel,A147,1,Turbocharger,a979a3f0-368a-4693-bb68-36a78023f1ea,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+147,bcbb0fa6-f91e-483a-8732-be7f50d0205e,Compression Wheel,A148,1,Turbocharger,a979a3f0-368a-4693-bb68-36a78023f1ea,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+148,68184658-5451-49ae-a0d7-53ac24c82024,Wheel & Shaft assembly,A149,1,Turbocharger,a979a3f0-368a-4693-bb68-36a78023f1ea,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+149,a9800485-3b79-460b-9457-89bc4b191942,Brass bush (02),A150,1,Turbocharger,a979a3f0-368a-4693-bb68-36a78023f1ea,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+150,2f9001f8-fcc1-45fe-a7be-1cc705aa36e7,Slip rings (02),A151,1,Turbocharger,a979a3f0-368a-4693-bb68-36a78023f1ea,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+151,167675e8-ac71-4fce-800d-b997e946e2ca,Turbine housing,A152,1,Turbocharger,a979a3f0-368a-4693-bb68-36a78023f1ea,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+152,e5b0dfa6-fe06-4be0-8ac0-facf29219cc6,Compression housing,A153,1,Turbocharger,a979a3f0-368a-4693-bb68-36a78023f1ea,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+153,1d6731cd-8bd5-4e1b-90b7-da42647b0dd9,Center housing,A154,1,Turbocharger,a979a3f0-368a-4693-bb68-36a78023f1ea,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+154,70c218e2-1528-41f8-ab18-5ce616f2473b,Turbocharger Mounting,A155,0,Turbocharger and Mounting,86097e2c-f310-49e3-9a84-ca08f1857a67,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+155,b7e0d4b9-81ca-4e6d-a692-b7f2729776b8,Gasket (03),A156,1,Turbocharger Mounting,70c218e2-1528-41f8-ab18-5ce616f2473b,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+156,0ae380ff-2c99-48b7-a977-979d89096c19,O-rings (04),A157,1,Turbocharger Mounting,70c218e2-1528-41f8-ab18-5ce616f2473b,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+157,f205eea8-d7a9-42bf-a9eb-d74fe6deb1f8,Turbo Oil Supply Hose,A158,1,Turbocharger and Mounting,86097e2c-f310-49e3-9a84-ca08f1857a67,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+158,c05ec624-38a6-48b8-b9c7-666786b45938,Turbo Oil Drain Hose,A159,1,Turbocharger and Mounting,86097e2c-f310-49e3-9a84-ca08f1857a67,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+159,60278119-54e3-462b-abf8-c6c8452f6276,Prime Performance Parts,A160,0,DA2,973afbdd-31bd-417e-ac8d-27071c92da91,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+160,c0a79cfd-9019-4480-b72d-a7493ff1d5e1,Cylinder Block,A161,0,Prime Performance Parts,60278119-54e3-462b-abf8-c6c8452f6276,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+161,216f5572-e6c7-454e-b6d2-39ddc16ff82b,Cylinder Block,A162,0,Cylinder Block,216f5572-e6c7-454e-b6d2-39ddc16ff82b,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+162,699e3dee-3912-4352-8426-ed0cab155374,Cylinder Liner,A163,1,Cylinder Block,216f5572-e6c7-454e-b6d2-39ddc16ff82b,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+163,d45c3de6-8270-4cce-97ff-f57422378f62,Camshaft,A164,0,Prime Performance Parts,60278119-54e3-462b-abf8-c6c8452f6276,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+164,5b636c42-3893-48ff-8d39-abfd56379a41,Camshaft RB,A165,1,Camshaft,d45c3de6-8270-4cce-97ff-f57422378f62,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+165,0c3da555-3f54-4de7-b5bc-4e993243c8a4,Camshaft LB,A166,1,Camshaft,d45c3de6-8270-4cce-97ff-f57422378f62,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+166,a2db64bd-bad0-40be-a47d-d2e2a03df439,Camshaft Mounting,A167,0,Camshaft,d45c3de6-8270-4cce-97ff-f57422378f62,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+167,017c9dc4-a595-44ae-9156-7f96a56ceb73,Cam bush (34),A168,1,Camshaft Mounting,a2db64bd-bad0-40be-a47d-d2e2a03df439,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+168,9f5c8b18-de8b-4238-8156-5fb4ae8b6c35,Thrust Bearing,A169,1,Camshaft Mounting,a2db64bd-bad0-40be-a47d-d2e2a03df439,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+169,6d263ac9-8517-4e9e-a75d-acdbabd7f699,Cam follower,A170,1,Camshaft,d45c3de6-8270-4cce-97ff-f57422378f62,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+170,bf2ee194-8792-4756-b472-fb61440f897a,Push Rod,A171,1,Camshaft,d45c3de6-8270-4cce-97ff-f57422378f62,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+171,be70ef0d-a45d-44a4-932e-457cb5a582d8,Crankshaft Assembly,A172,0,Prime Performance Parts,60278119-54e3-462b-abf8-c6c8452f6276,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+172,fac429fc-71ac-437f-8c76-af1131de117f,Thrust Mounting Retainer,A173,1,Crankshaft Assembly,be70ef0d-a45d-44a4-932e-457cb5a582d8,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+173,a02f64a6-fe57-4b8f-88bf-2011ccae3707,Crankshaft,A174,1,Crankshaft Assembly,be70ef0d-a45d-44a4-932e-457cb5a582d8,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+174,377a79c2-9de8-42c2-95e1-2bc2ad8b23b5,Main Bearing Cap,A175,1,Crankshaft Assembly,be70ef0d-a45d-44a4-932e-457cb5a582d8,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+175,c42f961f-42f2-4c0b-a0c0-f7c4f985ed5d,Main Bearing Shell,A176,1,Crankshaft Assembly,be70ef0d-a45d-44a4-932e-457cb5a582d8,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+176,8d38f79a-4c63-41b4-bea1-d624edf23d7a,Damper Assy,A177,0,Prime Performance Parts,60278119-54e3-462b-abf8-c6c8452f6276,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+177,1e879b7d-db93-452c-a9f1-3ba6e3961cd7,Vibration Damper,A178,1,Damper Assy,8d38f79a-4c63-41b4-bea1-d624edf23d7a,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+178,d19a485e-8e66-49e6-9df8-fbf22ac0e7ef,Drive Gear Assy,A179,0,Prime Performance Parts,60278119-54e3-462b-abf8-c6c8452f6276,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+179,c65ac71c-a353-46e5-ab0e-b59d75d1155e,Idler Gear Mounting,A180,1,Drive Gear Assy,d19a485e-8e66-49e6-9df8-fbf22ac0e7ef,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+180,f51bb15d-dbc7-4c4b-90d3-66e87b94b5cb,Cam Idler Gear Mounting,A181,1,Drive Gear Assy,d19a485e-8e66-49e6-9df8-fbf22ac0e7ef,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+181,1b31ea35-57a7-44eb-9ab9-1637ac1342da,Idler Gear I,A182,1,Drive Gear Assy,d19a485e-8e66-49e6-9df8-fbf22ac0e7ef,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+182,4a103d31-0789-4f6d-9357-905a90c62f53,Idler Gear Bush I,A183,1,Drive Gear Assy,d19a485e-8e66-49e6-9df8-fbf22ac0e7ef,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+183,65e2d1c9-a4c5-4066-be67-ab239e112875,Idler Gear II,A184,1,Drive Gear Assy,d19a485e-8e66-49e6-9df8-fbf22ac0e7ef,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+184,dab1f296-c041-457b-8692-900e1d06be38,Idler Gear Bush II,A185,1,Drive Gear Assy,d19a485e-8e66-49e6-9df8-fbf22ac0e7ef,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+185,682076dc-4194-4082-b620-591e53ddad62,Front Gear Housing and Cover,A186,0,Prime Performance Parts,60278119-54e3-462b-abf8-c6c8452f6276,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+186,0909ef8f-2a2f-4cde-8210-fcbdb35df4e1,Front Gear Housing and Cover,A187,1,Front Gear Housing and Cover,0909ef8f-2a2f-4cde-8210-fcbdb35df4e1,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+187,9fd18151-2b9c-4194-9613-57f9b7089189,Accessort Drive Cover,A188,1,Front Gear Housing and Cover,0909ef8f-2a2f-4cde-8210-fcbdb35df4e1,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+188,9d1b08ec-1ee7-4f4a-acb3-bd013bf6ec1a,Gear Cover Mounting,A189,1,Front Gear Housing and Cover,0909ef8f-2a2f-4cde-8210-fcbdb35df4e1,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+189,972d9ae6-4151-45d8-a248-e1c7104aecaf,Cylinder Head,A190,0,Prime Performance Parts,60278119-54e3-462b-abf8-c6c8452f6276,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+190,116a80d4-8a2a-4595-ad89-3a2998196f75,Cylinder Head Gasket (16),A191,1,Cylinder Head,972d9ae6-4151-45d8-a248-e1c7104aecaf,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+191,50e18533-8992-4642-ada3-c20e77178374,Intake Valve,A192,1,Cylinder Head,972d9ae6-4151-45d8-a248-e1c7104aecaf,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+192,2f8de1cf-a089-4c8a-ada7-52b99ad78ac6,Exhaust Valve,A193,1,Cylinder Head,972d9ae6-4151-45d8-a248-e1c7104aecaf,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+193,235253d7-e86a-4b45-bc03-05fec7ad750e,Valve Guide,A194,1,Cylinder Head,972d9ae6-4151-45d8-a248-e1c7104aecaf,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+194,024e30b2-7b49-47ea-9027-5857112f9415,Valve Insert (Valve Sheet),A195,1,Cylinder Head,972d9ae6-4151-45d8-a248-e1c7104aecaf,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+195,a008b03f-332b-4002-8a74-474877085dfa,Valve Spring,A196,1,Cylinder Head,972d9ae6-4151-45d8-a248-e1c7104aecaf,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+196,eb0fce72-b924-4dba-8141-456a90326a05,Collet,A197,1,Cylinder Head,972d9ae6-4151-45d8-a248-e1c7104aecaf,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+197,7220c27d-a99f-4989-8d16-fe7345450338,Piston & Connecting Rod,A198,0,Prime Performance Parts,60278119-54e3-462b-abf8-c6c8452f6276,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+198,3b736112-b220-4f88-8c6f-7f2d947c4ed9,Piston,A199,1,Piston & Connecting Rod,7220c27d-a99f-4989-8d16-fe7345450338,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+199,bdb0a482-aa1e-4ad5-8c6d-d2aed67e85d3,Gudgeon Pin,A200,1,Piston & Connecting Rod,7220c27d-a99f-4989-8d16-fe7345450338,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+200,10f9d2ab-23c2-4e6c-95e7-e324658d3e81,Oil Ring,A201,1,Piston & Connecting Rod,7220c27d-a99f-4989-8d16-fe7345450338,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+201,1dbce89c-7460-453f-aac8-f1a24906273e,Compression Ring I,A202,1,Piston & Connecting Rod,7220c27d-a99f-4989-8d16-fe7345450338,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+202,c32abce5-d7b4-4ba8-b519-220afc814865,Compression Ring II,A203,1,Piston & Connecting Rod,7220c27d-a99f-4989-8d16-fe7345450338,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+203,88ebb30c-bf47-42c7-ac8b-bd32e1e57440,Flywheel Housing Assembly,A204,0,Prime Performance Parts,60278119-54e3-462b-abf8-c6c8452f6276,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+204,103e47fb-d743-42c2-82b8-9d0e2403abe1,Flywheel,A205,1,Flywheel Housing Assembly,88ebb30c-bf47-42c7-ac8b-bd32e1e57440,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+205,c1bb0821-6f1b-4fb2-901b-8724750bacf9,Magnetic Pickup,A206,1,Flywheel Housing Assembly,88ebb30c-bf47-42c7-ac8b-bd32e1e57440,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+206,e12f0775-7f26-4c53-9980-1d6ed8a26011,Rocker Housing,A207,0,Prime Performance Parts,60278119-54e3-462b-abf8-c6c8452f6276,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+207,b17488f3-ea01-4918-b94e-935050c9b0f4,Rocker Arm Mounting Housing,A208,1,Rocker Housing,e12f0775-7f26-4c53-9980-1d6ed8a26011,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+208,2dcae240-3033-4e6c-b4a6-5b39efef4be3,Rocker Lever Housing Assy,A209,1,Rocker Housing,e12f0775-7f26-4c53-9980-1d6ed8a26011,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+209,c5af793d-2c01-4b3a-a1ba-2c9e8398ea27,Rocker Lever Assy,A210,1,Rocker Housing,e12f0775-7f26-4c53-9980-1d6ed8a26011,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+210,cb322ca0-2718-4aa8-b8eb-ada096e77be9,Rocker Lever Bush,A211,1,Rocker Housing,e12f0775-7f26-4c53-9980-1d6ed8a26011,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+211,b6e5b18d-a2bd-4e5d-a174-f5f323e853cd,Rocker Lever Cover,A212,1,Rocker Housing,e12f0775-7f26-4c53-9980-1d6ed8a26011,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+212,2018d13f-37f4-447f-b6d7-f86bc3e398ad,Exhaust System,A213,0,DA2,973afbdd-31bd-417e-ac8d-27071c92da91,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+213,7072529a-1fdf-4341-8c23-6f0b2916ca08,Exhaust Connection,A214,0,Exhaust System,2018d13f-37f4-447f-b6d7-f86bc3e398ad,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+214,d47350bf-6cf4-4f34-aa53-9f930531a845,Bellow,A215,1,Exhaust Connection,7072529a-1fdf-4341-8c23-6f0b2916ca08,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+215,3f0389be-02da-4baa-a8da-07d848fb5c52,Gaskets (04),A216,1,Exhaust Connection,7072529a-1fdf-4341-8c23-6f0b2916ca08,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+216,e3976625-aae3-4690-8f72-94b7e772163c,Lagging,A217,1,Exhaust Connection,7072529a-1fdf-4341-8c23-6f0b2916ca08,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+217,0652b842-56de-4bae-a5e2-c4fb2a355862,Exhaust Manifold and Mounting,A218,0,Exhaust System,2018d13f-37f4-447f-b6d7-f86bc3e398ad,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+218,1eb4357c-f0f0-4eb0-ae4b-658cfffc476c,Bellow (06),A219,1,Exhaust Manifold and Mounting,0652b842-56de-4bae-a5e2-c4fb2a355862,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+219,a63e2d55-84cd-4bdf-b656-38222d15c6ba,Gaskets (16),A220,1,Exhaust Manifold and Mounting,0652b842-56de-4bae-a5e2-c4fb2a355862,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+220,0dae1c87-931f-4c32-a9ab-4f1bbbb830ad,V-Bend Clamp,A221,1,Exhaust Manifold and Mounting,0652b842-56de-4bae-a5e2-c4fb2a355862,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+221,00072dfa-f88a-4f2f-9c6f-b1e0799526e9,Gasket,A222,0,Exhaust System,2018d13f-37f4-447f-b6d7-f86bc3e398ad,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+222,fb735ebf-2d92-4071-86cb-ea98ac71eaf4,Exhaust Temperature Guage,A223,1,Exhaust System,2018d13f-37f4-447f-b6d7-f86bc3e398ad,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+223,08973712-7420-4356-b3ae-7571f59fe2d3,DG Set Mounting,A224,0,DA2,973afbdd-31bd-417e-ac8d-27071c92da91,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+224,80f9013e-4a35-4d50-ace9-761ee84a3b25,Flexible Coupling Engine Alternator,A225,0,DG Set Mounting,08973712-7420-4356-b3ae-7571f59fe2d3,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+225,d79d0424-68f9-4323-80b7-f874de58419b,Hub,A226,1,Flexible Coupling Engine Alternator,80f9013e-4a35-4d50-ace9-761ee84a3b25,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+226,05ccd405-2a78-4f4f-8367-34e24f88336d,Hub cover,A227,1,Flexible Coupling Engine Alternator,80f9013e-4a35-4d50-ace9-761ee84a3b25,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+227,f9e2ccf7-96b8-41dd-9909-3ff988d6e619,Retainer plate,A228,1,Flexible Coupling Engine Alternator,80f9013e-4a35-4d50-ace9-761ee84a3b25,Talwar 1,Destroyer,Talwar,Western,Insma,DA2
+228,2a83de22-3150-455e-af90-9c5d0ec3e98b,Rubber block (24),A229,1,Flexible Coupling Engine Alternator,80f9013e-4a35-4d50-ace9-761ee84a3b25,Talwar 1,Destroyer,Talwar,Western,Insma,DA2

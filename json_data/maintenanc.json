@@ -1,0 +1,30 @@
+[{
+    "component_id": "c88aa68a-c924-11eb-b8bc-0242ac130003",
+    "maintenance_id": "9611957c-c935-11eb-b8bc-0242ac130003",
+    "repair_type": "replaced",
+    "pm_applicable": 0,
+    "pm_interval": 0,
+    "replaced_during_mission": 0,
+    "condition_monitoring_applicable": 1,
+    "component_criticality": "yeo"
+},
+{
+    "component_id": "c88aa68a-c924-11eb-b8bc-0242ac130003",
+    "maintenance_id": "9611957c-c935-11eb-b8bc-0242ac130003",
+    "repair_type": "replaced",
+    "pm_applicable": 0,
+    "pm_interval": 0,
+    "replaced_during_mission": 0,
+    "condition_monitoring_applicable": 1,
+    "component_criticality": "yeo"
+},
+{
+    "component_id": "c88aa68a-c924-11eb-b8bc-0242ac130003",
+    "maintenance_id": "9611957c-c935-11eb-b8bc-0242ac130003",
+    "repair_type": "replaced",
+    "pm_applicable": 0,
+    "pm_interval": 0,
+    "replaced_during_mission": 0,
+    "condition_monitoring_applicable": 1,
+    "component_criticality": "yeo"
+}]

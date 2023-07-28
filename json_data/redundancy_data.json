@@ -1,0 +1,10 @@
+[{
+    "component_id": "c88aa68a-c924-11eb-b8bc-0242ac130003",
+    "redundancy_id": "051a9086-c927-11eb-b8bc-0242ac130003",
+    "redundancy_type": "Whatever",
+    "k": 2,
+    "n": 4,
+    "switch_rel": 0.95,
+    "parellel_component": ["051a9086-c927-11eb-b8bc-0242ac130003", "4add97b2-c927-11eb-b8bc-0242ac130003"]
+    
+}]

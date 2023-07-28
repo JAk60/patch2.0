@@ -1,0 +1,22 @@
+.example-full-width-row {
+  background-color: lightblue;
+  /* border: 2px solid #22ff22; */
+  /* we want the border to be kept within the row height */
+  box-sizing: border-box;
+  /* get the row to fill the available height */
+  height: 100%;
+  /* grid sets white-space to one line, need to reset for wrapping the text */
+  white-space: normal;
+  font-size: 1rem;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+}
+
+.tableFooter {
+  float: right;
+}
+
+.tableFooter button {
+  margin: 0 1rem;
+}

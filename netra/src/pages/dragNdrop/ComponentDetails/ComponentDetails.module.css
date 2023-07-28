@@ -1,0 +1,23 @@
+.input {
+  width: 94%;
+  padding: 7px 0 7px 10px;
+  border: 0.7px solid gray;
+  border-radius: 5px;
+}
+.inputlabel{
+  display: block;
+  margin-bottom: 14px;
+}
+.savebtn {
+  float: right;
+  width: 40%;
+  padding: 10px 5px;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  background-color: rgb(0,70,134);
+}
+
+.savebtn:hover{
+  background-color: rgb(4, 50, 93);
+}

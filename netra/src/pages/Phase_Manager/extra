@@ -1,0 +1,352 @@
+import React from "react";
+import Navigation from "../../components/navigation/Navigation";
+import Module from "../../components/module/Module_radio";
+import Slider from "../../components/slider/Slider";
+import StageSlider from "../../components/slider/NewSlider";
+import { Button } from "@material-ui/core";
+import Table from "../../ui/Table/Table";
+import styles from "./Phasemanager.module.css";
+import {
+  MProwData,
+  MPcolumnDefs,
+  LMrowData,
+  LMcolumnDefs,
+  DCMrowData,
+  DCMcolumnDefs,
+  components,
+} from "./PhasetableData.js";
+import { useState } from "react";
+import { Switch, Route } from "react-router-dom";
+import {
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  makeStyles,
+  TextField,
+} from "@material-ui/core";
+import LensIcon from "@material-ui/icons/Lens";
+import NewModule from "../../components/module/NewModule";
+import CustomTextInput from "../../ui/Form/CustomTextInput";
+import CustomSelect from "../../ui/Form/CustomSelect";
+import PhaseManagerHome from "./Home/Home";
+const PhaseStyles = makeStyles({
+  formControl: {
+    // margin: '2rem',
+    minWidth: "20%",
+  },
+  Submit: {
+    // margin: '2rem',
+    height: 40,
+  },
+  Pbuttons: {
+    marginLeft: 10,
+  },
+});
+const PhaseManager = (props) => {
+  const [rowstate, setRows] = useState([...MProwData]);
+  const [paramName, setParamName] = useState("");
+  const [MType, setMType] = useState("Qualitative");
+  const [Unit, setUnit] = useState("");
+  const [Status, setStatus] = useState("");
+  const [desc, setDesc] = useState("");
+  const [LBound, setLBound] = useState("");
+  const [UBound, setUBound] = useState("");
+  const [PRange, setPrange] = useState("");
+  const [Stage, setStage] = useState(0);
+  const PhaseClasses = PhaseStyles();
+  const addRow = (e) => {
+    let newRows = [
+      ...rowstate,
+      {
+        PhaseName: paramName,
+        MeasurementType: MType,
+        LowerBound: LBound,
+        UpperBound: UBound,
+        Status: Status,
+        PhaseRange: PRange,
+        Unit: Unit,
+        Description: desc,
+      },
+    ];
+    setParamName("");
+    setLBound("");
+    setUBound("");
+    setStatus("");
+    setPrange("");
+    setUnit("");
+    setDesc("");
+    setRows(newRows);
+    console.log(rowstate);
+    props.history.push("/phase_manager/");
+  };
+  const AddRange = () => {
+    props.history.push("/phase_manager/add");
+  };
+  const NextStage = () => {
+    if (Stage === 0) {
+      setStage(1);
+      props.history.push("/phase_manager/life_multiplier");
+    }
+    if (Stage === 1) {
+      setStage(2);
+      props.history.push("/phase_manager/dcmultiplier");
+    }
+  };
+  const handleParamNameChange = (e) => {
+    setParamName(e.target.value);
+  };
+  const handleMTypeChange = (e) => {
+    setMType(e.target.value);
+  };
+  const handleUnitChange = (e) => {
+    setUnit(e.target.value);
+  };
+  const handleStatusChange = (e) => {
+    setStatus(e.target.value);
+  };
+  const handleDescChange = (e) => {
+    setDesc(e.target.value);
+  };
+  const handleLBoundChange = (e) => {
+    setLBound(e.target.value);
+  };
+  const handleUBoundChange = (e) => {
+    setUBound(e.target.value);
+  };
+  const handlePRangeChange = (e) => {
+    setPrange(e.target.value);
+  };
+  console.log(rowstate);
+  let marks = [
+    {
+      value: 30,
+      label: "Modify Phase",
+    },
+    {
+      value: 60,
+      label: "Life Multiplier",
+    },
+    {
+      value: 90,
+      label: "Duty Cycle Multiplier(System)",
+    },
+  ];
+
+  return (
+    <>
+      <Navigation />
+      {/* <Module/> */}
+      <NewModule />
+      {/* <Slider marks={marks} default={marks[0]["value"]}/> */}
+      <StageSlider marks={marks} default={marks[Stage]["value"]} />
+      <div className={styles.flex1}>
+        <div>Platform name - Talwar | System name - DA</div>
+        <div>
+          <Route path="/phase_manager" exact={true}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => AddRange()}
+              className={PhaseClasses.Pbuttons}
+            >
+              Add More Range
+            </Button>
+          </Route>
+          <Route path="/phase_manager/life_multiplier" exact={true}>
+            <Button
+              variant="contained"
+              color="primary"
+              className={PhaseClasses.Pbuttons}
+            >
+              Update
+            </Button>
+          </Route>
+          <Button
+            variant="contained"
+            color="primary"
+            className={PhaseClasses.Pbuttons}
+          >
+            Save
+          </Button>
+          <Route
+            exact
+            path={[
+              "/phase_manager",
+              "/phase_manager/life_multiplier",
+              "/phase_manager/add",
+            ]}
+          >
+            <Button
+              variant="contained"
+              color="primary"
+              className={PhaseClasses.Pbuttons}
+              onClick={() => NextStage()}
+            >
+              Next Stage
+            </Button>
+          </Route>
+          <Route exact path="/phase_manager/dcmultiplier">
+            <Button
+              variant="contained"
+              color="primary"
+              className={PhaseClasses.Pbuttons}
+            >
+              Next Module
+            </Button>
+          </Route>
+        </div>
+      </div>
+
+      {/* <Switch>
+        <Route path="/phase_manager" exact={true}>
+          <div className={styles.flex2}>
+            <Button variant="contained" color="secondary">
+              Pre-Configured Phase Manager
+            </Button>
+          </div>
+          <div className={styles.phaseTable}>
+            <Table columnDefs={MPcolumnDefs} rowData={rowstate} />
+          </div>
+        </Route>
+        </Switch> */}
+
+      <Switch>
+        <Route path="/phase_manager" exact={true}>
+          <PhaseManagerHome></PhaseManagerHome>
+        </Route>
+        <Route path="/phase_manager/add">
+          <div className={styles.addForm}>
+            <div className={styles.flex} style={{ marginTop: "4rem" }}>
+              <CustomTextInput
+                label="Parameter Name"
+                id="parameter-name"
+                className={PhaseClasses.formControl}
+                value={paramName}
+                onChange={handleParamNameChange}
+              ></CustomTextInput>
+
+              <CustomSelect
+                className={PhaseClasses.formControl}
+                id="measurement-type"
+                label="Measurement Type"
+                value={MType}
+                onChange={handleMTypeChange}
+                fields={["Quantitative", "Qualitative"]}
+              />
+
+              <CustomSelect
+                className={PhaseClasses.formControl}
+                id="unit"
+                label="Unit"
+                value={Unit}
+                onChange={handleUnitChange}
+                fields={["Km/hr", "M/hr"]}
+              ></CustomSelect>
+              <Button
+                variant="contained"
+                color="primary"
+                className={PhaseClasses.Submit}
+                onClick={() => addRow()}
+              >
+                Submit
+              </Button>
+            </div>
+            <div className={styles.flex} style={{ marginTop: "3rem" }}>
+              <Button variant="contained" color="secondary">
+                {MType} Measurement Type - Range
+              </Button>
+            </div>
+            <div className={styles.flex} style={{ marginTop: "3rem" }}>
+              {MType === "Qualitative" ? (
+                <>
+                  <CustomTextInput
+                    style={{ minWidth: "45%" }}
+                    label="Status"
+                    id="status"
+                    className={PhaseClasses.formControl}
+                    value={Status}
+                    onChange={handleStatusChange}
+                  ></CustomTextInput>
+                  <CustomTextInput
+                    style={{ minWidth: "45%" }}
+                    label="Description"
+                    id="description"
+                    className={PhaseClasses.formControl}
+                    value={desc}
+                    onChange={handleDescChange}
+                  ></CustomTextInput>
+                </>
+              ) : (
+                <>
+                  <CustomTextInput
+                    label="Phase Range"
+                    id="phaserange"
+                    className={PhaseClasses.formControl}
+                    value={PRange}
+                    onChange={handlePRangeChange}
+                  ></CustomTextInput>
+
+                  <CustomTextInput
+                    label="Lower Bound"
+                    id="lowerbound"
+                    className={PhaseClasses.formControl}
+                    value={LBound}
+                    onChange={handleLBoundChange}
+                  ></CustomTextInput>
+
+                  <CustomTextInput
+                    label="Lower Bound"
+                    id="upperbound"
+                    className={PhaseClasses.formControl}
+                    value={UBound}
+                    onChange={handleUBoundChange}
+                  ></CustomTextInput>
+
+                  <CustomTextInput
+                    label="Description"
+                    id="description"
+                    className={PhaseClasses.formControl}
+                    value={desc}
+                    onChange={handleDescChange}
+                  ></CustomTextInput>
+                </>
+              )}
+            </div>
+          </div>
+        </Route>
+        <Route path="/phase_manager/life_multiplier" exact={true}>
+          <div className={styles.flex2}>
+            <CustomSelect
+              style={{ minWidth: "45%" }}
+              className={PhaseClasses.formControl}
+              id="parent-component"
+              label="Parent Component"
+              fields={components}
+            />
+            <Button
+              variant="contained"
+              color="primary"
+              className={PhaseClasses.Submit}
+            >
+              Submit
+            </Button>
+            <span style={{ fontSize: "0.7rem" }}>
+              <LensIcon style={{ color: "#d8f0f4" }} />
+              LMU-Lowest Maintainable Unit
+            </span>
+          </div>
+          <div className={styles.phaseTable}>
+            <Table columnDefs={LMcolumnDefs} rowData={LMrowData} />
+          </div>
+        </Route>
+        <Route path="/phase_manager/dcmultiplier" exact={true}>
+          <div className={styles.phaseTable}>
+            <Table columnDefs={DCMcolumnDefs} rowData={DCMrowData} />
+          </div>
+        </Route>
+      </Switch>
+    </>
+  );
+};
+export default PhaseManager;

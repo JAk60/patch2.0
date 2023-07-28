@@ -1,0 +1,50 @@
+
+[{
+  "component_id": "c88aa68a-c924-11eb-b8bc-0242ac130003",
+  "component_name":"DA",
+  "parent_name": "Talwar",
+  "system_name": null,
+  "platform_name": "talwar",
+  "part_code": "kta50dm",
+  "is_lmu": 0
+},
+{
+  "component_id": "0d5479de-c926-11eb-b8bc-0242ac130003",
+  "component_name":"Fresh Water Cooling",
+  "parent_id": "c88aa68a-c924-11eb-b8bc-0242ac130003",
+  "system_name": null,
+  "platform_name": "talwar",
+  "part_code": "fresh121",
+  "is_lmu": 0
+},
+{
+  "component_id": "1461d67c-c926-11eb-b8bc-0242ac130003",
+  "component_name":"Sea Water Cooling",
+  "parent_name": "DA",
+  "system_name": null,
+  "platform_name": "talwar",
+  "part_code": "water121",
+  "is_lmu": 0
+},
+{
+  "component_id": "3765fa90-c926-11eb-b8bc-0242ac130003",
+  "component_name":"Shaft",
+  "parent_name": "Fresh Water Cooling",
+  "system_name": null,
+  "platform_name": "talwar",
+  "part_code": "water121",
+  "is_lmu": 1
+}
+]
+
+
+{
+  "component_id": "c88aa68a-c924-11eb-b8bc-0242ac130003",
+  "component_name":"DA",
+  "parent_name": "Talwar",
+  "level1": null,
+  "level0": "talwar",
+  "part_code": "kta50dm",
+  "is_lmu": 0
+}
+

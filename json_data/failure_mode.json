@@ -1,0 +1,15 @@
+[{
+    "failure_id": "05d7c788-c935-11eb-b8bc-0242ac130003",
+    "component_id": "c88aa68a-c924-11eb-b8bc-0242ac130003",
+    "failure_mode": "ABC"
+},
+{
+    "failure_id": "05d7c788-c935-11eb-b8bc-0242ac130003",
+    "component_id": "c88aa68a-c924-11eb-b8bc-0242ac130003",
+    "failure_mode": "ABC"
+},
+{
+    "failure_id": "05d7c788-c935-11eb-b8bc-0242ac130003",
+    "component_id": "c88aa68a-c924-11eb-b8bc-0242ac130003",
+    "failure_mode": "ABC"
+}]

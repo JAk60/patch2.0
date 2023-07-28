@@ -1,0 +1,14 @@
+all modules has two seperate files. 1. for getting data and another for writing data.
+1. That contains functions to all DDL queries. For example select all child of parent_id
+2. Another files just keep track of all queries. It /
+has functions for all queries which makes any changes to dB. Also in initialization it calls /
+a function which creates all tables.
+
+In file 1 - all select queries are written in that file itself
+
+
+
+Tasks remaining.
+1. Insert Data into tables with try statement and return error. done.
+2. Delete specific rows. done
+3. Update Specific rows

@@ -1,0 +1,361 @@
+def saving_reliability(self, data, rel, targetR):
+        sql_check = """select OBJECT_ID('Reliability_Data')"""
+        cursor.execute(sql_check)
+        exists = cursor.fetchall()
+        if (exists[0][0] == None):
+            create_sql = """CREATE TABLE Reliability_Data (
+                                         TargetR FLOAT NOT NULL,
+                                         ActualR FLOAT NOT NULL,
+                                         system VARCHAR(MAX) NULL,
+                                         platform VARCHAR(MAX) NULL,
+                                         Mission VARCHAR(MAX) NULL)
+                                                   """
+            cursor.execute(create_sql)
+            cnxn.commit()
+        del_sql = """delete from Reliability_Data where system = ? and platform = ? and Mission = ?"""
+        cursor.execute(del_sql, data["system"], data["platform"],
+                       data["mission"])
+        cnxn.commit()
+        insert_sql = '''insert into Reliability_Data values(?,?,?,?,?)'''
+        cursor.execute(insert_sql, targetR, rel,
+                       data['system'], data['platform'], data['mission'])
+        cnxn.commit()
+
+        # Model Simulator ##TO run for 1000 times.
+    def model_simulator(self, data, flag=0, group_system=None):
+        system = data["system"]
+        platform = data["platform"]
+        mission = data["mission"]
+        mission_type = data["mission_type"]
+        extra_data = data['extra_data']
+        type = data['type']
+        if type != 'group':
+            # Get all details of data maintenance
+            get_maintenance_data_sql = """select date, datetime,event_type from data_maintenance where platform=? 
+                                            and system=? and (event_type='Preventive' or event_type='Breakdown' or event_type='Start') order by datetime"""
+            cursor.execute(get_maintenance_data_sql, platform, system)
+            maintenance_data = cursor.fetchall()
+            maintenance_data = list(map(lambda b: list(b), maintenance_data))
+            get_min_datetime_sql = """select MIN(date) from data_maintenance where platform=? and system=? and component_name=?"""
+            cursor.execute(get_min_datetime_sql, platform, system, system)
+            get_min_date = list(map(lambda x: list(x), cursor.fetchall()))
+            count = 0
+            min_total_duration = 0
+            max_total_duration = 0
+            min_max_range = []
+            if (mission_type == 'STD'):
+                if flag == 0:
+                    target_rel_sql = """select target_rel from mission_profile where platform = ? and system=? and mission_name =?"""
+                    cursor.execute(target_rel_sql, platform, system, mission)
+                    target_rel = cursor.fetchone()[0]
+                    ind_stages = """select Stage_name, load, duration, target_rel 
+                                                            from mission_profile where mission_name=? and platform=? and system=?"""
+                    cursor.execute(ind_stages, mission, platform, system)
+                    stages = cursor.fetchall()
+                else:
+                    target_rel_sql = """select target_rel from mission_profile where platform = ? and system=? and mission_name =?"""
+                    cursor.execute(target_rel_sql, platform,
+                                   group_system, mission)
+                    target_rel = cursor.fetchone()[0]
+                    ind_stages = """select Stage_name, load, duration, target_rel 
+                                                                                from mission_profile where mission_name=?
+                                                                                 and platform=? and system=? and group_system=?"""
+                    cursor.execute(ind_stages, mission, platform,
+                                   group_system, data['system'])
+                    stages = cursor.fetchall()
+                for s in stages:
+                    ran = s[2].split('-')
+                    if (len(ran) > 1):
+                        min_max_range.append(float(ran[0]))
+                        min_total_duration += float(ran[0])
+                        min_max_range.append(float(ran[1]))
+                        max_total_duration += float(ran[1])
+                    else:
+                        min_total_duration += float(ran[0])
+                        max_total_duration += float(ran[0])
+            else:
+                target_rel = float(extra_data['target_rel'])
+                for local_data in extra_data['data']:
+                    ran = local_data[2].split('-')
+                    if (len(ran) > 1):
+                        min_max_range.append(int(ran[0]))
+                        min_total_duration += int(ran[0])
+                        min_max_range.append(int(ran[1]))
+                        max_total_duration += int(ran[1])
+                    else:
+                        min_total_duration += int(ran[0])
+                        max_total_duration += int(ran[0])
+                stages = extra_data['data']
+            if (len(min_max_range) > 0):
+                sorted_range = sorted(min_max_range)
+            else:
+                sorted_range = [max_total_duration]
+            min_val = sorted_range[0]
+            max_val = sorted_range[-1]
+            try:
+                temp_sys_rel_min = self.system_reliability(
+                    data, min_val, 'no', stages)
+            except Exception as e:
+                return str(e)
+            temp_sys_rel_max = self.system_reliability(
+                data, max_val, 'no', stages)
+            system_rel_min = temp_sys_rel_min["system_rel"][0]["rel"]
+            system_rel_max = temp_sys_rel_max["system_rel"][0]["rel"]
+            if (system_rel_min * 100 > target_rel):
+                count += 1
+            if (system_rel_max * 100 > target_rel):
+                count += 1
+            # avg_rel_and_max_risk = self.calculate_Risk(data, stages)
+            # avg_sub_system_rel = avg_rel_and_max_risk[0]
+            # max_Risk = avg_rel_and_max_risk[1]
+            self.saving_reliability(
+                data, avg_sub_system_rel['system_rel'][0]['rel'], target_rel)
+            return {"rel": (count / 2) * 100, "min": system_rel_min,
+                    "max": system_rel_max, "target_rel": target_rel,
+                    "max_duration": max_total_duration, "min_duration": min_total_duration,
+                    "maintenance_data": maintenance_data, "min_date_system": get_min_date, 'system': data['system']}
+        # else:
+        #     return self.group_reliability_calculation(data)
+
+    def system_reliability(self, data, duration, avg="no", local_stages=[]):
+        try:
+            lmu_rel = self.lmu_reliability(data, duration, avg, local_stages)
+        except Exception as e:
+            raise ValueError(e)
+        new_list = []
+        self.system_component_list_with_parallel(
+            data, data["system"], new_list)
+        new_system_rel = []
+        only_system = []
+        all_components_reliabilty = []
+        system_rel_data = self.system_rel_calculation(data, new_list, new_system_rel, lmu_rel, only_system, 'no',
+                                                      all_components_reliabilty)
+        # New Code
+        lmu_system_parent = list(
+            filter(lambda f: f['parent_id'] == '#', lmu_rel[0]['main_data']))
+        lmu_system_parent = [{'LMU': lp['id'], 'name': lp['lmu'], 'parent_id': lp['parent_id'],
+                              'parent_name': lp['parent_name'], 'rel': lp['rel']} for lp in lmu_system_parent]
+        sub_component_rel = self.compute_sub_system_rel(
+            all_components_reliabilty + lmu_system_parent)
+        final_system_rel_data = 1
+        for sys_rel in system_rel_data:
+            final_system_rel_data = final_system_rel_data * sys_rel['rel']
+        return {"system_rel": [{'system': data['system'], 'rel': final_system_rel_data}],
+                "sub_system": sub_component_rel, "all_component_rel": all_components_reliabilty, "lmu_rel": lmu_rel}
+
+        # Calculate LMU Reliability
+    def lmu_reliability(self, data, duration, avg, local_stages):
+        platform = data["platform"]
+        system = data["system"]
+        mission = data["mission"]
+        mission_type = data['mission_type']
+        lmu_list = []
+        self.system_component_list_with_parallel(
+            data, data["system"], lmu_list)
+        lmu_final_list = list(
+            filter(lambda x: x["lmu"] == 1 and x['comp_critical'] in range(1, 5), lmu_list))
+        if len(lmu_final_list) == 0:
+            lmu_final_list = list(filter(lambda x: x["lmu"] == 1, lmu_list))
+        # Get all phases of Platform and system
+        all_phase_param_sql = """select DISTINCT(phase_name) from phase_parameter where platform_name=? and system_name=?"""
+        cursor.execute(all_phase_param_sql, platform, system)
+        all_phase_params = cursor.fetchall()
+        ####
+        data_manager_inst = Data_Manager()
+        new_data = {"system_name": system, "platform": platform}
+        main_data = []
+        temp_main_data = []
+        for stage in local_stages:
+            temp_dur = stage[2].split("-")
+            if (avg == "no"):
+                temp_durr = duration
+            else:
+                if (len(temp_dur) > 1):
+                    temp_durr = (float(temp_dur[0]) + float(temp_dur[1])) / 2
+                elif (len(temp_dur) == 1):
+                    temp_durr = float(temp_dur[0])
+                else:
+                    temp_durr = 0
+
+            phase_split = stage[1].split("|")
+            phase_id_final = ""
+            for x in phase_split:
+                if x != "":
+                    phase_ind_split = x.split("=")
+                    filtered_phase_to_be_selected = list(filter(lambda b: b[0].replace(
+                        " ", "") == phase_ind_split[0], all_phase_params))[0][0]
+                else:
+                    raise ValueError(
+                        "Phases not Found for this Platform, Please add.")
+                measure_type_sql = """select measurement_type from phase_parameter where platform_name=? and system_name=? 
+                                                                and phase_name=?"""
+                cursor.execute(measure_type_sql, platform,
+                               system, filtered_phase_to_be_selected)
+                measure_type = cursor.fetchone()[0]
+                if (measure_type == "Quan"):
+                    phase_val_split = phase_ind_split[1].split("-")
+                    if (len(phase_val_split) > 1):
+                        phase_temp = np.random.uniform(float(phase_val_split[0]), float(phase_val_split[1]), 1)[
+                            0]
+                    elif (len(phase_val_split) == 1):
+                        phase_temp = (float(phase_val_split[0]))
+                    else:
+                        phase_temp = 0
+                    phase_ID_sql = """ select phase_range from phase_parameter where ? BETWEEN 
+                                                lower_bound and upper_bound and platform_name = ? and system_name=?"""
+                    cursor.execute(phase_ID_sql, phase_temp, platform, system)
+                    phase_id_final += cursor.fetchone()[0] + '-'
+                else:
+                    phase_id_final += phase_ind_split[1] + '-'
+
+            for lmu in lmu_final_list:
+                if lmu['condition'] == 'Yes':
+                    con_param = self.calculation_of_condition_monitoring_reliability(
+                        lmu['name'], platform, system)
+                else:
+                    DC_phase = 1
+                    Em_phase = 1
+                    try:
+                        dc_phase = data_manager_inst.DC_phase_calculation(new_data, lmu["component"], phase_id_final[0:-1],
+                                                                          DC_phase)
+                    except Exception as e:
+                        raise ValueError(e)
+                    try:
+                        em_phase = data_manager_inst.em_phase(
+                            new_data, lmu["component"], phase_id_final[0:-1], Em_phase)
+                    except Exception as e:
+                        raise ValueError("Please Enter EM Multiplier.")
+                    print('em phase:' + str(em_phase))
+                    print('dcphase:' + str(dc_phase))
+                    print('duration:' + str(temp_durr))
+                    duration = (temp_durr * dc_phase) / em_phase
+                    already_present = list(
+                        filter(lambda ap: ap["lmu"] == lmu["component"] and ap["parent"] == lmu["parent"],
+                               temp_main_data))
+                    if (already_present):
+                        already_present[0]["time"] = already_present[0]["time"] + duration
+                    else:
+                        temp_main_data.append({"lmu": lmu["component"], "time": duration, "parent": lmu["parent"],
+                                               "parent_id": lmu["parent_id"], "id": lmu["id"],
+                                               "relationship": lmu["relationship"], 'k': lmu['k'], 'n': lmu['n'], 'pmInterval': lmu['pmInterval'], 'isReplacedMission': lmu['isReplacedMission'],
+                                               'typeName': lmu['typeName']})
+            main_data.append({"mission_name": mission, "data": temp_main_data})
+        try:
+            lmu_rel_final_data = self.lmu_reliability_calculation(
+                main_data, system, platform, lmu_final_list)
+            return lmu_rel_final_data
+        except Exception as e:
+            raise ValueError(e)
+
+    def lmu_reliability_calculation(self, data, system, platform, lmu_list):
+        data_m_inst = Data_Manager()
+        endDate = str(datetime.now().date())
+        maint_log = data_m_inst.m_log_start(
+            system, platform, lmu_list, endDate)
+        lmu_rel_main_data = []
+        for mission in data:
+            name = mission["mission_name"]
+            lmu_rel_temp_data = []
+            for d in mission["data"]:
+                if (maint_log):
+                    # print("Get From Maint_log")
+                    latest_age_maint = list(filter(lambda xx: xx["LMU"] == d["lmu"], maint_log))[
+                        0]["cumm_eq_age"]
+                else:
+                    get_latest_age_sql = """select cumm_eq_age from data_maintenance_final where Date = 
+                                                      (select MAX(Date) from data_maintenance_final 
+                                                      where platform=? and system=?
+                                                      and LMU=? and parent=?) and platform=? and system=?
+                                                      and LMU=? and parent=?"""
+                    cursor.execute(get_latest_age_sql, platform, system, d["lmu"], d["parent"],
+                                   platform, system, d["lmu"], d["parent"])
+                    latest_age_maint = cursor.fetchone()
+                    if (latest_age_maint):
+                        latest_age_maint = latest_age_maint[0]
+                    else:
+                        latest_age_maint = 0
+                get_lates_age_param_sql = """select cumm_eq_age from parameter_estimation_var where Date = 
+                                                      (select MAX(Date) from parameter_estimation_var 
+                                                      where platform=? and system=?
+                                                      and LMU=? and parent=?) and platform=? and system=?
+                                                      and LMU=? and parent=?"""
+                cursor.execute(get_lates_age_param_sql, platform, system, d["lmu"], d["parent"],
+                               platform, system, d["lmu"], d["parent"])
+                latest_age_param = cursor.fetchone()
+                if (latest_age_param):
+                    latest_age_param = latest_age_param[0]
+                else:
+                    latest_age_param = 0
+                # TO find eeta beta
+                eta_beta = self.get_params_priority_wise(
+                    system, platform, d['lmu'], d['id'])
+                if (eta_beta):
+                    eta = float(eta_beta[0][0])
+                    beta = float(eta_beta[0][1])
+                else:
+                    eta = 50000
+                    beta = 2.5
+                current_age = latest_age_maint - latest_age_param
+                print(current_age)
+                if d['isReplacedMission'] == 'Yes':
+                    rel = self.pmIntervalReliabilityCalculation(
+                        d, current_age, eta, beta)
+                else:
+                    rel_num = np.exp(-((current_age +
+                                     float(d['time'])) / eta) ** beta)
+                    # rel_num = np.exp(-((current_age + time of mission duration...) / eta) ** beta)
+                    rel_deno = np.exp(-(current_age / eta) ** beta)
+                    rel = rel_num / rel_deno
+                print(rel)
+                print(d['lmu'])
+                lmu_rel_temp_data.append({'lmu': d['lmu'], 'parent': d['parent'], 'rel': rel,
+                                          'parent_id': d["parent_id"], "id": d["id"],
+                                          "relationship": d["relationship"], "parent_name": d["parent"], 'k': d['k'],
+                                          'n': d['n']})
+            lmu_rel_main_data.append(
+                {'name': name, 'main_data': lmu_rel_temp_data})
+
+        return lmu_rel_main_data
+
+    def system_rel_calculation(self, data, new_list, new_system_rel, lmu_rel, only_system, lmu_done,
+                               all_components_reliabilty):
+        immediate_parent_rel = []
+        if (lmu_done == 'no'):
+            # Calculate all Immediate LMU's
+            groups = list(
+                groupby(lmu_rel[0]["main_data"], key=itemgetter('parent_id')))
+            groups = set(list(map(lambda b: b[0], groups)))
+            for x in groups:
+                lmus = list(
+                    filter(lambda rel: rel["parent_id"] == x, lmu_rel[0]["main_data"]))
+                if x != '#':
+                    curr_component_select_k_n = list(
+                        filter(lambda kn: kn["id"] == x, new_list))
+                    k = curr_component_select_k_n[0]['k']
+                    n = curr_component_select_k_n[0]['n']
+                elif x == '#':
+                    select_k_n = """select k,n from system_configuration where platform_name=? and system_name=? and parent_unit=?"""
+                    cursor.execute(
+                        select_k_n, data["platform"], data["system"], x)
+                    k_n = cursor.fetchone()
+                    k = k_n[0]
+                    n = k_n[1]
+                total_rel = self.multiply_rel(lmus, data, x, k, n)
+                if (x == "#"):
+                    only_system.append(
+                        {'system': data["system"], "rel": total_rel})
+                    all_components_reliabilty.append({'LMU': x, "rel": total_rel,
+                                                      "name": data["system"], "parent_id": '#',
+                                                      "parent_name": data["system"]})
+                else:
+                    parent_item = list(
+                        filter(lambda parent: parent["id"] == x, new_list))[0]
+                    parent_item["rel"] = total_rel
+                    immediate_parent_rel.append(parent_item)
+                    all_components_reliabilty.append({'LMU': x, "rel": total_rel,
+                                                      "name": parent_item["component"],
+                                                      "parent_id": parent_item["parent_id"],
+                                                      "parent_name": parent_item["parent"]})
+            lmu_done = 'yes'
+            self.system_rel_calculation(data, new_list, immediate_parent_rel, lmu_rel, only_system, lmu_done,
+                                        all_components_reliabilty)

@@ -1,0 +1,49 @@
+.react-flow__node-output.selected,
+.react-flow__node-output.selected:hover {
+  box-shadow: 0 0 0 1.5px black;
+}
+
+.react-flow__node-default.selected,
+.react-flow__node-default:hover {
+  box-shadow: 0 0 0 1.5px black;
+}
+
+.react-flow__node-systemNode.selected,
+.react-flow__node-systemNode.selected:hover {
+  box-shadow: 0 0 0 1.5px black;
+}
+
+.react-flow__controls{
+  background-color: transparent;
+  box-shadow: none;
+  bottom: 10px;
+  left:20px;
+}
+
+.react-flow__controls-button{
+  border-radius: 50%;
+  margin-bottom: 20px;
+  width: 35px;
+  height: 35px;
+  box-shadow: 0px 10px 24px 3px rgba(0,0,0,0.09);
+}
+
+.react-flow__controls-button svg{
+  max-width: none;
+  max-height: none;
+  width:70%;
+  height: 70%;
+}
+
+.react-flow__controls-button path{
+  fill:rgb(0,70,134);
+}
+
+#tooltip{
+  position: absolute;
+  opacity: 0;
+  background-color: white;
+  width: fit-content ;
+  padding: 15px;
+  z-index: 1000;
+}

@@ -1,0 +1,15 @@
+[{
+    "duty_cycle_id": "05d7c788-c935-11eb-b8bc-0242ac130003",
+    "component_id": "c88aa68a-c924-11eb-b8bc-0242ac130003",
+    "duty_cycle_value": 10
+},
+{
+    "duty_cycle_id": "05d7c788-c935-11eb-b8bc-0242ac130003",
+    "component_id": "c88aa68a-c924-11eb-b8bc-0242ac130003",
+    "duty_cycle_value": 65
+},
+{
+    "duty_cycle_id": "05d7c788-c935-11eb-b8bc-0242ac130003",
+    "component_id": "c88aa68a-c924-11eb-b8bc-0242ac130003",
+    "duty_cycle_value": 7
+}]

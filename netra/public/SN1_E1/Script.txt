@@ -1,0 +1,15 @@
+for(var i =26; i<126; i++){
+    if(document.getElementsByTagName("a")[i].innerText.slice(34,38) === "oth_"){
+            arr.push(document.getElementsByTagName("a")[i])
+}
+}
+
+for(var j=0; j<arr.length; j++){
+    arr[j].click()
+}
+
+const myTimeout = setTimeout(nextPage, 20000);
+
+const nextPage = () => {
+	document.getElementByClass("ui-icon-seek-next").click();
+}
