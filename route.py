@@ -12,6 +12,7 @@ from dB.maintenance_allocation.maintenanceAllocation import maintenanceAllocatio
 from dB.phase_manager.phase_manager_dB import Phase_Manager_dB
 from dB.hep.hep_dB import Hep_dB
 from dB.condition_monitoring.condition_monitoring import conditionMonitoring_dB
+from dB.condition_monitoring.cgraph import GraphDashBoard
 from dB.mission_profile import MissionProfile
 from dB.data_manager.data_manager import Data_Manager
 from dB.system_configuration.system_configurationdB_table import SystemConfigurationdBTable
@@ -231,6 +232,7 @@ def update_parameters():
 def save_historical_data():
     if request.method == 'POST':
         data = request.get_json(force=True)
+        print(data)
         data = data['data']
         d_inst = Data_Manager()
         res = d_inst.insert_data(data)
@@ -507,6 +509,13 @@ def predict_rul():
         # If the file is not provided, load the previously saved CSV file
         return "file is not provided"
 
+
+@app.route("/cgraph", methods=["post"])
+def cgraph():
+    data = request.get_json()
+    equipment_id = data.get('equipment_id')
+    graph=GraphDashBoard()
+    return graph.graph_c(equipment_id)
 
 if __name__ == '__main__':
     app.secret_key = os.urandom(32)
