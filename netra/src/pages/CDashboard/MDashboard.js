@@ -1,7 +1,15 @@
 import React, { useEffect, useState } from "react";
-
-import { InputLabel, TextField, makeStyles, Button } from "@material-ui/core";
 import styles from "./CDashboard.module.css";
+import { InputLabel, TextField, makeStyles, Button } from "@material-ui/core";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ReferenceLine,
+} from "recharts";
 // import { arr,arr2 } from "./data";
 import {
   MuiPickersUtilsProvider
@@ -14,7 +22,6 @@ import { Autocomplete } from "@material-ui/lab";
 import { useDispatch, useSelector } from "react-redux";
 import { userActions } from "../../store/ApplicationVariable";
 import CustomizedSnackbars from "../../ui/CustomSnackBar";
-import CGraph from "./CGraph";
 
 const CDashboard = () => {
   const dispatch = useDispatch();
@@ -26,10 +33,10 @@ const CDashboard = () => {
   const [selectedShipName, setShipName] = useState([]);
   const [selectedParameterName, setParameterName] = useState([]);
   const [eqDataOption, setEqDataOption] = useState([]);
-  const [graphData, setGraphData] = useState([]);
+  const [paramData, setParamData] = useState([]);
   const [currMinMax, setCurrMinMax] = useState([]);
- const PData=useSelector((state)=>state.userSelection.userSelection.params)
-console.log(PData)
+
+
   useEffect(() => {
     fetch("/cm_dashboard", {
       method: "GET",
@@ -58,7 +65,6 @@ console.log(PData)
       });
     }, []);
   // ...
-
   useEffect(() => {
     const filteredArray = minMax.filter((item) => {
       return selectedEqName.some(
@@ -97,86 +103,100 @@ console.log(PData)
     },
   });
   const classes = dropDownStyle();
+  let arr = [];
+  let arr2 = [];
+  for (let i = 0; i < 50; i++) {
+    // const maxDate = Date.now();
+    // const timestamp = Math.floor(Math.random() * maxDate);
+    arr = [
+      ...arr,
+      {
+        name: new Date(
+          new Date(2021, 1, 1).getTime() +
+            Math.random() *
+              (new Date(2022, 1, 1).getTime() - new Date(2021, 1, 1).getTime())
+        )
+          .toISOString()
+          .slice(0, 10),
+        uv: Math.floor(Math.random() * (80 - 30 + 1)) + 30,
+      },
+    ];
+
+    arr2 = [
+      ...arr2,
+      {
+        name: new Date(
+          new Date(2021, 1, 1).getTime() +
+            Math.random() *
+              (new Date(2022, 1, 1).getTime() - new Date(2021, 1, 1).getTime())
+        )
+          .toISOString()
+          .slice(0, 10),
+        uv: Math.floor(Math.random() * (75 - 30 + 1)) + 30,
+      },
+    ];
+  }
   const [showGraph, setShowGraph] = useState(false);
 
-  // const onSubmitHandler = () => {
-  //   fetch("/fetch_cmdata", {
-  //     method: "POST",
-  //     body: JSON.stringify({
-  //       EquipmentIds: selectedEqName.map((x) => x.id),
-  //       ParameterNames: selectedParameterName.map((x) => x),
-  //     }),
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //       Accept: "application/json",
-  //     },
-  //   })
-  //     .then((res) => {
-  //       return res.json();
-  //     })
-  //     .then((data) => {
-  //       const sortedParamData = data.map((param) => {
-  //         return {
-  //           ...param,
-  //           data: param.data.sort((a, b) => new Date(a.date) - new Date(b.date)),
-  //         };
-  //       });
-  //       setSnackBarMessage({
-  //         severity: "success",
-  //         message: data.message,
-  //         showSnackBar: true,
-  //       });
-  //       setParamData(sortedParamData);
-  //       setShowGraph(true);
-  //     })
-  //     .catch((error) => {
-  //       setSnackBarMessage({
-  //         severity: "error",
-  //         message: "Some Error Occured. " + error,
-  //         showSnackBar: true,
-  //       });
-  //     });
-  //   };
-
-    const onSubmitHandler = () => {
-      fetch("/cgraph", {
-        method: "POST",
-        body: JSON.stringify({
-          EquipmentIds: selectedEqName.map((x) => x.id),
-        }),
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
+  const onSubmitHandler = () => {
+    fetch("/fetch_cmdata", {
+      method: "POST",
+      body: JSON.stringify({
+        EquipmentIds: selectedEqName.map((x) => x.id),
+        ParameterNames: selectedParameterName.map((x) => x),
+      }),
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    })
+      .then((res) => {
+        return res.json();
       })
-        .then((res) => {
-          return res.json();
-        })
-        .then((data) => {
-          console.log(data)
-          setSnackBarMessage({
-            severity: "success",
-            message: data.message,
-            showSnackBar: true,
-          });
-          setGraphData(data['graphData']);
-          setShowGraph(true);
-        })
-        .catch((error) => {
-          setSnackBarMessage({
-            severity: "error",
-            message: "Some Error Occured. " + error,
-            showSnackBar: true,
-          });
+      .then((data) => {
+        const sortedParamData = data.map((param) => {
+          return {
+            ...param,
+            data: param.data.sort((a, b) => new Date(a.date) - new Date(b.date)),
+          };
         });
+        setSnackBarMessage({
+          severity: "success",
+          message: data.message,
+          showSnackBar: true,
+        });
+        setParamData(sortedParamData);
+        setShowGraph(true);
+      })
+      .catch((error) => {
+        setSnackBarMessage({
+          severity: "error",
+          message: "Some Error Occured. " + error,
+          showSnackBar: true,
+        });
+      });
     };
+
+
+    function findMaxValue(dataArray) {
+      if (!Array.isArray(dataArray)) {
+        return null; // Return null if dataArray is not an array
+      }
     
-
-
- 
+      let max = Number.MIN_SAFE_INTEGER; // Initialize max to the smallest possible number
+    
+      for (const obj of dataArray) {
+        const value = parseInt(obj.value, 10); // Convert the value to a number
+        if (!isNaN(value)) { // Check if the value is a valid number
+          max = Math.max(max, value);
+        }
+      }
+    
+      return max;
+    }
     
   // Snackbar
-  console.log("graphData",graphData)
+  console.log(paramData)
   const [SnackBarMessage, setSnackBarMessage] = useState({
     severity: "error",
     message: "This is awesome",
@@ -299,9 +319,81 @@ console.log(PData)
         </div>
 
         {showGraph && (
-          <CGraph graphData={graphData} 
-          selectedParameterNames={selectedParameterName}
-         />
+          <div className={styles.midSection}>
+            {paramData.map((param) => {
+              if (param.data.length === 0) {
+                return null;
+              }
+
+              const crossingThreshold =
+                (param.data[param.data.length - 1]?.value ?? 0) <
+                  param.minThreshold ||
+                (param.data[param.data.length - 1]?.value ?? 0) >
+                  param.maxThreshold;
+
+              const matchingMinMax = currMinMax?.find(
+                (item) => item.name === param.parameterName
+              )
+
+              const minThreshold = parseInt(matchingMinMax?.min_value);
+              const maxThreshold = parseInt(matchingMinMax?.max_value);
+
+              return (
+                <div className={styles.rchart}>
+                  <div className={styles.content}>
+                    <div>
+                      {crossingThreshold}
+                      {param.equipmentName} {param.componentName}
+                      {param.parameterName}
+                    </div>
+                    <LineChart width={550} height={300} data={param.data}>
+                      <XAxis
+                        dataKey="date"
+                        tick={false}
+                        label={{
+                          value: "Date",
+                          position: "insideBottom",
+                          dy: 10,
+                        }}
+                        height={45}
+                      />
+                      <YAxis
+                        domain={[0, findMaxValue(paramData[0]?.data)]} // Set the Y-axis domain dynamically
+                        label={{
+                          value: `${param.parameterName} Data`,
+                          angle: -90,
+                          position: "center",
+                          paddingRight: "20px",
+                          dy: -10,
+                        }}
+                        width={80}
+                      />
+                      <CartesianGrid horizontal={false} vertical={false} />
+
+                      <Line
+                        layout="horizontal"
+                        dataKey="value"
+                        stroke={crossingThreshold ? "red" : "green"}
+                      />
+
+                      <ReferenceLine
+                        y={minThreshold}
+                        stroke="gray"
+                        strokeDasharray="6 6"
+                      />
+                      <ReferenceLine
+                        y={maxThreshold}
+                        stroke="gray"
+                        strokeDasharray="6 6"
+                      />
+
+                      <Tooltip />
+                    </LineChart>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         )}
       </div>
       {SnackBarMessage.showSnackBar && (
