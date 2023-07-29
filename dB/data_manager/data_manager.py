@@ -45,9 +45,13 @@ class Data_Manager:
                         'beta': rows[2]
                     })
             else:
+                # sql = '''select * from alpha_beta where component_id = ?'''
+                # cursor.execute(sql, (id,))
+                # rows = cursor.fetchone()
                 sql = '''select * from alpha_beta where component_id = ?'''
                 cursor.execute(sql, (id,))
-                rows = cursor.fetchone()
+                rows = cursor.fetchall()
+                rows = rows[-1]
                 if rows:
                     final_data.append({
                         'EquipmentName': name,
@@ -579,14 +583,14 @@ class Data_Manager:
         component_id, overhaul_id, "date", maintenance_type, running_age,
         associated_sub_system) values (?,?,?,?,?,?,?);'''
         failure_times = []
-        running_age = []
         try:
             for d in subData:
                 if d:
                     id = d['id']
                     overhaulNum = d["overhaulNum"]
                     runAge = d["runAge"]
-                    running_age.append(float(runAge))
+                    failure_times.append(float(runAge))
+                    print(failure_times)
                     numMaint = d["numMaint"]
                     component_id = d["component_id"]
                     cursor.execute(insert_sub_sql, id, component_id,
@@ -603,21 +607,19 @@ class Data_Manager:
                     date = datetime.strptime(date, "%d/%m/%Y")
                     maintenanceType = d["maintenanceType"]
                     totalRunAge = d["totalRunAge"]
-                    failure_times.append(float(totalRunAge))
                     subSystemId = d["subSystemId"]
                     cursor.execute(insert_main_sql, id, component_id,
                                    overhaulId, date, maintenanceType, totalRunAge, subSystemId)
         except Exception as e:
             pass
         
-        T = running_age[-1]
+        T = failure_times[-1]
         N = len(failure_times)
         def para(N, x, T):
             beta = N / sum(math.log(T/i) for i in x)
             alpha = N / T**beta
             return(beta, alpha)
         alpha, beta = para(N, failure_times, T)
-        print(alpha, beta)
         ## insert alpha beta temp now.
         alpha_beta_insert = '''insert into alpha_beta values(?,?,?,?)'''
         a_b_id = uuid.uuid4()
