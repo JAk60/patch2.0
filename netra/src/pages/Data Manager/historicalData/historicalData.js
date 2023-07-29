@@ -37,9 +37,9 @@ function HistoricalData(props) {
   const classes = useStyles();
   const [historicalChildData, setHistoricalChildData] = useState([]);
   const systemConfigurationTreeData = useSelector(
-    (state) => state.treeData.selectedP
+    (state) => state.treeData.sortTreeData
   );
-  let filteredSystemConfigData = [];
+  // let filteredSystemConfigData = [];
   const [type, setType] = React.useState("");
 
   const handleChange = (event) => {
@@ -79,19 +79,21 @@ function HistoricalData(props) {
       </Select>
     </FormControl>
   );
+  console.log(systemConfigurationTreeData, "system conf")
 
   if (systemConfigurationTreeData.length > 0) {
-    // const equipment = systemConfigurationTreeData.filter(
+    // filteredSystemConfigData = systemConfigurationTreeData.filter(
     //   (x) => x.parentId === null
     // )[0];
     // console.log(equipment)
+    // debugger
     const EquipRtype = systemConfigurationTreeData[0]?.repairType
     systemRepairTypeBool =
     EquipRtype === "Replaceable" ? true : false;
       console.log(systemRepairTypeBool);
-      // if(!systemRepairTypeBool){ 
-      //   return <Redirect to="/data_manager/historical_data/repairable_overhaul"></Redirect>
-      //  }
+      if(!systemRepairTypeBool){ 
+        <Redirect to="/data_manager/historical_data/repairable_overhaul"></Redirect>
+       }
     
     if (EquipRtype === "Replaceable") {
       systemRepairedReplaceableOptions = (
@@ -189,7 +191,7 @@ function HistoricalData(props) {
           <Autocomplete
             id="combo-box-demo"
             groupBy={(option) => option.parentName}
-            options={filteredSystemConfigData}
+            options={systemConfigurationTreeData}
             getOptionLabel={(option) => option.name}
             style={{ width: 300 }}
             onChange={onEquipmentChange}

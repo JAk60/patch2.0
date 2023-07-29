@@ -30,6 +30,7 @@ class Data_Manager:
         final_data = []
         for d in data:
             id = d['id']
+            print(id)
             name = d['EquipmentName']
             if systemType_replaceable:
                 self.update_through_MLE(id)
@@ -61,7 +62,6 @@ class Data_Manager:
                         'alpha': '-',
                         'beta': '-'
                     })
-            print(final_data)
         return final_data
 
 
@@ -225,6 +225,7 @@ class Data_Manager:
                 pass
 
     def save_actual_data(self, data):
+        print("actual_data", data)
         insert_sql = '''insert into data_manager_actual_data (id, interval_start_date, 
         component_id, f_s, interval_end_date)
         values (?,?,?,?,?);'''
@@ -257,6 +258,7 @@ class Data_Manager:
             self.success_return
         except Exception as e:
             self.error_return["message"] = str(e)
+            print(e)
             return self.error_return
 
     def save_interval_data(self, data):
@@ -272,6 +274,7 @@ class Data_Manager:
                 remove_start_date = d["removalStartDate"]
                 remove_end_date = d["removalEndDate"]
                 f_s = d['interval_failure']
+                print(id, component_id, install_start_date, install_end_date, f_s)
                 # TTF logic
                 i_startDate = datetime.strptime(
                     str(install_start_date), "%d/%m/%Y")
@@ -382,7 +385,7 @@ class Data_Manager:
             return z
         zGuess = np.array([1,1])
         n, b = fsolve(equations, zGuess)
-        print(n, b)
+        print("n value", n, "b value",b)
         return n, b
 
     def solve_failure_prob(self, data):
@@ -397,7 +400,6 @@ class Data_Manager:
              ((mean(xs) * mean(xs)) - mean(xs * xs)))
         c = ysData[0] - b*xsData[0]
         n = (2.718281828459045)**(-c/b)
-        print(n, b)
         return n, b
 
     def solve_eta_beta_nprd(self, x):
@@ -466,7 +468,7 @@ class Data_Manager:
             mle_inst = Mle()
             n, b = mle_inst.twoParamWeibullEstimationForNRSEqForming(
                 dps, len(dps))
-            # Update n,b in eta_beta table
+            print(f"MLE nvalue {n}  b value {b}")
 
             update_sql = '''update eta_beta set eta=?, beta=? where component_id=?'''
             update_sql(update_sql, n, b, component_id)
@@ -576,12 +578,15 @@ class Data_Manager:
         insert_main_sql = '''insert into data_manager_overhaul_maint_data (id, 
         component_id, overhaul_id, "date", maintenance_type, running_age,
         associated_sub_system) values (?,?,?,?,?,?,?);'''
+        failure_times = []
+        running_age = []
         try:
             for d in subData:
                 if d:
                     id = d['id']
                     overhaulNum = d["overhaulNum"]
                     runAge = d["runAge"]
+                    running_age.append(float(runAge))
                     numMaint = d["numMaint"]
                     component_id = d["component_id"]
                     cursor.execute(insert_sub_sql, id, component_id,
@@ -598,14 +603,23 @@ class Data_Manager:
                     date = datetime.strptime(date, "%d/%m/%Y")
                     maintenanceType = d["maintenanceType"]
                     totalRunAge = d["totalRunAge"]
+                    failure_times.append(float(totalRunAge))
                     subSystemId = d["subSystemId"]
                     cursor.execute(insert_main_sql, id, component_id,
                                    overhaulId, date, maintenanceType, totalRunAge, subSystemId)
         except Exception as e:
             pass
-
+        
+        T = running_age[-1]
+        N = len(failure_times)
+        def para(N, x, T):
+            beta = N / sum(math.log(T/i) for i in x)
+            alpha = N / T**beta
+            return(beta, alpha)
+        alpha, beta = para(N, failure_times, T)
+        print(alpha, beta)
         ## insert alpha beta temp now.
         alpha_beta_insert = '''insert into alpha_beta values(?,?,?,?)'''
         a_b_id = uuid.uuid4()
-        cursor.execute(alpha_beta_insert, a_b_id, 0.36223, 0.45299, component_id)
+        cursor.execute(alpha_beta_insert, a_b_id, alpha, beta, component_id)
         cnxn.commit()

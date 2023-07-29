@@ -8,7 +8,7 @@ import { makeStyles } from "@material-ui/styles";
 import IconButton from "@material-ui/core/IconButton";
 import DeleteIcon from "@material-ui/icons/Delete";
 import SelectEquipment from "../selectEquipment/selectEquipment";
-import { useSelector,useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { treeDataActions } from "../../../store/TreeDataStore";
 
 const ParameterStyles = makeStyles({
@@ -37,60 +37,60 @@ function ParameterEstimation(props) {
       equipment === "Replaceable" ? true : false;
   }
   let ParameterColumns = [];
-if (!systemRepairTypeBool) {
-  // Repairable Data
-  ParameterColumns = [
-    <AgGridColumn
-      colId="EquipmentName"
-      field="EquipmentName"
-      headerName="Equipment Name"
-      minWidth={200}
-      editable={true}
-    />,
-    <AgGridColumn
-      colId="alpha"
-      field="alpha"
-      headerName="alpha"
-      minWidth={200}
-      type="number"
-      editable={false}
-    />,
-    <AgGridColumn
-      colId="beta"
-      field="beta"
-      headerName="β"
-      minWidth={200}
-      type="number"
-      editable={false}
-    />,
-  ];
-} else {
-  ParameterColumns = [
-    <AgGridColumn
-      colId="EquipmentName"
-      field="EquipmentName"
-      headerName="Equipment Name"
-      minWidth={200}
-      editable={true}
-    />,
-    <AgGridColumn
-      colId="eta"
-      field="eta"
-      headerName="η-Scale Parameter"
-      minWidth={200}
-      type="number"
-      editable={false}
-    />,
-    <AgGridColumn
-      colId="beta"
-      field="beta"
-      headerName="β-Shape Parameter"
-      minWidth={200}
-      type="number"
-      editable={false}
-    />,
-  ];
-}
+  if (!systemRepairTypeBool) {
+    // Repairable Data
+    ParameterColumns = [
+      <AgGridColumn
+        colId="EquipmentName"
+        field="EquipmentName"
+        headerName="Equipment Name"
+        minWidth={200}
+        editable={true}
+      />,
+      <AgGridColumn
+        colId="alpha"
+        field="alpha"
+        headerName="alpha"
+        minWidth={200}
+        type="number"
+        editable={false}
+      />,
+      <AgGridColumn
+        colId="beta"
+        field="beta"
+        headerName="β"
+        minWidth={200}
+        type="number"
+        editable={false}
+      />,
+    ];
+  } else {
+    ParameterColumns = [
+      <AgGridColumn
+        colId="EquipmentName"
+        field="EquipmentName"
+        headerName="Equipment Name"
+        minWidth={200}
+        editable={true}
+      />,
+      <AgGridColumn
+        colId="eta"
+        field="eta"
+        headerName="η-Scale Parameter"
+        minWidth={200}
+        type="number"
+        editable={false}
+      />,
+      <AgGridColumn
+        colId="beta"
+        field="beta"
+        headerName="β-Shape Parameter"
+        minWidth={200}
+        type="number"
+        editable={false}
+      />,
+    ];
+  }
 
 
   const onHandleSubmitClick = () => {
@@ -118,7 +118,7 @@ if (!systemRepairTypeBool) {
     )
     console.log(rowD)
   };
-  
+
 
   const onUpdateSelectedEquipmentList = (d) => {
     setSelectedEquipmentList(d);
