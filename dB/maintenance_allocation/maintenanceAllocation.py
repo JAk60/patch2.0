@@ -34,34 +34,34 @@ class maintenanceAllocation_dB():
         return res
 
     def insert_sensor(self, data):
-        #print(data)
-        # try:
-        for d in data:
+        print(data)
+        try:
+            for d in data:
 
-            component_id = d['ComponentId']
-            equipment_id = d['EquipmentId']
-            id = d['id']
-            failure_mode_id=d['FailureModeId']
-            name = d['name']
-            frequency = d['frequency']
-            unit=d['unit']
-            min_value =d['min']
-            max_value =d['max']
-            param_data =d['data']
-            level =d['level']
-            
-            insert_sensor_based = '''INSERT INTO sensor_based_data (id, component_id,equipment_id, name,
-                            failure_mode_id,frequency,unit, min_value,max_value,data,level)
-                                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);'''
+                component_id = d['ComponentId']
+                equipment_id = d['EquipmentId']
+                id = d['id']
+                failure_mode_id=d['FailureModeId']
+                name = d['name']
+                frequency = d['frequency']
+                unit=d['unit']
+                min_value =d['min']
+                max_value =d['max']
+                param_data =d['data']
+                level =d['level']
+                
+                insert_sensor_based = '''INSERT INTO sensor_based_data (id, component_id,equipment_id, name,
+                                failure_mode_id,frequency,unit, min_value,max_value,data,level)
+                                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);'''
 
-            cursor.execute(insert_sensor_based, id, component_id, equipment_id, name,failure_mode_id,
-                            frequency, unit, min_value,max_value,param_data,level)
-        cursor.commit()
-        return self.success_return
-        # except Exception as e:
-        #     print(e)
-        #     self.error_return['message'] = str(e)
-        #     return self.error_return
+                cursor.execute(insert_sensor_based, id, component_id, equipment_id, name,failure_mode_id,
+                                frequency, unit, min_value,max_value,param_data,level)
+            cursor.commit()
+            return self.success_return
+        except Exception as e:
+            print(e)
+            self.error_return['message'] = str(e)
+            return self.error_return
 
     def insert_sensor_param_attributes(self, data):
         #print(data)

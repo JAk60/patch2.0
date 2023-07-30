@@ -227,38 +227,59 @@ const AssignType = (props) => {
 
   const parameterColumnDefs = [
     <AgGridColumn
+      field="channel_name"
+      headerName="Channel Name"
+      headerTooltip="Channel Name"
+      // minWidth={100}
+      editable={true}
+    />,
+    <AgGridColumn
       field="name"
       headerName="Name"
       headerTooltip="Name"
-      //minWidth={100}
+      // minWidth={100}
       editable={true}
     />,
     <AgGridColumn
       field="unit"
       headerName="Unit"
       headerTooltip="Unit"
-      //minWidth={100}
+      // minWidth={100}
       editable={true}
     />,
     <AgGridColumn
       field="min"
       headerName="Minimum Value"
       headerTooltip="Minimum Value"
-      //minWidth={100}
+      // minWidth={100}
       editable={true}
     />,
     <AgGridColumn
       field="max"
       headerName="Maximum Value"
       headerTooltip="Maximum Value"
-      //minWidth={100}
+      // minWidth={100}
+      editable={true}
+    />,
+    <AgGridColumn
+      field="P"
+      headerName="P"
+      headerTooltip="P"
+      // minWidth={100}
+      editable={true}
+    />,
+    <AgGridColumn
+      field="F"
+      headerName="F"
+      headerTooltip="F"
+      // minWidth={100}
       editable={true}
     />,
     <AgGridColumn
       field="level"
       headerName="Level"
       headerTooltip="Level"
-      //minWidth={100}
+      // minWidth={100}
       editable={true}
     />,
     monitoringType === "intermittent" ? (
@@ -266,7 +287,7 @@ const AssignType = (props) => {
         field="frequency"
         headerName="Frequency"
         headerTooltip="Frequency"
-        //minWidth={100}
+        // minWidth={100}
         editable={true}
       />
     ) : null,
@@ -274,7 +295,7 @@ const AssignType = (props) => {
       field="data"
       headerName="Data"
       headerTooltip="Data"
-      //minWidth={100}
+      // minWidth={100}
       editable={true}
       cellEditor="agSelectCellEditor"
       cellEditorParams={{

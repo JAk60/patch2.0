@@ -11,16 +11,14 @@ import { Container } from "@material-ui/core";
 
 import styles from "./rul.module.css";
 
-const RULPredictor = ({ prevRul }) => {
+const RULPredictor = ({ prevRul,P,F }) => {
   const [sensorValue, setSensorValue] = useState("");
   const [prediction, setPrediction] = useState("");
   const [openDialog, setOpenDialog] = useState(false);
 
   // New state variables
-  const [p, setP] = useState("");
-  const [F, setF] = useState("");
   const [T0, setT0] = useState("");
-  const [confidenceLevel, setConfidenceLevel] = useState("");
+  const [confidenceLevel, setConfidenceLevel] = useState(0.9);
 
   const handlePredict = async () => {
     const { operating_hours } = prevRul;
@@ -28,7 +26,7 @@ const RULPredictor = ({ prevRul }) => {
       vc: parseFloat(sensorValue),
       t0: parseFloat(T0),
       tp: parseFloat(operating_hours),
-      p: parseFloat(p),
+      p: parseFloat(P),
       f: parseFloat(F),
       confidence: parseFloat(confidenceLevel),
     };
@@ -82,8 +80,7 @@ const RULPredictor = ({ prevRul }) => {
                 type="number"
                 step="any"
                 label="P"
-                value={p}
-                onChange={(e) => setP(e.target.value)}
+                value={P}
                 required
                 fullWidth
               />
@@ -94,7 +91,6 @@ const RULPredictor = ({ prevRul }) => {
                 step="any"
                 label="F"
                 value={F}
-                onChange={(e) => setF(e.target.value)}
                 required
                 fullWidth
               />

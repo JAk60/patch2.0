@@ -269,9 +269,9 @@ def save_condition_monitoring():
         cmData = data['flatData']
         dtype = data['dtype']
         res = cm_inst.save_dataToDB(cmData, dtype)
-    else:
-        pass
-    return jsonify(res)
+    return jsonify("data saved to database")
+
+    
 @app.route('/fetch_params', methods=['POST', 'GET'])
 def fetch_parameters():
     if request.method == 'POST':
@@ -475,9 +475,8 @@ def optimize():
 @app.route('/rul', methods=['POST'])
 def rul():
     if request.method== 'POST':
-        data = request.json
-        print(data)
-        return rul_code()
+        file_path = os.path.join(app.config['UPLOAD_FOLDER'], 'uploaded_data.csv')
+        return rul_code(file_path)
  
 
 @app.route('/prev_rul', methods=['POST'])
@@ -510,12 +509,22 @@ def predict_rul():
         return "file is not provided"
 
 
-@app.route("/cgraph", methods=["post"])
+@app.route("/cgraph", methods=["POST"])
 def cgraph():
     data = request.get_json()
     equipment_id = data.get('equipment_id')
     graph=GraphDashBoard()
     return graph.graph_c(equipment_id)
+
+
+@app.route("/get_pf", methods=["POST"])
+def pf():
+    data = request.get_json()
+    equipment_id = data.get('equipment_id')
+    name = data.get('name')
+    rul_class = RUL_dB()
+    return rul_class.fetch_PF(equipment_id,name)
+
 
 if __name__ == '__main__':
     app.secret_key = os.urandom(32)

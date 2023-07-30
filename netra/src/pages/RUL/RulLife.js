@@ -31,6 +31,8 @@ const RulLife = () => {
   const [prevrul, setPrevrul] = useState();
   const [isRulOpen, setRulOpen] = useState(false);
   const [uploadedFile, setUploadedFile] = useState(null);
+  const [P, setP] = useState(0);
+  const [F, setF] = useState(0);
 
   // Function to handle file upload
   const handleFileUpload = (file) => {
@@ -76,7 +78,7 @@ const RulLife = () => {
       system: currentSelection["equipmentName"],
       ship_name: currentSelection["shipName"],
     };
-  
+
     if (matchingId) {
       payload.component_id = matchingId;
     }
@@ -108,7 +110,7 @@ const RulLife = () => {
 
   const handlePrevRul = (e, p) => {
     e.preventDefault();
-    // console.log(typeof parameter, "abcd")
+    console.log(typeof parameter, "abcd")
     fetch("/prev_rul", {
       method: "POST",
       headers: {
@@ -127,6 +129,31 @@ const RulLife = () => {
       .catch((error) => {
         console.error("Fetch Error:", error);
         throw error;
+      });
+
+    fetch("/get_pf", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({
+        equipment_id: selectedEqName?.id,
+        name: selectedParameterName
+      }),
+    })
+      .then((res) => {
+        return res.json();
+      })
+      .then((data) => {
+        console.log(data)
+        setP(data[0].P)
+        setF(data[0].F)
+        console.log(P, F)
+        
+      })
+      .catch((error) => {
+        // Handle fetch error
       });
   };
 
@@ -264,7 +291,7 @@ const RulLife = () => {
             </div>
           </div>
           {isRulOpen && (
-            <RULPredictor selectedEqName={selectedEqName} prevRul={prevrul} />
+            <RULPredictor selectedEqName={selectedEqName} prevRul={prevrul} P={P} F={F} />
           )}
         </div>
       </div>

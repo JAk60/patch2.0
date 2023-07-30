@@ -7,8 +7,9 @@ import pandas as pd
 from flask import jsonify
 
 
-def rul_code():
+def rul_code(file_path):
     data = request.get_json()
+    print(data)
 
     # Extract input values from JSON data
     vc = data['vc']  # Sensor value
@@ -18,8 +19,8 @@ def rul_code():
     f = data['f']
     confidence = data['confidence']
 
-    path = "D:\\NetraB\\uploads\\uploaded_data.csv"
-    data = pd.read_csv(path)
+    data = pd.read_csv(file_path)
+    
 
 
     dataset = {}
@@ -43,9 +44,11 @@ def rul_code():
 
     # Unpack the estimated parameters
     beta, eta = params[0], params[2]
+    print(beta, eta)
 
     def rul(eta, beta, t0):
         reliability = math.e ** -((t0 / eta) ** beta)
+        print(confidence, reliability)
         t = (eta * (-math.log(reliability * confidence)) ** (1 / beta)) - t0
         return t
 
@@ -54,7 +57,7 @@ def rul_code():
         rulp = rul(eta, beta, tp)
         rulc = rul(eta, beta, t0)
     else:
-        m = (f - vc) / (f - p)
+        m = abs((f - vc)) / (f - p)
         etac = eta * m
         rulp = rul(etac, beta, tp)
         rulc = rul(etac, beta, t0)
