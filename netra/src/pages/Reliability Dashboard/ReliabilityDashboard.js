@@ -193,7 +193,9 @@ const ReliabilityDashboard = () => {
   const currentSelection = useSelector(
     (state) => state.userSelection.currentSelection
   );
-
+  const SelectedEq_ID = useSelector(
+    (state) => state.treeData.treeData
+  );
   useEffect(() => {
     fetch("/rel_dashboard", {
       method: "GET",
@@ -220,6 +222,7 @@ const ReliabilityDashboard = () => {
         );
       });
   }, [setUserSelectionData]);
+
 
   // useEffect(() => {
   //   fetch("/fetch_user_selection", {
@@ -267,6 +270,8 @@ const ReliabilityDashboard = () => {
     // }
   };
 
+  console.log(selectedEqName)
+
   const handleChange = (event) => {
     setMissionName(event.target.value);
   };
@@ -281,8 +286,8 @@ const ReliabilityDashboard = () => {
         shipClass: selectedShipName,
         tempMissions: tempMissionData,
       };
+      console.log(data.equipments);
       setMission(0);
-      console.log(missionInfo);
       fetch("/rel_estimate_EQ", {
         method: "POST",
         body: JSON.stringify({ data: data }),
@@ -324,7 +329,7 @@ const ReliabilityDashboard = () => {
                 //console.log(missionData)
                 data.shipClass.forEach((ship) => {
                   let shipData = missionData[ship];
-                  //console.log(shipData);
+                  console.log(shipData);
                   let actual = [];
                   data.equipments.forEach((eqpt, eid) => {
                     let eqptData = shipData[eid][eqpt.name];
@@ -353,6 +358,7 @@ const ReliabilityDashboard = () => {
                   });
                 });
               });
+
               debugger;
               setGraphData(newGraphData);
               setSubSystemData(newSubSystem);
@@ -603,107 +609,6 @@ const ReliabilityDashboard = () => {
                       </div>
                     )}
                   </div>
-                </div>
-              </div>
-              <div className={styles.calendar}>
-                {/* <div className={styles.header}>
-              <div style={{display:'flex',alignItems:'center'}}>
-            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-event" width="32" height="32" viewBox="0 0 24 24" stroke-width="1.5" stroke="#0d1a45" fill="none" stroke-linecap="round" stroke-linejoin="round">
-              <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-              <rect x="4" y="5" width="16" height="16" rx="2" />
-              <line x1="16" y1="3" x2="16" y2="7" />
-              <line x1="8" y1="3" x2="8" y2="7" />
-              <line x1="4" y1="11" x2="20" y2="11" />
-              <rect x="8" y="15" width="2" height="2" />
-            </svg>Calendar</div> <div><LensIcon style={{color:'#8af6ad',opacity:'0.5'}}/>Working <LensIcon style={{color:'#ff8788',opacity:'0.5'}}/>Down <LensIcon style={{color:'#f3f682',opacity:'0.5'}}/>Maintenance</div></div> */}
-                <div className={styles.content}>
-                  <div className={styles.calendar}>
-                    <EventCalendar events={events} />
-                  </div>
-                  <ReactCardFlip isFlipped={isCardFlipped}>
-                    <div className={styles.datePicker}>
-                      <div className={styles.dpHeader}>Availability</div>
-                      <KeyboardDatePicker
-                        disableToolbar
-                        variant="inline"
-                        format="L"
-                        margin="normal"
-                        id="start-date"
-                        label="Start Date"
-                        value={startDate}
-                        onChange={handleStartDateChange}
-                        KeyboardButtonProps={{
-                          "aria-label": "start date",
-                        }}
-                      />
-                      <KeyboardDatePicker
-                        disableToolbar
-                        variant="inline"
-                        format="L"
-                        margin="normal"
-                        id="end-date"
-                        label="End Date"
-                        value={endDate}
-                        onChange={handleEndDateChange}
-                        KeyboardButtonProps={{
-                          "aria-label": "end date",
-                        }}
-                      />
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        style={{ width: 200 }}
-                        onClick={() => {
-                          handleEventCheck();
-                        }}
-                      >
-                        Check
-                      </Button>
-                    </div>
-                    <div className={styles.datePicker}>
-                      <div className={styles.dpHeader}>Availability</div>
-                      {eventInfo && (
-                        <>
-                          <div>The Equipment was: </div>
-                          <div>
-                            Running for{" "}
-                            <strong>{eventInfo.working} days</strong>(
-                            {(
-                              (eventInfo.working / eventInfo.total) *
-                              100
-                            ).toFixed(2)}
-                            %)
-                          </div>
-                          <div>
-                            Under Maintenance for{" "}
-                            <strong>{eventInfo.maintenance} days</strong>(
-                            {(
-                              (eventInfo.maintenance / eventInfo.total) *
-                              100
-                            ).toFixed(2)}
-                            %)
-                          </div>
-                          <div>
-                            Down for <strong>{eventInfo.down} days</strong>(
-                            {((eventInfo.down / eventInfo.total) * 100).toFixed(
-                              2
-                            )}
-                            %)
-                          </div>
-                        </>
-                      )}
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        style={{ width: 200 }}
-                        onClick={() => {
-                          setCardFlipped(!isCardFlipped);
-                        }}
-                      >
-                        Back
-                      </Button>
-                    </div>
-                  </ReactCardFlip>
                 </div>
               </div>
             </div>

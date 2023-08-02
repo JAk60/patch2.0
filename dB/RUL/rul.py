@@ -8,8 +8,8 @@ class RUL_dB:
 
     def get_prev_rul(self, p):
         try:
-            sql = f"SELECT TOP 1 * FROM parameter_data WHERE name = '{p}' ORDER BY date DESC;"
-            cursor.execute(sql)
+            sql = f"SELECT TOP 1 * FROM parameter_data WHERE name = ?  ORDER BY date DESC;"
+            cursor.execute(sql, p)
             data = cursor.fetchone()
 
             if data:

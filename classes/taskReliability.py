@@ -258,8 +258,11 @@ class TaskReliability:
         #         pass
         #     final_data.append({m: data})
         # return final_data
+    
+
+    
     def calculate_rel_by_power_law(self, alpha, beta, duration):
-        curr_age = 5000
+        curr_age = 2000
         N_currentAge = alpha*(curr_age**beta)
         missionAge = curr_age + duration
         N_mission = alpha*(missionAge**beta)
@@ -526,4 +529,3 @@ class TaskReliability:
         id_ = cursor.fetchone()[0]
         data["equipementId"] = id_
         return data
-

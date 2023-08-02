@@ -189,7 +189,8 @@ const getMonthPicker = () => {
 };
 
 const DataManagerTable = (props) => {
-  console.log("props",props);
+
+  console.log("props",props.rowData);
   const location = useLocation();
   const tableHeight = props.tableSize ? props.tableSize : 400
   // const [gridApi, setGridApi] = useState(null);
@@ -237,6 +238,8 @@ const DataManagerTable = (props) => {
     }
   };
 
+  
+
   const saveModifiedRows = (params) => {
     // console.log(params);
     maintenanceDataCheck(params);
@@ -260,7 +263,8 @@ const DataManagerTable = (props) => {
         const allRowData = [];
         props.gridApi.forEachNode((node) => allRowData.push(node.data));
         props.tableUpdate(allRowData, selectedId);
-      }else{
+      }
+      else{
         const allRowData = [];
       props.gridApi.forEachNode((node) => allRowData.push(node.data));
       props.tableUpdate(allRowData);

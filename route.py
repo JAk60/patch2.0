@@ -1,4 +1,5 @@
 from flask import Flask, json, session, request, jsonify, send_file
+from datetime import datetime
 import os
 import io
 from dB.dB_connection import cnxn, cursor
@@ -528,4 +529,4 @@ def pf():
 
 if __name__ == '__main__':
     app.secret_key = os.urandom(32)
-    app.run(debug=False)
+    app.run(debug=True)

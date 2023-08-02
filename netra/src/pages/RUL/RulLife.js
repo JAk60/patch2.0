@@ -124,7 +124,7 @@ const RulLife = () => {
       .then((data) => {
         setPrevrul(data);
         setRulOpen(true);
-        console.log(data);
+        console.log("RUL DATA",data);
       })
       .catch((error) => {
         console.error("Fetch Error:", error);

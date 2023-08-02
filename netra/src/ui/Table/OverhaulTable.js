@@ -181,7 +181,7 @@ const OverhaulTable = (props) => {
       headerTooltip="Maintenance Type"
       cellEditor="agSelectCellEditor"
       minWidth={400}
-      cellEditorParams={{ values: ["Minor Refit", "Corrective Maintenance"] }}
+      cellEditorParams={{ values: ["Corrective Maintenance","Overhaul"] }}
       editable={true}
     />,
     <AgGridColumn

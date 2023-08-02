@@ -66,6 +66,7 @@ const OperationalData = (props) => {
   ];
 
   const updateFinalRowData = (allRows) => {
+    console.log(allRows)
     props.tableUpdate(allRows, "insertOpData");
 
   };
@@ -84,7 +85,6 @@ const OperationalData = (props) => {
   const deleteRows = () => {
     const selectedRows = gridApi.getSelectedRows();
     gridApi.applyTransaction({ remove: selectedRows });
-    console.log(selectedRows);
   };
   return (
     <div>

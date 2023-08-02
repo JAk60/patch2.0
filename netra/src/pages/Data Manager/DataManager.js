@@ -386,6 +386,9 @@ function DataManager(props) {
     else if(location.pathname == '/data_manager/maintenance_data'){
       setDataType(dataType);
     }
+    else{
+      setDataType(dataType)
+    }
   };
   const handleHistoricalDataDropdownChange = (dataType) => {
     setDataType(dataType);

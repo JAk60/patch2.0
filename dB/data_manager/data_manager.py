@@ -14,7 +14,7 @@ from dB.dB_utility import get_parentId
 from datetime import datetime, timedelta
 from calendar import monthrange
 import uuid
-
+from scipy.optimize import minimize
 
 class Data_Manager:
     def __init__(self):
@@ -56,7 +56,7 @@ class Data_Manager:
                     final_data.append({
                         'EquipmentName': name,
                         'id': id,
-                        'alpha': round(rows[1], 2),
+                        'alpha': rows[1],
                         'beta': rows[2]
                     })
                 else:
@@ -589,7 +589,6 @@ class Data_Manager:
                     id = d['id']
                     overhaulNum = d["overhaulNum"]
                     runAge = d["runAge"]
-                    failure_times.append(float(runAge))
                     print(failure_times)
                     numMaint = d["numMaint"]
                     component_id = d["component_id"]
@@ -607,21 +606,38 @@ class Data_Manager:
                     date = datetime.strptime(date, "%d/%m/%Y")
                     maintenanceType = d["maintenanceType"]
                     totalRunAge = d["totalRunAge"]
+                    failure_times.append(float(totalRunAge))
                     subSystemId = d["subSystemId"]
                     cursor.execute(insert_main_sql, id, component_id,
                                    overhaulId, date, maintenanceType, totalRunAge, subSystemId)
         except Exception as e:
             pass
         
+        print(failure_times)
         T = failure_times[-1]
         N = len(failure_times)
         def para(N, x, T):
-            beta = N / sum(math.log(T/i) for i in x)
+            if N != 1:
+                beta = N / sum(math.log(T/i) for i in x)
+            else:
+                beta = N
             alpha = N / T**beta
-            return(beta, alpha)
+            return alpha, beta
         alpha, beta = para(N, failure_times, T)
-        ## insert alpha beta temp now.
-        alpha_beta_insert = '''insert into alpha_beta values(?,?,?,?)'''
         a_b_id = uuid.uuid4()
-        cursor.execute(alpha_beta_insert, a_b_id, alpha, beta, component_id)
+        print(f'alpha={alpha} beta={beta}')
+        # ## insert alpha beta temp now.
+        merge_query = '''
+        MERGE INTO alpha_beta AS target
+        USING (VALUES (?, ?, ?, ?)) AS source (id, component_id, alpha, beta)
+        ON target.component_id = source.component_id
+        WHEN MATCHED THEN
+            UPDATE SET alpha = source.alpha, beta = source.beta
+        WHEN NOT MATCHED THEN
+            INSERT (id, component_id, alpha, beta)
+            VALUES (source.id, source.component_id, source.alpha, source.beta);
+        '''
+
+        # Assuming you have appropriate values for 'component_id', 'alpha', and 'beta'
+        cursor.execute(merge_query, (a_b_id, component_id, alpha, beta))
         cnxn.commit()

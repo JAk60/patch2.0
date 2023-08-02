@@ -4,10 +4,11 @@ from itertools import groupby
 from operator import itemgetter
 import pandas as pd
 import math
+from datetime import datetime
 
 
 class Reliability:
-    # Saving Reliability.
+
     def lmu_rel(self, mission_name, system, platform, total_dur):
         sys_lmus = []
         # mission_name = mission_data['mission_name']
@@ -207,13 +208,50 @@ class Reliability:
             final_data.append({m: data})
         return final_data
 
+
+
+    def get_curr_age(self):
+        
+        query1 = "SELECT MAX(date) AS last_overhaul_date FROM data_manager_overhaul_maint_data WHERE maintenance_type = 'Overhaul';"
+        cursor.execute(query1)
+        result1 = cursor.fetchone()
+        print(result1)
+        
+        if result1 is None or result1[0] is None:
+            return None, "No data found for the first query."
+
+        last_overhaul_date_str = result1[0]
+        last_overhaul_date = datetime.strptime(last_overhaul_date_str, '%Y-%m-%d')
+        formatted_date = f"{last_overhaul_date.year}-{last_overhaul_date.month:02d}-01"
+        print(formatted_date)
+
+        query2 = "SELECT SUM(average_running) AS sum_of_average_running FROM operational_data WHERE operation_date >= ?;"
+        cursor.execute(query2, (formatted_date))
+        result2 = cursor.fetchone()
+
+        if result2 is None or result2[0] is None:
+            return None, "No data found for the second query."
+
+        sum_of_average_running = result2[0]
+        return sum_of_average_running, None
+
+
+
+
     def calculate_rel_by_power_law(self, alpha, beta, duration):
-        curr_age = 2000
+        sum_of_average_running, error_message = self.get_curr_age()
+        if error_message:
+            curr_age = 5000
+        else:
+           curr_age = sum_of_average_running
+        print("current age",curr_age)
+        print(alpha, beta)
         N_currentAge = alpha*(curr_age**beta)
         missionAge = curr_age + duration
         N_mission = alpha*(missionAge**beta)
         N = N_mission - N_currentAge
         rel = (np.e**(-N))
+        print("relib ",rel)
         return rel
 
     def get_DC_EM(self, lmuName, component_id=None, system_name=None, platform_name=None):
