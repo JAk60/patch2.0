@@ -473,11 +473,18 @@ def optimize():
         print(data)
         return optimizer()
     
+# @app.route('/rul', methods=['POST'])
+# def rul():
+#     if request.method== 'POST':
+#         file_path = os.path.join(app.config['UPLOAD_FOLDER'], 'uploaded_data.csv')
+#         return rul_code(file_path)
+
 @app.route('/rul', methods=['POST'])
 def rul():
     if request.method== 'POST':
-        file_path = os.path.join(app.config['UPLOAD_FOLDER'], 'uploaded_data.csv')
-        return rul_code(file_path)
+        # file_path = os.path.join(app.config['UPLOAD_FOLDER'], 'uploaded_data.csv')
+        inst = RUL_dB()
+        return inst.rul_code()
  
 
 @app.route('/prev_rul', methods=['POST'])
@@ -485,8 +492,9 @@ def prev_rul():
     try:
         data = request.get_json()
         parameter = data['parameter']
+        equipment_id = data['equipment_id']
         rul_class = RUL_dB()
-        result = rul_class.get_prev_rul(parameter)
+        result = rul_class.get_prev_rul(parameter, equipment_id)
         return result
     except Exception as e:
         # Handle any exceptions and return an error message
@@ -521,10 +529,10 @@ def cgraph():
 @app.route("/get_pf", methods=["POST"])
 def pf():
     data = request.get_json()
-    equipment_id = data.get('equipment_id')
+    # equipment_id = data.get('equipment_id')
     name = data.get('name')
     rul_class = RUL_dB()
-    return rul_class.fetch_PF(equipment_id,name)
+    return rul_class.fetch_PF(name)
 
 
 if __name__ == '__main__':

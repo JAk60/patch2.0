@@ -174,7 +174,7 @@ function ParameterEstimation(props) {
             style={{ marginLeft: "20px" }}
             onClick={onHandleUpdateEtaBetaDB}
           >
-            Update Parameters from Database
+            Restimate Parameters
           </Button>
 
           {/* <Button

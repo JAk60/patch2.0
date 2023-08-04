@@ -27,7 +27,7 @@ class conditionMonitoringdB_Table:
                                 unit varchar(200),
                                 level varchar(200),
                                 frequency varchar(200),
-                                data varchar(200)
+                                data varchar(200),
 
                             )'''
             try:

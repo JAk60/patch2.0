@@ -165,8 +165,8 @@ const AddData = (props) => {
 ,
     <AgGridColumn
       field="parameterName"
-      headerName="Parameter"
-      headerTooltip="Parameter"
+      headerName="Channel/Parameter Name"
+      headerTooltip="Channel/Parameter Name"
       cellEditor="agSelectCellEditor"
       cellEditorParams={{
         values: paramData.map((data) => data.name),

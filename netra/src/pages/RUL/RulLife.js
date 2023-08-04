@@ -110,7 +110,13 @@ const RulLife = () => {
 
   const handlePrevRul = (e, p) => {
     e.preventDefault();
-    console.log(typeof parameter, "abcd")
+    console.log(para)
+    const filteredObjects = para.filter(obj => obj.name === p);
+    let equipmentId = null;
+    if (filteredObjects.length > 0) {
+      equipmentId = filteredObjects[0].equipment_id;
+    }
+    console.log(matchingItems, "matching items")
     fetch("/prev_rul", {
       method: "POST",
       headers: {
@@ -118,6 +124,7 @@ const RulLife = () => {
       },
       body: JSON.stringify({
         parameter: p,
+        equipment_id: equipmentId
       }),
     })
       .then((res) => res.json())
@@ -138,7 +145,6 @@ const RulLife = () => {
         Accept: "application/json",
       },
       body: JSON.stringify({
-        equipment_id: selectedEqName?.id,
         name: selectedParameterName
       }),
     })

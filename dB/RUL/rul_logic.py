@@ -5,6 +5,7 @@ from scipy.stats import weibull_min
 import numpy as np
 import pandas as pd
 from flask import jsonify
+from dB.dB_connection import cursor
 
 
 def rul_code(file_path):

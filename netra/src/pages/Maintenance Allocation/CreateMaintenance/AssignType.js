@@ -226,17 +226,17 @@ const AssignType = (props) => {
   };
 
   const parameterColumnDefs = [
-    <AgGridColumn
-      field="channel_name"
-      headerName="Channel Name"
-      headerTooltip="Channel Name"
-      // minWidth={100}
-      editable={true}
-    />,
+    // <AgGridColumn
+    //   field="channel_name"
+    //   headerName="Channel Name"
+    //   headerTooltip="Channel Name"
+    //   // minWidth={100}
+    //   editable={true}
+    // />,
     <AgGridColumn
       field="name"
-      headerName="Name"
-      headerTooltip="Name"
+      headerName="Channel/Parameter Name"
+      headerTooltip="Channel/Parameter Name"
       // minWidth={100}
       editable={true}
     />,

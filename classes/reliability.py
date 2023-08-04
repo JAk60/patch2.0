@@ -8,6 +8,10 @@ from datetime import datetime
 
 
 class Reliability:
+    def __init__(self):
+        self.__ship_name = None
+        self.__component_name = None
+        self.__component_id = None
 
     def lmu_rel(self, mission_name, system, platform, total_dur):
         sys_lmus = []
@@ -50,6 +54,8 @@ class Reliability:
                     c_age = 0
             eta = lmu[1]
             beta = lmu[2]
+            print(f"eta {eta}, beta {beta}")
+            print(f"lmu {lmu}")
             rel_num = np.exp(-((0 + float(total_dur)) / eta) ** beta)
             rel_deno = np.exp(-(0 / eta) ** beta)
             rel = rel_num / rel_deno
@@ -212,10 +218,9 @@ class Reliability:
 
     def get_curr_age(self):
         
-        query1 = "SELECT MAX(date) AS last_overhaul_date FROM data_manager_overhaul_maint_data WHERE maintenance_type = 'Overhaul';"
-        cursor.execute(query1)
+        query1 = "SELECT MAX(date) AS last_overhaul_date FROM data_manager_overhaul_maint_data WHERE maintenance_type = 'Overhaul' and component_id= ?"
+        cursor.execute(query1, self.__component_id)
         result1 = cursor.fetchone()
-        print(result1)
         
         if result1 is None or result1[0] is None:
             return None, "No data found for the first query."
@@ -223,10 +228,9 @@ class Reliability:
         last_overhaul_date_str = result1[0]
         last_overhaul_date = datetime.strptime(last_overhaul_date_str, '%Y-%m-%d')
         formatted_date = f"{last_overhaul_date.year}-{last_overhaul_date.month:02d}-01"
-        print(formatted_date)
 
-        query2 = "SELECT SUM(average_running) AS sum_of_average_running FROM operational_data WHERE operation_date >= ?;"
-        cursor.execute(query2, (formatted_date))
+        query2 = "SELECT SUM(average_running) AS sum_of_average_running FROM operational_data WHERE operation_date >= ? and component_id=?"
+        cursor.execute(query2, formatted_date, self.__component_id)
         result2 = cursor.fetchone()
 
         if result2 is None or result2[0] is None:
@@ -239,13 +243,21 @@ class Reliability:
 
 
     def calculate_rel_by_power_law(self, alpha, beta, duration):
+        query = '''
+            SELECT component_id
+                FROM system_configuration
+                WHERE ship_name = ? COLLATE SQL_Latin1_General_CP1_CS_AS
+                AND component_name = ? COLLATE SQL_Latin1_General_CP1_CS_AS;
+        '''
+        cursor.execute(query, self.__ship_name, self.__component_name)
+        result = cursor.fetchone()
+        self.__component_id = result[0]
         sum_of_average_running, error_message = self.get_curr_age()
         if error_message:
             curr_age = 5000
         else:
            curr_age = sum_of_average_running
         print("current age",curr_age)
-        print(alpha, beta)
         N_currentAge = alpha*(curr_age**beta)
         missionAge = curr_age + duration
         N_mission = alpha*(missionAge**beta)
@@ -304,19 +316,21 @@ class Reliability:
         for tm in missions:
             data  = {}
             for sys in eqData:
-                    system = sys['name']
-                    platform = sys['parent']
-                    # call the method and save it to a variable
-                    single_rel_duration = int(tm)
-                    rel = self.system_rel(m, system, platform, single_rel_duration)
-                    estimation_ach = 1
-                    if rel['rel'] > target_rel:
-                            estimation_ach = 1                    
-                    rel['prob_ac'] = estimation_ach
-                    if platform not in data:
-                        data[platform] = []
-                    data[platform].append({system: rel})
-                    pass
+                system = sys['name']
+                platform = sys['parent']
+                self.__ship_name = platform
+                self.__component_name = system
+                # call the method and save it to a variable
+                single_rel_duration = int(tm)
+                rel = self.system_rel(m, system, platform, single_rel_duration)
+                estimation_ach = 1
+                if rel['rel'] > target_rel:
+                        estimation_ach = 1                    
+                rel['prob_ac'] = estimation_ach
+                if platform not in data:
+                    data[platform] = []
+                data[platform].append({system: rel})
+                pass
             final_data.append({m: data})
         return final_data
 

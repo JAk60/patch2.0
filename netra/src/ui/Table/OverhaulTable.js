@@ -185,9 +185,9 @@ const OverhaulTable = (props) => {
       editable={true}
     />,
     <AgGridColumn
-      headerName="Total Running Age till this Event"
+      headerName="Running Age After Previous Overhaul"
       field="totalRunAge"
-      headerTooltip="Total Running Age till this Event"
+      headerTooltip="Running Age After Previous Overhaul"
       minWidth={500}
       editable={true}
     />,

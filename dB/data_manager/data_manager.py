@@ -176,6 +176,7 @@ class Data_Manager:
             time_ = d['time']
             try:
                 n, b = self.solve_failure_prob([d])
+                print(n, b)
                 cursor.execute(insert_sql, id, time_, f_prob, component_id)
                 self.check_TTF_num_priority_wise(n, b, component_id, 6)
             except Exception as e:
@@ -229,12 +230,12 @@ class Data_Manager:
                 pass
 
     def save_actual_data(self, data):
-        print("actual_data", data)
         insert_sql = '''insert into data_manager_actual_data (id, interval_start_date, 
         component_id, f_s, interval_end_date)
         values (?,?,?,?,?);'''
         try:
             for d in data:
+                print(f"d value {d}")
                 id = d['id']
                 f_s = d['actual_failure']
                 install_s_date = d['installationDate']
@@ -262,7 +263,6 @@ class Data_Manager:
             self.success_return
         except Exception as e:
             self.error_return["message"] = str(e)
-            print(e)
             return self.error_return
 
     def save_interval_data(self, data):
@@ -601,7 +601,12 @@ class Data_Manager:
             for d in mainData:
                 if d:
                     id = d['id']
-                    overhaulId = d["overhaulId"]
+                    # Check if 'overhaulId' key is present, otherwise set it to None
+                    try:
+                        overhaulId = d["overhaulId"]
+                    except KeyError:
+                        overhaulId = None
+
                     date = d["date"]
                     date = datetime.strptime(date, "%d/%m/%Y")
                     maintenanceType = d["maintenanceType"]
