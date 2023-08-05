@@ -30,9 +30,11 @@ import CustomizedSnackbars from "../../ui/CustomSnackBar";
 import RenderMultipleComponent from "./TaskRenderMultipleComponent";
 import { taskActions } from "../../store/taskStore";
 import { useDispatch, useSelector } from "react-redux";
+import AccessControl from "../Home/AccessControl";
 const MissionData = (props) => {
   
   return (
+    
     <div className={styles.missionData} style={props.style}>
       <div className={styles.target}>
         <svg
@@ -551,6 +553,7 @@ const updateCompTable = () => {
   const minThreshold=45
   const maxThreshold=60
   return (
+    <AccessControl allowedLevels={['L1', 'L2', 'L3','L4','L5']}>
     <MuiPickersUtilsProvider utils={MomentUtils}>
       <Navigation />
       <div className={styles.body}>
@@ -816,6 +819,7 @@ const updateCompTable = () => {
         />
       )}
     </MuiPickersUtilsProvider>
+    </AccessControl>
   );
 };
 export default TaskDashboard;

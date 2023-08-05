@@ -29,6 +29,7 @@ import Bayesian_Inputs from "./pages/Bayesian/bayesian_input";
 import SysDocs from "./pages/System Docs/SysDocs";
 import PM from "./pages/PM OPTIM/pm";
 import RulLife from './pages/RUL/RulLife';
+import Login from './pages/Home/Login'
 
 const theme = createMuiTheme({
   palette: {
@@ -65,7 +66,7 @@ function App() {
   //     });
   // }
   const [settings, setSettings] = useState(null);
-  const [loggedIn, setLoggedIn] = useState(true);
+  const [loggedIn, setLoggedIn] = useState(false);
   useEffect(() => {
     if (localStorage.getItem("settings")) {
       let settings = JSON.parse(localStorage.getItem("settings"));

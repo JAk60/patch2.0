@@ -6,6 +6,7 @@ import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import { userActions } from '../../store/ApplicationVariable';
 import { useDispatch } from 'react-redux';
+import AccessControl from "../Home/AccessControl";
 
 const ViewData=(props)=>{
     // useEffect(()=>{
@@ -22,6 +23,7 @@ const ViewData=(props)=>{
         )
     }
     return(
+        <AccessControl allowedLevels={['L1']}>
         <div className={styles.container}>
             <div className={styles.viewDataNav}>
                 <Link onClick={()=>Logout()}><i class="fas fa-sign-out-alt"></i>Logout</Link>
@@ -60,6 +62,7 @@ const ViewData=(props)=>{
                 <div>NETRA</div>
             </div>
     </div>
+    </AccessControl>
     )
 }
 

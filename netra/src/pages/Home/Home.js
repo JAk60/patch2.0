@@ -1,15 +1,25 @@
 import React, { useState, useEffect } from "react";
 import styles from "./Home.module.css";
-import { Button, Menu, MenuItem } from "@material-ui/core";
+import {  Menu, MenuItem } from "@material-ui/core";
 import { Link } from "react-router-dom";
-import Visibility from "@material-ui/icons/Visibility";
-import VisibilityOff from "@material-ui/icons/VisibilityOff";
 import { userActions } from "../../store/ApplicationVariable";
 import { useDispatch } from "react-redux";
+import { useLocation } from 'react-router-dom';
+import Snackbar from "@material-ui/core/Snackbar";
+import MuiAlert from "@material-ui/lab/Alert";
+
 
 
 const Home = (props) => {
+
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const location = useLocation();
+  const message = location.state?.message;
+  const [open, setOpen] = React.useState(!!message); // Set open state based on the presence of the message
+
+  const handleMClose = () => {
+    setOpen(false);
+  };
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -35,6 +45,11 @@ const Home = (props) => {
   }
   return (
     <div className={styles.container}>
+      <Snackbar open={open} autoHideDuration={6000} onClose={handleMClose}>
+        <MuiAlert elevation={6} variant="filled" onClose={handleMClose} severity="warning">
+          {message}
+        </MuiAlert>
+      </Snackbar>
       <div className={styles.homeNav}>
         <Link onClick={() => Logout()}>
           <i class="fas fa-sign-out-alt"></i>Logout

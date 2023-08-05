@@ -20,10 +20,17 @@ const ReliabilityChart = ({ data }) => {
    yKeys = yKeys.filter(item => item !== "name")
    //console.log(yKeys)
   }
+  const referenceData = [
+    {
+      name: "Target Reliability",
+      reliability: 90.0,
+    },
+  ];
   let colors=['#86a0ff','#364d9d','#e4ebfe','#374c93']
+  console.log("jjjk",[...referenceData,...data]);
   return (
     <ResponsiveContainer height="90%" width={'100%'} debounce={50}>
-      <BarChart data={data} layout="horizontal" >
+      <BarChart data={[...referenceData,...data]} layout="horizontal" >
         <Tooltip/>
         <YAxis type="number" domain={[0, 100]} tick={{fontSize: 10}}/>
         <XAxis

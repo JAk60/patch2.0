@@ -8,7 +8,7 @@ import {
 } from "@material-ui/pickers";
 import MomentUtils from "@date-io/moment";
 import Navigation from "../../components/navigation/Navigation";
-
+import AccessControl from "../Home/AccessControl";
 import CustomSelect from "../../ui/Form/CustomSelect";
 import { Autocomplete } from "@material-ui/lab";
 import { useDispatch, useSelector } from "react-redux";
@@ -205,6 +205,7 @@ console.log(PData)
     setShipName(e.target.value);
   };
   return (
+    <AccessControl allowedLevels={['L1', 'L2', 'L5']}>
     <MuiPickersUtilsProvider utils={MomentUtils}>
       <Navigation />
       <div className={styles.body}>
@@ -311,6 +312,7 @@ console.log(PData)
         />
       )}
     </MuiPickersUtilsProvider>
+    </AccessControl>
   );
 };
 export default CDashboard;

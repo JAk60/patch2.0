@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from "react";
 import Navigation from "../../components/navigation/Navigation";
 import styles from "./rDashboard.module.css";
-import { Button, Switch, InputLabel, Input, TextField } from "@material-ui/core";
+import {
+  Button,
+  Switch,
+  InputLabel,
+  Input,
+  TextField,
+} from "@material-ui/core";
 import BarGraph from "./BarGraph";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "./calendar.css";
-//import LensIcon from '@material-ui/icons/Lens';
-import AddCircleOutlineIcon from "@material-ui/icons/AddCircleOutline";
-// import CreateProfile from "./CreateProfile";
 import { data, subSystemLevelData, events, mainData } from "./DashboardData";
 import ReliabilityChart from "./ReliabilityChart";
 import EventCalendar from "./EventCalendar";
@@ -16,13 +19,11 @@ import {
   KeyboardDatePicker,
 } from "@material-ui/pickers";
 import MomentUtils from "@date-io/moment";
-import moment from "moment";
-import ReactCardFlip from "react-card-flip";
 import MissionSlider from "./MissionSlider";
 import { SelectWithLimit } from "../../ui/Form/SelectWithLimit";
 import { useDispatch, useSelector } from "react-redux";
 import { userActions } from "../../store/ApplicationVariable";
-import Loader from "react-loader-spinner";
+import AccessControl from "../Home/AccessControl";
 
 const MissionData = (props) => {
   return (
@@ -95,10 +96,7 @@ const MissionData = (props) => {
     </div>
   );
 };
-
 const ReliabilityDashboard = () => {
-  const [loading, setLoading] = useState(false);
-  const [startDate, setStartDate] = useState(new Date());
   const [missionData, setMissionData] = useState([]);
   const [tempMissionData, setTempMissionData] = useState([]);
 
@@ -106,63 +104,14 @@ const ReliabilityDashboard = () => {
 
   const [cardData, setCardData] = useState(null);
 
-  const handleStartDateChange = (date) => {
-    setStartDate(date);
-  };
-
-  const [endDate, setEndDate] = useState(new Date());
-
-  const [eventInfo, setEventInfo] = useState(null);
-
-  const handleEndDateChange = (date) => {
-    setEndDate(date);
-  };
-
-  const handleEventCheck = () => {
-    let start = moment(startDate).subtract(1, "day");
-    let end = moment(endDate).add(1, "day");
-    let total = (end - start) / (1000 * 3600 * 24) - 1;
-    console.log(total);
-    let days = { working: 0, down: 0, maintenance: 0, total: total };
-    events.forEach((event) => {
-      if (event.start < end && event.end > start) {
-        if (event.start >= start && event.end <= end) {
-          let diff =
-            (moment(event.end) - moment(event.start)) / (1000 * 3600 * 24);
-          console.log(diff);
-          days[event.status] += Math.floor(diff);
-        } else if (event.start >= start && event.end >= end) {
-          let diff = (moment(end) - moment(event.start)) / (1000 * 3600 * 24);
-          console.log(diff);
-
-          days[event.status] += Math.floor(diff);
-        } else if (event.start <= start && event.end <= end) {
-          let diff = (moment(event.end) - moment(start)) / (1000 * 3600 * 24);
-          console.log(diff);
-
-          days[event.status] += Math.floor(diff);
-        } else if (event.start <= start && event.end >= end) {
-          let diff = (moment(end) - moment(start)) / (1000 * 3600 * 24);
-          console.log(diff);
-
-          days[event.status] += Math.floor(diff);
-        }
-      }
-    });
-    setEventInfo(days);
-    setCardFlipped(!isCardFlipped);
-  };
-
   const [showSubsystem, setSubSystem] = useState(false);
-
-  const [isCardFlipped, setCardFlipped] = useState(false);
 
   const [currentMission, setMission] = useState(0);
   const [eqDataOption, setEqDataOption] = useState([]);
 
   const [selectedEqName, setEquipmentName] = useState(null);
-  const [selectedShipName, setShipName] = useState(null);
-  const [selectedMissionName, setMissionName] = useState(null);
+  const [selectedShipName, setShipName] = useState([]);
+  const [selectedMissionName, setMissionName] = useState([]);
 
   const [graphData, setGraphData] = useState([]);
 
@@ -185,6 +134,9 @@ const ReliabilityDashboard = () => {
     }
   };
 
+
+
+
   const [userSelectionData, setUserSelectionData] = useState([]);
   const dispatch = useDispatch();
   const customSelectData = useSelector(
@@ -193,9 +145,7 @@ const ReliabilityDashboard = () => {
   const currentSelection = useSelector(
     (state) => state.userSelection.currentSelection
   );
-  const SelectedEq_ID = useSelector(
-    (state) => state.treeData.treeData
-  );
+  const SelectedEq_ID = useSelector((state) => state.treeData.treeData);
   useEffect(() => {
     fetch("/rel_dashboard", {
       method: "GET",
@@ -223,28 +173,6 @@ const ReliabilityDashboard = () => {
       });
   }, [setUserSelectionData]);
 
-
-  // useEffect(() => {
-  //   fetch("/fetch_user_selection", {
-  //     method: "GET",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //       Accept: "application/json",
-  //     },
-  //   })
-  //     .then((res) => {
-  //       return res.json();
-  //     })
-  //     .then((data) => {
-  //       const shipName = data.map((x) => x.shipName);
-  //       debugger;
-  //       setUserSelectionData(data);
-  //       dispatch(
-  //         userActions.onChangeLoad({ filteredData: { shipName: shipName } })
-  //       );
-  //     });
-  // }, [setUserSelectionData]);
-
   const getSelectedValues = (d, selectType) => {
     debugger;
     // console.log(selectedEqName, selectedShipName, selectedMissionName);
@@ -269,227 +197,95 @@ const ReliabilityDashboard = () => {
     //   setMissionName(d);
     // }
   };
+  console.log("graphData", graphData);
+  console.log("subSystemData", subSystemData);
+  console.log("cardData", cardData);
 
-  console.log(selectedEqName)
-
+  console.log(selectedEqName, selectedMissionName, selectedShipName);
+  console.log(missionInfo);
   const handleChange = (event) => {
     setMissionName(event.target.value);
   };
-    const onSubmitHandler = () => {
-      debugger;
-      setGraphData([]);
-      setSubSystem(false);
-      setLoading(true);
-      const data = {
-        missions: [selectedMissionName],
-        equipments: selectedEqName,
-        shipClass: selectedShipName,
-        tempMissions: tempMissionData,
-      };
-      console.log(data.equipments);
-      setMission(0);
-      fetch("/rel_estimate_EQ", {
-        method: "POST",
-        body: JSON.stringify({ data: data }),
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-      })
-        .then((res) => res.json())
-        .then((d) => {
-          debugger;
-          console.log(d);
+  const onSubmitHandler = () => {
+    setGraphData([]);
+    setSubSystem(false);
 
-          if (data.missions.length == 1) {
-            if (data.shipClass.length == 1) {
-              //for Single Ship and Single Mission
-              let newGraphData = [];
-              let newSubSystem = [];
-              let newCardData = [];
-              data.missions.forEach((mission, mid) => {
-                let missionData = d[mid]["Temp Mission"];
-                newCardData[mid] = {
-                  ...newCardData[mid],
-                  name: mission,
-                  target: 90,
-                };
-                newGraphData = [
-                  ...newGraphData,
-                  {
-                    name: "Target Reliability",
-                    Reliability: 90,
-                  },
-                ];
-                // missionInfo.forEach((element) => {
-                //   if (element.missionName === mission) {
-                    
-                //   }
-                // });
-                //console.log(missionData)
-                data.shipClass.forEach((ship) => {
-                  let shipData = missionData[ship];
-                  console.log(shipData);
-                  let actual = [];
-                  data.equipments.forEach((eqpt, eid) => {
-                    let eqptData = shipData[eid][eqpt.name];
+    const data = {
+      missions: [selectedMissionName], /// its duration not the mission
+      equipments: selectedEqName,
+      shipClass: selectedShipName,
+      tempMissions: tempMissionData,
+    };
+    console.log(data);
+    setMission(0);
+    fetch("/rel_estimate_EQ", {
+      method: "POST",
+      body: JSON.stringify({ data: data }),
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((d) => {
+        debugger;
+        console.log(d);
+        console.log(d[0]["Temp Mission"]);
+        const reliabilityDataArray = [];
+        // reliabilityDataArray.push({
+        //   name: "Target Reliability",
+        //   Reliability: 90.0,
+        // })
 
-                    actual[eid] = {
-                      name: eqpt.name,
-                      rel: 100 * eqptData.rel,
-                      prob: 100 * eqptData.prob_ac,
-                    };
-
-                    newCardData[mid].actual = actual;
-
-                    console.log(newCardData);
-                    //console.log(eqptData);
-                    newGraphData = [
-                      ...newGraphData,
-                      { name: `${eqpt.name}`, Reliability: 100 * eqptData.rel },
-                    ];
-                    eqptData.child.forEach((child, cid) => {
-                      newSubSystem[cid] = {
-                        ...newSubSystem[cid],
-                        name: child.name,
-                        [eqpt.name]: 100 * child.rel,
-                      };
-                    });
-                  });
-                });
-              });
-
-              debugger;
-              setGraphData(newGraphData);
-              setSubSystemData(newSubSystem);
-              setCardData(newCardData);
-              setLoading(false);
-            } else {
-              //for many Ship Classes and Single Mission
-              let newGraphData = [];
-              let newSubSystem = [];
-              let newCardData = [];
-              data.missions.forEach((mission, mid) => {
-                let missionData = d[mid][mission];
-                missionInfo.forEach((element) => {
-                  if (element.missionName === mission) {
-                    newCardData[mid] = {
-                      ...newCardData[mid],
-                      name: mission,
-                      target: element.tar_rel,
-                    };
-                    newGraphData = [
-                      ...newGraphData,
-                      {
-                        name: "Target Reliability",
-                        Reliability: element.tar_rel,
-                      },
-                    ];
-                  }
-                });
-                //console.log(missionData)
-                data.shipClass.forEach((ship, sid) => {
-                  let shipData = missionData[ship];
-                  //console.log(shipData);
-                  let actual = [];
-                  data.equipments.forEach((eqpt, eid) => {
-                    let eqptData = shipData[eid][eqpt.name];
-
-                    actual[eid] = {
-                      name: eqpt.name,
-                      rel: 100 * eqptData.rel,
-                      prob: 100 * eqptData.prob_ac,
-                    };
-
-                    newCardData[mid].actual = actual;
-
-                    //console.log(eqptData);
-                    newGraphData[sid] = {
-                      ...newGraphData[sid],
-                      name: ship,
-                      [eqpt.name]: 100 * eqptData.rel,
-                    };
-                    eqptData.child.forEach((child, cid) => {
-                      newSubSystem[cid] = {
-                        ...newSubSystem[cid],
-                        name: [`${ship} ${child.name}`],
-                        [ship]: 100 * child.rel,
-                      };
-                    });
-                  });
-                });
-              });
-              debugger;
-              setGraphData(newGraphData);
-              setSubSystemData(newSubSystem);
-              setCardData(newCardData);
-              setLoading(false);
-            }
-          } else if (data.missions.length > 1) {
-            //for many Missions
-            let newGraphData = [];
-            let newSubSystem = [];
-            let newCardData = [];
-            let targetRel = {};
-            data.missions.forEach((mission, mid) => {
-              let missionData = d[mid][mission];
-              missionInfo.forEach((element) => {
-                if (element.missionName === mission) {
-                  newCardData[mid] = {
-                    ...newCardData[mid],
-                    name: mission,
-                    target: element.tar_rel,
-                  };
-                  targetRel = {
-                    ...targetRel,
-                    name: "Target Reliability",
-                    [mission]: element.tar_rel,
-                  };
-                }
-              });
-              //console.log(missionData)
-              data.shipClass.forEach((ship) => {
-                let shipData = missionData[ship];
-                //console.log(shipData);
-                let actual = [];
-                data.equipments.forEach((eqpt, eid) => {
-                  let eqptData = shipData[eid][eqpt.name];
-
-                  actual[eid] = {
-                    name: eqpt.name,
-                    rel: 100 * eqptData.rel,
-                    prob: 100 * eqptData.prob_ac,
-                  };
-
-                  newCardData[mid].actual = actual;
-
-                  //console.log(eqptData);
-                  newGraphData[eid] = {
-                    ...newGraphData[eid],
-                    name: eqpt.name,
-                    [mission]: 100 * eqptData.rel,
-                  };
-                  eqptData.child.forEach((child, cid) => {
-                    newSubSystem[cid] = {
-                      ...newSubSystem[cid],
-                      name: [`${eqpt.name} ${child.name}`],
-                      [mission]: 100 * child.rel,
-                    };
-                  });
+        d.forEach((missionData) => {
+          Object.keys(missionData["Temp Mission"]).forEach((ship) => {
+            const shipData = missionData["Temp Mission"][ship];
+            shipData.forEach((data) => {
+              Object.keys(data).forEach((name) => {
+                const relValue = data[name].rel;
+                reliabilityDataArray.push({
+                  name,
+                  reliability: 100 * relValue,
                 });
               });
             });
-            newGraphData = [targetRel, ...newGraphData];
-            setGraphData(newGraphData);
-            setSubSystemData(newSubSystem);
-            setCardData(newCardData);
-            setLoading(false);
-            console.log(cardData);
-          }
+          });
         });
-    };
 
+        console.log("---------------->>>>>", reliabilityDataArray);
+
+        setGraphData(reliabilityDataArray);
+        const cardD = [];
+
+        d.forEach((missionData) => {
+          const actualData = [];
+          Object.keys(missionData["Temp Mission"]).forEach((ship) => {
+            const shipDataArray = missionData["Temp Mission"][ship];
+            shipDataArray.forEach((shipData) => {
+              Object.keys(shipData).forEach((name) => {
+                const relValue = 100 * shipData[name].rel;
+                actualData.push({
+                  name,
+                  rel: relValue,
+                  prob: 100 * shipData[name].prob_ac,
+                });
+              });
+            });
+          });
+
+          cardD.push({
+            name: selectedMissionName,
+            target: 90, // Replace this with the actual target value if available
+            actual: actualData,
+          });
+        });
+        console.log("PPP____>>>>>>", cardD);
+        setCardData(cardD);
+      });
+  };
+  
   return (
+    <AccessControl allowedLevels={['L1', 'L2', 'L3', 'L4', 'L5']}>
     <MuiPickersUtilsProvider utils={MomentUtils}>
       <Navigation />
       <div className={styles.body}>
@@ -545,8 +341,14 @@ const ReliabilityDashboard = () => {
             >
               Enter Mission Duration
             </InputLabel>
-            <TextField id="outlined-basic"  variant="outlined" 
-             type="number" selectType="missionDuration" value={selectedMissionName} onChange={handleChange} />
+            <TextField
+              id="outlined-basic"
+              variant="outlined"
+              type="number"
+              selectType="missionDuration"
+              value={selectedMissionName}
+              onChange={handleChange}
+            />
           </div>
           <Button
             variant="contained"
@@ -560,17 +362,6 @@ const ReliabilityDashboard = () => {
           </Button>
           {/* <CreateProfile saveTempMission={saveTempMission} /> */}
         </div>
-        {loading && (
-          <div className={styles.midSection}>
-            <Loader
-              type="Puff"
-              color="#86a0ff"
-              height={300}
-              width={300}
-              style={{ marginTop: 100 }}
-            />
-          </div>
-        )}
         {graphData.length ? (
           <>
             <div className={styles.midSection}>
@@ -580,9 +371,6 @@ const ReliabilityDashboard = () => {
                     {graphData && <ReliabilityChart data={graphData} />}
                   </div>
                   <div className={styles.compareMission}>
-                    <div style={{ display: "flex", alignItems: "center" }}>
-                      <AddCircleOutlineIcon /> Compare with other missions
-                    </div>
                     {cardData ? (
                       <div className={styles.missionbox}>
                         {/* <div className={styles.missionName}>Mission B</div> */}
@@ -592,16 +380,6 @@ const ReliabilityDashboard = () => {
                           setMission={setMission}
                         />
                         <MissionData mission={cardData[currentMission]} />
-                        <div className={styles.showSubsystem}>
-                          Show Subsytem Level{" "}
-                          <Switch
-                            checked={showSubsystem}
-                            disabled={!subSystemData.length}
-                            onChange={() => {
-                              setSubSystem(!showSubsystem);
-                            }}
-                          />
-                        </div>
                       </div>
                     ) : (
                       <div className={styles.missionbox}>
@@ -659,6 +437,9 @@ const ReliabilityDashboard = () => {
         ) : null}
       </div>
     </MuiPickersUtilsProvider>
+    </AccessControl>
   );
 };
-export default ReliabilityDashboard;
+
+
+export default ReliabilityDashboard

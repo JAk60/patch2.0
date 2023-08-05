@@ -17,6 +17,7 @@ import DutyCycle from "./dutyCycle/dutyCycle";
 import AdditionalInfo from "./additionalInfo/additionalInfo";
 import { useLocation } from "react-router";
 import { treeDataActions } from "../../store/TreeDataStore";
+import AccessControl from "../Home/AccessControl";
 import { v4 as uuid } from "uuid";
 const SystemStyles = makeStyles({
   formControl: {
@@ -386,6 +387,7 @@ const SystemConfiguration = (props) => {
 
   return (
     <React.Fragment>
+      <AccessControl allowedLevels={['L1', 'L5']}>
       <Navigation />
       <NewModule />
       <StageSlider marks={marks} default={marks[Stage]["value"]} />
@@ -518,6 +520,7 @@ const SystemConfiguration = (props) => {
           onHandleClose={onHandleSnackClose}
         />
       )}
+      </AccessControl>
     </React.Fragment>
   );
 };

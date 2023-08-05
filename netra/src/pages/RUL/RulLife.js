@@ -11,6 +11,7 @@ import AutoSelect from "../../ui/Form/AutoSelect";
 import { useDropzone } from "react-dropzone";
 import CustomizedSnackbars from "../../ui/CustomSnackBar";
 import RULPredictor from "./RULPredictor";
+import AccessControl from "../Home/AccessControl";
 
 const useStyles = makeStyles({
   buttons: {
@@ -221,6 +222,7 @@ const RulLife = () => {
 
   return (
     <>
+    <AccessControl allowedLevels={['L1', 'L5']}>
       <Navigation />
       <div className={styles.userSelection}>
         <UserSelection />
@@ -308,6 +310,7 @@ const RulLife = () => {
           onHandleClose={onHandleSnackClose}
         />
       )}
+      </AccessControl>
     </>
   );
 };
