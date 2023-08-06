@@ -233,7 +233,6 @@ def update_parameters():
 def save_historical_data():
     if request.method == 'POST':
         data = request.get_json(force=True)
-        print(data)
         data = data['data']
         d_inst = Data_Manager()
         res = d_inst.insert_data(data)

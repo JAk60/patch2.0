@@ -23,6 +23,7 @@ class Data_Manager:
                                "code": 1}
         self.error_return = {"message": "Some Error Occured, Please try agian.",
                              "code": 0}
+        self.overhaul_id = ""
 
     def update_parameters(self, data):
         systemType_replaceable = data['isReplacable']
@@ -571,10 +572,55 @@ class Data_Manager:
             return True
 
         return False
+    
+    def extract_failure_times(self, input_data):
+            failure_times = []
+            overhaul_data = {}
+            present_overhaul_data = []
+
+            for data in input_data:
+                if data is None:
+                    continue
+                overhaul_id = data.get('overhaulId')
+                if overhaul_id:
+                    total_run_age = float(data.get('totalRunAge', 0))
+                    if overhaul_id in overhaul_data:
+                        overhaul_data[overhaul_id].append(total_run_age)
+                    else:
+                        overhaul_data[overhaul_id] = [total_run_age]
+                else:
+                    total_run_age = float(data.get('totalRunAge', 0))
+                    present_overhaul_data.append(total_run_age)
+                    # failure_times.append([total_run_age])
+
+            for overhaul_id, data in overhaul_data.items():
+                failure_times.append(data)
+            failure_times.append(present_overhaul_data)
+            return failure_times
+
+    def extract_run_age(self, main_data, sub_data):
+        run_ages = [entry['runAge'] for entry in sub_data]
+
+        last_run_age = None
+        for data in reversed(main_data):
+            if data is None:
+                continue
+            if 'overhaulId' not in data:
+                last_run_age = int(data.get('totalRunAge', 0))
+                break
+
+        if last_run_age is not None:
+            run_ages.append(last_run_age)
+
+        return run_ages
+
+
 
     def insert_overhauls(self,data):
         mainData = data[0]['mainData']
         subData = data[0]['subData']
+        print("mainData",mainData)
+        print("subData",subData)
         component_id = ""
         insert_sub_sql = '''insert into data_manager_overhauls_info (id, 
         component_id, overhaul_num, running_age, num_maintenance_event)
@@ -582,14 +628,12 @@ class Data_Manager:
         insert_main_sql = '''insert into data_manager_overhaul_maint_data (id, 
         component_id, overhaul_id, "date", maintenance_type, running_age,
         associated_sub_system) values (?,?,?,?,?,?,?);'''
-        failure_times = []
         try:
             for d in subData:
                 if d:
                     id = d['id']
                     overhaulNum = d["overhaulNum"]
                     runAge = d["runAge"]
-                    print(failure_times)
                     numMaint = d["numMaint"]
                     component_id = d["component_id"]
                     cursor.execute(insert_sub_sql, id, component_id,
@@ -603,32 +647,27 @@ class Data_Manager:
                     id = d['id']
                     # Check if 'overhaulId' key is present, otherwise set it to None
                     try:
-                        overhaulId = d["overhaulId"]
+                        overhaulId = d["overhaulId"]           
                     except KeyError:
                         overhaulId = None
-
                     date = d["date"]
                     date = datetime.strptime(date, "%d/%m/%Y")
                     maintenanceType = d["maintenanceType"]
                     totalRunAge = d["totalRunAge"]
-                    failure_times.append(float(totalRunAge))
                     subSystemId = d["subSystemId"]
                     cursor.execute(insert_main_sql, id, component_id,
                                    overhaulId, date, maintenanceType, totalRunAge, subSystemId)
         except Exception as e:
             pass
-        
-        print(failure_times)
-        T = failure_times[-1]
-        N = len(failure_times)
-        def para(N, x, T):
-            if N != 1:
-                beta = N / sum(math.log(T/i) for i in x)
-            else:
-                beta = N
-            alpha = N / T**beta
+        failure_times = self.extract_failure_times(mainData)
+        N = [len(subarray) for subarray in failure_times]
+        T = self.extract_run_age(main_data=mainData, sub_data=subData)
+        print(failure_times, N)
+        def para(N, x, T, k):
+            beta = (sum(n for n in N))/ (sum(sum(math.log(t/x[T.index(t)][i]) for i in range(N[T.index(t)])) for t in T ))
+            alpha = (sum(n for n in N) )/ (sum(t**beta for t in T))
             return alpha, beta
-        alpha, beta = para(N, failure_times, T)
+        alpha, beta = para(N, failure_times, T, k=len(failure_times))
         a_b_id = uuid.uuid4()
         print(f'alpha={alpha} beta={beta}')
         # ## insert alpha beta temp now.

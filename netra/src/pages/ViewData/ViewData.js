@@ -23,7 +23,7 @@ const ViewData=(props)=>{
         )
     }
     return(
-        <AccessControl allowedLevels={['L1']}>
+        <AccessControl allowedLevels={['L1', 'L5']}>
         <div className={styles.container}>
             <div className={styles.viewDataNav}>
                 <Link onClick={()=>Logout()}><i class="fas fa-sign-out-alt"></i>Logout</Link>
