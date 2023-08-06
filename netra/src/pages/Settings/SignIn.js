@@ -1,52 +1,58 @@
-import React, { useEffect, useState } from "react";
-import styles from "./SignIn.module.css";
-import {
-  Paper,
-  FormGroup,
-  Switch,
-  Button,
-  FormControlLabel,
-} from "@material-ui/core";
+import React, { useEffect, useState } from 'react'
+import styles from './SignIn.module.css'
+import { Paper, makeStyles, InputBase, Button, FormControlLabel, Checkbox } from '@material-ui/core'
+import { Link } from 'react-router-dom';
 import CustomizedSnackbars from '../../ui/CustomSnackBar';
-import { useDispatch, useSelector } from "react-redux";
-import { setLevel } from "../../store/Levels";
+import { useDispatch } from 'react-redux';
+import { setLevel } from '../../store/Levels';
+import { useLocation } from 'react-router-dom';
+import Snackbar from "@material-ui/core/Snackbar";
+import MuiAlert from "@material-ui/lab/Alert";
+
+const InputStyles = makeStyles({
+  root: {
+    margin: '15px 0px 5px 0px',
+    paddingRight: 10,
+    paddingLeft: 10,
+    background: "#ebebeb",
+    borderRadius: "5px",
+    height: 40,
+    width: '70%',
+    boxShadow: "2px 3px 5px -1px rgba(0,0,0,0.2)",
+  },
+  label: {
+    fontWeight: 600
+  }
+});
 
 const SignIn = (props) => {
-  const [toggles, setToggles] = useState({
-    L1: false,
-    L2: false,
-    L3: false,
-    L4: false,
-    L5: false,
-  });
 
-  // const [level, setLevel] = useState("");
-  const dispatch = useDispatch();
-  const levels = useSelector((state) => state.LevelsData);
-
-  const handleToggleChange = (toggleName) => (event) => {
-    const value = event.target.checked;
-    setToggles({ ...toggles, [toggleName]: value });
-
-    // Dispatch only true levels
-    if (value) {
-      dispatch(setLevel({ level: toggleName, value }));
+  useEffect(() => {
+    if (props.loggedIn) {
+      props.history.push('/')
     }
-  }
+  })
 
-  console.log(levels);
+  const location = useLocation();
+  const message = location.state?.message;
+  const [open, setOpen] = React.useState(!!message);
 
+  const [keepLogin, setKeepLogin] = useState(false);
+  const InputClasses = InputStyles();
+  const [userName, setUserName] = useState('')
+  const [password, setPassword] = useState('')
+
+  const handleMClose = () => {
+    setOpen(false);
+  };
+  
+
+  const [showSnackBar, setShowSnackBar] = useState(false);
   const [SnackBarMessage, setSnackBarMessage] = useState({
     severity: "error",
     message: "",
     showSnackBar: false,
   });
-
-  useEffect(() => {
-    if (props.loggedIn) {
-      props.history.push("/");
-    }
-  }, [props.loggedIn, props.history]);
 
   const onHandleSnackClose = () => {
     setSnackBarMessage({
@@ -56,76 +62,83 @@ const SignIn = (props) => {
     });
   };
 
-  const Login = () => {
-    props.setLoggedIn(true);
-    props.history.push("/");
-  };
+  const dispatch = useDispatch();
 
+  const Login = () => {
+
+    if (userName && password) {
+      const data = {
+        username: userName, // Replace with the username to check
+        password: password  // Replace with the password to check
+      };
+
+      fetch("/get_credentials", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+        })
+        .then(data => {
+          console.log('Success:', data);
+          props.setLoggedIn(true)
+          console.log({ level: data.level, value: true })
+          dispatch(setLevel({ level: data.level, value: true }))
+          // props.history.push('/')
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+    }
+    else {
+      setSnackBarMessage({
+        severity: "error",
+        message: "Enter Correct Login details",
+        showSnackBar: true,
+      })
+    }
+  }
   return (
     <div className={styles.container}>
+      <Snackbar open={open} autoHideDuration={6000} onClose={handleMClose}>
+        <MuiAlert elevation={6} variant="filled" onClose={handleMClose} severity="success">
+          {message}
+        </MuiAlert>
+      </Snackbar>
       <Paper className={styles.SignInPaper} elevation={5}>
         <div>
-          <img src="/netra-logo.png" width={60} height={60} />
+          <img src='/netra-logo.png' width={60} height={60} />
           <div className={styles.netra}>NETRA</div>
         </div>
-        <div style={{ textAlign: "center" }}>
+        <div style={{ textAlign: 'center' }}>
           <h5 style={{ margin: 0 }}>Welcome</h5>
           <h6 style={{ margin: 0 }}>Sign in to your account</h6>
         </div>
-        <FormGroup>
+        <InputBase classes={InputClasses} name='username' value={userName} onChange={(e) => setUserName(e.target.value)} id='username' placeholder='User Name' required />
+        <InputBase classes={InputClasses} name='password' id='password' value={password} onChange={(e) => setPassword(e.target.value)} placeholder='Password' type='text' required />
+        <Button variant='contained' style={{ backgroundColor: '#1c4199', color: 'white' }} onClick={() => Login()}>Sign In</Button>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '80%' }}>
           <FormControlLabel
-            control={
-              <Switch
-                checked={toggles.L1}
-                onChange={handleToggleChange("L1")}
-              />
-            }
-            label="L1 - SHIP HOD"
+            classes={{
+              label: InputClasses.label
+            }}
+            style={{ color: '#1c4199' }}
+            control={<Checkbox style={{ color: '#1c4199' }} checked={keepLogin} onChange={() => { setKeepLogin(!keepLogin) }} name="checkedA" />}
+            label="Keep me logged in"
           />
-          <FormControlLabel
-            control={
-              <Switch
-                checked={toggles.L2}
-                onChange={handleToggleChange("L2")}
-              />
-            }
-            label="L2 - SHIP CO"
-          />
-          <FormControlLabel
-            control={
-              <Switch
-                checked={toggles.L3}
-                onChange={handleToggleChange("L3")}
-              />
-            }
-            label="L3 - FLEET"
-          />
-          <FormControlLabel
-            control={
-              <Switch
-                checked={toggles.L4}
-                onChange={handleToggleChange("L4")}
-              />
-            }
-            label="L4 - NHQ"
-          />
-          <FormControlLabel
-            control={
-              <Switch
-                checked={toggles.L5}
-                onChange={handleToggleChange("L5")}
-              />
-            }
-            label="L5 - INSMA"
-          />
-        </FormGroup>
-        <Button
-          variant="contained"
-          style={{ backgroundColor: "#1c4199", color: "white" }}
-          onClick={() => Login()}
-        >
-          Sign In
-        </Button>
+          <Link className={styles.links} to="/edit_profile">
+            Forgot Password?
+          </Link>
+        </div>
+        <Link className={styles.links} to="/sign_up">
+          Create an Account? Sign Up
+        </Link>
       </Paper>
       {SnackBarMessage.showSnackBar && (
         <CustomizedSnackbars
@@ -134,7 +147,7 @@ const SignIn = (props) => {
         />
       )}
     </div>
-  );
-};
+  )
+}
 
 export default SignIn

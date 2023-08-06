@@ -30,6 +30,7 @@ import SysDocs from "./pages/System Docs/SysDocs";
 import PM from "./pages/PM OPTIM/pm";
 import RulLife from './pages/RUL/RulLife';
 import Login from './pages/Home/Login'
+import { useDispatch } from "react-redux";
 
 const theme = createMuiTheme({
   palette: {
@@ -74,6 +75,9 @@ function App() {
       setSettings(settings);
     }
   }, []);
+
+
+
 
   return (
     <ThemeProvider theme={theme}>
