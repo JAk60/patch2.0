@@ -29,7 +29,7 @@ const GroupTable = ({ height, n, tData, columnDefs }) => {
   const handleClose = () => {
     setOpen(false); // Close the dialog
     setTableData([]);
-    window.location.reload();
+    // window.location.reload();
   };
   // Generate row data with 'n' number of rows
   const rowData = [];

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { TextField, Button, Dialog, DialogTitle, DialogContent, DialogActions, Grid } from "@material-ui/core";
 import styles from "./pm.module.css";
 import OptTable from "./OptTable";
@@ -20,6 +20,14 @@ const OptiQ = ({ questions, name, currQ, option, eta, beta }) => {
     console.log(answers, "answers")
   };
 
+  useEffect(() => {
+    setAnswers({
+      ...answers,
+      eeta: eta,
+      beta: beta,
+    });
+  }, [eta, beta]);
+
   const handleAddRow = (e) => {
     e.preventDefault();
     const newRow = { ...answers, method: name };
@@ -39,7 +47,7 @@ const OptiQ = ({ questions, name, currQ, option, eta, beta }) => {
                 {question.type === "text" && (
                   <TextField
                     type="number"
-                    value={answers[question.id] || ""}
+                    value = {  question.id === "eeta" ? eta : question.id === "beta" ? beta : answers[question.id] || ""}
                     onChange={(event) => handleAnswerChange(event, question.id)}
                     required={question.required}
                   />
