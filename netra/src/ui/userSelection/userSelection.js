@@ -210,7 +210,8 @@ function UserSelection(props) {
           "/HEP/",
           "/maintenance_allocation/",
           "/add_system_doc/",
-          "/rul"
+          "/rul",
+          "/optimize"
           
         ]}
       >

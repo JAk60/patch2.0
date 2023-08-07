@@ -344,6 +344,10 @@ const Critical_RCM=(props)=> {
           alert(d.res)      
         })
     }
+
+    const handleOptimize = () =>{
+      history.push("/optimize")
+    }
    
     const SaveAssemplyHandler = () => {
         if(selectedCriticalComponent.length > 0){
@@ -427,7 +431,7 @@ const Critical_RCM=(props)=> {
               </div>
               </div>
               <div>
-              <Button className={styles.nextbtn} onClick={() => {}} style={{marginRight: "2rem"}} variant='contained' color='primary'> Optimize</Button>
+              <Button className={styles.nextbtn} onClick={handleOptimize} style={{marginRight: "2rem"}} variant='contained' color='primary'> Optimize</Button>
               <Button className={styles.nextbtn} onClick={addCriticalData} style={{marginRight: "2rem"}} variant='contained' color='primary'>Generate Report</Button>
               <Button className={styles.nextbtn} onClick={handleDownload} style={{marginRight: "2rem"}} variant='contained' color='primary'>Download Report</Button>
               <Button className={styles.nextbtn} onClick={SaveAssemplyHandler} style={{marginRight: "2rem"}} variant='contained' color='primary'>Save</Button>

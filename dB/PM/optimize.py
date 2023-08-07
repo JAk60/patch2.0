@@ -213,14 +213,17 @@ def optimizer():
         beta = float(data.get('beta'))
         eeta = float(data.get('eeta'))
         p = float(data.get('p'))
-
         t = sp.Symbol('t')
         equation = sp.Eq(1 - sp.exp(-((t / eeta) ** beta)) - p, 0)
         solutions = sp.nsolve(equation, t, 1.0, solver='mnewton')
 
+        print(solutions)
+
         return jsonify({
             't': float(solutions)
         })
+
+
     elif method == 'calender_downtime':
         beta = float(data.get('beta'))
         eeta = float(data.get('eeta'))

@@ -15,6 +15,7 @@ from datetime import datetime, timedelta
 from calendar import monthrange
 import uuid
 from scipy.optimize import minimize
+from flask import jsonify
 
 class Data_Manager:
     def __init__(self):
@@ -685,3 +686,17 @@ class Data_Manager:
         # Assuming you have appropriate values for 'component_id', 'alpha', and 'beta'
         cursor.execute(merge_query, (a_b_id, component_id, alpha, beta))
         cnxn.commit()
+
+    def fetch_eeta_beta(self, component_id):
+        try:
+            query = "select eta, beta from eta_beta where component_id= ?"
+            cursor.execute(query, component_id)
+            data = cursor.fetchone()
+            return jsonify({
+                "eta": data[0],
+                "beta": data[1]
+            })
+        except Exception as e:
+            return jsonify({
+                "messege": "Component id is not exist"
+            })

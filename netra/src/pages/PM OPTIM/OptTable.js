@@ -7,6 +7,12 @@ import { makeStyles } from "@material-ui/core/styles";
 import styles from './pm.module.css';
 
 const OptTable = ({ columnDefs, rowData, height,name,setRowData}) => {
+  const defaultColumnDefs = [
+    { headerName: "Beta", field: "beta", editable: true },
+    { headerName: "Eeta", field: "eeta", editable: true },
+    { headerName: "P", field: "p", editable: true },
+  ];
+  const tableColumnDefs = columnDefs || defaultColumnDefs;
 
   const useStyles = makeStyles((theme) => ({
     dialogContainer: {
@@ -67,11 +73,13 @@ const OptTable = ({ columnDefs, rowData, height,name,setRowData}) => {
       });
     setOpen(true);
   }
+
+
   return (
     <div className="ag-theme-alpine" style={{ height: height, width: '100%',position: 'relative' }}>
       {console.log(rowData)}
       <AgGridReact
-        columnDefs={columnDefs}
+        columnDefs={tableColumnDefs}
         rowData={rowData}
         defaultColDef={{
           flex: 1,

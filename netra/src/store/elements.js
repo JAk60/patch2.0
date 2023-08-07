@@ -75,18 +75,16 @@ const elements = createSlice({
       }
     },
     updateParallelComponent(state, action) {
-      debugger; 
-      // let repair_type = action.payload.repair_type;
-      let parallel_comp = action.payload.parallel_comp;
-      let color = action.payload.color;
-      let data = {
+      const parallel_comp = action.payload.parallel_comp || []; // Check for null and set to empty array if null
+      const color = action.payload.color;
+      const data = {
         ...state.node.data,
         k: Number(action.payload.k),
         k_elh: Number(action.payload.k_elh),
         k_c: Number(action.payload.k_c),
         k_ds: Number(action.payload.k_ds),
         k_as: Number(action.payload.k_as),
-        n:parallel_comp.length+1,
+        n: parallel_comp.length + 1,
         parallel_comp: parallel_comp,
       };
       let style = {

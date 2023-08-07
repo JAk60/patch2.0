@@ -8,6 +8,7 @@
   display: block;
   margin-bottom: 14px;
 }
+/* ComponentDetails.module.css */
 .savebtn {
   float: right;
   width: 40%;
@@ -15,9 +16,15 @@
   border: none;
   border-radius: 5px;
   color: white;
-  background-color: rgb(0,70,134);
+  background-color: rgb(0, 70, 134);
 }
 
-.savebtn:hover{
+.savebtn:hover {
   background-color: rgb(4, 50, 93);
 }
+
+.savebtn.disabledButton {
+  background-color: gray; /* Set your desired background color for disabled state */
+  cursor: not-allowed; /* Change the cursor to show it's not clickable */
+}
+

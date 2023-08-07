@@ -2,11 +2,22 @@
     display: flex;
     align-items: center;
     justify-content: space-around;
-    margin-top: 50px;
+    margin-top: 30px;
     height: fit-content;
     box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
     border-radius: 10px;
     padding: 20px 10px;
+  }
+.userSelect {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    margin-top: 30px;
+    height: fit-content;
+    box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+    border-radius: 10px;
+    padding: 20px 10px;
+    margin-left: 25px;
   }
   
   .radioRow {
@@ -14,12 +25,13 @@
     flex-direction: row;
   }
   .flex {
-    grid-row: 3/4;
+    grid-row: 2/4;
     grid-column: 2/13;
     height: fit-content;
     width: 93vw;
-    margin-left: 1%;
     display: flex;
+    margin-left: 1%;
+    margin-right: 1%;
     flex-direction: column;
     justify-content: space-around;
     padding: 20px 20px 30px 20px;
@@ -36,11 +48,12 @@
     margin-right: 20px;
   }
   .OptTable{
-    width: 80em;
-    margin-top: 50px;
+    width: 50em;
     box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
     border-radius: 10px;
     padding: 20px 10px;
+    margin-left: 1%;
+    margin-right: 1%;
   }
   .userSele{
     padding:20px;
@@ -53,4 +66,7 @@
     position: absolute;
     bottom: 30px;
   }
-  
+  .mainOp{
+    padding-right:25px;
+    margin-left: 1%;
+  }

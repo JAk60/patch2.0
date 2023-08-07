@@ -26,6 +26,7 @@ from classes.taskReliability import TaskReliability
 from dB.dB_utility import add_user_selection_data
 from dB.RCM.rcmDB import RCMDB
 from dB.PM.optimize import optimizer
+from dB.Authentication.signin import Authentication
 import math
 import numpy as np
 # import malotlib.pyplot as plt
@@ -532,6 +533,34 @@ def pf():
     name = data.get('name')
     rul_class = RUL_dB()
     return rul_class.fetch_PF(name)
+
+@app.route('/get_credentials', methods=['POST'])
+def get_credentials():
+    data = request.json  # Assuming you send a JSON object in the request body
+    if 'username' in data and 'password' in data:
+        username = data['username']
+        password = data['password']
+        inst = Authentication()
+        return inst.sign_in(username, password)
+
+
+@app.route('/insert_user', methods=['POST'])
+def insert_new_user():
+    data = request.json  # Assuming you send a JSON object in the request body
+    if 'username' in data and 'password' in data and 'level' in data:
+        username = data['username']
+        password = data['password']
+        level = data['level']
+        inst = Authentication()
+        return inst.sign_up(username, password, level)
+
+
+@app.route('/fetch_eta_beta', methods=['POST'])
+def fetch_eta_beta():
+    data = request.json
+    component_id = data['component_id']
+    inst = Data_Manager()
+    return inst.fetch_eeta_beta(component_id)
 
 
 if __name__ == '__main__':

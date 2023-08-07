@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Accordion from "@material-ui/core/Accordion";
 import AccordionSummary from "@material-ui/core/AccordionSummary";
@@ -12,9 +12,10 @@ import { elementActions } from "../../../store/elements";
 import randomColor from "randomcolor";
 
 import GroupData from "./GroupData";
+
 const useStyles = makeStyles((theme) => ({
   root: {
-    marginTop:20,
+    marginTop: 20,
     width: "100%",
     "& .MuiAccordionDetails-root": {
       "flex-direction": "column",
@@ -35,15 +36,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const AccordionStyles=makeStyles(theme=>({
-  root:{
-    border:'1px solid gray',
-    borderRadius:'10px',
-    marginTop:20,
-    },
-    
-
-}))
+const AccordionStyles = makeStyles((theme) => ({
+  root: {
+    border: "1px solid gray",
+    borderRadius: "10px",
+    marginTop: 20,
+  },
+}));
 
 const ComponentDetails = (props) => {
   const dispatch = useDispatch();
@@ -53,8 +52,6 @@ const ComponentDetails = (props) => {
     .filter((x) => x.dtype === "edge")
     .map((x) => x.source);
 
-  // console.log("Edge");
-  // console.log(edgesN);
   const groupDataKN = GroupData();
   const parentName = useSelector(
     (state) => state.elements.selectedNodeParentName
@@ -75,11 +72,18 @@ const ComponentDetails = (props) => {
   const knP = useRef();
   const classes = useStyles();
 
-  const accordionClasses=AccordionStyles();
+  const accordionClasses = AccordionStyles();
   const data = useSelector((state) => state.elements.node.data);
 
+  const [inputValues, setInputValues] = useState({
+    k: "",
+    k_elh: "",
+    k_c: "",
+    k_ds: "",
+    k_as: "",
+  });
+
   const onHandleChange = (e) => {
-    console.log(data);
     dispatch(
       elementActions.onHandleNameChange({
         nodeName: nodeNameRef.current.value,
@@ -87,14 +91,29 @@ const ComponentDetails = (props) => {
       })
     );
   };
+
+  const onHandleInputChange = (e) => {
+    const { name, value } = e.target;
+    setInputValues((prevValues) => ({
+      ...prevValues,
+      [name]: value,
+    }));
+  };
+
+  const isSaveDisabled =
+    inputValues.k !== "" &&
+    inputValues.k_elh !== "" &&
+    inputValues.k_c !== "" &&
+    inputValues.k_ds !== "" &&
+    inputValues.k_as !== "";
+console.log(isSaveDisabled);
   const onHandleButtonClick = () => {
-    debugger;
     const parallel_comp = p_selectRef.current.state.value;
     const color = randomColor({ luminosity: "bright", format: "rgb" });
-    //console.log(kRef.current.value)
+
     dispatch(
       elementActions.updateParallelComponent({
-        k:kRef.current.value,
+        k: kRef.current.value,
         k_elh: kRefELH.current.value,
         k_c: kRefC.current.value,
         k_ds: kRefDS.current.value,
@@ -103,13 +122,13 @@ const ComponentDetails = (props) => {
         color: color,
       })
     );
-    kRef.current.value='';
-    kRefELH.current.value = '';
-    kRefC.current.value = '';
-    kRefDS.current.value = '';
-    kRefAS.current.value = '';
+
+    kRef.current.value = "";
+    kRefELH.current.value = "";
+    kRefC.current.value = "";
+    kRefDS.current.value = "";
+    kRefAS.current.value = "";
     p_selectRef.current.state.value = null;
-    
   };
 
   const onHandleUpdateKN = () => {
@@ -125,7 +144,12 @@ const ComponentDetails = (props) => {
 
   return (
     <div className={classes.root}>
-      <Accordion square elevation={0} classes={accordionClasses} defaultExpanded={true}>
+      <Accordion
+        square
+        elevation={0}
+        classes={accordionClasses}
+        defaultExpanded={true}
+      >
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}
           aria-controls="panel1a-content"
@@ -170,18 +194,12 @@ const ComponentDetails = (props) => {
           aria-controls="panel2a-content"
           id="panel2a-header"
         >
-          <Typography className={classes.heading}>Advance Details</Typography>
+          <Typography className={classes.heading}>
+            Advance Details
+          </Typography>
         </AccordionSummary>
         <AccordionDetails>
           <div>
-            {/* <label className={customclasses.inputlabel}>
-              Repair type
-              <Select options={[
-                { value: 'None', label: 'None' },
-                { value: 'Repairable', label: 'Repairable' },
-                { value: 'Replacable', label: 'Replacable' }]} ref={r_selectRef}>
-              </Select>
-            </label> */}
             <label className={customclasses.inputlabel}>
               Please Select Parallel Components
               <Select
@@ -191,90 +209,82 @@ const ComponentDetails = (props) => {
                 isSearchable
               />
             </label>
-            {/* <label className={customclasses.inputlabel}>
-              Please Select All K out of N components.
-              <Select ref={knP} options={groupDataKN} isMulti isSearchable />
-            </label> */}
             <label className={customclasses.inputlabel}>
-                  
-                  <input
-                    className={customclasses.input}
-                    ref={kRef}
-                    type="number"
-                    placeholder="Enter K-Harbour value"
-                    // onChange={onHandleChange}
-                  ></input>
-                </label>
-                <label className={customclasses.inputlabel}>
-                  
-                  <input
-                    className={customclasses.input}
-                    ref={kRefELH}
-                    type="number"
-                    placeholder="Enter K- Entry Leaving Harbour value"
-                    // onChange={onHandleChange}
-                  ></input>
-                </label>
-                <label className={customclasses.inputlabel}>
-                  
-                  <input
-                    className={customclasses.input}
-                    ref={kRefC}
-                    type="number"
-                    placeholder="Enter K-Cruise value"
-                    // onChange={onHandleChange}
-                  ></input>
-                </label>
-                <label className={customclasses.inputlabel}>
-                  
-                  <input
-                    className={customclasses.input}
-                    ref={kRefDS}
-                    type="number"
-                    placeholder="Enter K-Defense Station value"
-                    // onChange={onHandleChange}
-                  ></input>
-                </label>
-                <label className={customclasses.inputlabel}>
-                  
-                  <input
-                    className={customclasses.input}
-                    ref={kRefAS}
-                    type="number"
-                    placeholder="Enter K-Action Station value"
-                    // onChange={onHandleChange}
-                  ></input>
-                </label>
-                <label className={customclasses.inputlabel}>
-                  
-                  <input
-                    className={customclasses.input}
-                    type="number"
-                    placeholder="Enter N value"
-                    disabled={true}
-                    style={{background:'rgb(235,235,228)'}}
-                    // value={parentName}
-                    // readOnly
-                    // disabled
-                  ></input>
-                </label>
-            <button className={customclasses.savebtn} onClick={onHandleButtonClick}>Save Details</button>
+              <input
+                className={customclasses.input}
+                name="k"
+                ref={kRef}
+                type="number"
+                placeholder="Enter K-Harbour value"
+                value={inputValues.k}
+                onChange={onHandleInputChange}
+              ></input>
+            </label>
+            <label className={customclasses.inputlabel}>
+              <input
+                className={customclasses.input}
+                name="k_elh"
+                ref={kRefELH}
+                type="number"
+                placeholder="Enter K- Entry Leaving Harbour value"
+                value={inputValues.k_elh}
+                onChange={onHandleInputChange}
+              ></input>
+            </label>
+            <label className={customclasses.inputlabel}>
+              <input
+                className={customclasses.input}
+                name="k_c"
+                ref={kRefC}
+                type="number"
+                placeholder="Enter K-Cruise value"
+                value={inputValues.k_c}
+                onChange={onHandleInputChange}
+              ></input>
+            </label>
+            <label className={customclasses.inputlabel}>
+              <input
+                className={customclasses.input}
+                name="k_ds"
+                ref={kRefDS}
+                type="number"
+                placeholder="Enter K-Defense Station value"
+                value={inputValues.k_ds}
+                onChange={onHandleInputChange}
+              ></input>
+            </label>
+            <label className={customclasses.inputlabel}>
+              <input
+                className={customclasses.input}
+                name="k_as"
+                ref={kRefAS}
+                type="number"
+                placeholder="Enter K-Action Station value"
+                value={inputValues.k_as}
+                onChange={onHandleInputChange}
+              ></input>
+            </label>
+            <label className={customclasses.inputlabel}>
+              <input
+                className={customclasses.input}
+                type="number"
+                placeholder="Enter N value"
+                disabled={true}
+                style={{ background: "rgb(235, 235, 228)" }}
+              ></input>
+            </label>
+            <button
+              className={`${
+                customclasses.savebtn
+              } ${!isSaveDisabled ? customclasses.disabledButton : ""}`}
+              onClick={onHandleButtonClick}
+              disabled={!isSaveDisabled}
+            >
+              Save Details
+            </button>
           </div>
         </AccordionDetails>
       </Accordion>
-      {/* <Accordion square elevation={0} classes={accordionClasses} defaultExpanded={true}>
-        <AccordionSummary aria-controls="panel2a-content" id="panel2a-header">
-          <Typography className={classes.heading}>K out of N</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <div>
-            
-            <button className={customclasses.savebtn} 
-            // onClick={onHandleUpdateKN}
-            >Update K/N</button>
-          </div>
-        </AccordionDetails>
-      </Accordion> */}
     </div>
   );
 };
