@@ -600,14 +600,14 @@ class Data_Manager:
             return failure_times
 
     def extract_run_age(self, main_data, sub_data):
-        run_ages = [entry['runAge'] for entry in sub_data]
+        run_ages = [float(entry['runAge']) for entry in sub_data]
 
         last_run_age = None
         for data in reversed(main_data):
             if data is None:
                 continue
             if 'overhaulId' not in data:
-                last_run_age = int(data.get('totalRunAge', 0))
+                last_run_age = float(data.get('totalRunAge', 0))
                 break
 
         if last_run_age is not None:
@@ -664,6 +664,7 @@ class Data_Manager:
         N = [len(subarray) for subarray in failure_times]
         T = self.extract_run_age(main_data=mainData, sub_data=subData)
         print(failure_times, N)
+        print(T)
         def para(N, x, T, k):
             beta = (sum(n for n in N))/ (sum(sum(math.log(t/x[T.index(t)][i]) for i in range(N[T.index(t)])) for t in T ))
             alpha = (sum(n for n in N) )/ (sum(t**beta for t in T))

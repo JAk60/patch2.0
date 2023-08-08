@@ -56,7 +56,7 @@ const FailureMode = (props) => {
     />,
     <AgGridColumn
       field="fixFailureMode"
-      headerName="Failure Mode"
+      headerName="Failure Mode/Symptoms"
       headerTooltip="Failure Mode"
       width={300}
       editable={true}

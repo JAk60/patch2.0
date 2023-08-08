@@ -40,7 +40,6 @@ const OptTable = ({ columnDefs, rowData, height,name,setRowData}) => {
     window.location.reload();
     
   };
-
  
   const handleT =(event)=>{
     event.preventDefault();
@@ -94,9 +93,9 @@ const OptTable = ({ columnDefs, rowData, height,name,setRowData}) => {
             <div className={classes.dialogContainer}>
               <DialogTitle className={classes.dialogTitle}>Optimization Result</DialogTitle>
               <DialogContent className={classes.dialogContent}>
-                <p>t value: {tval}</p>
-                <p>t value (90%): {tval90}</p>
-                <p>t value (110%): {tval110}</p>
+                <p>Optimized Time For Maintenance: {tval}</p>
+                <p>Lower Bound: {tval90}</p>
+                <p>Upper Bound: {tval110}</p>
               </DialogContent>
               <DialogActions>
                 <Button onClick={handleClose} color="primary">

@@ -181,7 +181,26 @@ export const  getQuestions = (value) => {
       ];
       break;
     default:
-      questions = [];
+      questions = [
+        {
+          id: "beta",
+          text: "Enter beta value:",
+          type: "text",
+          required: true,
+        },
+        {
+          id: "eeta",
+          text: "Enter eeta value:",
+          type: "text",
+          required: true,
+        },
+        {
+          id: "p",
+          text: "Enter p value:",
+          type: "text",
+          required: true,
+        },
+      ];
       break;
   }
 

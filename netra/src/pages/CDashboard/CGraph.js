@@ -120,7 +120,7 @@ const CGraph = ({ graphData, selectedParameterNames }) => {
                  <YAxis
                   domain={yDomain}
                   label={{
-                    value: `${param.parameterName} Data`,
+                    value: `${param.parameterName} (${unit})`,
                     angle: -90,
                     position: "center",
                     dx: -10, // Adjust the label's distance from the axis

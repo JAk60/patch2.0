@@ -102,13 +102,13 @@ const Home = (props) => {
           <div className={styles.circleIcon}>
             <i class="far fa-chart-bar"></i>
           </div>
-          Task Reliability Dashboard
+          Mission Reliability Dashboard
         </Link>
         <Link to="/dnd" onClick={resetUserSelection}>
           <div className={styles.circleIcon}>
             <i class="far fa-chart-bar"></i>
           </div>
-          Task Configuration
+          Mission Configuration
         </Link>
         <Link to="/view_data" onClick={resetUserSelection}>
           <div className={styles.circleIcon}>

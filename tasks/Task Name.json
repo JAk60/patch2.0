@@ -4,231 +4,57 @@
             "label": "Task Name"
         },
         "dtype": "node",
-        "id": "bfca2235-8d96-4d1b-b689-e5e5a0c6d868",
+        "id": "77630b78-9bf8-4398-88e2-2c6fca7bf134",
         "position": {
-            "x": 601,
-            "y": 601
+            "x": 601.111111164093,
+            "y": 601.111111164093
         },
-        "shipName": "Talwar 1",
+        "shipName": "Ship 1",
         "type": "systemNode"
     },
     {
-        "data": {
-            "label": "Task Name"
-        },
-        "dtype": "node",
-        "id": "d72a07c8-8bb7-4cf3-aa7d-fc72ab44f7f3",
-        "position": {
-            "x": 601,
-            "y": 601
-        },
-        "shipName": "Talwar 1",
-        "type": "systemNode"
-    },
-    {
-        "data": {
-            "label": "Task Name"
-        },
-        "dtype": "node",
-        "id": "7a054802-3d2f-4067-80f4-9503dac6e771",
-        "position": {
-            "x": 601,
-            "y": 601
-        },
-        "shipName": "AAA",
-        "type": "systemNode"
-    },
-    {
+        "animated": false,
         "dtype": "edge",
-        "id": "08e64c02-cefc-4969-a60d-22791957247d",
-        "source": "d7cd2f54-0e27-4b08-bcea-673f6a4d1010",
-        "sourceHandle": null,
-        "target": "a49b82d1-acb2-4a25-8b9e-4b6998df8c07",
-        "targetHandle": null,
-        "type": "smoothstep"
-    },
-    {
-        "dtype": "edge",
-        "id": "f352df2b-325e-445a-811e-a4437a4d7e1a",
-        "source": "350c15dd-634d-42db-9855-0ea9ab5db6f9",
-        "sourceHandle": null,
-        "target": "a49b82d1-acb2-4a25-8b9e-4b6998df8c07",
+        "id": "2191c748-3ae9-4433-8a0c-f6ad52471cd1",
+        "source": "77630b78-9bf8-4398-88e2-2c6fca7bf134",
+        "sourceHandle": "a",
+        "style": {
+            "stroke": "rgb(237, 61, 158)"
+        },
+        "target": "cb6ccc17-a266-4c5c-b559-4591f39352f1",
         "targetHandle": null,
         "type": "smoothstep"
     },
     {
         "data": {
-            "label": "DA1"
+            "k": 1,
+            "k_as": 1,
+            "k_c": 1,
+            "k_ds": 1,
+            "k_elh": 1,
+            "label": "GT",
+            "n": 1,
+            "parallel_comp": []
         },
         "dtype": "node",
-        "equipementId": "40c49cbc-99d0-4fe1-834a-c7e738debb4f",
-        "id": "350c15dd-634d-42db-9855-0ea9ab5db6f9",
+        "equipementId": "ca4658c6-81f4-4e83-8221-7d38a5ee99e6",
+        "id": "cb6ccc17-a266-4c5c-b559-4591f39352f1",
         "metaData": {
-            "command": "Western",
-            "department": "Insma",
+            "command": "West",
+            "department": "Dept1",
             "equipmentCode": "",
             "equipmentName": "",
-            "shipCategory": "Destroyer",
-            "shipClass": "Talwar",
-            "shipName": "Talwar 1"
+            "shipCategory": "Cat1",
+            "shipClass": "Class1",
+            "shipName": "Ship 1"
         },
         "position": {
-            "x": 51,
-            "y": 51
+            "x": 51.11111116409302,
+            "y": 51.11111116409302
         },
-        "shipName": "Talwar 1",
+        "shipName": "Ship 1",
         "style": {
-            "background": "#DCFFC0",
-            "border": "1px solid black",
-            "borderColor": "black",
-            "borderRadius": "5px",
-            "padding": "20px"
-        },
-        "type": "component"
-    },
-    {
-        "data": {
-            "label": "DA1"
-        },
-        "dtype": "node",
-        "equipementId": "40c49cbc-99d0-4fe1-834a-c7e738debb4f",
-        "id": "d7cd2f54-0e27-4b08-bcea-673f6a4d1010",
-        "metaData": {
-            "command": "Western",
-            "department": "Insma",
-            "equipmentCode": "",
-            "equipmentName": "",
-            "shipCategory": "Destroyer",
-            "shipClass": "Talwar",
-            "shipName": "Talwar 1"
-        },
-        "position": {
-            "x": 51,
-            "y": 51
-        },
-        "shipName": "Talwar 1",
-        "style": {
-            "background": "#DCFFC0",
-            "border": "1px solid black",
-            "borderColor": "black",
-            "borderRadius": "5px",
-            "padding": "20px"
-        },
-        "type": "component"
-    },
-    {
-        "data": {
-            "label": "DA2"
-        },
-        "dtype": "node",
-        "equipementId": "e73722f3-5308-4360-8fda-245c32316ac5",
-        "id": "d600c5e6-bf45-4921-ba6f-2adc4adf0faf",
-        "metaData": {
-            "command": "Western",
-            "department": "Insma",
-            "equipmentCode": "",
-            "equipmentName": "",
-            "shipCategory": "Destroyer",
-            "shipClass": "Talwar",
-            "shipName": "Talwar 1"
-        },
-        "position": {
-            "x": 101,
-            "y": 101
-        },
-        "shipName": "Talwar 1",
-        "style": {
-            "background": "#DCFFC0",
-            "border": "1px solid black",
-            "borderColor": "black",
-            "borderRadius": "5px",
-            "padding": "20px"
-        },
-        "type": "component"
-    },
-    {
-        "data": {
-            "label": "DA3"
-        },
-        "dtype": "node",
-        "equipementId": "58fbc475-a353-4a93-b9d9-e284e4c71335",
-        "id": "90a84791-70af-418f-9942-16fb521bd1f9",
-        "metaData": {
-            "command": "Western",
-            "department": "Insma",
-            "equipmentCode": "",
-            "equipmentName": "",
-            "shipCategory": "Destroyer",
-            "shipClass": "Talwar",
-            "shipName": "Talwar 1"
-        },
-        "position": {
-            "x": 151,
-            "y": 151
-        },
-        "shipName": "Talwar 1",
-        "style": {
-            "background": "#DCFFC0",
-            "border": "1px solid black",
-            "borderColor": "black",
-            "borderRadius": "5px",
-            "padding": "20px"
-        },
-        "type": "component"
-    },
-    {
-        "data": {
-            "label": "DA4"
-        },
-        "dtype": "node",
-        "equipementId": "8b1ec14c-01ae-4928-880b-d003e0f8b52a",
-        "id": "6b0074ed-8695-496f-bb38-90f5732cc29e",
-        "metaData": {
-            "command": "Western",
-            "department": "Insma",
-            "equipmentCode": "",
-            "equipmentName": "",
-            "shipCategory": "Destroyer",
-            "shipClass": "Talwar",
-            "shipName": "Talwar 1"
-        },
-        "position": {
-            "x": 201,
-            "y": 201
-        },
-        "shipName": "Talwar 1",
-        "style": {
-            "background": "#DCFFC0",
-            "border": "1px solid black",
-            "borderColor": "black",
-            "borderRadius": "5px",
-            "padding": "20px"
-        },
-        "type": "component"
-    },
-    {
-        "data": {
-            "label": "AA"
-        },
-        "dtype": "node",
-        "equipementId": "8cf72752-75fe-4c50-839a-9896bc90b380",
-        "id": "a49b82d1-acb2-4a25-8b9e-4b6998df8c07",
-        "metaData": {
-            "command": "AAA",
-            "department": "AAA",
-            "equipmentCode": "",
-            "equipmentName": "",
-            "shipCategory": "AAA",
-            "shipClass": "AAA",
-            "shipName": "AAA"
-        },
-        "position": {
-            "x": 51,
-            "y": 51
-        },
-        "shipName": "AAA",
-        "style": {
-            "background": "#DCFFC0",
+            "background": "rgb(237, 61, 158)",
             "border": "1px solid black",
             "borderColor": "black",
             "borderRadius": "5px",

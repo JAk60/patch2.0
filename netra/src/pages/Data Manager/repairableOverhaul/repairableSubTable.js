@@ -50,7 +50,7 @@ const RepairableSubTable = (props) => {
     while (count <= +numOverhaul) {
       sRows.push({
         overhaulNum: count.toString(),
-        runAge: 6000 * count,
+        runAge: 0 ,
         numMaint: 1,
         id: uuid(),
       });

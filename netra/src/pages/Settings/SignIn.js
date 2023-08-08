@@ -132,9 +132,7 @@ const SignIn = (props) => {
             control={<Checkbox style={{ color: '#1c4199' }} checked={keepLogin} onChange={() => { setKeepLogin(!keepLogin) }} name="checkedA" />}
             label="Keep me logged in"
           />
-          <Link className={styles.links} to="/edit_profile">
-            Forgot Password?
-          </Link>
+        
         </div>
         <Link className={styles.links} to="/sign_up">
           Create an Account? Sign Up

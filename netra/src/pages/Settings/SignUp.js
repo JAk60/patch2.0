@@ -119,9 +119,7 @@ const SignUp = () => {
               required
             />
           </div>
-          <div className={styles.flex} style={{ marginLeft: '2%' }}>
-            You can use letters, numbers, periods.
-          </div>
+  
           <div className={styles.flex}>
             <InputBase
               classes={InputClasses}
@@ -164,9 +162,7 @@ const SignUp = () => {
               required
             />
           </div>
-          <div className={styles.flex} style={{ marginLeft: '2%' }}>
-            Use 8 or more characters with a mix of letters, numbers & symbols
-          </div>
+        
           <div className={styles.flex}>
             {/* Level of Access input */}
             <TextField

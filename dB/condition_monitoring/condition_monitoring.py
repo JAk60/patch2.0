@@ -57,7 +57,7 @@ class conditionMonitoring_dB():
                     INSERT INTO sensor_based_data
                         (id, component_id, equipment_id, name, failure_mode_id, frequency, unit,
                         min_value, max_value, data, level, P, F)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 '''
 
                 cursor.execute(insert_sensor_based, sensor_id, component_id, equipment_id, name, failure_mode_id,

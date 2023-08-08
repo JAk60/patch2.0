@@ -175,7 +175,7 @@ const PM = () => {
               <OptiQ
                 option={selectedOption}
                 currQ={currQ}
-                name={currQ.name}
+                name={currQ?.name ||  "risk_target"}
                 questions={getQuestions(selectedOption)}
                 eta={eta}
                 beta={beta}

@@ -20,11 +20,11 @@ const Navigation = () => {
       onMouseLeave={onMouseOutHandler}
     >
       <ul className={classes.nav}>
-        <li className={classes.nav_link}>
+        {/* <li className={classes.nav_link}>
           <Link to='/module_select'>
             <AccountCircleTcon fontSize="large" />
           </Link>
-        </li>
+        </li> */}
         {SideBarData.map((item, index) => {
           return (
             <li key={index} className={classes.nav_link}>

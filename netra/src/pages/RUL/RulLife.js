@@ -276,7 +276,7 @@ const RulLife = () => {
                   )}
                 />
               </div>
-              <div {...getRootProps()}>
+              {/* <div {...getRootProps()}>
                 <input {...getInputProps()} />
                 <Button
                   className={classes.buttons}
@@ -285,7 +285,7 @@ const RulLife = () => {
                 >
                   Upload File
                 </Button>
-              </div>
+              </div> */}
               <div className={styles.importBtnContainer}>
                 <Button
                   className={classes.buttons}

@@ -58,7 +58,7 @@ function ParameterEstimation(props) {
       <AgGridColumn
         colId="beta"
         field="beta"
-        headerName="β"
+        headerName="beta"
         minWidth={200}
         type="number"
         editable={false}
@@ -76,7 +76,7 @@ function ParameterEstimation(props) {
       <AgGridColumn
         colId="eta"
         field="eta"
-        headerName="η-Scale Parameter"
+        headerName="eta"
         minWidth={200}
         type="number"
         editable={false}
@@ -84,7 +84,7 @@ function ParameterEstimation(props) {
       <AgGridColumn
         colId="beta"
         field="beta"
-        headerName="β-Shape Parameter"
+        headerName="beta"
         minWidth={200}
         type="number"
         editable={false}

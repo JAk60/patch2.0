@@ -67,7 +67,7 @@ function App() {
   //     });
   // }
   const [settings, setSettings] = useState(null);
-  const [loggedIn, setLoggedIn] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(true);
   useEffect(() => {
     if (localStorage.getItem("settings")) {
       let settings = JSON.parse(localStorage.getItem("settings"));
