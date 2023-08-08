@@ -12,6 +12,7 @@ const AccessControl = ({ allowedLevels, children }) => {
   const history = useHistory();
 
   const isAllowed = allowedLevels.some((level) => trueLevels.includes(level));
+  console.log(isAllowed);
 
   // If not allowed, redirect to the root route with a state object
   React.useEffect(() => {

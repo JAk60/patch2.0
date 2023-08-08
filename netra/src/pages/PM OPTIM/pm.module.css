@@ -70,3 +70,37 @@
     padding-right:25px;
     margin-left: 1%;
   }
+
+
+
+.noArrows input[type="number"]::-webkit-inner-spin-button,
+.noArrows input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.questions{
+  text-transform: uppercase;
+  padding-bottom: 40px;
+}
+
+.question{
+  margin-bottom: 20px;
+}
+
+
+.optimizationTable {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.optimizationTable th, .optimizationTable td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.optimizationTable th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+}

@@ -1,16 +1,15 @@
-import React,{useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
-import {  Button, Dialog, DialogTitle, DialogContent, DialogActions } from "@material-ui/core";
+import { Button, Dialog, DialogTitle, DialogContent, DialogActions } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import styles from './pm.module.css';
 
-const OptTable = ({ columnDefs, rowData, height,name,setRowData}) => {
+const OptTable = ({ columnDefs, rowData, height, name, setRowData }) => {
   const defaultColumnDefs = [
     { headerName: "Beta", field: "beta", editable: true },
     { headerName: "Eeta", field: "eeta", editable: true },
-    { headerName: "P", field: "p", editable: true },
   ];
   const tableColumnDefs = columnDefs || defaultColumnDefs;
 
@@ -29,19 +28,20 @@ const OptTable = ({ columnDefs, rowData, height,name,setRowData}) => {
   }));
   const [open, setOpen] = useState(false);
   const [tval, setTval] = useState(0);
+  const [tvals, setTvals] = useState([]);
   const [tval90, setTval90] = useState(0);
   const [tval110, setTval110] = useState(0);
-  
+
 
   const classes = useStyles();
   const handleClose = () => {
     setOpen(false); // Close the dialog
     setRowData([])
     window.location.reload();
-    
+
   };
- 
-  const handleT =(event)=>{
+
+  const handleT = (event) => {
     event.preventDefault();
 
     // Include the method value in the answers object
@@ -59,12 +59,18 @@ const OptTable = ({ columnDefs, rowData, height,name,setRowData}) => {
       .then((response) => response.json())
       .then((data) => {
         // Handle the response from the backend
-        console.log(data);
-        setTval(data.t);
-        setTval90(data.t - 0.1 * data.t);
-        setTval110(data.t + 0.1 * data.t);
+        if (name !== "risk_target") {
+          console.log(data);
+          setTval(data.t);
+          setTval90(data.t - 0.1 * data.t);
+          setTval110(data.t + 0.1 * data.t);
+        }
+        else {
+          setTvals(data.t)
+          console.log(tvals)
+        }
         // Set the tableData state with the row data when the form is submitted
-       
+
       })
       .catch((error) => {
         // Handle any errors
@@ -75,7 +81,7 @@ const OptTable = ({ columnDefs, rowData, height,name,setRowData}) => {
 
 
   return (
-    <div className="ag-theme-alpine" style={{ height: height, width: '100%',position: 'relative' }}>
+    <div className="ag-theme-alpine" style={{ height: height, width: '100%', position: 'relative' }}>
       {console.log(rowData)}
       <AgGridReact
         columnDefs={tableColumnDefs}
@@ -90,21 +96,50 @@ const OptTable = ({ columnDefs, rowData, height,name,setRowData}) => {
       ></AgGridReact>
       <Button className={styles.btn} type="submit" variant="contained" color="primary" onClick={handleT}>Submit</Button>
       <Dialog open={open} onClose={handleClose} maxWidth="xs" fullWidth>
-            <div className={classes.dialogContainer}>
-              <DialogTitle className={classes.dialogTitle}>Optimization Result</DialogTitle>
-              <DialogContent className={classes.dialogContent}>
+        <div className={classes.dialogContainer}>
+          <DialogTitle className={classes.dialogTitle}>Optimization Result</DialogTitle>
+          <DialogContent className={classes.dialogContent}>
+            {name === "risk_target" ? (
+              <div>
+                <p>Optimized Time For Maintenance:</p>
+                <table className={styles.optimizationTable}>
+                  <thead>
+                    <tr>
+                      <th>Probability</th> {/* Add the extra column header */}
+                      <th>t</th>
+                      <th>90%</th>
+                      <th>110%</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {tvals.map((t, index) => (
+                      <tr key={index}>
+                        <td>{[.8, .85, .9, .95][index]}</td> {/* Add the extra column values */}
+                        <td>{t.toFixed(4)}</td> {/* Round off to 4 decimal places */}
+                        <td>{(t * 0.9).toFixed(4)}</td> {/* Round off to 4 decimal places */}
+                        <td>{(t * 1.1).toFixed(4)}</td> {/* Round off to 4 decimal places */}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div>
                 <p>Optimized Time For Maintenance: {tval}</p>
                 <p>Lower Bound: {tval90}</p>
                 <p>Upper Bound: {tval110}</p>
-              </DialogContent>
-              <DialogActions>
-                <Button onClick={handleClose} color="primary">
-                  Close
-                </Button>
-              </DialogActions>
-            </div>
-          </Dialog>
-          
+              </div>
+            )}
+
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose} color="primary">
+              Close
+            </Button>
+          </DialogActions>
+        </div>
+      </Dialog>
+
     </div>
   );
 };

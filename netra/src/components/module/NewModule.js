@@ -11,11 +11,11 @@ import styles from "./Module_radio.module.css";
 const StepperStyles = makeStyles((theme) => ({
   root: {
     width: "100%",
-    background:'#ebebed',
+    background: '#ebebed',
     borderRadius: '5px',
-    height:"18px",
-    justifyContent:'space-between',
-    padding:'15px'
+    height: "50px",
+    justifyContent: 'space-between',
+    padding: '15px'
   },
   active: {
     color: '#000',
@@ -27,7 +27,7 @@ const CustomIconStyles = makeStyles({
     display: 'flex',
     height: 22,
     alignItems: 'center',
-    padding:'10px',
+    padding: '10px',
   },
   active: {
     // position: 'relative',
@@ -41,18 +41,18 @@ const CustomIconStyles = makeStyles({
     // boxShadow: '3px 3px 10px 0px rgba(0,0,0,0.3)',
     height: '25px',
     width: '25px',
-    borderRadius:'50%',
+    borderRadius: '50%',
     boxShadow: '0px 4px 14px 0px rgba(0,0,0,0.2)',
     backgroundColor: '#ffffff',
   },
   circle: {
     height: '25px',
     width: '25px',
-    borderRadius:'50%',
+    borderRadius: '50%',
     boxShadow: '0px 4px 14px 0px rgba(0,0,0,0.2)',
     backgroundColor: '#ffffff',
-},
-  
+  },
+
   completed: {
     position: 'relative',
     backgroundColor: '#00dffe',
@@ -60,7 +60,7 @@ const CustomIconStyles = makeStyles({
     top: '5px',
     width: '15px',
     height: '15px',
-    borderRadius:'50%',
+    borderRadius: '50%',
     zIndex: 1,
     fontSize: 18,
     boxShadow: '3px 3px 10px 0px rgba(0,0,0,0.3)',
@@ -74,10 +74,10 @@ function CustomIcon(props) {
   return (
     <div
       className={classes.root}
-    > 
+    >
       {completed ? <div className={classes.circle}><div className={classes.completed} /></div> : <div className={classes.circle}><div className={clsx({
         [classes.active]: active,
-      })}/></div>}
+      })} /></div>}
     </div>
   );
 }
@@ -111,10 +111,17 @@ export default function NewModule() {
   debugger;
   return (
     <div className={styles.module}>
-      <Stepper classes={classes}  activeStep={activeStep}  connector={null}>
+      <Stepper classes={classes} activeStep={activeStep} connector={null}>
         {steps.map((label) => (
           <Step key={label} >
-            <StepLabel StepIconComponent={CustomIcon}>{label}</StepLabel>
+            <StepLabel
+              StepIconComponent={CustomIcon}
+              TypographyProps={{
+                classes: { root: styles.boldLabel }, // Apply the class to the Typography component
+              }}
+            >
+              {label}
+            </StepLabel>
           </Step>
         ))}
       </Stepper>

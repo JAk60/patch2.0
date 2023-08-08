@@ -11,7 +11,6 @@ import MuiAlert from "@material-ui/lab/Alert";
 
 
 const Home = (props) => {
-
   const [anchorEl, setAnchorEl] = React.useState(null);
   const location = useLocation();
   const message = location.state?.message;

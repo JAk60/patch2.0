@@ -493,6 +493,7 @@ def prev_rul():
         data = request.get_json()
         parameter = data['parameter']
         equipment_id = data['equipment_id']
+        print(parameter, equipment_id)
         rul_class = RUL_dB()
         result = rul_class.get_prev_rul(parameter, equipment_id)
         return result

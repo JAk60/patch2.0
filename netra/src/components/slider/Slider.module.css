@@ -18,3 +18,9 @@
   box-shadow: 7px 13px 14px -8px #777;
   display: flex;
 }
+
+
+.slider-labels {
+  font-weight: bold !important;
+  font-size: 18px !important;
+}

@@ -15,7 +15,7 @@ class RUL_dB:
         try:
             RUL_dB.component_id = equipment_id
             sql = "SELECT TOP 1 * FROM parameter_data WHERE name = ? and component_id= ?  ORDER BY date DESC"
-            cursor.execute(sql, p, RUL_dB.component_id)
+            cursor.execute(sql, p, equipment_id)
             RUL_dB.parameter = p
             data = cursor.fetchone()
 
@@ -71,40 +71,61 @@ class RUL_dB:
 
     
     def rul_code(self):
-        data = request.get_json()
+        req_data = request.get_json()
         query = '''
             SELECT operating_hours, value from parameter_data WHERE name = ? and component_id = ?
         '''
         cursor.execute(query, RUL_dB.parameter, RUL_dB.component_id)
-        dataset = cursor.fetchall()
-        print(data)
+        data = cursor.fetchall()
+        data = [(x, float(y)) for x, y in data]
 
         # Extract input values from JSON data
-        vc = data['vc']  # Sensor value
-        t0 = data['t0']  # Current time
-        tp = data['tp']
-        p = data['p']
-        f = data['f']
-        confidence = data['confidence']
-
+        vc = req_data['vc']  # Sensor value
+        t0 = req_data['t0']  # Current time
+        tp = req_data['tp']
+        p = req_data['p']
+        f = req_data['f']
+        confidence = req_data['confidence']
+        print(req_data)
+        threshold = f
         idx = []
+        result = []
+        current_group = []
 
-        for t, sensor_val in dataset:
-            first_threshold = float(sensor_val) > f
-            if first_threshold:
-                idx.append(float(t))
-        datattf = np.array(idx)
+        for item in data:
+            if not current_group or item[0] >= current_group[-1][0]:
+                current_group.append(item)
+            else:
+                result.append(current_group)
+                current_group = [item]
+
+        # Append the last group
+        result.append(current_group)
+
+        # Store operating hours where threshold is first reached in another array
+        operating_hours_threshold_reached = []
+
+        for group in result:
+            threshold_reached = False
+            for item in group:
+                if item[1] >= threshold:
+                    operating_hours_threshold_reached.append(item[0])
+                    threshold_reached = True
+                    break
+
 
         # # Estimate beta and eta using MLE
-        params = weibull_min.fit(datattf, floc=0)
+        print(data)
+        print(operating_hours_threshold_reached)
+        params = weibull_min.fit(operating_hours_threshold_reached, floc=0)
 
         # # Unpack the estimated parameters
         beta, eta = params[0], params[2]
-        print(beta, eta)
 
         def rul(eta, beta, t0):
+            print(beta, eta, t0)
             reliability = math.e ** -((t0 / eta) ** beta)
-            print(confidence, reliability)
+            print(math.e ** -((t0 / eta) ** beta))
             t = (eta * (-math.log(reliability * confidence)) ** (1 / beta)) - t0
             return t
 

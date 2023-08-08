@@ -7,8 +7,11 @@ const useStyles = makeStyles({
   root: {
     width: "98%",
     background: "#ebebeb",
-    height: 50,
+    height: 70,
     borderRadius: 5,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center"
   },
 });
 
@@ -57,7 +60,9 @@ export default function StageSlider(props) {
   return (
     <div className={classes.slider}>
       <div className={styles.root}>
-        <PrettoSlider value={def} step={null} marks={props.marks} disabled />
+        <PrettoSlider value={def} step={null} marks={props.marks} classes={{
+            markLabel: classes["slider-labels"], // Apply the class to the labels
+          }}disabled />
       </div>
     </div>
   );

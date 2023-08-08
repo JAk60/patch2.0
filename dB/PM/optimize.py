@@ -210,17 +210,20 @@ def optimizer():
 
 
     elif method == 'risk_target':
+        data = request.get_json()
         beta = float(data.get('beta'))
         eeta = float(data.get('eeta'))
-        p = float(data.get('p'))
-        t = sp.Symbol('t')
-        equation = sp.Eq(1 - sp.exp(-((t / eeta) ** beta)) - p, 0)
-        solutions = sp.nsolve(equation, t, 1.0, solver='mnewton')
+        p_values = [0.8, 0.85, 0.9, 0.95]
+        t_values = []
 
-        print(solutions)
+        for p in p_values:
+            t = sp.Symbol('t')
+            equation = sp.Eq(1 - sp.exp(-((t / eeta) ** beta)) - p, 0)
+            solution = sp.nsolve(equation, t, 1.0, solver='mnewton')
+            t_values.append(float(solution))
 
         return jsonify({
-            't': float(solutions)
+            't': t_values
         })
 
 

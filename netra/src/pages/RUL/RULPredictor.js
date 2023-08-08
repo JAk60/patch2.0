@@ -22,6 +22,7 @@ const RULPredictor = ({ prevRul,P,F }) => {
 
   const handlePredict = async () => {
     const { operating_hours } = prevRul;
+    console.log(operating_hours)
     const requestData = {
       vc: parseFloat(sensorValue),
       t0: parseFloat(T0),

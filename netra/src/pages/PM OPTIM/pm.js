@@ -79,7 +79,7 @@ const PM = () => {
         });
         break;
       case "option6":
-        setCurrQ({ columns: ["beta", "eeta", "p"], name: "risk_target" });
+        setCurrQ({ columns: ["beta", "eeta"], name: "risk_target" });
         break;
       case "option7":
         setCurrQ({
@@ -88,7 +88,7 @@ const PM = () => {
         });
         break;
       default:
-        setCurrQ({ columns: ["beta", "eeta", "p"], name: "risk_target" });
+        setCurrQ({ columns: ["beta", "eeta"], name: "risk_target" });
         break;
     }
   };

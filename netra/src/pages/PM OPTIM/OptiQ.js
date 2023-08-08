@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { TextField, Button, Dialog, DialogTitle, DialogContent, DialogActions, Grid } from "@material-ui/core";
+import { TextField, Button, Dialog, DialogTitle, DialogContent, DialogActions, Grid, Typography } from "@material-ui/core";
 import styles from "./pm.module.css";
 import OptTable from "./OptTable";
 import GroupTable from "./GroupTable";
@@ -9,6 +9,8 @@ const OptiQ = ({ questions, name, currQ, option, eta, beta }) => {
   });
   const [tableData, setTableData] = useState([]);
   const [n, setN] = useState(0);
+
+  console.log(currQ.columns)
 
   const handleAnswerChange = (event, questionId) => {
     const { value } = event.target;
@@ -39,17 +41,18 @@ const OptiQ = ({ questions, name, currQ, option, eta, beta }) => {
     <Grid container spacing={2} className={styles.mainOp}>
       <Grid item xs={12} md={6}>
         <div className={styles.userSele}>
-          <h3>{name} Questions</h3>
+        <Typography variant="h5" className={styles.questions}>Questions</Typography>
           <form>
             {questions?.map((question) => (
-              <div key={question.id}>
-                <label>{question.text}</label>
+              <div key={question.id} className={styles.question}>
+                <Typography variant="h6">{question.text}</Typography>
                 {question.type === "text" && (
                   <TextField
                     type="number"
                     value = {  question.id === "eeta" ? eta : question.id === "beta" ? beta : answers[question.id] || ""}
                     onChange={(event) => handleAnswerChange(event, question.id)}
                     required={question.required}
+                    className={`${styles.answer} ${styles.noArrows}`}
                   />
                 )}
                 {/* Add other input types (e.g., select, radio, checkbox) based on the question type */}
