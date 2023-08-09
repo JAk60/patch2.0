@@ -10,6 +10,7 @@ import {
   Checkbox,
   InputAdornment,
   IconButton,
+  Typography,
   TextField, // Import the TextField component
 } from '@material-ui/core';
 import { Link } from 'react-router-dom';
@@ -101,11 +102,11 @@ const SignUp = () => {
     <div className={styles.container}>
       <Paper className={styles.SignUpPaper} elevation={5}>
         <div>
-          <img src='/netra-logo.png' width={60} height={60} alt="Netra Logo" />
+        <img src='/netra-logo.png' width={100} height={100} />
           <div className={styles.netra}>NETRA</div>
         </div>
         <div style={{ textAlign: 'center' }}>
-          <h4 style={{ margin: 0 }}>Create Your Account</h4>
+          <Typography variant='h4'>Sign in to your account</Typography>
         </div>
         <form id={styles.signUpForm}>
           <div className={styles.flex}>
@@ -116,6 +117,7 @@ const SignUp = () => {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               placeholder='Username'
+              className={styles.inputField}
               required
             />
           </div>
@@ -128,6 +130,7 @@ const SignUp = () => {
               onChange={(e) => setPassword(e.target.value)}
               id='password'
               placeholder='Password'
+              className={styles.inputField}
               endAdornment={
                 <InputAdornment position="end">
                   <IconButton
@@ -148,6 +151,7 @@ const SignUp = () => {
               onChange={(e) => setConfirmPassword(e.target.value)}
               id='confirm-password'
               placeholder='Confirm Password'
+              className={styles.inputField}
               endAdornment={
                 <InputAdornment position="end">
                   <IconButton
@@ -171,7 +175,7 @@ const SignUp = () => {
               value={accessLevel}
               onChange={(e) => setAccessLevel(e.target.value)}
               variant="outlined"
-              className={styles.accessLevelInput}
+              className={`${styles.accessLevelInput} ${styles.inputField}`}
             >
               <option value="L1">Ship HoD</option>
               <option value="L2">Ship CO</option>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import styles from './SignIn.module.css'
-import { Paper, makeStyles, InputBase, Button, FormControlLabel, Checkbox } from '@material-ui/core'
+import { Paper, makeStyles, InputBase, Button, FormControlLabel, Checkbox, Typography } from '@material-ui/core'
 import { Link } from 'react-router-dom';
 import CustomizedSnackbars from '../../ui/CustomSnackBar';
 import { useDispatch } from 'react-redux';
@@ -29,7 +29,7 @@ const SignIn = (props) => {
 
   useEffect(() => {
     if (props.loggedIn) {
-      props.history.push('/')
+      props.history.push('/maintenance_allocation/add_data')
     }
   })
 
@@ -113,12 +113,13 @@ const SignIn = (props) => {
       </Snackbar>
       <Paper className={styles.SignInPaper} elevation={5}>
         <div>
-          <img src='/netra-logo.png' width={60} height={60} />
+          <img src='/netra-logo.png' width={100} height={100} />
           <div className={styles.netra}>NETRA</div>
         </div>
         <div style={{ textAlign: 'center' }}>
-          <h5 style={{ margin: 0 }}>Welcome</h5>
-          <h6 style={{ margin: 0 }}>Sign in to your account</h6>
+          {/* <h5 style={{ margin: 0 }}>Welcome</h5> */}
+          <Typography variant='h5'>Welcome</Typography>
+          <Typography variant='h6'>Sign in to your account</Typography>
         </div>
         <InputBase classes={InputClasses} name='username' value={userName} onChange={(e) => setUserName(e.target.value)} id='username' placeholder='User Name' required />
         <InputBase classes={InputClasses} name='password' id='password' value={password} onChange={(e) => setPassword(e.target.value)} placeholder='Password' type='text' required />
