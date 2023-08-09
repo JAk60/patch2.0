@@ -571,10 +571,10 @@ class TaskReliability:
 
 
 
-    def json_paraser(self, APP_ROOT):
+    def json_paraser(self, APP_ROOT, phase_duration, curr_task):
         target_path = os.path.join(APP_ROOT, 'tasks/')
         files = os.listdir(target_path)
-        file = files[0]
+        file = f"{curr_task}.json"
         target = os.path.join(APP_ROOT, 'tasks/' + file)
         json_data = json.load(open(target))
 
@@ -735,8 +735,10 @@ class TaskReliability:
 
             groups = sorted_data
 
-            total_phase = 2
-            phase_duration = [20,30]
+            print("groups",groups)
+
+            phase_duration = phase_duration
+            total_phase = len(phase_duration)
 
             def equipment_reliability(alpha, bta, t, D):
                 NT1 = alpha * (t ** bta)
@@ -786,6 +788,7 @@ class TaskReliability:
                 return (group_equi_rel , max_rel_equip , [group_equip[i] for i in max_rel_equip_index], Rel, max_rel_equip_index)
 
             final_results = []
+            total_reliblity = 1
             for i in range(len(groups)):
                 for j in range(total_phase):
 
@@ -793,14 +796,16 @@ class TaskReliability:
                     # print ("for phase", j, " and group", i,"Reliability of all equipments is", group_equi_rel, "Reliability of the preferred equipments are",
                     #         max_rel_equip, "preferred equipments are", group_equip,"Group Reliability is", Rel)
                     final_results.append(f"For phase {j+1} and group {i+1}, "
-                         f"preferred equipments are {group_equip}, "
-                         f"Group Reliability is {Rel}")
+                         f"preferred equipments are {group_equip}")
+                    total_reliblity *=Rel
 
                     try:
                         for k in max_rel_equip_index:
                             groups[i][j+1][4][k] += phase_duration[j]
                     except:
                         pass
+
+            final_results.append(f"Total Reliability: {total_reliblity}")
 
                 
             return jsonify({

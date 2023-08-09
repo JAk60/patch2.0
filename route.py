@@ -570,8 +570,11 @@ def fetch_eta_beta():
 
 @app.route('/phase_json', methods=['POST'])
 def phasejson():
+    data = request.json
+    durations = data["duration"]
+    curr_task = data["task_name"]
     inst = TaskReliability()
-    return inst.json_paraser(APP_ROOT)
+    return inst.json_paraser(APP_ROOT, durations, curr_task)
 
 
 if __name__ == '__main__':

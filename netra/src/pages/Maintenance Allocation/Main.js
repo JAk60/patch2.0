@@ -6,7 +6,7 @@ import AccessControl from "../Home/AccessControl";
 
 const Main = (props) => {
   return (
-    <AccessControl allowedLevels={['L1', 'L5']}>
+    <AccessControl allowedLevels={['L1', 'L5', 'L6']}>
       <div className={styles.container}>
         <div className={styles.homeLinks}>
           <Link to="/maintenance_allocation/create">

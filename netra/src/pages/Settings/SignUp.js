@@ -182,6 +182,7 @@ const SignUp = () => {
               <option value="L3">Fleet/ Command HQ</option>
               <option value="L4">NHQ</option>
               <option value="L5">Admin/ INSMA</option>
+              <option value="L6">OEM</option>
             </TextField>
           </div>
         </form>

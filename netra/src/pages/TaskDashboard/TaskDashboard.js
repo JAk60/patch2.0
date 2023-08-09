@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 // import styles from "./TaskDashboard.module.css";
-import {  InputLabel, TextField,makeStyles,Button, Switch, Input,Paper, Typography} from "@material-ui/core";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip,Label,ReferenceLine } from 'recharts';
+import { InputLabel, TextField, makeStyles, Button, Switch, Input, Paper, Typography } from "@material-ui/core";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Label, ReferenceLine } from 'recharts';
 // import { arr,arr2 } from "./data";
 import {
   MuiPickersUtilsProvider,
@@ -33,9 +33,9 @@ import { taskActions } from "../../store/taskStore";
 import { useDispatch, useSelector } from "react-redux";
 import AccessControl from "../Home/AccessControl";
 const MissionData = (props) => {
-  
+
   return (
-    
+
     <div className={styles.missionData} style={props.style}>
       <div className={styles.target}>
         <svg
@@ -117,6 +117,7 @@ const TaskDashboard = () => {
   const [rowCompState, setCompRows] = useState([]);
   const dispatch = useDispatch();
   const [phasedata, setPhaseData] = useState([]);
+  const [missionDurations, setMissionDurations] = useState([]);
   let ParallelIds = [];
   const setParallelIds = (d) => {
     console.log("This is shit!!")
@@ -129,7 +130,7 @@ const TaskDashboard = () => {
   const [missionOption, setmissionOption] = useState([]);
   const [taskShipNameOption, settaskShipNameOption] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [recommedation,setRecommedation]= useState([])
+  const [recommedation, setRecommedation] = useState([])
 
   const [selectedTaskShip, setselectedTaskShip] = useState("");
   const [selectedTaskName, setselectedTaskName] = useState("");
@@ -175,6 +176,14 @@ const TaskDashboard = () => {
   };
 
   console.table(phasedata, "phase data")
+  const onCellValueChanged = (params) => {
+    if (params.colDef.field === "duration") {
+      const updatedDurations = missionDurations.map((duration, index) =>
+        index === params.node.rowIndex ? params.newValue : duration
+      );
+      setMissionDurations(updatedDurations);
+    }
+  };
   const ImportColumns = [
     <AgGridColumn
       field="missionType"
@@ -196,13 +205,14 @@ const TaskDashboard = () => {
       editable={true}
     />,
     <AgGridColumn
-    field="duration"
-    headerName="Duration"
-    headerTooltip="Duration"
-    type="number"
-    width={100}
-    editable={true}
-  />,
+      field="duration"
+      headerName="Duration"
+      headerTooltip="Duration"
+      type="number"
+      width={100}
+      editable={true}
+      onCellValueChanged={onCellValueChanged}
+    />,
   ];
 
   const compColumns = [
@@ -261,65 +271,65 @@ const TaskDashboard = () => {
 
   const taskTableColumns = [
     <AgGridColumn
-    field="shipName"
-    headerName="Ship Name"
-    headerTooltip="Ship Name"
-    width={100}
-    editable={true}
-  />,
+      field="shipName"
+      headerName="Ship Name"
+      headerTooltip="Ship Name"
+      width={100}
+      editable={true}
+    />,
     <AgGridColumn
-    field="taskName"
-    headerName="Task Name"
-    headerTooltip="Task Name"
-    width={100}
-    editable={true}
-  />,
-  <AgGridColumn
-    field="rel"
-    headerName="Reliability"
-    headerTooltip="Reliability"
-    type="number"
-    width={100}
-    editable={true}
-  />
+      field="taskName"
+      headerName="Task Name"
+      headerTooltip="Task Name"
+      width={100}
+      editable={true}
+    />,
+    <AgGridColumn
+      field="rel"
+      headerName="Reliability"
+      headerTooltip="Reliability"
+      type="number"
+      width={100}
+      editable={true}
+    />
   ];
   const taskMissionTableColumns = [
     <AgGridColumn
-    field="shipName"
-    headerName="Ship Name"
-    headerTooltip="Ship Name"
-    width={100}
-    editable={true}
-  />,
+      field="shipName"
+      headerName="Ship Name"
+      headerTooltip="Ship Name"
+      width={100}
+      editable={true}
+    />,
     <AgGridColumn
-    field="taskName"
-    headerName="Task Name"
-    headerTooltip="Task Name"
-    width={100}
-    editable={true}
-  />,
-  <AgGridColumn
-    field="missionType"
-    headerName="Mission Type"
-    headerTooltip="Mission Type"
-    width={100}
-    editable={true}
-  />,
-  <AgGridColumn
-    field="ComponentMission"
-    headerName="Component/Mission Type"
-    headerTooltip="Component/Mission Type"
-    width={100}
-    editable={true}
-  />,
-  <AgGridColumn
-    field="rel"
-    headerName="Reliability"
-    headerTooltip="Reliability"
-    type="number"
-    width={100}
-    editable={true}
-  />
+      field="taskName"
+      headerName="Task Name"
+      headerTooltip="Task Name"
+      width={100}
+      editable={true}
+    />,
+    <AgGridColumn
+      field="missionType"
+      headerName="Mission Type"
+      headerTooltip="Mission Type"
+      width={100}
+      editable={true}
+    />,
+    <AgGridColumn
+      field="ComponentMission"
+      headerName="Component/Mission Type"
+      headerTooltip="Component/Mission Type"
+      width={100}
+      editable={true}
+    />,
+    <AgGridColumn
+      field="rel"
+      headerName="Reliability"
+      headerTooltip="Reliability"
+      type="number"
+      width={100}
+      editable={true}
+    />
   ];
 
 
@@ -331,39 +341,46 @@ const TaskDashboard = () => {
         missionType: "",
       },
     ];
+    setMissionDurations(prevDurations => [...prevDurations, defaultRow.duration]);
     gridApi.applyTransaction({
       add: defaultRow,
     });
   };
-const updateCompTable = () => {
-  fetch('/phase_json', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ /* Your request data goes here */ })
-  })
-    .then(response => response.json())
-    .then(data => {
-      // Handle the response data here
-      console.log(data);
-      setRecommedation(data)
+  const updateCompTable = () => {
+    console.log(missionDurations);
+    console.log(currentTaskName)
+    const durationNums = missionDurations.map(str => parseFloat(str));
+    fetch('/phase_json', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        "duration": durationNums,
+        "task_name": currentTaskName
+      })
     })
-    .catch(error => {
-      // Handle errors here
-      console.error('Error:', error);
-    });
-  
-  let allRowData = [];
-  gridApi.forEachNode((node) => allRowData.push(node.data));
-  let newData = []
-  allRowData.forEach((d) => {
-    newData.push({"missionType": d["missionType"], "component": "", "id": d["id"]})
-  })
-  setCompRows(newData)
-  // debugger;
-}
-console.log(recommedation);
+      .then(response => response.json())
+      .then(data => {
+        // Handle the response data here
+        console.log(data);
+        setRecommedation(data)
+      })
+      .catch(error => {
+        // Handle errors here
+        console.error('Error:', error);
+      });
+
+    let allRowData = [];
+    gridApi.forEachNode((node) => allRowData.push(node.data));
+    let newData = []
+    allRowData.forEach((d) => {
+      newData.push({ "missionType": d["missionType"], "component": "", "id": d["id"] })
+    })
+    setCompRows(newData)
+    // debugger;
+  }
+  console.log(recommedation);
   const saveTaskReset = () => {
     debugger;
     let allRowData = [];
@@ -373,10 +390,12 @@ console.log(recommedation);
     //logic for saving it to local data
     let mainData = []
     allRowData.forEach((d, index) => {
-      mainData.push({"id": allRowData[index]["id"], "missionType": allRowData[index]["missionType"], 
-      "duration": allRowData[index]["duration"], "components": allRowCData[index]["components"]})
+      mainData.push({
+        "id": allRowData[index]["id"], "missionType": allRowData[index]["missionType"],
+        "duration": allRowData[index]["duration"], "components": allRowCData[index]["components"]
+      })
     })
-    let localData = {'shipName': currentShip, "taskName": currentTaskName, "data": mainData} 
+    let localData = { 'shipName': currentShip, "taskName": currentTaskName, "data": mainData }
     console.log(localData)
     setPhaseData(mainData)
     localStorage.setItem(`${currentShip}_${currentTaskName}`, JSON.stringify(localData));
@@ -458,7 +477,7 @@ console.log(recommedation);
         setentireData(data)
         // settaskOption(taskNames);      
         settaskShipNameOption(task_ship_name)
-        dispatch(taskActions.onLoad({'taskData': data}))
+        dispatch(taskActions.onLoad({ 'taskData': data }))
       });
   }, []);
 
@@ -473,28 +492,28 @@ console.log(recommedation);
       minHeight: "40px",
       boxShadow: "2px 3px 5px -1px rgba(0,0,0,0.2)",
     },
-    inputRoot:{
+    inputRoot: {
       width: '100%'
     },
   });
-  const classes=dropDownStyle();
-  let arr=[]
-  let arr2=[]
-  for(let i=0;i<50;i++){
+  const classes = dropDownStyle();
+  let arr = []
+  let arr2 = []
+  for (let i = 0; i < 50; i++) {
     // const maxDate = Date.now();
     // const timestamp = Math.floor(Math.random() * maxDate);
-    arr=[...arr,{name:new Date(new Date(2021, 1, 1).getTime() + Math.random() * (new Date(2022, 1, 1).getTime() - new Date(2021, 1, 1).getTime())).toISOString().slice(0,10),uv:Math.floor(Math.random() * (80 - 30 + 1)) + 30}]
+    arr = [...arr, { name: new Date(new Date(2021, 1, 1).getTime() + Math.random() * (new Date(2022, 1, 1).getTime() - new Date(2021, 1, 1).getTime())).toISOString().slice(0, 10), uv: Math.floor(Math.random() * (80 - 30 + 1)) + 30 }]
 
-    arr2=[...arr2,{name:new Date(new Date(2021, 1, 1).getTime() + Math.random() * (new Date(2022, 1, 1).getTime() - new Date(2021, 1, 1).getTime())).toISOString().slice(0,10),uv:Math.floor(Math.random() * (75 - 30 + 1)) + 30}]
+    arr2 = [...arr2, { name: new Date(new Date(2021, 1, 1).getTime() + Math.random() * (new Date(2022, 1, 1).getTime() - new Date(2021, 1, 1).getTime())).toISOString().slice(0, 10), uv: Math.floor(Math.random() * (75 - 30 + 1)) + 30 }]
   }
-  const [showGraph,setShowGraph]=useState(false);
+  const [showGraph, setShowGraph] = useState(false);
 
   const onResetMissionHandler = () => {
     localStorage.clear();
 
   }
 
-  const onSubmitHandler = () => { 
+  const onSubmitHandler = () => {
     // setMission(0);
     let storedData = Object.entries(localStorage)
     // storedData.pop()
@@ -503,13 +522,15 @@ console.log(recommedation);
       debugger;
       let name = ele[0]
       // let elemData = JSON.parse(ele[0])
-      if(name != "settings"){
+      if (name != "settings") {
         fData.push(JSON.parse(ele[1]))
       }
     })
-    if(fData.length > 0){
-      const data = {"taskName": currentTaskName, "shipName": currentShip,
-       "selectedMission": missionName.current.value, "missionProfileData": missionProfileData}
+    if (fData.length > 0) {
+      const data = {
+        "taskName": currentTaskName, "shipName": currentShip,
+        "selectedMission": missionName.current.value, "missionProfileData": missionProfileData
+      }
       fetch("/task_rel", {
         method: "POST",
         body: JSON.stringify(fData),
@@ -526,28 +547,32 @@ console.log(recommedation);
           d.forEach((tData) => {
             let perMData = tData["data"]
             perMData.forEach((pTD) => {
-              taskMissionData.push({"shipName": tData["shipName"], "taskName": tData["taskName"], 
-              "rel": Math.round(pTD["rel"]*100)/100, "missionType": pTD["missionName"], "ComponentMission": pTD["missionName"]})
+              taskMissionData.push({
+                "shipName": tData["shipName"], "taskName": tData["taskName"],
+                "rel": Math.round(pTD["rel"] * 100) / 100, "missionType": pTD["missionName"], "ComponentMission": pTD["missionName"]
+              })
               let componentRelData = pTD["comp_rel"]
               componentRelData.forEach((cTD) => {
-                taskMissionData.push({"shipName": tData["shipName"], "taskName": tData["taskName"], 
-              "rel": Math.round(cTD["rel"]*100)/100, "missionType": pTD["missionName"], "ComponentMission": cTD["compName"]})
+                taskMissionData.push({
+                  "shipName": tData["shipName"], "taskName": tData["taskName"],
+                  "rel": Math.round(cTD["rel"] * 100) / 100, "missionType": pTD["missionName"], "ComponentMission": cTD["compName"]
+                })
               })
             })
-            taskData.push({"shipName": tData["shipName"], "taskName": tData["taskName"], "rel": Math.round(tData["rel"]*100)/100})
+            taskData.push({ "shipName": tData["shipName"], "taskName": tData["taskName"], "rel": Math.round(tData["rel"] * 100) / 100 })
           });
           settaskTableData(taskData)
           settaskMissionTableData(taskMissionData)
         });
-    }else{
+    } else {
       // alert("Please add Mission Definition!!")
       setSnackBarMessage({
         severity: "error",
         message: "Please Select data and Enter Mission Phase Data!!",
         showSnackBar: true,
-      });      
+      });
     }
-    
+
   };
 
   const onHandleSnackClose = () => {
@@ -566,23 +591,25 @@ console.log(recommedation);
     let tt = entireData;
     let sNames = tt["task_ship_name"][value[0]["name"]]
     let fNames = []
-    sNames.forEach(s => fNames.push({"name": s}))
+    sNames.forEach(s => fNames.push({ "name": s }))
     settaskOption(fNames)
     // setselectedTaskShip(value)
-    dispatch(taskActions.updateCurrentShip({'ship': value[0].name}))
+    dispatch(taskActions.updateCurrentShip({ 'ship': value[0].name }))
   }
   const TaskNameChange = (event, value) => {
-    dispatch(taskActions.updateCurrentTask({'task': value[0].name}))
+    dispatch(taskActions.updateCurrentTask({ 'task': value[0].name }))
   }
-  const minThreshold=45
-  const maxThreshold=60
+  const minThreshold = 45
+  const maxThreshold = 60
+
+  
   return (
-    <AccessControl allowedLevels={['L1', 'L2', 'L3','L4','L5']}>
-    <MuiPickersUtilsProvider utils={MomentUtils}>
-      <Navigation />
-      <div className={styles.body}>
-        <div className={styles.mprofile}>
-          {/* <div style={{ width: "300px" }}>
+    <AccessControl allowedLevels={['L1', 'L2', 'L3', 'L4', 'L5']}>
+      <MuiPickersUtilsProvider utils={MomentUtils}>
+        <Navigation />
+        <div className={styles.body}>
+          <div className={styles.mprofile}>
+            {/* <div style={{ width: "300px" }}>
             <InputLabel
               style={{
                 fontWeight: "bold",
@@ -598,92 +625,92 @@ console.log(recommedation);
            
             
           </div> */}
-          <div style={{ width: "300px" }}>
-            <InputLabel
-              style={{
-                fontWeight: "bold",
-                color: "black",
-                fontSize: "16px",
-                marginBottom: "10px",
-              }}
-            >
-              Ship Name
-            </InputLabel>
+            <div style={{ width: "300px" }}>
+              <InputLabel
+                style={{
+                  fontWeight: "bold",
+                  color: "black",
+                  fontSize: "16px",
+                  marginBottom: "10px",
+                }}
+              >
+                Ship Name
+              </InputLabel>
 
-            <Autocomplete
-            classes={classes}
-              multiple
-              id="tags-standard"
-              options={taskShipNameOption}
-              getOptionLabel={(option) => option.name}
-              onChange = {shipNameChange}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  InputProps={{...params.InputProps, disableUnderline: true}}
-                  variant="standard"
+              <Autocomplete
+                classes={classes}
+                multiple
+                id="tags-standard"
+                options={taskShipNameOption}
+                getOptionLabel={(option) => option.name}
+                onChange={shipNameChange}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    InputProps={{ ...params.InputProps, disableUnderline: true }}
+                    variant="standard"
                   // label="Multiple values"
                   // placeholder="Favorites"
-                />
-              )}
-            />
-            
-          </div>
-          <div style={{ width: "300px" }}>
-            <InputLabel
-              style={{
-                fontWeight: "bold",
-                color: "black",
-                fontSize: "16px",
-                marginBottom: "10px",
-              }}
-            >
-              Task Name
-            </InputLabel>
+                  />
+                )}
+              />
 
-            <Autocomplete
-            classes={classes}
-              multiple
-              id="tags-standard"
-              options={taskOption}
-              getOptionLabel={(option) => option.name}
-              onChange = {TaskNameChange}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  InputProps={{...params.InputProps, disableUnderline: true}}
-                  variant="standard"
+            </div>
+            <div style={{ width: "300px" }}>
+              <InputLabel
+                style={{
+                  fontWeight: "bold",
+                  color: "black",
+                  fontSize: "16px",
+                  marginBottom: "10px",
+                }}
+              >
+                Task Name
+              </InputLabel>
+
+              <Autocomplete
+                classes={classes}
+                multiple
+                id="tags-standard"
+                options={taskOption}
+                getOptionLabel={(option) => option.name}
+                onChange={TaskNameChange}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    InputProps={{ ...params.InputProps, disableUnderline: true }}
+                    variant="standard"
                   // label="Multiple values"
                   // placeholder="Favorites"
-                />
-              )}
-            />
-            
-          </div>
-          
+                  />
+                )}
+              />
 
-          <div style={{ width: "300px" }}>
-            <InputLabel
-              style={{
-                fontWeight: "bold",
-                color: "black",
-                fontSize: "16px",
-                marginBottom: "10px",
-              }}
-            >
-               Mission Name
-            </InputLabel>
+            </div>
 
-            {/* <TextField ref={missionName}   id="outlined-basic" variant="outlined" /> */}
-            <input
-            className={styles.missionName}
-                    ref={missionName}
-                    // onChange={onHandleChange}
-                  ></input>
-            
-          </div>
 
-          {/* <div style={{ width: "300px" }}>
+            <div style={{ width: "300px" }}>
+              <InputLabel
+                style={{
+                  fontWeight: "bold",
+                  color: "black",
+                  fontSize: "16px",
+                  marginBottom: "10px",
+                }}
+              >
+                Mission Name
+              </InputLabel>
+
+              {/* <TextField ref={missionName}   id="outlined-basic" variant="outlined" /> */}
+              <input
+                className={styles.missionName}
+                ref={missionName}
+              // onChange={onHandleChange}
+              ></input>
+
+            </div>
+
+            {/* <div style={{ width: "300px" }}>
             <InputLabel
               style={{
                 fontWeight: "bold",
@@ -702,103 +729,104 @@ console.log(recommedation);
             
           </div> */}
 
-          <Button
-            variant="contained"
-            color="primary"
-            style={{
-              marginTop: "2rem",
-            }}
-            onClick={onResetMissionHandler} 
-          >
-            Reset Temp. Missions
-          </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              style={{
+                marginTop: "2rem",
+              }}
+              onClick={onResetMissionHandler}
+            >
+              Reset Temp. Missions
+            </Button>
 
-          <Button
-            variant="contained"
-            color="primary"
-            style={{
-              marginTop: "2rem",
-            }}
-            onClick={onSubmitHandler} 
-          >
-            Calculate Reliability
-          </Button>
-         
-          
-        </div>
-        
-        <div>
-          <div className={styles.table}>
-          <Table
-        columnDefs={ImportColumns}
-        setGrid={setGridApi}
-        gridApi={gridApi}
-        rowData={rowState}
-        tableUpdate={updateFinalRowData}
-        tableSize= {180}
-      />
-          </div>
-      <div className={styles.tableFooter}>
-      <Button
-              variant="contained"
-              startIcon={<AddIcon />}
-              color="secondary"
-              onClick={() => updateCompTable()}
-            >
-              Update Mission Component Reliability
-            </Button>
             <Button
-            style={{ marginLeft: 10 }}
               variant="contained"
-              startIcon={<AddIcon />}
-              color="secondary"
-              onClick={() => AddRow()}
+              color="primary"
+              style={{
+                marginTop: "2rem",
+              }}
+              onClick={onSubmitHandler}
             >
-              Add Row
+              Calculate Reliability
             </Button>
-            <Button
-              style={{ marginLeft: 10 }}
-              variant="contained"
-              startIcon={<DeleteIcon />}
-              color="secondary"
-              onClick={() => deleteRows()}
-            >
-              Delete Rows
-            </Button>
+
+
           </div>
+
           <div>
-      <Paper elevation={3} style={{ padding: '20px', margin: '80px', maxWidth: '1900px' ,width: "100%" }}>
-        <Typography variant="h6"></Typography>
-        {recommedation?.res?.map((item, index) => (
-          <Typography key={index} style={{ margin: '10px 0' }}>
-            {item}
-          </Typography>
-        ))}
-      </Paper>
-    </div>
-        
-      <div className={styles.table}>
-      <Table
-        columnDefs={compColumns}
-        setGrid={setGridCompApi}
-        gridApi={gridCompApi}
-        rowData={rowCompState}
-        tableUpdate={updateFinalRowData}
-        tableSize= {180}
-      />
-      </div>
-      <div className={styles.tableFooter}>
-            <Button
-              variant="contained"
-              startIcon={<AddIcon />}
-              color="secondary"
-              style={{ marginRight: 10 }}
-              onClick={() => saveTaskReset()}
-            >
-              Save this Task for Comparison
-            </Button>
-          </div>
-        {/* <div style={{ width: "300px" }}>
+            <div className={styles.table}>
+              <Table
+                columnDefs={ImportColumns}
+                setGrid={setGridApi}
+                gridApi={gridApi}
+                rowData={rowState}
+                tableUpdate={updateFinalRowData}
+                tableSize={180}
+              />
+            </div>
+            <div className={styles.tableFooter}>
+              <Button
+                variant="contained"
+                startIcon={<AddIcon />}
+                color="secondary"
+                onClick={() => updateCompTable()}
+              >
+                Update Mission Component Reliability
+              </Button>
+              <Button
+                style={{ marginLeft: 10 }}
+                variant="contained"
+                startIcon={<AddIcon />}
+                color="secondary"
+                onClick={() => AddRow()}
+              >
+                Add Row
+              </Button>
+              <Button
+                style={{ marginLeft: 10 }}
+                variant="contained"
+                startIcon={<DeleteIcon />}
+                color="secondary"
+                onClick={() => deleteRows()}
+              >
+                Delete Rows
+              </Button>
+            </div>
+            <div>
+              {recommedation.res ? <Paper elevation={3} style={{ padding: '20px', margin: '80px'}}>
+                <Typography variant="h6"></Typography>
+                {recommedation?.res?.map((item, index) => (
+                  <Typography key={index} style={{ margin: '10px 0' }} variant="h5">
+                    {item.replace(/\b\w/g, match => match.toUpperCase())}
+                  </Typography>
+                ))}
+              </Paper> : ""
+              }
+            </div>
+
+            <div className={styles.table}>
+              <Table
+                columnDefs={compColumns}
+                setGrid={setGridCompApi}
+                gridApi={gridCompApi}
+                rowData={rowCompState}
+                tableUpdate={updateFinalRowData}
+                tableSize={180}
+              />
+            </div>
+            <div className={styles.tableFooter}>
+              <Button
+                variant="contained"
+                startIcon={<AddIcon />}
+                color="secondary"
+                style={{ marginRight: 10 }}
+                onClick={() => saveTaskReset()}
+              >
+                Save this Task for Comparison
+              </Button>
+            </div>
+            {/* <div style={{ width: "300px" }}>
         <TextField id="outlined-basic" label="Mission Name" 
         variant="outlined" defaultValue="Temp Mission" />
           </div>
@@ -822,38 +850,38 @@ console.log(recommedation);
           <TextField id="outlined-basic" label="Action Duration" 
           variant="outlined" defaultValue="0" type="number" />
           </div> */}
-        
-        </div>
 
-        <div className={styles.table}>
-          {taskTableData.length > 0 && 
-          <Table columnDefs={taskTableColumns}
-          setGrid={setGriTaskdApi}
-          gridApi={gridTaskApi}
-          rowData={taskTableData}
-          tableUpdate={() => {}}
-          tableSize= {180}>
-            </Table>}
-        </div>
+          </div>
 
-        <div className={styles.table}>
-          {taskTableData.length > 0 && 
-          <Table columnDefs={taskMissionTableColumns}
-          setGrid={setgridMissionApi}
-          gridApi={gridMissionApi}
-          rowData={taskMissionTableData}
-          tableUpdate={() => {}}
-          tableSize= {290}></Table>}
+          <div className={styles.table}>
+            {taskTableData.length > 0 &&
+              <Table columnDefs={taskTableColumns}
+                setGrid={setGriTaskdApi}
+                gridApi={gridTaskApi}
+                rowData={taskTableData}
+                tableUpdate={() => { }}
+                tableSize={180}>
+              </Table>}
+          </div>
+
+          <div className={styles.table}>
+            {taskTableData.length > 0 &&
+              <Table columnDefs={taskMissionTableColumns}
+                setGrid={setgridMissionApi}
+                gridApi={gridMissionApi}
+                rowData={taskMissionTableData}
+                tableUpdate={() => { }}
+                tableSize={290}></Table>}
+          </div>
+
         </div>
-        
-      </div>
-      {SnackBarMessage.showSnackBar && (
-        <CustomizedSnackbars
-          message={SnackBarMessage}
-          onHandleClose={onHandleSnackClose}
-        />
-      )}
-    </MuiPickersUtilsProvider>
+        {SnackBarMessage.showSnackBar && (
+          <CustomizedSnackbars
+            message={SnackBarMessage}
+            onHandleClose={onHandleSnackClose}
+          />
+        )}
+      </MuiPickersUtilsProvider>
     </AccessControl>
   );
 };

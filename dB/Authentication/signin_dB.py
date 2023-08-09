@@ -15,7 +15,7 @@ class SignInDB:
                     id INT PRIMARY KEY IDENTITY(1,1),
                     username VARCHAR(500) UNIQUE,
                     password VARCHAR(500),
-                    level NVARCHAR(2) CHECK (level IN ('L1', 'L2', 'L3', 'L4', 'L5'))
+                    level NVARCHAR(2) CHECK (level IN ('L1', 'L2', 'L3', 'L4', 'L5', 'L6'))
                 )
             '''
             cursor.execute(actual_sql)

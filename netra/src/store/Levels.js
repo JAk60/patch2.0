@@ -6,6 +6,7 @@ const initialState = {
   L3: false,
   L4: false,
   L5: false,
+  L6: false,
 };
 
 const levelsSlice = createSlice({

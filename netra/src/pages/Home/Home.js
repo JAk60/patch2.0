@@ -19,13 +19,13 @@ const Home = (props) => {
   const trueLevels = Object.keys(level).filter((key) => level[key] === true);
 
   const featureAccess = [
-    { feature: "SystemConfiguration", levels: ["L1", "L5"] },
+    { feature: "SystemConfiguration", levels: ["L1", "L5", "L6"] },
     { feature: "ReliabilityDashboard", levels: ["L1", "L2", "L3", "L4", "L5"] },
     { feature: "MonitoringDashboard", levels: ["L1", "L2", "L5"] },
     { feature: "TaskReliabilityDashboard", levels: ["L1", "L2", "L4","L3", "L5"] },
     { feature: "TaskConfiguration", levels: ["L1", "L5"] },
     { feature: "ViewUpdateData", levels: ["L1"] },
-    { feature: "MaintenanceAllocation", levels: ["L1", "L5"] },
+    { feature: "MaintenanceAllocation", levels: ["L1", "L5", "L6"] },
     { feature: "TimeToFailureRUL", levels: ["L1", "L5"] },
   ];
 
@@ -67,6 +67,7 @@ const Home = (props) => {
       L3: false,
       L4: false,
       L5: false,
+      L6: false,
     }));
   };
 
@@ -75,16 +76,6 @@ const Home = (props) => {
   };
   return (
     <div className={styles.container}>
-      <Snackbar open={open} autoHideDuration={6000} onClose={handleMClose}>
-        <MuiAlert
-          elevation={6}
-          variant="filled"
-          onClose={handleMClose}
-          severity="warning"
-        >
-          {message}
-        </MuiAlert>
-      </Snackbar>
       <div className={styles.homeNav}>
         <Link onClick={() => Logout()}>
           <i class="fas fa-sign-out-alt"></i>Logout
@@ -127,7 +118,7 @@ const Home = (props) => {
                 <div className={styles.circleIcon}>
                   <i className="far fa-chart-bar"></i>
                 </div>
-                {featureObj.feature}
+                {featureObj.feature != "TimeToFailureRUL" ? featureObj.feature .replace(/([A-Z])/g, ' $1') : "Time To Faliure / RUL"}
               </Link>
             );
           }

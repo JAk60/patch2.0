@@ -3,6 +3,8 @@ from flask import jsonify, request
 from scipy.stats import weibull_min
 import numpy as np
 import math
+from mpmath import mp
+
 
 class RUL_dB:
     parameter = None
@@ -121,14 +123,14 @@ class RUL_dB:
 
         # # Unpack the estimated parameters
         beta, eta = params[0], params[2]
+        mp.dps = 50
 
         def rul(eta, beta, t0):
             eta = round(eta, 2) 
             beta = round(beta, 2) 
             t0 = round(t0, 2) 
             print(beta, eta, t0)
-            reliability = math.e ** -((t0 / eta) ** beta)
-            print(math.e ** -((t0 / eta) ** beta))
+            reliability = mp.exp(-((t0 / eta) ** beta))
             t = (eta * (-math.log(reliability * confidence)) ** (1 / beta)) - t0
             return t
 
