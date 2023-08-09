@@ -25,13 +25,14 @@ const InputStyles = makeStyles({
   }
 });
 
+
 const SignIn = (props) => {
 
-  useEffect(() => {
+
     if (props.loggedIn) {
-      props.history.push('/maintenance_allocation/add_data')
+      props.history.push('/')
     }
-  })
+    
 
   const location = useLocation();
   const message = location.state?.message;
@@ -93,7 +94,11 @@ const SignIn = (props) => {
           // props.history.push('/')
         })
         .catch(error => {
-          console.error('Error:', error);
+          setSnackBarMessage({
+            severity: "error",
+            message: "Enter Correct Login details",
+            showSnackBar: true,
+          })
         });
     }
     else {

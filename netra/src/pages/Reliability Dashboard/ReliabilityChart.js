@@ -7,7 +7,8 @@ import {
   YAxis,
   Cell,
   Legend,
-  Tooltip
+  Tooltip,
+  ReferenceLine
 } from "recharts";
 
 const ReliabilityChart = ({ data }) => {
@@ -30,7 +31,7 @@ const ReliabilityChart = ({ data }) => {
   console.log("jjjk",[...referenceData,...data]);
   return (
     <ResponsiveContainer height="90%" width={'100%'} debounce={50}>
-      <BarChart data={[...referenceData,...data]} layout="horizontal" >
+      <BarChart data={[...data]} layout="horizontal" >
         <Tooltip/>
         <YAxis type="number" domain={[0, 100]} tick={{fontSize: 10}}/>
         <XAxis
@@ -49,6 +50,7 @@ const ReliabilityChart = ({ data }) => {
           })}
         </Bar>)
         })}
+         <ReferenceLine y={90} stroke="red" strokeDasharray="5 5" />
         <Legend/>
       </BarChart>
     </ResponsiveContainer>

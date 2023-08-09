@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import styles from "./Home.module.css";
-import {  Menu, MenuItem } from "@material-ui/core";
+import { Menu, MenuItem } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import { userActions } from "../../store/ApplicationVariable";
-import { useDispatch } from "react-redux";
-import { useLocation } from 'react-router-dom';
+import { useDispatch, useSelector } from "react-redux";
+import { useLocation } from "react-router-dom";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
-
+import { resetLevels } from "../../store/Levels";
 
 
 const Home = (props) => {
@@ -15,6 +15,32 @@ const Home = (props) => {
   const location = useLocation();
   const message = location.state?.message;
   const [open, setOpen] = React.useState(!!message); // Set open state based on the presence of the message
+  const level = useSelector((state) => state.LevelsData);
+  const trueLevels = Object.keys(level).filter((key) => level[key] === true);
+
+  const featureAccess = [
+    { feature: "SystemConfiguration", levels: ["L1", "L5"] },
+    { feature: "ReliabilityDashboard", levels: ["L1", "L2", "L3", "L4", "L5"] },
+    { feature: "MonitoringDashboard", levels: ["L1", "L2", "L5"] },
+    { feature: "TaskReliabilityDashboard", levels: ["L1", "L2", "L4","L3", "L5"] },
+    { feature: "TaskConfiguration", levels: ["L1", "L5"] },
+    { feature: "ViewUpdateData", levels: ["L1"] },
+    { feature: "MaintenanceAllocation", levels: ["L1", "L5"] },
+    { feature: "TimeToFailureRUL", levels: ["L1", "L5"] },
+  ];
+
+  const featurePaths = {
+    SystemConfiguration: "/system_config",
+    ReliabilityDashboard: "/rDashboard",
+    MonitoringDashboard: "/CDashboard",
+    TaskReliabilityDashboard: "/TaskDashboard",
+    TaskConfiguration: "/dnd",
+    ViewUpdateData: "/view_data",
+    MaintenanceAllocation: "/maintenance_allocation",
+    TimeToFailureRUL: "/rul",
+  };
+
+  console.log("level", level, trueLevels);
 
   const handleMClose = () => {
     setOpen(false);
@@ -22,7 +48,7 @@ const Home = (props) => {
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
-  
+
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -31,21 +57,31 @@ const Home = (props) => {
       props.history.push("/sign_in");
     }
   });
+  const dispatch = useDispatch();
   const Logout = () => {
     props.setLoggedIn(false);
     props.history.push("/sign_in");
+    dispatch(resetLevels({
+      L1: false,
+      L2: false,
+      L3: false,
+      L4: false,
+      L5: false,
+    }));
   };
-  
-  const dispatch = useDispatch();
-  const resetUserSelection=()=>{
-    dispatch(
-      userActions.onReset()
-    )
-  }
+
+  const resetUserSelection = () => {
+    dispatch(userActions.onReset());
+  };
   return (
     <div className={styles.container}>
       <Snackbar open={open} autoHideDuration={6000} onClose={handleMClose}>
-        <MuiAlert elevation={6} variant="filled" onClose={handleMClose} severity="warning">
+        <MuiAlert
+          elevation={6}
+          variant="filled"
+          onClose={handleMClose}
+          severity="warning"
+        >
           {message}
         </MuiAlert>
       </Snackbar>
@@ -79,54 +115,24 @@ const Home = (props) => {
         </Menu>
       </div>
       <div className={styles.homeLinks}>
-        <Link to="/system_config" onClick={resetUserSelection}>
-          <div className={styles.circleIcon}>
-            <i class="fas fa-cog"></i>
-          </div>
-          System Configuration
-        </Link>
-        <Link to="/rDashboard" onClick={resetUserSelection}>
-          <div className={styles.circleIcon}>
-            <i class="far fa-chart-bar"></i>
-          </div>
-          Reliability Dashboard
-        </Link>
-        <Link to="/CDashboard" onClick={resetUserSelection}>
-          <div className={styles.circleIcon}>
-            <i class="far fa-chart-bar"></i>
-          </div>
-          Monitoring Dashboard
-        </Link>
-        <Link to="/TaskDashboard" onClick={resetUserSelection}>
-          <div className={styles.circleIcon}>
-            <i class="far fa-chart-bar"></i>
-          </div>
-          Mission Reliability Dashboard
-        </Link>
-        <Link to="/dnd" onClick={resetUserSelection}>
-          <div className={styles.circleIcon}>
-            <i class="far fa-chart-bar"></i>
-          </div>
-          Mission Configuration
-        </Link>
-        <Link to="/view_data" onClick={resetUserSelection}>
-          <div className={styles.circleIcon}>
-            <i class="fas fa-database"></i>
-          </div>
-          View/Update Data
-        </Link>
-        <Link to="/maintenance_allocation" onClick={resetUserSelection}>
-          <div className={styles.circleIcon}>
-            <i class="fas fa-microchip"></i>
-          </div>
-          Maintenance Allocation
-        </Link>
-        <Link to="/rul" onClick={resetUserSelection}>
-          <div className={styles.circleIcon}>
-            <i class="fas fa-microchip"></i>
-          </div>
-          Time To Failure/RUL
-        </Link>
+        {featureAccess.map((featureObj) => {
+           const isAllowed = featureObj.levels.some(level => trueLevels.includes(level));
+          if (isAllowed) {
+            return (
+              <Link
+                key={featureObj.feature}
+                to={featurePaths[featureObj.feature]}
+                onClick={resetUserSelection}
+              >
+                <div className={styles.circleIcon}>
+                  <i className="far fa-chart-bar"></i>
+                </div>
+                {featureObj.feature}
+              </Link>
+            );
+          }
+          return null;
+        })}
       </div>
       <div className={styles.netra}>
         <img src="/netra-logo-removebg.png" width={200} height={200} />

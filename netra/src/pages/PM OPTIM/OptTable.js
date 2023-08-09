@@ -101,14 +101,14 @@ const OptTable = ({ columnDefs, rowData, height, name, setRowData }) => {
           <DialogContent className={classes.dialogContent}>
             {name === "risk_target" ? (
               <div>
-                <p>Optimized Time For Maintenance:</p>
+                <p>Optimized Time For Maintenance(t):</p>
                 <table className={styles.optimizationTable}>
                   <thead>
                     <tr>
-                      <th>Probability</th> {/* Add the extra column header */}
+                      <th>Risk Level</th> {/* Add the extra column header */}
                       <th>t</th>
-                      <th>90%</th>
-                      <th>110%</th>
+                      <th>Lower Bound</th>
+                      <th>Upper Bound</th>
                     </tr>
                   </thead>
                   <tbody>
