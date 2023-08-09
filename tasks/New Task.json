@@ -19,7 +19,7 @@
         "source": "266a3be0-7ecf-4651-814b-67e1117212c9",
         "sourceHandle": "a",
         "style": {
-            "stroke": "rgb(201, 221, 15)"
+            "stroke": "rgb(184, 40, 204)"
         },
         "target": "08b8c5c0-bd5d-42f5-b0c6-1e642d13fe06",
         "targetHandle": null,
@@ -32,34 +32,42 @@
         "source": "266a3be0-7ecf-4651-814b-67e1117212c9",
         "sourceHandle": "a",
         "style": {
-            "stroke": "rgb(201, 221, 15)"
+            "stroke": "rgb(184, 40, 204)"
         },
         "target": "db296ff2-30b4-4db4-be5d-a4faffc6f575",
         "targetHandle": null,
         "type": "smoothstep"
     },
     {
+        "animated": false,
         "dtype": "edge",
         "id": "a05de074-796c-4600-b451-3ced09a1c578",
         "source": "266a3be0-7ecf-4651-814b-67e1117212c9",
         "sourceHandle": "a",
+        "style": {
+            "stroke": "rgb(184, 40, 204)"
+        },
         "target": "ce20b918-9fbb-43dd-a27a-7f10c7f5e52b",
         "targetHandle": null,
         "type": "smoothstep"
     },
     {
         "data": {
-            "k": 0,
-            "k_as": 0,
-            "k_c": 0,
-            "k_ds": 0,
-            "k_elh": 0,
+            "k": 1,
+            "k_as": 3,
+            "k_c": 2,
+            "k_ds": 3,
+            "k_elh": 2,
             "label": "DA1",
-            "n": 2,
+            "n": 3,
             "parallel_comp": [
                 {
                     "label": "DA2",
                     "value": "db296ff2-30b4-4db4-be5d-a4faffc6f575"
+                },
+                {
+                    "label": "DA3",
+                    "value": "ce20b918-9fbb-43dd-a27a-7f10c7f5e52b"
                 }
             ]
         },
@@ -81,7 +89,7 @@
         },
         "shipName": "Talwar 1",
         "style": {
-            "background": "rgb(201, 221, 15)",
+            "background": "rgb(184, 40, 204)",
             "border": "1px solid black",
             "borderColor": "black",
             "borderRadius": "5px",
@@ -91,14 +99,18 @@
     },
     {
         "data": {
-            "k": 0,
-            "k_as": 0,
-            "k_c": 0,
-            "k_ds": 0,
-            "k_elh": 0,
+            "k": 1,
+            "k_as": 3,
+            "k_c": 2,
+            "k_ds": 3,
+            "k_elh": 2,
             "label": "DA2",
-            "n": 2,
+            "n": 3,
             "parallel_comp": [
+                {
+                    "label": "DA3",
+                    "value": "ce20b918-9fbb-43dd-a27a-7f10c7f5e52b"
+                },
                 {
                     "label": "DA1",
                     "value": "08b8c5c0-bd5d-42f5-b0c6-1e642d13fe06"
@@ -123,7 +135,7 @@
         },
         "shipName": "Talwar 1",
         "style": {
-            "background": "rgb(201, 221, 15)",
+            "background": "rgb(184, 40, 204)",
             "border": "1px solid black",
             "borderColor": "black",
             "borderRadius": "5px",
@@ -133,7 +145,23 @@
     },
     {
         "data": {
-            "label": "DA3"
+            "k": 1,
+            "k_as": 3,
+            "k_c": 2,
+            "k_ds": 3,
+            "k_elh": 2,
+            "label": "DA3",
+            "n": 3,
+            "parallel_comp": [
+                {
+                    "label": "DA2",
+                    "value": "db296ff2-30b4-4db4-be5d-a4faffc6f575"
+                },
+                {
+                    "label": "DA1",
+                    "value": "08b8c5c0-bd5d-42f5-b0c6-1e642d13fe06"
+                }
+            ]
         },
         "dtype": "node",
         "equipementId": "58fbc475-a353-4a93-b9d9-e284e4c71335",
@@ -153,7 +181,7 @@
         },
         "shipName": "Talwar 1",
         "style": {
-            "background": "#DCFFC0",
+            "background": "rgb(184, 40, 204)",
             "border": "1px solid black",
             "borderColor": "black",
             "borderRadius": "5px",

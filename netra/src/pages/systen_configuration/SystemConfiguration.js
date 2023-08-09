@@ -462,14 +462,14 @@ const SystemConfiguration = (props) => {
               </Button>
             </Route>
             <Route exact path="/system_config/additional_info">
-              <Button
+              {/* <Button
                 onClick={() => nextModule(props.settings)}
                 variant="contained"
                 color="primary"
                 className={SystemClasses.buttons}
               >
                 Next Module
-              </Button>
+              </Button> */}
             </Route>
             <Route exact path="/system_config/additional_info">
               <Button
@@ -477,15 +477,8 @@ const SystemConfiguration = (props) => {
                 variant="contained"
                 color="primary"
                 className={SystemClasses.buttons}
-                onClick={() => {
-                  if (window.confirm("Are you sure you want to skip?")) {
-                    history.push("/phase_manager");
-                  } else {
-                    console.log("Hii");
-                  }
-                }}
               >
-                Skip Stage
+                Next Module
               </Button>
             </Route>
           </Route>

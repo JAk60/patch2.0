@@ -123,6 +123,9 @@ class RUL_dB:
         beta, eta = params[0], params[2]
 
         def rul(eta, beta, t0):
+            eta = round(eta, 2) 
+            beta = round(beta, 2) 
+            t0 = round(t0, 2) 
             print(beta, eta, t0)
             reliability = math.e ** -((t0 / eta) ** beta)
             print(math.e ** -((t0 / eta) ** beta))

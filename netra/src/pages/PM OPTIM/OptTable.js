@@ -106,7 +106,7 @@ const OptTable = ({ columnDefs, rowData, height, name, setRowData }) => {
                   <thead>
                     <tr>
                       <th>Risk Level</th> {/* Add the extra column header */}
-                      <th>t</th>
+                      <th>Optimized Time</th>
                       <th>Lower Bound</th>
                       <th>Upper Bound</th>
                     </tr>

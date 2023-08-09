@@ -1,0 +1,79 @@
+[
+    {
+        "data": {
+            "k": 1,
+            "k_as": 1,
+            "k_c": 2,
+            "k_ds": 1,
+            "k_elh": 1,
+            "label": "Taskify",
+            "n": 1,
+            "parallel_comp": []
+        },
+        "dtype": "node",
+        "id": "77218b64-1bf6-4021-ba7b-95562dfe90d6",
+        "position": {
+            "x": 601.111111164093,
+            "y": 601.111111164093
+        },
+        "shipName": "Ocean Perl",
+        "style": {
+            "background": "rgb(67, 204, 48)",
+            "border": "1px solid black",
+            "borderColor": "black",
+            "borderRadius": "5px",
+            "padding": "20px"
+        },
+        "type": "systemNode"
+    },
+    {
+        "animated": false,
+        "dtype": "edge",
+        "id": "603b7137-4748-44df-95f9-a983c61f26e4",
+        "source": "77218b64-1bf6-4021-ba7b-95562dfe90d6",
+        "sourceHandle": "a",
+        "style": {
+            "stroke": "rgb(65, 226, 221)"
+        },
+        "target": "1ad2ec0f-3358-4730-8501-efa9bfa0baf5",
+        "targetHandle": null,
+        "type": "smoothstep"
+    },
+    {
+        "data": {
+            "k": 1,
+            "k_as": 1,
+            "k_c": 1,
+            "k_ds": 1,
+            "k_elh": 1,
+            "label": "F1",
+            "n": 1,
+            "parallel_comp": []
+        },
+        "dtype": "node",
+        "equipementId": "b20935c1-2482-4dce-848d-8e6cec1c9ca6",
+        "id": "1ad2ec0f-3358-4730-8501-efa9bfa0baf5",
+        "metaData": {
+            "command": "Eagle",
+            "department": "NavyD",
+            "equipmentCode": "",
+            "equipmentName": "",
+            "shipCategory": "Destroyer",
+            "shipClass": "Falcon-1",
+            "shipName": "Ocean Perl"
+        },
+        "position": {
+            "x": 51.11111116409302,
+            "y": 51.11111116409302
+        },
+        "shipName": "Ocean Perl",
+        "style": {
+            "background": "rgb(65, 226, 221)",
+            "border": "1px solid black",
+            "borderColor": "black",
+            "borderRadius": "5px",
+            "padding": "20px"
+        },
+        "type": "component"
+    }
+]

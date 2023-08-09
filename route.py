@@ -31,6 +31,10 @@ import math
 import numpy as np
 # import malotlib.pyplot as plt
 from scipy.stats import weibull_min
+import copy
+import numpy as np
+import pandas as pd
+import math
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 app = Flask(__name__)
@@ -562,6 +566,12 @@ def fetch_eta_beta():
     component_id = data['component_id']
     inst = Data_Manager()
     return inst.fetch_eeta_beta(component_id)
+
+
+@app.route('/phase_json', methods=['POST'])
+def phasejson():
+    inst = TaskReliability()
+    return inst.json_paraser(APP_ROOT)
 
 
 if __name__ == '__main__':

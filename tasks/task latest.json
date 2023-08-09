@@ -1,0 +1,192 @@
+[
+    {
+        "data": {
+            "label": "task latest"
+        },
+        "dtype": "node",
+        "id": "5045defe-9ca4-4b5f-9b86-571ce5ab2c82",
+        "position": {
+            "x": 601.111111164093,
+            "y": 601.111111164093
+        },
+        "shipName": "Ocean Perl",
+        "type": "systemNode"
+    },
+    {
+        "animated": false,
+        "dtype": "edge",
+        "id": "ad63dd63-70b7-45fe-adf6-689be353acff",
+        "source": "5045defe-9ca4-4b5f-9b86-571ce5ab2c82",
+        "sourceHandle": "a",
+        "style": {
+            "stroke": "rgb(20, 209, 124)"
+        },
+        "target": "fb999fa0-ff51-46fc-8fe6-8395b788f937",
+        "targetHandle": null,
+        "type": "smoothstep"
+    },
+    {
+        "animated": false,
+        "dtype": "edge",
+        "id": "1a32172a-7215-4c81-9f39-1840cf31f7e1",
+        "source": "5045defe-9ca4-4b5f-9b86-571ce5ab2c82",
+        "sourceHandle": "a",
+        "style": {
+            "stroke": "rgb(20, 209, 124)"
+        },
+        "target": "10806de6-d657-4a04-93ce-87d36101daf5",
+        "targetHandle": null,
+        "type": "smoothstep"
+    },
+    {
+        "animated": false,
+        "dtype": "edge",
+        "id": "71e8caf3-fe08-4316-b819-e9319fe18b33",
+        "source": "5045defe-9ca4-4b5f-9b86-571ce5ab2c82",
+        "sourceHandle": "a",
+        "style": {
+            "stroke": "rgb(20, 209, 124)"
+        },
+        "target": "683940bc-4863-4234-abb5-c781f027f787",
+        "targetHandle": null,
+        "type": "smoothstep"
+    },
+    {
+        "data": {
+            "k": 1,
+            "k_as": 3,
+            "k_c": 2,
+            "k_ds": 3,
+            "k_elh": 1,
+            "label": "F1",
+            "n": 3,
+            "parallel_comp": [
+                {
+                    "label": "F2",
+                    "value": "10806de6-d657-4a04-93ce-87d36101daf5"
+                },
+                {
+                    "label": "F3",
+                    "value": "683940bc-4863-4234-abb5-c781f027f787"
+                }
+            ]
+        },
+        "dtype": "node",
+        "equipementId": "b20935c1-2482-4dce-848d-8e6cec1c9ca6",
+        "id": "fb999fa0-ff51-46fc-8fe6-8395b788f937",
+        "metaData": {
+            "command": "Eagle",
+            "department": "NavyD",
+            "equipmentCode": "",
+            "equipmentName": "",
+            "shipCategory": "Destroyer",
+            "shipClass": "Falcon-1",
+            "shipName": "Ocean Perl"
+        },
+        "position": {
+            "x": 51.11111116409302,
+            "y": 51.11111116409302
+        },
+        "shipName": "Ocean Perl",
+        "style": {
+            "background": "rgb(20, 209, 124)",
+            "border": "1px solid black",
+            "borderColor": "black",
+            "borderRadius": "5px",
+            "padding": "20px"
+        },
+        "type": "component"
+    },
+    {
+        "data": {
+            "k": 1,
+            "k_as": 3,
+            "k_c": 2,
+            "k_ds": 3,
+            "k_elh": 1,
+            "label": "F2",
+            "n": 3,
+            "parallel_comp": [
+                {
+                    "label": "F3",
+                    "value": "683940bc-4863-4234-abb5-c781f027f787"
+                },
+                {
+                    "label": "F1",
+                    "value": "fb999fa0-ff51-46fc-8fe6-8395b788f937"
+                }
+            ]
+        },
+        "dtype": "node",
+        "equipementId": "c006da4e-2db1-41d6-ba53-da7076ea64a8",
+        "id": "10806de6-d657-4a04-93ce-87d36101daf5",
+        "metaData": {
+            "command": "Eagle",
+            "department": "NavyD",
+            "equipmentCode": "",
+            "equipmentName": "",
+            "shipCategory": "Destroyer",
+            "shipClass": "Falcon-1",
+            "shipName": "Ocean Perl"
+        },
+        "position": {
+            "x": 101.11111116409302,
+            "y": 101.11111116409302
+        },
+        "shipName": "Ocean Perl",
+        "style": {
+            "background": "rgb(20, 209, 124)",
+            "border": "1px solid black",
+            "borderColor": "black",
+            "borderRadius": "5px",
+            "padding": "20px"
+        },
+        "type": "component"
+    },
+    {
+        "data": {
+            "k": 1,
+            "k_as": 3,
+            "k_c": 2,
+            "k_ds": 3,
+            "k_elh": 1,
+            "label": "F3",
+            "n": 3,
+            "parallel_comp": [
+                {
+                    "label": "F2",
+                    "value": "10806de6-d657-4a04-93ce-87d36101daf5"
+                },
+                {
+                    "label": "F1",
+                    "value": "fb999fa0-ff51-46fc-8fe6-8395b788f937"
+                }
+            ]
+        },
+        "dtype": "node",
+        "equipementId": "a681f1d0-9e32-4264-8f9d-b73dac15a0df",
+        "id": "683940bc-4863-4234-abb5-c781f027f787",
+        "metaData": {
+            "command": "Eagle",
+            "department": "NavyD",
+            "equipmentCode": "",
+            "equipmentName": "",
+            "shipCategory": "Destroyer",
+            "shipClass": "Falcon-1",
+            "shipName": "Ocean Perl"
+        },
+        "position": {
+            "x": 151.11111116409302,
+            "y": 151.11111116409302
+        },
+        "shipName": "Ocean Perl",
+        "style": {
+            "background": "rgb(20, 209, 124)",
+            "border": "1px solid black",
+            "borderColor": "black",
+            "borderRadius": "5px",
+            "padding": "20px"
+        },
+        "type": "component"
+    }
+]

@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 // import styles from "./TaskDashboard.module.css";
-import {  InputLabel, TextField,makeStyles,Button, Switch, Input} from "@material-ui/core";
+import {  InputLabel, TextField,makeStyles,Button, Switch, Input,Paper, Typography} from "@material-ui/core";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip,Label,ReferenceLine } from 'recharts';
 // import { arr,arr2 } from "./data";
 import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker,
 } from "@material-ui/pickers";
+
 import { AgGridColumn } from "ag-grid-react";
 import MomentUtils from "@date-io/moment";
 import Navigation from "../../components/navigation/Navigation";
@@ -115,18 +116,20 @@ const TaskDashboard = () => {
   const [rowState, setRows] = useState([]);
   const [rowCompState, setCompRows] = useState([]);
   const dispatch = useDispatch();
+  const [phasedata, setPhaseData] = useState([]);
   let ParallelIds = [];
   const setParallelIds = (d) => {
     console.log("This is shit!!")
     console.log(d)
     ParallelIds = d;
   };
-  
+  console.log(rowCompState, "This is shit!!")
   const [shipOption, setshipOption] = useState([]);
   const [taskOption, settaskOption] = useState([]);
   const [missionOption, setmissionOption] = useState([]);
   const [taskShipNameOption, settaskShipNameOption] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [recommedation,setRecommedation]= useState([])
 
   const [selectedTaskShip, setselectedTaskShip] = useState("");
   const [selectedTaskName, setselectedTaskName] = useState("");
@@ -170,6 +173,8 @@ const TaskDashboard = () => {
   const handleEndDateChange = (date) => {
     setEndDate(date);
   };
+
+  console.table(phasedata, "phase data")
   const ImportColumns = [
     <AgGridColumn
       field="missionType"
@@ -331,6 +336,24 @@ const TaskDashboard = () => {
     });
   };
 const updateCompTable = () => {
+  fetch('/phase_json', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ /* Your request data goes here */ })
+  })
+    .then(response => response.json())
+    .then(data => {
+      // Handle the response data here
+      console.log(data);
+      setRecommedation(data)
+    })
+    .catch(error => {
+      // Handle errors here
+      console.error('Error:', error);
+    });
+  
   let allRowData = [];
   gridApi.forEachNode((node) => allRowData.push(node.data));
   let newData = []
@@ -340,7 +363,7 @@ const updateCompTable = () => {
   setCompRows(newData)
   // debugger;
 }
-
+console.log(recommedation);
   const saveTaskReset = () => {
     debugger;
     let allRowData = [];
@@ -355,6 +378,7 @@ const updateCompTable = () => {
     })
     let localData = {'shipName': currentShip, "taskName": currentTaskName, "data": mainData} 
     console.log(localData)
+    setPhaseData(mainData)
     localStorage.setItem(`${currentShip}_${currentTaskName}`, JSON.stringify(localData));
     gridApi.selectAll();
     const selectedRows = gridApi.getSelectedRows();
@@ -742,6 +766,17 @@ const updateCompTable = () => {
               Delete Rows
             </Button>
           </div>
+          <div>
+      <Paper elevation={3} style={{ padding: '20px', margin: '80px', maxWidth: '1900px' ,width: "100%" }}>
+        <Typography variant="h6"></Typography>
+        {recommedation?.res?.map((item, index) => (
+          <Typography key={index} style={{ margin: '10px 0' }}>
+            {item}
+          </Typography>
+        ))}
+      </Paper>
+    </div>
+        
       <div className={styles.table}>
       <Table
         columnDefs={compColumns}

@@ -41,7 +41,7 @@ const OptiQ = ({ questions, name, currQ, option, eta, beta }) => {
     <Grid container spacing={2} className={styles.mainOp}>
       <Grid item xs={12} md={6}>
         <div className={styles.userSele}>
-        <Typography variant="h5" className={styles.questions}>Questions</Typography>
+        <Typography variant="h5" className={styles.questions}>Parameters</Typography>
           <form>
             {questions?.map((question) => (
               <div key={question.id} className={styles.question}>
