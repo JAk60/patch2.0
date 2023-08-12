@@ -12,6 +12,7 @@ import copy
 import numpy as np
 import pandas as pd
 import math
+from classes.taskRelCode import TaskRelCode
 
 
 class TaskReliability:
@@ -404,12 +405,6 @@ class TaskReliability:
 
         return {"task_rel": fRel, "all_missionRel": all_mission_rel}
 
-
-
-
-
-
-
     def task_multiply_rel(self, data):
         total = 1
         parentK = None
@@ -570,6 +565,9 @@ class TaskReliability:
         return sum_of_average_running
 
 
+    def task_formatter(self, json_data):
+        pass
+
 
     def json_paraser(self, APP_ROOT, phase_duration, curr_task):
         target_path = os.path.join(APP_ROOT, 'tasks/')
@@ -654,7 +652,6 @@ class TaskReliability:
                     'N': data_list_dict['N'][index]
                 }
                 data_list.append(row_dict)
-
             equipment_ids = {}
             running_ages = {}
             for item in json_data:
@@ -714,10 +711,6 @@ class TaskReliability:
             # Convert the grouped dictionary back to a list of lists
             final_result = list(grouped_result.values())
 
-            print(final_result)
-
-
-
             sorted_data = []
             phase_array = [
                 "Harbour",
@@ -732,73 +725,21 @@ class TaskReliability:
                 sorted_data.append(sorted_sublist)
 
 
-
             groups = sorted_data
-
-            print("groups",groups)
 
             phase_duration = phase_duration
             total_phase = len(phase_duration)
 
-            def equipment_reliability(alpha, bta, t, D):
-                NT1 = alpha * (t ** bta)
-                NT2 = alpha * ((t+D) ** bta)
-                NT = NT2 -NT1
-                FR = NT/D
-                rel = math.e ** (-FR * D)
-                return (rel, FR)
-
-
-            def top_equipment_in_group(group_equip, group_alpha, group_bta, group_t, D, k,n):
-                group_equi_rel = []
-                max_rel_equip = []
-                max_rel_equip_index = []
-                group_FR = []
-                for i in range(n):
-                    equip_rel, FR = equipment_reliability(group_alpha[i], group_bta[i], group_t[i], D)
-                    group_equi_rel.append(equip_rel)
-                    group_FR.append(FR)
-                group_equi_rel_copy = copy.deepcopy(group_equi_rel)
-
-                for j in range(k) :
-                    max_rel_equip.append(max(group_equi_rel_copy))
-                    max_rel_equip_index.append(group_equi_rel.index(max(group_equi_rel_copy)))
-                    group_equi_rel_copy.remove(max(group_equi_rel_copy))
-                return (max_rel_equip, max_rel_equip_index, group_equi_rel, group_FR )
-
-
-
-            def group_rel(group_equip, group_alpha, group_bta, group_t, D, k, n):
-                max_rel_equip, max_rel_equip_index, group_equi_rel, FR = top_equipment_in_group(group_equip, group_alpha, group_bta, group_t, D, k,n)
-                if (k<n):
-                    FR_sum = 0
-                    not_max_equip_index = []
-                    for j in range(n):
-                        if j not in max_rel_equip_index:
-                            not_max_equip_index.append(j)
-                    for i in max_rel_equip_index:
-                        FR_sum += FR[i]
-                    lamda_max = FR_sum/k
-
-                    Rel = (math.e ** -(k * lamda_max * D)) * sum((((k * lamda_max * D) ** i) / math.factorial(i)) for i in range(len(not_max_equip_index)))
-                else:
-                    Rel = 1
-                    for i in group_equi_rel:
-                        Rel = Rel * i
-                return (group_equi_rel , max_rel_equip , [group_equip[i] for i in max_rel_equip_index], Rel, max_rel_equip_index)
+            taskrelcode = TaskRelCode()
 
             final_results = []
             total_reliblity = 1
             for i in range(len(groups)):
                 for j in range(total_phase):
-
-                    group_equi_rel, max_rel_equip, group_equip, Rel, max_rel_equip_index = group_rel(groups[i][j][1],groups[i][j][2], groups[i][j][3], groups[i][j][4],phase_duration[i], groups[i][j][5],groups[i][j][6])
-                    # print ("for phase", j, " and group", i,"Reliability of all equipments is", group_equi_rel, "Reliability of the preferred equipments are",
-                    #         max_rel_equip, "preferred equipments are", group_equip,"Group Reliability is", Rel)
+                    group_equi_rel, max_rel_equip, group_equip, Rel, max_rel_equip_index = taskrelcode.group_rel(groups[i][j][1],groups[i][j][2], groups[i][j][3], groups[i][j][4],phase_duration[j], groups[i][j][5],groups[i][j][6])
                     final_results.append(f"For phase {j+1} and group {i+1}, "
                          f"preferred equipments are {group_equip}")
                     total_reliblity *=Rel
-
                     try:
                         for k in max_rel_equip_index:
                             groups[i][j+1][4][k] += phase_duration[j]
@@ -809,7 +750,6 @@ class TaskReliability:
 
                 
             return jsonify({
-              
                "res": final_results
             })
         else:

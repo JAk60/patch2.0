@@ -27,8 +27,6 @@ const InputStyles = makeStyles({
 
 
 const SignIn = (props) => {
-
-
     if (props.loggedIn) {
       props.history.push('/')
     }
@@ -88,9 +86,14 @@ const SignIn = (props) => {
         })
         .then(data => {
           console.log('Success:', data);
-          props.setLoggedIn(true)
+          localStorage.setItem('login', true);
+          const isLoggedIn = localStorage.getItem('login');
+          if(isLoggedIn === 'true'){
+            props.setLoggedIn(true)
+          }
           console.log({ level: data.level, value: true })
           dispatch(setLevel({ level: data.level, value: true }))
+          localStorage.setItem('userData', JSON.stringify({ level: data.level, value: true }));
           // props.history.push('/')
         })
         .catch(error => {
@@ -130,7 +133,7 @@ const SignIn = (props) => {
         <InputBase classes={InputClasses} name='password' id='password' value={password} onChange={(e) => setPassword(e.target.value)} placeholder='Password' type='text' required />
         <Button variant='contained' style={{ backgroundColor: '#1c4199', color: 'white' }} onClick={() => Login()}>Sign In</Button>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '80%' }}>
-          <FormControlLabel
+          {/* <FormControlLabel
             classes={{
               label: InputClasses.label
             }}
@@ -138,7 +141,7 @@ const SignIn = (props) => {
             control={<Checkbox style={{ color: '#1c4199' }} checked={keepLogin} onChange={() => { setKeepLogin(!keepLogin) }} name="checkedA" />}
             label="Keep me logged in"
           />
-        
+         */}
         </div>
         <Link className={styles.links} to="/sign_up">
           Create an Account? Sign Up

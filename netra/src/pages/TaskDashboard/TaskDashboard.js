@@ -421,6 +421,22 @@ const TaskDashboard = () => {
     // console.log(selectedRows);
   };
 
+  const resetGrids = () => {
+    // Reset the main grid
+    if (gridApi) {
+      gridApi.setRowData([]); // Clear the row data
+      gridApi.refreshCells(); // Refresh the grid to clear any cell changes
+    }
+  
+    // Reset the component grid
+    if (gridCompApi) {
+      gridCompApi.setRowData([]); // Clear the row data
+      gridCompApi.refreshCells(); // Refresh the grid to clear any cell changes
+    }
+    
+    // You can add similar logic for other grids if needed
+  };
+
   const handleEventCheck = () => {
     let start = moment(startDate).subtract(1, "day");
     let end = moment(endDate).add(1, "day");
@@ -509,6 +525,8 @@ const TaskDashboard = () => {
   const [showGraph, setShowGraph] = useState(false);
 
   const onResetMissionHandler = () => {
+    resetGrids();
+    setRecommedation([]);
     localStorage.clear();
 
   }
@@ -589,15 +607,29 @@ const TaskDashboard = () => {
   const shipNameChange = (event, value) => {
     debugger;
     let tt = entireData;
-    let sNames = tt["task_ship_name"][value[0]["name"]]
-    let fNames = []
-    sNames.forEach(s => fNames.push({ "name": s }))
-    settaskOption(fNames)
-    // setselectedTaskShip(value)
-    dispatch(taskActions.updateCurrentShip({ 'ship': value[0].name }))
-  }
+    
+    if (tt && tt["task_ship_name"] && Array.isArray(value) && value.length > 0 && value[0].name) {
+      const selectedShipName = value[0].name;
+      console.log("Selected Ship Name:", selectedShipName);
+  
+      if (tt["task_ship_name"].hasOwnProperty(selectedShipName)) {
+        const sNames = tt["task_ship_name"][selectedShipName];
+        const fNames = sNames.map((s) => ({ name: s }));
+        settaskOption(fNames);
+  
+        dispatch(taskActions.updateCurrentShip({ ship: selectedShipName }));
+      } else {
+        console.log(`No task_ship_name data found for ship: ${selectedShipName}`);
+      }
+    } else {
+      console.log("Invalid data or value array in shipNameChange function.");
+    }
+  };
+  
   const TaskNameChange = (event, value) => {
-    dispatch(taskActions.updateCurrentTask({ 'task': value[0].name }))
+    if (Array.isArray(value) && value.length > 0) {
+      dispatch(taskActions.updateCurrentTask({ 'task': value[0].name }));
+    }
   }
   const minThreshold = 45
   const maxThreshold = 60
@@ -689,7 +721,7 @@ const TaskDashboard = () => {
             </div>
 
 
-            <div style={{ width: "300px" }}>
+            {/* <div style={{ width: "300px" }}>
               <InputLabel
                 style={{
                   fontWeight: "bold",
@@ -700,15 +732,13 @@ const TaskDashboard = () => {
               >
                 Mission Name
               </InputLabel>
-
-              {/* <TextField ref={missionName}   id="outlined-basic" variant="outlined" /> */}
               <input
                 className={styles.missionName}
                 ref={missionName}
               // onChange={onHandleChange}
               ></input>
 
-            </div>
+            </div> */}
 
             {/* <div style={{ width: "300px" }}>
             <InputLabel
@@ -737,7 +767,7 @@ const TaskDashboard = () => {
               }}
               onClick={onResetMissionHandler}
             >
-              Reset Temp. Missions
+              Reset Screen
             </Button>
 
             <Button

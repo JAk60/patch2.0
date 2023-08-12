@@ -31,6 +31,7 @@ import PM from "./pages/PM OPTIM/pm";
 import RulLife from './pages/RUL/RulLife';
 import Login from './pages/Home/Login'
 import { useDispatch } from "react-redux";
+import { setLevel } from "./store/Levels";
 
 const theme = createMuiTheme({
   palette: {
@@ -68,11 +69,21 @@ function App() {
   // }
   const [settings, setSettings] = useState(null);
   const [loggedIn, setLoggedIn] = useState(false);
+  const dispatch = useDispatch();
+  console.log("login", loggedIn)
   useEffect(() => {
     if (localStorage.getItem("settings")) {
       let settings = JSON.parse(localStorage.getItem("settings"));
       console.log(settings);
       setSettings(settings);
+    }
+    const storedLoginStatus = localStorage.getItem('login');
+    if (storedLoginStatus === 'true') {
+      setLoggedIn(true);
+    }
+    const storedUserData = JSON.parse(localStorage.getItem('userData'));
+    if (storedUserData) {
+      dispatch(setLevel(storedUserData));
     }
   }, []);
 

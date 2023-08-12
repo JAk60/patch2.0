@@ -59,7 +59,11 @@ const Home = (props) => {
   });
   const dispatch = useDispatch();
   const Logout = () => {
-    props.setLoggedIn(false);
+    localStorage.setItem('login', false);
+    const isLoggedIn = localStorage.getItem('login');
+    if(isLoggedIn === 'false'){
+      props.setLoggedIn(false);
+    }
     props.history.push("/sign_in");
     dispatch(resetLevels({
       L1: false,

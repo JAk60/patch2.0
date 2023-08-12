@@ -16,7 +16,7 @@ class RUL_dB:
     def get_prev_rul(self, p, equipment_id):
         try:
             RUL_dB.component_id = equipment_id
-            sql = "SELECT TOP 1 * FROM parameter_data WHERE name = ? and component_id= ?  ORDER BY date DESC"
+            sql = "SELECT TOP 1 * FROM parameter_data WHERE name = ? and component_id= ?  ORDER BY date"
             cursor.execute(sql, p, equipment_id)
             RUL_dB.parameter = p
             data = cursor.fetchone()
@@ -123,14 +123,13 @@ class RUL_dB:
 
         # # Unpack the estimated parameters
         beta, eta = params[0], params[2]
-        mp.dps = 50
 
         def rul(eta, beta, t0):
             eta = round(eta, 2) 
             beta = round(beta, 2) 
             t0 = round(t0, 2) 
             print(beta, eta, t0)
-            reliability = mp.exp(-((t0 / eta) ** beta))
+            reliability = math.exp(-((t0 / eta) ** beta))
             t = (eta * (-math.log(reliability * confidence)) ** (1 / beta)) - t0
             return t
 
