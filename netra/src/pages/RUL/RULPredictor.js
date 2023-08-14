@@ -25,8 +25,8 @@ const RULPredictor = ({ prevRul,P,F }) => {
     console.log(operating_hours)
     const requestData = {
       vc: parseFloat(sensorValue),
-      t0: parseFloat(T0),
-      tp: parseFloat(operating_hours),
+      // t0: parseFloat(T0),
+      // tp: parseFloat(operating_hours),
       p: parseFloat(P),
       f: parseFloat(F),
       confidence: parseFloat(confidenceLevel),
@@ -65,7 +65,7 @@ const RULPredictor = ({ prevRul,P,F }) => {
             <h1>Time Till Failure/RUL</h1>
         <Grid item xs={12} sm={6} md={4} style={{display: "flex",justifyContent: "center", width: "550px"}}>
           <div>
-            <div>
+            {/* <div>
               <TextField
                 type="number"
                 step="any"
@@ -75,7 +75,7 @@ const RULPredictor = ({ prevRul,P,F }) => {
                 required
                 fullWidth
               />
-            </div>
+            </div> */}
             <div>
               <TextField
                 type="number"
@@ -96,7 +96,7 @@ const RULPredictor = ({ prevRul,P,F }) => {
                 fullWidth
               />
             </div>
-            <div>
+            {/* <div>
               <TextField
                 type="number"
                 step="any"
@@ -106,7 +106,7 @@ const RULPredictor = ({ prevRul,P,F }) => {
                 required
                 fullWidth
               />
-            </div>
+            </div> */}
             <div>
               <TextField
                 type="number"

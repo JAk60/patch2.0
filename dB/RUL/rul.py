@@ -16,7 +16,7 @@ class RUL_dB:
     def get_prev_rul(self, p, equipment_id):
         try:
             RUL_dB.component_id = equipment_id
-            sql = "SELECT TOP 1 * FROM parameter_data WHERE name = ? and component_id= ?  ORDER BY date"
+            sql = "SELECT TOP 1 * FROM parameter_data WHERE name = ? and component_id= ?  ORDER BY date desc"
             cursor.execute(sql, p, equipment_id)
             RUL_dB.parameter = p
             data = cursor.fetchone()
@@ -82,9 +82,9 @@ class RUL_dB:
         data = [(x, float(y)) for x, y in data]
 
         # Extract input values from JSON data
-        vc = req_data['vc']  # Sensor value
-        t0 = req_data['t0']  # Current time
-        tp = req_data['tp']
+        vc = data[-1][0]  # Sensor value
+        t0 = data[-2][1] # Current time
+        tp = data[-1][1]
         p = req_data['p']
         f = req_data['f']
         confidence = req_data['confidence']

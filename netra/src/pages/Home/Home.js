@@ -20,12 +20,12 @@ const Home = (props) => {
 
   const featureAccess = [
     { feature: "SystemConfiguration", levels: ["L1", "L5", "L6"] },
+    { feature: "MissionConfiguration", levels: ["L1", "L5"] },
+    { feature: "MaintenanceAllocation", levels: ["L1", "L5", "L6"] },
+    { feature: "ViewUpdateData", levels: ["L1", "L5"] },
     { feature: "ReliabilityDashboard", levels: ["L1", "L2", "L3", "L4", "L5"] },
     { feature: "MonitoringDashboard", levels: ["L1", "L2", "L5"] },
     { feature: "TaskReliabilityDashboard", levels: ["L1", "L2", "L4","L3", "L5"] },
-    { feature: "TaskConfiguration", levels: ["L1", "L5"] },
-    { feature: "ViewUpdateData", levels: ["L1"] },
-    { feature: "MaintenanceAllocation", levels: ["L1", "L5", "L6"] },
     { feature: "TimeToFailureRUL", levels: ["L1", "L5"] },
   ];
 
@@ -34,7 +34,7 @@ const Home = (props) => {
     ReliabilityDashboard: "/rDashboard",
     MonitoringDashboard: "/CDashboard",
     TaskReliabilityDashboard: "/TaskDashboard",
-    TaskConfiguration: "/dnd",
+    MissionConfiguration: "/dnd",
     ViewUpdateData: "/view_data",
     MaintenanceAllocation: "/maintenance_allocation",
     TimeToFailureRUL: "/rul",
@@ -84,9 +84,9 @@ const Home = (props) => {
         <Link onClick={() => Logout()}>
           <i class="fas fa-sign-out-alt"></i>Logout
         </Link>
-        <Link onClick={() => props.history.push("/configure_history2")}>
+        {/* <Link onClick={() => props.history.push("/configure_history2")}>
           <i class="fas fa-history"></i>Configuration History
-        </Link>
+        </Link> */}
         <Link
           aria-controls="simple-menu"
           aria-haspopup="true"
@@ -130,8 +130,8 @@ const Home = (props) => {
         })}
       </div>
       <div className={styles.netra}>
-        <img src="/netra-logo-removebg.png" width={200} height={200} />
-        <div>NETRA</div>
+        <img src="/netra-logo-removebg.png" width={300} height={400} />
+        <div className={styles.logotxt}>NETRA</div>
       </div>
     </div>
   );

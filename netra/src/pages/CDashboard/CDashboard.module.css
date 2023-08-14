@@ -63,6 +63,6 @@
   
   .blinkingChart {
     animation: blinking 1s infinite;
-    border: 2px solid red;
+    border: 5px solid red;
   }
   

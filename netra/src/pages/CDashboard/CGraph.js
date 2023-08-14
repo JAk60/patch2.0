@@ -44,17 +44,21 @@ const CGraph = ({ graphData, selectedParameterNames }) => {
     return new Date(year, month, day, hour, minute, second);
   };
 
-  const getDomainByUnit = (unit) => {
+  const getDomainByUnit = (unit, minThreshold, maxThreshold) => {
+    const adjustedMin = minThreshold / 1.5;
+    const adjustedMax = maxThreshold * 1.5;
+    console.log(adjustedMin, adjustedMax)
+
     switch (unit) {
       case "RMS":
-        return [0, 1000]; // Example domain for RMS unit
+        return [adjustedMin, adjustedMax];
       case "kg":
-        return [0, 100]; // Example domain for kg unit
+        return [adjustedMin, adjustedMax];
       case "deg C":
-        return [0, 500]; // Example domain for deg C unit
+        return [adjustedMin, adjustedMax];
       // Add more cases for other units as needed
       default:
-        return [0, 100]; // Default domain if unit is not recognized
+        return [adjustedMin, adjustedMax];
     }
   };
   const sortDataByDate = (data) => {
@@ -80,7 +84,7 @@ const CGraph = ({ graphData, selectedParameterNames }) => {
           (sortedData[sortedData.length - 1]?.value ?? 0) > maxThreshold;
 
         const unit = sortedData[0]?.unit;
-        const yDomain = getDomainByUnit(unit);
+        const yDomain = getDomainByUnit(unit, minThreshold, maxThreshold);
 
         return (
           <div className={`${styles.rchart}`} key={param.parameterName}>

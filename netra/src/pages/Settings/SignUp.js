@@ -102,7 +102,7 @@ const SignUp = () => {
     <div className={styles.container}>
       <Paper className={styles.SignUpPaper} elevation={5}>
         <div>
-        <img src='/netra-logo.png' width={100} height={100} />
+        <img src='/netra-logo-removebg.png' height={300} />
           <div className={styles.netra}>NETRA</div>
         </div>
         <div style={{ textAlign: 'center' }}>
