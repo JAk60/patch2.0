@@ -130,7 +130,9 @@ const TaskDashboard = () => {
   const [missionOption, setmissionOption] = useState([]);
   const [taskShipNameOption, settaskShipNameOption] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [recommedation, setRecommedation] = useState([])
+  const [recommedation, setRecommedation] = useState([]);
+  const [totalReliability, setTotalReliability] = useState(null);
+
 
   const [selectedTaskShip, setselectedTaskShip] = useState("");
   const [selectedTaskName, setselectedTaskName] = useState("");
@@ -187,8 +189,8 @@ const TaskDashboard = () => {
   const ImportColumns = [
     <AgGridColumn
       field="missionType"
-      headerName="Mission Type"
-      headerTooltip="Mission Type"
+      headerName="Phase"
+      headerTooltip="Phase"
       cellEditor="agSelectCellEditor"
       checkboxSelection={true}
       cellEditorParams={{
@@ -218,8 +220,8 @@ const TaskDashboard = () => {
   const compColumns = [
     <AgGridColumn
       field="missionType"
-      headerName="Mission Type"
-      headerTooltip="Mission Type"
+      headerName="Phase"
+      headerTooltip="Phase"
       cellEditor="agSelectCellEditor"
       checkboxSelection={true}
       cellEditorParams={{
@@ -237,13 +239,13 @@ const TaskDashboard = () => {
     />,
     <AgGridColumn
       field="component"
-      headerName="Select Component for Mission"
-      headerTooltip="Select Component for Mission"
+      headerName="Select Component for Phase"
+      headerTooltip="Select Component for Phase"
       // cellEditor="agSelectCellEditor"
       cellEditorFramework={RenderMultipleComponent}
       cellEditorParams={{
         setParallelIds: setParallelIds,
-        label: "Select Component for Mission",
+        label: "Select Component for Phase",
         isMultiple: true,
         currentTask: selectedTaskName
       }}
@@ -286,9 +288,16 @@ const TaskDashboard = () => {
     />,
     <AgGridColumn
       field="rel"
-      headerName="Reliability"
-      headerTooltip="Reliability"
+      headerName="User Reliability"
+      headerTooltip="User Reliability"
       type="number"
+      width={100}
+      editable={true}
+    />,
+    <AgGridColumn
+      field="cal_rel"
+      headerName="Calculated Reliability"
+      headerTooltip="Calculated Reliability"
       width={100}
       editable={true}
     />
@@ -365,6 +374,20 @@ const TaskDashboard = () => {
         // Handle the response data here
         console.log(data);
         setRecommedation(data)
+        // const totalReliabilityRegex = /Total Reliability: (\d+\.\d+)/;
+        // const match = data.res[2].match(totalReliabilityRegex);
+        // console.log(match)
+
+        const totalRel = data.res[data.res.length -1];
+        // console.log(totalRel)
+        const reliabilityValue = totalRel.split(":")[1];
+        console.log(reliabilityValue);
+        setTotalReliability(reliabilityValue);
+        setSnackBarMessage({
+          severity: "Success",
+          message: `Reliblity Calculated Sucessfully`,
+          showSnackBar: true,
+        });
       })
       .catch(error => {
         // Handle errors here
@@ -382,6 +405,7 @@ const TaskDashboard = () => {
   }
   console.log(recommedation);
   const saveTaskReset = () => {
+    console.log(totalReliability, "tOTAL rekl")
     debugger;
     let allRowData = [];
     gridApi.forEachNode((node) => allRowData.push(node.data));
@@ -395,8 +419,8 @@ const TaskDashboard = () => {
         "duration": allRowData[index]["duration"], "components": allRowCData[index]["components"]
       })
     })
-    let localData = { 'shipName': currentShip, "taskName": currentTaskName, "data": mainData }
-    console.log(localData)
+    let localData = { 'shipName': currentShip, "taskName": currentTaskName, "data": mainData, "cal_rel": totalReliability }
+    console.log(localData, "local Data")
     setPhaseData(mainData)
     localStorage.setItem(`${currentShip}_${currentTaskName}`, JSON.stringify(localData));
     gridApi.selectAll();
@@ -410,6 +434,9 @@ const TaskDashboard = () => {
     allRowData = [];
     // gridApi.forEachNode((node) => allRowData.push(node.data));
     setMissionData(allRowData)
+    setRecommedation([]);
+    settaskTableData([]);
+    settaskMissionTableData([]);
   }
   const deleteRows = () => {
     debugger;
@@ -427,13 +454,13 @@ const TaskDashboard = () => {
       gridApi.setRowData([]); // Clear the row data
       gridApi.refreshCells(); // Refresh the grid to clear any cell changes
     }
-  
+
     // Reset the component grid
     if (gridCompApi) {
       gridCompApi.setRowData([]); // Clear the row data
       gridCompApi.refreshCells(); // Refresh the grid to clear any cell changes
     }
-    
+
     // You can add similar logic for other grids if needed
   };
 
@@ -527,28 +554,46 @@ const TaskDashboard = () => {
   const onResetMissionHandler = () => {
     resetGrids();
     setRecommedation([]);
-    localStorage.clear();
+    let storedData = Object.entries(localStorage)
+    storedData.forEach(ele => {
+      let key = ele[0];
 
+      if (key !== "settings" && key !== "login" && key !== "userData") {
+        localStorage.removeItem(key)
+      }
+      setSnackBarMessage({
+        severity: "Success",
+        message: "Data Cleared",
+        showSnackBar: true,
+      });
+
+      settaskTableData([]);
+      settaskMissionTableData([]);
+    })
   }
 
   const onSubmitHandler = () => {
     // setMission(0);
     let storedData = Object.entries(localStorage)
+    console.log(storedData)
     // storedData.pop()
     let fData = []
     storedData.forEach(ele => {
       debugger;
+      console.log(ele)
       let name = ele[0]
-      // let elemData = JSON.parse(ele[0])
-      if (name != "settings") {
+      if (name !== "settings" && name !== "login" && name !== "userData") {
+        let elemData = JSON.parse(ele[1])
         fData.push(JSON.parse(ele[1]))
+
       }
     })
+    console.log(fData)
     if (fData.length > 0) {
-      const data = {
-        "taskName": currentTaskName, "shipName": currentShip,
-        "selectedMission": missionName.current.value, "missionProfileData": missionProfileData
-      }
+      // const data = {
+      //   "taskName": currentTaskName, "shipName": currentShip,
+      //   "selectedMission": missionName.current.value, "missionProfileData": missionProfileData
+      // }
       fetch("/task_rel", {
         method: "POST",
         body: JSON.stringify(fData),
@@ -577,8 +622,10 @@ const TaskDashboard = () => {
                 })
               })
             })
-            taskData.push({ "shipName": tData["shipName"], "taskName": tData["taskName"], "rel": Math.round(tData["rel"] * 100) / 100 })
+            // console.log("This is tdata", tData)
+            taskData.push({ "shipName": tData["shipName"], "taskName": tData["taskName"], "rel": Math.round(tData["rel"] * 100) / 100 ,  "cal_rel": tData["cal_rel"]})
           });
+          console.log(taskData, 'Taks data')
           settaskTableData(taskData)
           settaskMissionTableData(taskMissionData)
         });
@@ -607,16 +654,16 @@ const TaskDashboard = () => {
   const shipNameChange = (event, value) => {
     debugger;
     let tt = entireData;
-    
+
     if (tt && tt["task_ship_name"] && Array.isArray(value) && value.length > 0 && value[0].name) {
       const selectedShipName = value[0].name;
       console.log("Selected Ship Name:", selectedShipName);
-  
+
       if (tt["task_ship_name"].hasOwnProperty(selectedShipName)) {
         const sNames = tt["task_ship_name"][selectedShipName];
         const fNames = sNames.map((s) => ({ name: s }));
         settaskOption(fNames);
-  
+
         dispatch(taskActions.updateCurrentShip({ ship: selectedShipName }));
       } else {
         console.log(`No task_ship_name data found for ship: ${selectedShipName}`);
@@ -625,7 +672,7 @@ const TaskDashboard = () => {
       console.log("Invalid data or value array in shipNameChange function.");
     }
   };
-  
+
   const TaskNameChange = (event, value) => {
     if (Array.isArray(value) && value.length > 0) {
       dispatch(taskActions.updateCurrentTask({ 'task': value[0].name }));
@@ -634,7 +681,7 @@ const TaskDashboard = () => {
   const minThreshold = 45
   const maxThreshold = 60
 
-  
+
   return (
     <AccessControl allowedLevels={['L1', 'L2', 'L3', 'L4', 'L5']}>
       <MuiPickersUtilsProvider utils={MomentUtils}>
@@ -770,16 +817,7 @@ const TaskDashboard = () => {
               Reset Screen
             </Button>
 
-            <Button
-              variant="contained"
-              color="primary"
-              style={{
-                marginTop: "2rem",
-              }}
-              onClick={onSubmitHandler}
-            >
-              Calculate Reliability
-            </Button>
+          
 
 
           </div>
@@ -798,11 +836,11 @@ const TaskDashboard = () => {
             <div className={styles.tableFooter}>
               <Button
                 variant="contained"
-                startIcon={<AddIcon />}
+                // startIcon={<AddIcon />}
                 color="secondary"
                 onClick={() => updateCompTable()}
               >
-                Update Mission Component Reliability
+                Recommend Solution
               </Button>
               <Button
                 style={{ marginLeft: 10 }}
@@ -824,7 +862,7 @@ const TaskDashboard = () => {
               </Button>
             </div>
             <div>
-              {recommedation.res ? <Paper elevation={3} style={{ padding: '20px', margin: '80px'}}>
+              {recommedation.res ? <Paper elevation={3} style={{ padding: '20px', margin: '80px' }}>
                 <Typography variant="h6"></Typography>
                 {recommedation?.res?.map((item, index) => (
                   <Typography key={index} style={{ margin: '10px 0' }} variant="h5">
@@ -853,8 +891,17 @@ const TaskDashboard = () => {
                 style={{ marginRight: 10 }}
                 onClick={() => saveTaskReset()}
               >
-                Save this Task for Comparison
+                Add this Task for Comparison
               </Button>
+
+              <Button
+              variant="contained"
+              color="secondary"
+              style={{ marginRight: 10 }}
+              onClick={onSubmitHandler}
+            >
+              Calculate Reliability
+            </Button>
             </div>
             {/* <div style={{ width: "300px" }}>
         <TextField id="outlined-basic" label="Mission Name" 

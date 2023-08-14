@@ -362,10 +362,11 @@ def task_rel():
         shipname = d["shipName"]
         taskName = d["taskName"]    
         missionDataDuration = d["data"]
+        cal_rel = d["cal_rel"]
         missionName ='A'
         rel = trel_inst.task_new_rel(taskName, missionName, missionDataDuration, APP_ROOT, shipname)
         final_return_data.append({"shipName": shipname, "taskName": taskName, 
-                                  "rel": rel["task_rel"], "data": rel["all_missionRel"]})
+                                  "rel": rel["task_rel"], "data": rel["all_missionRel"], "cal_rel": cal_rel})
     # name = data["taskName"][0]["name"]
     
     # missionDataDuration = data["missionProfileData"
