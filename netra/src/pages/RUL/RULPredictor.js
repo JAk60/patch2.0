@@ -7,14 +7,25 @@ import {
   DialogContent,
   Grid,
 } from "@material-ui/core";
+
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+} from "@material-ui/core";
 import { Container } from "@material-ui/core";
 
 import styles from "./rul.module.css";
 
-const RULPredictor = ({ prevRul,P,F }) => {
+const RULPredictor = ({ prevRul, P, F }) => {
   const [sensorValue, setSensorValue] = useState("");
-  const [prediction, setPrediction] = useState("");
+  const [prediction, setPrediction] = useState([]);
   const [openDialog, setOpenDialog] = useState(false);
+  const confidance_levels = [.8, .85, .9, .95]
 
   // New state variables
   const [T0, setT0] = useState("");
@@ -62,8 +73,8 @@ const RULPredictor = ({ prevRul,P,F }) => {
   return (
     <Container className={styles.userSelection}>
       <Grid >
-            <h1>Time Till Failure/RUL</h1>
-        <Grid item xs={12} sm={6} md={4} style={{display: "flex",justifyContent: "center", width: "550px"}}>
+        <h1>Time Till Failure/RUL</h1>
+        <Grid item xs={12} sm={6} md={4} style={{ display: "flex", justifyContent: "center", width: "550px" }}>
           <div>
             {/* <div>
               <TextField
@@ -125,13 +136,32 @@ const RULPredictor = ({ prevRul,P,F }) => {
               color="primary"
               onClick={handlePredict}
               fullWidth
-              style={{marginTop: "20px"}}
+              style={{ marginTop: "20px" }}
             >
               Calculate
             </Button>
             <Dialog open={openDialog} onClose={handleCloseDialog}>
-              <DialogTitle>Remaining Useful Life is :</DialogTitle>
-              <DialogContent>{prediction}</DialogContent>
+              <DialogTitle>Remaining Useful Life for Different Confidence Levels:</DialogTitle>
+              <DialogContent>
+                <TableContainer component={Paper}>
+                  <Table>
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>Confidence Level</TableCell>
+                        <TableCell>Remaining Life(Hours)</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {prediction.map((entry, index) => (
+                        <TableRow key={index}>
+                          <TableCell>{confidance_levels[index]}</TableCell>
+                          <TableCell>{entry}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </DialogContent>
             </Dialog>
           </div>
         </Grid>

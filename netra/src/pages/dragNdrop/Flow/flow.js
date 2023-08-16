@@ -1,6 +1,8 @@
 import { useSelector, useDispatch } from "react-redux";
 import React, { useCallback, useRef, useState } from "react";
 import { ContextMenu, ContextMenuTrigger } from "react-contextmenu";
+import Snackbar from "@material-ui/core/Snackbar";
+import MuiAlert from "@material-ui/lab/Alert";
 import { v4 as uuid } from "uuid";
 import ReactFlow, {
   addEdge,
@@ -38,6 +40,7 @@ const nodeWidth = 172;
 const nodeHeight = 36;
 
 const getLayoutedElements = (elements, direction = "TB") => {
+ 
   debugger;
   const isHorizontal = direction === "LR";
   dagreGraph.setGraph({ rankdir: direction });
@@ -72,6 +75,11 @@ const getLayoutedElements = (elements, direction = "TB") => {
 };
 
 const Flow = ({reactFlowInstance,reactFlowWrapper,setReactFlowInstance}) => {
+  const [isSnackbarOpen, setIsSnackbarOpen] = useState(false);
+
+  const handleCloseSnackbar = () => {
+    setIsSnackbarOpen(false);
+  };
   const dispatch = useDispatch();
   
   const ielements = useSelector((state) => state.elements.elements);
@@ -182,6 +190,10 @@ const Flow = ({reactFlowInstance,reactFlowWrapper,setReactFlowInstance}) => {
     document.getElementById('tooltip').style.opacity = 0
     document.getElementById('tooltip').innerHTML=null
   }
+  const handleClear =()=>{
+    dispatch(elementActions.clearCanvas());
+    setIsSnackbarOpen(true);
+  }
 
   return (<>
     <ContextMenuTrigger id="same_unique_identifier">
@@ -217,10 +229,21 @@ const Flow = ({reactFlowInstance,reactFlowWrapper,setReactFlowInstance}) => {
         <div className={`controls + ' ' + ${customCSSClasses.control_div}`}>
           <button className={customCSSClasses.horizontal} onClick={() => onLayout("LR")}>Horizontal Layout</button>
           <button className={customCSSClasses.vertical} onClick={() => onLayout("TB")}>Vertical Layout</button>
+          <button className={customCSSClasses.vertical} onClick={handleClear}>Clear Layout</button>
         </div>
       </div>
     </ReactFlowProvider>
     </ContextMenuTrigger>
+    <Snackbar
+        open={isSnackbarOpen}
+        autoHideDuration={3000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+      >
+        <MuiAlert onClose={handleCloseSnackbar} severity="success">
+          Canvas cleared!
+        </MuiAlert>
+      </Snackbar>
     </>
   );
 };

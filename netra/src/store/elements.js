@@ -44,6 +44,9 @@ const elements = createSlice({
       let elements = action.payload.elements;
       state.elements = elements;
     },
+    clearCanvas(state) {
+      state.elements = []; // Clear the elements array
+    },
     setNodeDetail(state, action) {
       let node = action.payload;
       state.node = node;

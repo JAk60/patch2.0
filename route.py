@@ -310,38 +310,61 @@ def fetch_tasks():
             tasknames.append(file.split(".")[0])
         t_data={'tasks':tasknames }
         return jsonify(t_data)
-@app.route('/save_task_configuration', methods=['POST', 'GET'])
+@app.route('/save_task_configuration', methods=['POST'])
 def save_task_configuration():
     if request.method == 'POST':
         tc_inst = TaskReliability()
         data = request.get_json(force=True)
         taskData = data['taskData']
-        # data = list(filter(lambda x : x["type"] == "component", taskData))
-        taskDataf = filter(lambda x : x["type"] == "component", taskData)
-        taskDataf = map(tc_inst.get_eq_id, taskDataf)
-        taskDataNC = filter(lambda x : x["type"] != "component", taskData)
-        taskData = list(taskDataNC) + list(taskDataf)
-        try:
-            json_object = json.dumps(taskData, indent = 4) 
-            print(json_object)
-            directory = "./tasks/"
-            filename = taskData[0]['data']['label']+".json"
-            file_path = os.path.join(directory, filename)
-            if not os.path.isdir(directory):
-                os.mkdir(directory)
-            file = open(file_path, "w")
-            file.write(json_object)
-            file.close()
-            
-            res={"message": "Data Saved Successfully.",
-                               "code": 1}
-        except Exception as e:
-            res={"message": e,
-                             "code": 0}
-        # res = tc_inst.insertTaskData(taskData)
+
+        # Check if any task has k values that exceed n
+        invalid_tasks = []
+        for item in taskData:
+            if item['type'] == 'component' and 'n' in item['data']:
+                exceeded_k_values = [k_key for k_key in ['k', 'k_as', 'k_c', 'k_ds', 'k_elh'] if k_key in item['data'] and item['data'][k_key] > item['data']['n']]
+                if exceeded_k_values:
+                    invalid_tasks.append((item['data']['label'], exceeded_k_values))
+
+        if invalid_tasks:
+            messages = []
+            for task_label, exceeded_k_values in invalid_tasks:
+                message = f"Equipment '{task_label}' has exceeded the n value for the following k values: {', '.join(exceeded_k_values)}."
+                messages.append(message)
+            res = {
+                "message": " ".join(messages),
+                "code": 0
+            }
+            return jsonify({"error": res}), 400
+        else:
+            try:
+                # Save valid data
+                json_object = json.dumps(taskData, indent=4)
+                directory = "./tasks/"
+                filename = taskData[0]['data']['label'] + ".json"
+                file_path = os.path.join(directory, filename)
+                if not os.path.isdir(directory):
+                    os.mkdir(directory)
+                with open(file_path, "w") as file:
+                    file.write(json_object)
+
+                res = {
+                    "message": "Data Saved Successfully.",
+                    "code": 1
+                }
+            except Exception as e:
+                res = {
+                    "message": str(e),
+                    "code": 0
+                }
     else:
-        pass
+        res = {
+            "message": "Invalid request method.",
+            "code": 0
+        }
+
     return jsonify(res)
+
+
 @app.route('/load_task_configuration', methods=['POST', 'GET'])
 def load_task_configuration():
     if request.method == 'POST':

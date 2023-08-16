@@ -87,7 +87,7 @@ class RUL_dB:
         tp = data[-1][1]
         p = req_data['p']
         f = req_data['f']
-        confidence = req_data['confidence']
+        confidence_levels =[0.8, 0.85, 0.9, 0.95]
         print(req_data)
         threshold = f
         idx = []
@@ -123,29 +123,32 @@ class RUL_dB:
 
         # # Unpack the estimated parameters
         beta, eta = params[0], params[2]
+        remaining_life_results = []
 
-        def rul(eta, beta, t0):
-            eta = round(eta, 2) 
-            beta = round(beta, 2) 
-            t0 = round(t0, 2) 
-            print(beta, eta, t0)
-            reliability = math.exp(-((t0 / eta) ** beta))
-            t = (eta * (-math.log(reliability * confidence)) ** (1 / beta)) - t0
-            return t
+        for confidence in confidence_levels:
+            def rul(eta, beta, t0):
+                eta = round(eta, 2) 
+                beta = round(beta, 2) 
+                t0 = round(t0, 2) 
+                print(beta, eta, t0)
+                reliability = math.exp(-((t0 / eta) ** beta))
+                t = (eta * (-math.log(reliability * confidence)) ** (1 / beta)) - t0
+                return t
 
-        # tp = t0 - 100
-        if (vc < p):
-            rulp = rul(eta, beta, tp)
-            rulc = rul(eta, beta, t0)
-        else:
-            m = abs((f - vc)) / (f - p)
-            etac = eta * m
-            rulp = rul(etac, beta, tp)
-            rulc = rul(etac, beta, t0)
+            # tp = t0 - 100
+            if (vc < p):
+                rulp = rul(eta, beta, tp)
+                rulc = rul(eta, beta, t0)
+            else:
+                m = abs((f - vc)) / (f - p)
+                etac = eta * m
+                rulp = rul(etac, beta, tp)
+                rulc = rul(etac, beta, t0)
 
-        # if rulc is less than rulp then take rulc else rulp
-        remaining_life = rulc if rulc < rulp else rulp
+            # if rulc is less than rulp then take rulc else rulp
+            remaining_life = rulc if rulc < rulp else rulp
+            remaining_life_results.append(remaining_life)
 
         # Return the result as JSON
-        return jsonify({"remaining_life": remaining_life})
+        return jsonify({"confidence": confidence_levels, "remaining_life": remaining_life_results})
 

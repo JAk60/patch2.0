@@ -3,6 +3,7 @@ import { Handle } from "react-flow-renderer";
 import classes from "./cusomNode.module.css";
 
 export default memo(({ data }) => {
+  console.log(data);
   return (
     <>
       {/* <Handle

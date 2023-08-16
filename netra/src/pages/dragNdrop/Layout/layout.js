@@ -21,6 +21,7 @@ import CustomizedSnackbars from "../../../ui/CustomSnackBar";
 import { filter } from "lodash";
 
 const Layout = (props) => {
+  const [isNodeAddedMap, setIsNodeAddedMap] = useState({});
   useEffect(()=>{
     fetch("/fetch_tasks", {
       method: "GET",
@@ -85,7 +86,7 @@ const Layout = (props) => {
     fetch("/save_task_configuration", {
       method: "POST",
       body: JSON.stringify({
-        taskData:allElements['elements'],
+        taskData: allElements['elements'],
         taskName: taskName
       }),
       headers: {
@@ -97,21 +98,29 @@ const Layout = (props) => {
         return res.json();
       })
       .then((data) => {
-        setSnackBarMessage({
-          severity: "success",
-          message: data.message,
-          showSnackBar: true,
-        });
+        if (data.error) {
+          setSnackBarMessage({
+            severity: "warning",
+            message: data.error.message, // Access the error message here
+            showSnackBar: true,
+          });
+        } else {
+          setSnackBarMessage({
+            severity: "success",
+            message: data.message,
+            showSnackBar: true,
+          });
+        }
       })
       .catch((error) => {
         setSnackBarMessage({
           severity: "error",
-          message: "Some Error Occured. " + error,
+          message: error.message, // Update this line to access the error message
           showSnackBar: true,
-        })
-      })
-    setOpen(false)
-  };
+        });
+      });
+    setOpen(false);
+    }    
   const onLoadHandler = () => {
     console.log(loadname);
     // const ele = JSON.parse(localStorage.getItem("flow"));
@@ -153,6 +162,7 @@ const Layout = (props) => {
     // alert(newValue);
     setValue(newValue);
   };
+  console.log(value);
   const reactFlowWrapper = useRef(null);
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
   const [taskName,setTaskName] = useState("")
@@ -165,55 +175,66 @@ const Layout = (props) => {
   const options=customSelectData["equipmentName"]
   const ship_name = currentSelection["shipName"]
   // console.log(currentSelection)
-  const AddNodes=()=>{
+  const AddNodes = () => {
     const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
-    
-    
-    let i=50
-    const newNode = {
-      id: uuid(),
-      type:"systemNode",
-      position:reactFlowInstance.project({
-        x:  reactFlowBounds.left+600,
-        y:  reactFlowBounds.top+600,
-      }),
-      data: { label: "Task Name" },
-      dtype: "node",
-      shipName: ship_name
-      
-    }
-    dispatch(elementActions.addElement({ ele: newNode }))
-
-  value.map(equipment=>{
-    debugger
-    let style = {
-      border: "1px solid black",
-      borderRadius: "5px",
-      background: "#DCFFC0",
-      borderColor: "black",
-      padding:'20px'
-    }
-    const position = reactFlowInstance.project({
-      x:  reactFlowBounds.left+i,
-      y:  reactFlowBounds.top+i,
-    });
-    const newNode = {
-      id: uuid(),
-      type:"component",
-      position,
-      data: { label: equipment },
-      dtype: "node",
-      style: style,
-      shipName: ship_name,
-      metaData: currentSelection
-    }
-    i+=50
-    dispatch(elementActions.addElement({ ele: newNode }))
-  })
   
- 
-
-  }
+    // Check if "Task Name" node has already been added
+    const isTaskNameAdded = isNodeAddedMap["Task Name"];
+  
+    if (!isTaskNameAdded) {
+      // Create the "Task Name" node
+      const newNodeTaskName = {
+        id: uuid(),
+        type: "systemNode",
+        position: reactFlowInstance.project({
+          x: reactFlowBounds.left + 600,
+          y: reactFlowBounds.top + 600,
+        }),
+        data: { label: "Task Name" },
+        dtype: "node",
+        shipName: ship_name,
+      };
+  
+      dispatch(elementActions.addElement({ ele: newNodeTaskName }));
+      setIsNodeAddedMap((prevMap) => ({ ...prevMap, "Task Name": true }));
+    }
+  
+    let i = 50; // Initialize i for positioning equipment nodes
+    value.forEach((equipment) => {
+      if (!isNodeAddedMap[equipment]) {
+        // Create equipment nodes
+        const style = {
+          border: "1px solid black",
+          borderRadius: "5px",
+          background: "#DCFFC0",
+          borderColor: "black",
+          padding: "20px",
+        };
+  
+        const position = reactFlowInstance.project({
+          x: reactFlowBounds.left + i,
+          y: reactFlowBounds.top + i,
+        });
+  
+        const newNodeEquipment = {
+          id: uuid(),
+          type: "component",
+          position,
+          data: { label: equipment },
+          dtype: "node",
+          style: style,
+          shipName: ship_name,
+          metaData: currentSelection,
+        };
+  
+        dispatch(elementActions.addElement({ ele: newNodeEquipment }));
+        setIsNodeAddedMap((prevMap) => ({ ...prevMap, [equipment]: true }));
+      }
+  
+      i += 50; // Increment the positioning index for the next node
+    });
+  };
+  
 
   const [open, setOpen] = useState(false);
   const handleClickOpen = () => setOpen(true);

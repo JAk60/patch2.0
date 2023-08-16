@@ -736,10 +736,13 @@ class TaskReliability:
             total_reliblity = 1
             for i in range(len(groups)):
                 for j in range(total_phase):
-                    group_equi_rel, max_rel_equip, group_equip, Rel, max_rel_equip_index = taskrelcode.group_rel(groups[i][j][1],groups[i][j][2], groups[i][j][3], groups[i][j][4],phase_duration[j], groups[i][j][5],groups[i][j][6])
-                    final_results.append(f"For phase {j+1} and group {i+1}, "
-                         f"preferred equipments are {group_equip}")
-                    total_reliblity *=Rel
+                    if(groups[i][j][5] == 0):
+                        pass
+                    else:
+                        group_equi_rel, max_rel_equip, group_equip, Rel, max_rel_equip_index = taskrelcode.group_rel(groups[i][j][1],groups[i][j][2], groups[i][j][3], groups[i][j][4],phase_duration[j], groups[i][j][5],groups[i][j][6])
+                        final_results.append(f"For phase {j+1} and group {i+1}, "
+                            f"preferred equipments are {group_equip}")
+                        total_reliblity *=Rel
                     try:
                         for k in max_rel_equip_index:
                             groups[i][j+1][4][k] += phase_duration[j]
