@@ -32,6 +32,7 @@ import RenderMultipleComponent from "./TaskRenderMultipleComponent";
 import { taskActions } from "../../store/taskStore";
 import { useDispatch, useSelector } from "react-redux";
 import AccessControl from "../Home/AccessControl";
+import PaperTable from "./PaperTable"
 const MissionData = (props) => {
 
   return (
@@ -288,16 +289,16 @@ const TaskDashboard = () => {
     />,
     <AgGridColumn
       field="rel"
-      headerName="User Reliability"
-      headerTooltip="User Reliability"
+      headerName="Reliability (User Selection)"
+      headerTooltip="Reliability (User Selection)"
       type="number"
       width={100}
       editable={true}
     />,
     <AgGridColumn
       field="cal_rel"
-      headerName="Calculated Reliability"
-      headerTooltip="Calculated Reliability"
+      headerName="Reliability (NETRA Recommendation)"
+      headerTooltip="Reliability (NETRA Recommendation)"
       width={100}
       editable={true}
     />
@@ -836,15 +837,6 @@ const TaskDashboard = () => {
             <div className={styles.tableFooter}>
               <Button
                 variant="contained"
-                // startIcon={<AddIcon />}
-                color="secondary"
-                onClick={() => updateCompTable()}
-              >
-                Recommend Solution
-              </Button>
-              <Button
-                style={{ marginLeft: 10 }}
-                variant="contained"
                 startIcon={<AddIcon />}
                 color="secondary"
                 onClick={() => AddRow()}
@@ -852,7 +844,6 @@ const TaskDashboard = () => {
                 Add Row
               </Button>
               <Button
-                style={{ marginLeft: 10 }}
                 variant="contained"
                 startIcon={<DeleteIcon />}
                 color="secondary"
@@ -860,16 +851,17 @@ const TaskDashboard = () => {
               >
                 Delete Rows
               </Button>
+              <Button
+                variant="contained"
+                // startIcon={<AddIcon />}
+                color="secondary"
+                onClick={() => updateCompTable()}
+              >
+                Recommend Solution
+              </Button>
             </div>
             <div>
-              {recommedation.res ? <Paper elevation={3} style={{ padding: '20px', margin: '80px' }}>
-                <Typography variant="h6"></Typography>
-                {recommedation?.res?.map((item, index) => (
-                  <Typography key={index} style={{ margin: '10px 0' }} variant="h5">
-                    {item.replace(/\b\w/g, match => match.toUpperCase())}
-                  </Typography>
-                ))}
-              </Paper> : ""
+              {recommedation.res ? <PaperTable  response={recommedation}/>: ""
               }
             </div>
 
@@ -888,7 +880,7 @@ const TaskDashboard = () => {
                 variant="contained"
                 startIcon={<AddIcon />}
                 color="secondary"
-                style={{ marginRight: 10 }}
+
                 onClick={() => saveTaskReset()}
               >
                 Add this Task for Comparison
@@ -897,7 +889,6 @@ const TaskDashboard = () => {
               <Button
               variant="contained"
               color="secondary"
-              style={{ marginRight: 10 }}
               onClick={onSubmitHandler}
             >
               Calculate Reliability

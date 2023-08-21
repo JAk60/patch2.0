@@ -127,7 +127,7 @@ const CGraph = ({ graphData, selectedParameterNames }) => {
                     value: `${param.parameterName} (${unit})`,
                     angle: -90,
                     position: "center",
-                    dx: -10, // Adjust the label's distance from the axis
+                    dx: -30, // Adjust the label's distance from the axis
                     dy: -10, // Adjust the label's distance from the axis
                     paddingRight: "20px",
                   }}

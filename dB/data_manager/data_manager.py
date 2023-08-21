@@ -50,6 +50,61 @@ class Data_Manager:
                 # sql = '''select * from alpha_beta where component_id = ?'''
                 # cursor.execute(sql, (id,))
                 # rows = cursor.fetchone()
+                sub_query = '''select * from data_manager_overhauls_info where component_id = ?'''
+                cursor.execute(sub_query, (id,))
+                data = cursor.fetchall()
+                subData = []
+                for item in data:
+                    formatted_item = {
+                        'id': item[0],
+                        'overhaulNum': item[2],
+                        'numMaint': item[4],
+                        'runAge': item[3],
+                        'component_id': item[1],
+                    }
+                    subData.append(formatted_item)
+                main_query = '''select * from data_manager_overhaul_maint_data where component_id = ?'''
+                cursor.execute(main_query, (id,))
+                data = cursor.fetchall()
+                mainData = []
+                for item in data:
+                    formatted_item = {
+                        'id': item[0],
+                        'component_id': item[1],              
+                        'overhaulId': item[2],
+                        'date': item[3],
+                        'maintenanceType': item[4],
+                        'totalRunAge': item[5],
+                        'subSystemId': item[6]
+                    }
+                    mainData.append(formatted_item)
+                failure_times = self.extract_failure_times(mainData)
+                N = [len(subarray) for subarray in failure_times]
+                T = self.extract_run_age(main_data=mainData, sub_data=subData)
+                print(failure_times, N)
+                print("This is T", T)
+                def para(N, x, T, k):
+                    beta = (sum(n for n in N))/ (sum(sum(math.log(t/x[T.index(t)][i]) for i in range(N[T.index(t)])) for t in T ))
+                    alpha = (sum(n for n in N) )/ (sum(t**beta for t in T))
+                    return alpha, beta
+                alpha, beta = para(N, failure_times, T, k=len(failure_times))
+                a_b_id = uuid.uuid4()
+                # ## insert alpha beta temp now.
+                merge_query = '''
+                MERGE INTO alpha_beta AS target
+                USING (VALUES (?, ?, ?, ?)) AS source (id, component_id, alpha, beta)
+                ON target.component_id = source.component_id
+                WHEN MATCHED THEN
+                    UPDATE SET alpha = source.alpha, beta = source.beta
+                WHEN NOT MATCHED THEN
+                    INSERT (id, component_id, alpha, beta)
+                    VALUES (source.id, source.component_id, source.alpha, source.beta);
+                '''
+
+                # Assuming you have appropriate values for 'component_id', 'alpha', and 'beta'
+                cursor.execute(merge_query, (a_b_id, id, alpha, beta))
+                cnxn.commit()
+
                 sql = '''select * from alpha_beta where component_id = ?'''
                 cursor.execute(sql, (id,))
                 rows = cursor.fetchall()
@@ -68,6 +123,7 @@ class Data_Manager:
                         'alpha': '-',
                         'beta': '-'
                     })
+
         return final_data
 
 

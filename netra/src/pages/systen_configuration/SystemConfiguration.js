@@ -473,6 +473,7 @@ const SystemConfiguration = (props) => {
             </Route>
             <Route exact path="/system_config/additional_info">
               <Button
+              onClick={() => history.push("/data_manager")}
                 component={Link}
                 variant="contained"
                 color="primary"
