@@ -31,7 +31,7 @@ const RepairableOverhaul = (props) => {
         <FormControlLabel
           value="manual"
           control={<Radio />}
-          label="Manually data entry"
+          label="Manual data entry"
         />
         <FormControlLabel
           value="ship"

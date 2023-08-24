@@ -73,3 +73,8 @@
       letter-spacing: 1px;
       color: white;
   }
+  .logotxt{
+    position: relative;
+    right: -13%;
+    top: -29px;
+  }

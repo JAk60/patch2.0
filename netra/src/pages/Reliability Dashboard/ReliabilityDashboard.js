@@ -7,6 +7,7 @@ import {
   InputLabel,
   Input,
   TextField,
+  Typography,
 } from "@material-ui/core";
 import BarGraph from "./BarGraph";
 import "react-big-calendar/lib/css/react-big-calendar.css";
@@ -299,7 +300,7 @@ const ReliabilityDashboard = () => {
                 marginBottom: "10px",
               }}
             >
-              Ship Name
+               <Typography variant="h5">Ship Name</Typography>
             </InputLabel>
             <SelectWithLimit
               limit={3}
@@ -317,7 +318,7 @@ const ReliabilityDashboard = () => {
                 marginBottom: "10px",
               }}
             >
-              Equipment Name
+               <Typography variant="h5">Equipment Name</Typography>
             </InputLabel>
             <SelectWithLimit
               limit={3}
@@ -339,7 +340,7 @@ const ReliabilityDashboard = () => {
                 marginBottom: "10px",
               }}
             >
-              Enter Mission Duration
+               <Typography variant="h5">Enter Mission Duration</Typography>
             </InputLabel>
             <TextField
               id="outlined-basic"

@@ -298,9 +298,9 @@ const RulLife = () => {
               </div>
             </div>
           </div>
-          {isRulOpen && (
+          {/* {isRulOpen && ( */}
             <RULPredictor selectedEqName={selectedEqName} prevRul={prevrul} P={P} F={F} />
-          )}
+          {/* )} */}
         </div>
       </div>
 

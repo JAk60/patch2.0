@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { InputLabel, TextField, makeStyles, Button } from "@material-ui/core";
+import { InputLabel, TextField, makeStyles, Button, Typography } from "@material-ui/core";
 import styles from "./CDashboard.module.css";
 // import { arr,arr2 } from "./data";
 import {
@@ -219,7 +219,8 @@ console.log(PData)
                 marginBottom: "10px",
               }}
             >
-              Ship Name
+              <Typography variant="h5">Ship Name</Typography>
+              
             </InputLabel>
             <CustomSelect
               fields={customSelectData["shipName"]}
@@ -236,7 +237,8 @@ console.log(PData)
                 marginBottom: "10px",
               }}
             >
-              Equipment Name
+              <Typography variant="h5">Equipment Name</Typography>
+              
             </InputLabel>
 
             <Autocomplete
@@ -266,7 +268,8 @@ console.log(PData)
                 marginBottom: "10px",
               }}
             >
-              Select Parameter
+              <Typography variant="h5">Select Parameter</Typography>
+              
             </InputLabel>
 
             <Autocomplete

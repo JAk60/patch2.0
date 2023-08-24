@@ -36,13 +36,13 @@ const PreferredEquipmentsTable = ({ response }) => {
     return (
       <div>
         <Paper elevation={3} style={{ padding: '20px', margin: '80px' }}>
-          <Typography variant="h6">Preferred Equipments</Typography>
-          <TableContainer>
+          <Typography variant="h5">Preferred Equipments</Typography>
+          <TableContainer style={{margin: "30px 0"}}>
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell style={{ backgroundColor: '#56bcec', color: 'white' }}>Phase</TableCell>
-                  <TableCell style={{ backgroundColor: '#56bcec', color: 'white' }}>Preferred Equipment</TableCell>
+                  <TableCell style={{ backgroundColor: '#1976d2', color: 'white' }}><Typography variant='h6'>Phase</Typography></TableCell>
+                  <TableCell style={{ backgroundColor: '#1976d2', color: 'white' }}><Typography variant='h6'>Preferred Equipment</Typography></TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -56,7 +56,7 @@ const PreferredEquipmentsTable = ({ response }) => {
             </Table>
           </TableContainer>
           {/* Display total reliability */}
-          <Typography>{totalReliability}</Typography>
+          <Typography variant='h6'>{totalReliability}</Typography>
         </Paper>
       </div>
     );

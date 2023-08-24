@@ -222,7 +222,7 @@ const Coustom = () => {
                             marginBottom: "10px",
                         }}
                     >
-                        Ship Name
+                        <Typography variant="h5">Ship Name</Typography>
                     </InputLabel>
                     <CustomSelect
                         fields={customSelectData["shipName"]}
@@ -239,7 +239,8 @@ const Coustom = () => {
                             marginBottom: "10px",
                         }}
                     >
-                        Equipment Name
+                        <Typography variant="h5">Equipment Name</Typography>
+                        
                     </InputLabel>
 
                     <Autocomplete
@@ -262,7 +263,7 @@ const Coustom = () => {
                 <Button
                     variant="contained"
                     color="primary"
-                    style={{ marginTop: "1.6rem" }}
+                    style={{ marginTop: "2.5rem" }}
                     onClick={handleSubmit}
                 >
                     Submit

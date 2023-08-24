@@ -6,6 +6,7 @@ import {
   DialogTitle,
   DialogContent,
   Grid,
+  Typography,
 } from "@material-ui/core";
 
 import {
@@ -25,7 +26,7 @@ const RULPredictor = ({ prevRul, P, F }) => {
   const [sensorValue, setSensorValue] = useState("");
   const [prediction, setPrediction] = useState([]);
   const [openDialog, setOpenDialog] = useState(false);
-  const confidance_levels = [.8, .85, .9, .95]
+  const confidance_levels = [0.8, 0.85, 0.9, 0.95];
 
   const customTableStyle = {
     fontSize: "16px", // Adjust the font size as needed
@@ -37,7 +38,7 @@ const RULPredictor = ({ prevRul, P, F }) => {
 
   const handlePredict = async () => {
     const { operating_hours } = prevRul;
-    console.log(operating_hours)
+    console.log(operating_hours);
     const requestData = {
       vc: parseFloat(sensorValue),
       // t0: parseFloat(T0),
@@ -75,77 +76,43 @@ const RULPredictor = ({ prevRul, P, F }) => {
   };
 
   return (
-    <Container className={styles.userSelection}>
-      <Grid >
-        <h1>Time Till Failure/RUL</h1>
-        <Grid item xs={12} sm={6} md={4} style={{ display: "flex", justifyContent: "center", width: "550px" }}>
+    <div style={{marginTop: "50px"}} className={styles.Selection}>
+      <Grid>
+        <Typography variant="h4">Time Till Failure/RUL</Typography>
+        <Grid
+          item
+          xs={12}
+          sm={6}
+          md={4}
+          style={{display:"flex",justifyContent: "space-between"}}
+        >
           <div>
-            {/* <div>
-              <TextField
-                type="number"
-                step="any"
-                label="Sensor data"
-                value={sensorValue}
-                onChange={(e) => setSensorValue(e.target.value)}
-                required
-                fullWidth
-              />
-            </div> */}
-            <div>
-              <TextField
-                type="number"
-                step="any"
-                label="P"
-                value={P}
-                required
-                fullWidth
-              />
+            <div className={styles.horizontalTable}>
+              <div className={styles.horizontalTableCell}>
+                <Typography variant="h6">
+                  <strong>P:{P}</strong>
+                </Typography>
+              </div>
+              <div className={styles.horizontalTableCell}>
+                <Typography variant="h6">
+                  <strong>F:{F}</strong>
+                </Typography>
+              </div>
             </div>
-            <div>
-              <TextField
-                type="number"
-                step="any"
-                label="F"
-                value={F}
-                required
-                fullWidth
-              />
-            </div>
-            {/* <div>
-              <TextField
-                type="number"
-                step="any"
-                label="T0"
-                value={T0}
-                onChange={(e) => setT0(e.target.value)}
-                required
-                fullWidth
-              />
-            </div> */}
-            <div>
-              <TextField
-                type="number"
-                step="any"
-                label="Confidence Level"
-                value={confidenceLevel}
-                onChange={(e) => setConfidenceLevel(e.target.value)}
-                required
-                fullWidth
-              />
-            </div>
-            {/* End of new input fields */}
 
             <Button
               variant="contained"
               color="primary"
               onClick={handlePredict}
               fullWidth
-              style={{ marginTop: "20px" }}
+              style={{marginTop: "20px"}}
             >
               Calculate
             </Button>
             <Dialog open={openDialog} onClose={handleCloseDialog}>
-              <DialogTitle>Remaining Useful Life for Different Confidence Levels:</DialogTitle>
+              <DialogTitle>
+                Remaining Useful Life for Different Confidence Levels:
+              </DialogTitle>
               <DialogContent>
                 <TableContainer component={Paper} style={customTableStyle}>
                   <Table>
@@ -170,7 +137,7 @@ const RULPredictor = ({ prevRul, P, F }) => {
           </div>
         </Grid>
       </Grid>
-    </Container>
+    </div>
   );
 };
 

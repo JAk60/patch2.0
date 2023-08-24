@@ -47,8 +47,8 @@ const Main = (props) => {
         </Link> */}
         </div>
         <div className={styles.netra}>
-          <img src="/netra-logo-removebg.png" width={200} height={200} />
-          <div>NETRA</div>
+        <img src="/netra-logo-removebg.png" width={300} height={400} />
+        <div className={styles.logotxt}>NETRA</div>
         </div>
       </div>
     </AccessControl>

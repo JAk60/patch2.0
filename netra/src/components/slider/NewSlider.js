@@ -2,6 +2,7 @@ import { React, useEffect, useState } from "react";
 import { withStyles, makeStyles } from "@material-ui/core/styles";
 import Slider from "@material-ui/core/Slider";
 import classes from "./Slider.module.css";
+import { Typography } from "@material-ui/core";
 
 const useStyles = makeStyles({
   root: {
@@ -59,11 +60,13 @@ export default function StageSlider(props) {
   const styles = useStyles();
   return (
     <div className={classes.slider}>
+   
       <div className={styles.root}>
         <PrettoSlider value={def} step={null} marks={props.marks} classes={{
             markLabel: classes["slider-labels"], // Apply the class to the labels
           }}disabled />
       </div>
+      
     </div>
   );
 }

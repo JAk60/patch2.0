@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styles from "./Home.module.css";
-import { Menu, MenuItem } from "@material-ui/core";
+import { Menu, MenuItem, Typography } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import { userActions } from "../../store/ApplicationVariable";
 import { useDispatch, useSelector } from "react-redux";
@@ -119,10 +119,12 @@ const Home = (props) => {
                 to={featurePaths[featureObj.feature]}
                 onClick={resetUserSelection}
               >
+                <Typography variant="h4">
                 <div className={styles.circleIcon}>
                   <i className="far fa-chart-bar"></i>
                 </div>
                 {featureObj.feature != "TimeToFailureRUL" ? featureObj.feature .replace(/([A-Z])/g, ' $1') : "Time To Faliure / RUL"}
+                </Typography>              
               </Link>
             );
           }

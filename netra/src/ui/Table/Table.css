@@ -1,7 +1,9 @@
-.ag-theme-alpine {
+.ag-theme-alpine .ag-header{
     /* use theme parameters where possible */
-    --ag-header-background-color: #56bcec;
+    --ag-header-background-color: #1976d2;
     --ag-header-foreground-color: #fff;
+    font-family: "Raleway";
+    font-size: 17px;
   }
   .ag-theme-alpine .ag-root-wrapper {
     border: 0;
@@ -28,3 +30,4 @@
 .ag-grid-lmu{
   background: cyan;
 }
+

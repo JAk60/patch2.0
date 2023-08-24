@@ -5,7 +5,13 @@ import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 import "./Table.css";
 import ReactDom from "react-dom";
-import { Button, makeStyles, Slider, TextField } from "@material-ui/core";
+import {
+  Button,
+  makeStyles,
+  Slider,
+  TextField,
+  Typography,
+} from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
 import IconButton from "@material-ui/core/IconButton";
 
@@ -189,10 +195,9 @@ const getMonthPicker = () => {
 };
 
 const DataManagerTable = (props) => {
-
-  console.log("props",props.rowData);
+  console.log("props", props.rowData);
   const location = useLocation();
-  const tableHeight = props.tableSize ? props.tableSize : 400
+  const tableHeight = props.tableSize ? props.tableSize : 400;
   // const [gridApi, setGridApi] = useState(null);
   const Sliderclasses = useStyles();
   const [gridColumnApi, setGridColumnApi] = useState(null);
@@ -209,7 +214,7 @@ const DataManagerTable = (props) => {
       const allRowData = [];
       props.gridApi.forEachNode((node) => allRowData.push(node.data));
       props.tableUpdate(allRowData);
-      console.log("hiii",allRowData)
+      console.log("hiii", allRowData);
     } catch (err) {
       console.log(err);
     }
@@ -238,8 +243,6 @@ const DataManagerTable = (props) => {
     }
   };
 
-  
-
   const saveModifiedRows = (params) => {
     // console.log(params);
     maintenanceDataCheck(params);
@@ -257,19 +260,17 @@ const DataManagerTable = (props) => {
           props.gridApi.forEachNode((node) => allRowData.push(node.data));
           props.tableUpdate(allRowData);
         }
-      }else if (currentlocation === "/system_config/failure_mode"){
+      } else if (currentlocation === "/system_config/failure_mode") {
         let selectedId = "";
         selectedId = params.data.id;
         const allRowData = [];
         props.gridApi.forEachNode((node) => allRowData.push(node.data));
         props.tableUpdate(allRowData, selectedId);
-      }
-      else{
+      } else {
         const allRowData = [];
-      props.gridApi.forEachNode((node) => allRowData.push(node.data));
-      props.tableUpdate(allRowData);
+        props.gridApi.forEachNode((node) => allRowData.push(node.data));
+        props.tableUpdate(allRowData);
       }
-
     } catch (err) {
       console.log(err);
     }
@@ -358,7 +359,10 @@ const DataManagerTable = (props) => {
   };
   // debugger;
   return (
-    <div className="ag-theme-alpine" style={{ height: tableHeight, width: "100%" }}>
+    <div
+      className="ag-theme-alpine"
+      style={{ height: tableHeight, width: "100%" }}
+    >
       <AgGridReact
         defaultColDef={{
           flex: 1,

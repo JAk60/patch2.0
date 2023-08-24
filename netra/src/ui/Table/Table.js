@@ -6,7 +6,7 @@ import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 import "./Table.css";
 import { getDatePicker } from "./DataManagerTable";
 import ReactDom from "react-dom";
-import { TextField } from "@material-ui/core";
+import { TextField, Typography } from "@material-ui/core";
 
 // function getDatePicker() {
 //   function Datepicker() {}
@@ -138,6 +138,7 @@ console.log(rowData)
 
   return (
     <div className="ag-theme-alpine" style={{ height: height, width: "100%" }}>
+      <Typography variant="h1">
       <AgGridReact
         defaultColDef={{
           flex: 1,
@@ -159,6 +160,7 @@ console.log(rowData)
       >
         {columnDefs}
       </AgGridReact>
+      </Typography>
     </div>
   );
 };

@@ -235,6 +235,7 @@ const TaskDashboard = () => {
           "Action Station",
         ],
       }}
+      
       width="220"
       editable={true}
     />,
@@ -714,7 +715,7 @@ const TaskDashboard = () => {
                   marginBottom: "10px",
                 }}
               >
-                Ship Name
+                <Typography variant="h5">Ship Name</Typography>
               </InputLabel>
 
               <Autocomplete
@@ -745,7 +746,7 @@ const TaskDashboard = () => {
                   marginBottom: "10px",
                 }}
               >
-                Task Name
+                 <Typography variant="h5">Task Name</Typography>
               </InputLabel>
 
               <Autocomplete

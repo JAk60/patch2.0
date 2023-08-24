@@ -18,12 +18,21 @@
     margin: 20px;
     display: flex;
     align-items:center;
-    justify-content: space-around;
+    justify-content: center;
     margin-top: 10px;
     height: fit-content;
     box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
     border-radius: 10px;
     padding: 20px 10px;
+}
+.Selection{
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-top: 10px;
+  box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+  border-radius: 10px;
+  padding: 80px 10px;
 }
 .btn{
     /* height: fit-content; */
@@ -116,9 +125,7 @@
   justify-content: space-between;
 }
 
-.importBtnContainer {
-  /* margin-top: 10px; */
-}
+
 .selectC{
   width: 50%;
   margin-bottom: 15px;
@@ -131,4 +138,28 @@
   margin-bottom: 18px;
 }
 
+.horizontalTable {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-top: 10px;
+  gap: 4px;
+  background-color: #f0f0f0;
+}
+
+.horizontalTableCell {
+  flex: 1;
+  padding: 20px 80px;
+  background-color: #fff;
+  border-radius: 1px;
+  border: 1px solid #2a2a70;
+}
+
+.horizontalTableCell p {
+  margin: 0;
+}
+
+.horizontalTableCell strong {
+  font-weight: bold;
+}
 

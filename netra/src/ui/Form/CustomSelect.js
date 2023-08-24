@@ -9,6 +9,7 @@ import {
   Select,
   MenuItem,
   TextField,
+  Typography,
 } from "@material-ui/core";
 
 const LabelStyles = makeStyles({
@@ -38,7 +39,9 @@ const CustomSelect = (props) => {
   return (
     <FormControl className={props.className}>
       <InputLabel id={props.id}  classes={Labelclasses} shrink>
+        <Typography variant="h5" sx={{fontSize: "700"}}>
         {props.label}
+        </Typography>
       </InputLabel>
       {props.value ? (
         <Select

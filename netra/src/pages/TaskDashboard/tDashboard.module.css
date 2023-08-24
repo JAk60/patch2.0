@@ -15,9 +15,10 @@
   display: flex;
   width: 98%;
   margin-left: 1%;
-  margin-top: 10px;
-  justify-content: space-between;
+  margin-top: 50px;
+  justify-content: flex-start;
   align-items: center;
+  gap: 350px;
 }
 .midSection {
   display: flex;

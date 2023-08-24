@@ -238,7 +238,7 @@ const CDashboard = () => {
                 marginBottom: "10px",
               }}
             >
-              Ship Name
+               <Typography variant="h5">Ship Name</Typography>
             </InputLabel>
             <CustomSelect
               fields={customSelectData["shipName"]}
@@ -255,7 +255,8 @@ const CDashboard = () => {
                 marginBottom: "10px",
               }}
             >
-              Equipment Name
+               <Typography variant="h5">Equipment Name</Typography>
+              
             </InputLabel>
 
             <Autocomplete
