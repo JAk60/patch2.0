@@ -1,0 +1,67 @@
+.dropdownSelections{
+  display: flex;
+  gap: 50px;
+  /* align-items: center; */
+}
+
+.tableContainer {
+  margin-top: 16px;
+
+}
+
+.table {
+  min-width: 650px;
+}
+
+.tableHeadCell {
+  font-size: 18px !important;
+  font-weight: bold !important;
+  background-color: #1976d2;
+  color: #fff !important;
+}
+
+.tableRow {
+  background-color: #f5f5f5;
+  font-size: 17px !important;
+}
+
+.tableTotalRow {
+  background-color: #2a2a70;
+  
+}
+
+.tableTotalCell {
+  padding: 8px;
+  color: #fff !important;
+  font-size: 17px !important;
+  font-weight: bold !important;
+}
+
+
+/* Add the following styles to your existing CSS file */
+.horizontalTable {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 10px;
+  gap: 4px;
+  background-color: #f0f0f0;
+  padding: 10px;
+}
+
+.horizontalTableCell {
+  flex: 1;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 1px;
+  border: 1px solid #2a2a70;
+}
+
+.horizontalTableCell p {
+  margin: 0;
+}
+
+.horizontalTableCell strong {
+  font-weight: bold;
+}

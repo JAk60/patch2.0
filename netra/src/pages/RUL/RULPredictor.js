@@ -27,6 +27,10 @@ const RULPredictor = ({ prevRul, P, F }) => {
   const [openDialog, setOpenDialog] = useState(false);
   const confidance_levels = [.8, .85, .9, .95]
 
+  const customTableStyle = {
+    fontSize: "16px", // Adjust the font size as needed
+  };
+
   // New state variables
   const [T0, setT0] = useState("");
   const [confidenceLevel, setConfidenceLevel] = useState(0.9);
@@ -143,7 +147,7 @@ const RULPredictor = ({ prevRul, P, F }) => {
             <Dialog open={openDialog} onClose={handleCloseDialog}>
               <DialogTitle>Remaining Useful Life for Different Confidence Levels:</DialogTitle>
               <DialogContent>
-                <TableContainer component={Paper}>
+                <TableContainer component={Paper} style={customTableStyle}>
                   <Table>
                     <TableHead>
                       <TableRow>

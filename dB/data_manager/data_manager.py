@@ -17,6 +17,7 @@ import uuid
 from scipy.optimize import minimize
 from flask import jsonify
 
+
 class Data_Manager:
     def __init__(self):
         DataManagerDB()
@@ -70,7 +71,7 @@ class Data_Manager:
                 for item in data:
                     formatted_item = {
                         'id': item[0],
-                        'component_id': item[1],              
+                        'component_id': item[1],
                         'overhaulId': item[2],
                         'date': item[3],
                         'maintenanceType': item[4],
@@ -83,9 +84,11 @@ class Data_Manager:
                 T = self.extract_run_age(main_data=mainData, sub_data=subData)
                 print(failure_times, N)
                 print("This is T", T)
+
                 def para(N, x, T, k):
-                    beta = (sum(n for n in N))/ (sum(sum(math.log(t/x[T.index(t)][i]) for i in range(N[T.index(t)])) for t in T ))
-                    alpha = (sum(n for n in N) )/ (sum(t**beta for t in T))
+                    beta = (sum(n for n in N)) / (sum(sum(math.log(t /
+                                                                   x[T.index(t)][i]) for i in range(N[T.index(t)])) for t in T))
+                    alpha = (sum(n for n in N)) / (sum(t**beta for t in T))
                     return alpha, beta
                 alpha, beta = para(N, failure_times, T, k=len(failure_times))
                 a_b_id = uuid.uuid4()
@@ -125,7 +128,6 @@ class Data_Manager:
                     })
 
         return final_data
-
 
     def insert_data(self, data_obj):
         data = data_obj['data']
@@ -336,7 +338,8 @@ class Data_Manager:
                 remove_start_date = d["removalStartDate"]
                 remove_end_date = d["removalEndDate"]
                 f_s = d['interval_failure']
-                print(id, component_id, install_start_date, install_end_date, f_s)
+                print(id, component_id, install_start_date,
+                      install_end_date, f_s)
                 # TTF logic
                 i_startDate = datetime.strptime(
                     str(install_start_date), "%d/%m/%Y")
@@ -445,9 +448,9 @@ class Data_Manager:
                     z[1] = zero_failure_equation(n, b)
 
             return z
-        zGuess = np.array([1,1])
+        zGuess = np.array([1, 1])
         n, b = fsolve(equations, zGuess)
-        print("n value", n, "b value",b)
+        print("n value", n, "b value", b)
         return n, b
 
     def solve_failure_prob(self, data):
@@ -629,31 +632,31 @@ class Data_Manager:
             return True
 
         return False
-    
+
     def extract_failure_times(self, input_data):
-            failure_times = []
-            overhaul_data = {}
-            present_overhaul_data = []
+        failure_times = []
+        overhaul_data = {}
+        present_overhaul_data = []
 
-            for data in input_data:
-                if data is None:
-                    continue
-                overhaul_id = data.get('overhaulId')
-                if overhaul_id:
-                    total_run_age = float(data.get('totalRunAge', 0))
-                    if overhaul_id in overhaul_data:
-                        overhaul_data[overhaul_id].append(total_run_age)
-                    else:
-                        overhaul_data[overhaul_id] = [total_run_age]
+        for data in input_data:
+            if data is None:
+                continue
+            overhaul_id = data.get('overhaulId')
+            if overhaul_id:
+                total_run_age = float(data.get('totalRunAge', 0))
+                if overhaul_id in overhaul_data:
+                    overhaul_data[overhaul_id].append(total_run_age)
                 else:
-                    total_run_age = float(data.get('totalRunAge', 0))
-                    present_overhaul_data.append(total_run_age)
-                    # failure_times.append([total_run_age])
+                    overhaul_data[overhaul_id] = [total_run_age]
+            else:
+                total_run_age = float(data.get('totalRunAge', 0))
+                present_overhaul_data.append(total_run_age)
+                # failure_times.append([total_run_age])
 
-            for overhaul_id, data in overhaul_data.items():
-                failure_times.append(data)
-            failure_times.append(present_overhaul_data)
-            return failure_times
+        for overhaul_id, data in overhaul_data.items():
+            failure_times.append(data)
+        failure_times.append(present_overhaul_data)
+        return failure_times
 
     def extract_run_age(self, main_data, sub_data):
         run_ages = [float(entry['runAge']) for entry in sub_data]
@@ -671,13 +674,11 @@ class Data_Manager:
 
         return run_ages
 
-
-
-    def insert_overhauls(self,data):
+    def insert_overhauls(self, data):
         mainData = data[0]['mainData']
         subData = data[0]['subData']
-        print("mainData",mainData)
-        print("subData",subData)
+        print("mainData", mainData)
+        print("subData", subData)
         component_id = ""
         insert_sub_sql = '''insert into data_manager_overhauls_info (id, 
         component_id, overhaul_num, running_age, num_maintenance_event)
@@ -704,7 +705,7 @@ class Data_Manager:
                     id = d['id']
                     # Check if 'overhaulId' key is present, otherwise set it to None
                     try:
-                        overhaulId = d["overhaulId"]           
+                        overhaulId = d["overhaulId"]
                     except KeyError:
                         overhaulId = None
                     date = d["date"]
@@ -721,9 +722,11 @@ class Data_Manager:
         T = self.extract_run_age(main_data=mainData, sub_data=subData)
         print(failure_times, N)
         print(T)
+
         def para(N, x, T, k):
-            beta = (sum(n for n in N))/ (sum(sum(math.log(t/x[T.index(t)][i]) for i in range(N[T.index(t)])) for t in T ))
-            alpha = (sum(n for n in N) )/ (sum(t**beta for t in T))
+            beta = (sum(n for n in N)) / (sum(sum(math.log(t /
+                                                           x[T.index(t)][i]) for i in range(N[T.index(t)])) for t in T))
+            alpha = (sum(n for n in N)) / (sum(t**beta for t in T))
             return alpha, beta
         alpha, beta = para(N, failure_times, T, k=len(failure_times))
         a_b_id = uuid.uuid4()
@@ -757,3 +760,40 @@ class Data_Manager:
             return jsonify({
                 "messege": "Component id is not exist"
             })
+
+    def fetch_alpha_beta(self, components):
+        try:
+            alpha_beta_values = {}
+            for component in components:
+                component_id = component["id"]
+                component_name = component["name"]
+                query = "select alpha, beta from alpha_beta where component_id= ?"
+                cursor.execute(query, component_id)
+                data = cursor.fetchone()
+                alpha, beta = data
+                alpha_beta_values[component_name] = {
+                    "id": component_id, "alpha": alpha, "beta": beta}
+            return jsonify(alpha_beta_values)
+        except Exception as e:
+            return jsonify({"error": str(e)})
+
+    def update_alpha_beta(self, ship_name, component_name, alpha, beta):
+        try:
+            query = "select component_id from system_configuration where ship_name=? and component_name=?"
+            cursor.execute(query, ship_name, component_name)
+            data = cursor.fetchone()
+            component_id = data[0]
+            print("component_id", component_id)
+
+            query = '''UPDATE alpha_beta
+                    SET alpha = ?,
+                        beta = ?
+                    WHERE component_id = ?
+                '''
+            cursor.execute(query, alpha, beta, component_id)
+            cnxn.commit()
+            return jsonify({
+                "messege": f"Alpha beta for component {component_name} is setted"
+            })
+        except Exception as e:
+            return jsonify({"error": str(e)})

@@ -21,7 +21,6 @@ from classes.System_Configuration_Netra import System_Configuration_N
 from classes.custom_settings import Custom_Settings
 from dB.task_configuration.task_configuration import taskConfiguration_dB
 from dB.RUL.rul import RUL_dB
-from dB.RUL.rul_logic import rul_code
 from classes.taskReliability import TaskReliability
 from dB.dB_utility import add_user_selection_data
 from dB.RCM.rcmDB import RCMDB
@@ -599,6 +598,26 @@ def phasejson():
     curr_task = data["task_name"]
     inst = TaskReliability()
     return inst.json_paraser(APP_ROOT, durations, curr_task)
+
+
+@app.route('/get_ship_alpha_beta', methods=['POST'])
+def fetch_equipment_alpha_betas():
+    data = request.json
+    ship_name = data["ship_name"]
+    components = data["equipments"]
+    inst = Data_Manager()
+    return inst.fetch_alpha_beta(components=components)
+
+
+@app.route('/update_alpha_beta', methods=['POST'])
+def update_alpha_beta():
+    data = request.json
+    ship_name = data['ship_name']
+    component_name = data['equipment_name']
+    alpha = data['alpha']
+    beta = data['beta']
+    inst = Data_Manager()
+    return inst.update_alpha_beta(ship_name=ship_name, component_name=component_name, alpha=alpha, beta=beta)
 
 
 if __name__ == '__main__':
