@@ -1,4 +1,11 @@
-import { Button, Grid, makeStyles } from "@material-ui/core";
+import {
+  Button,
+  FormControlLabel,
+  Grid,
+  Radio,
+  RadioGroup,
+  makeStyles,
+} from "@material-ui/core";
 import React, { useState, useRef } from "react";
 import classes from "./EqptStructuring.module.css";
 import LabelToolTip from "./LabelToolTip/LabelToolTip";
@@ -22,6 +29,7 @@ const useStyles = makeStyles({
 });
 
 function EqptStructuring() {
+  const [selectedOption, setSelectedOption] = useState("addNew");
   const dispatch = useDispatch();
   let fData = useSelector((state) => state.treeData.treeData);
   const selectedInputs = useSelector(
@@ -44,6 +52,10 @@ function EqptStructuring() {
     parentId: "",
     lmu: 1,
   });
+
+  const handleOptionChange = (event) => {
+    setSelectedOption(event.target.value);
+  };
 
   const clearForm = (e) => {
     e.preventDefault();
@@ -115,7 +127,7 @@ function EqptStructuring() {
     setChildInputFields(childCopy);
   };
   const parentOnChange = (e, value) => {
-    debugger
+    debugger;
     setParentFieldValue(value);
   };
   const updateChildTree = (e) => {
@@ -167,143 +179,192 @@ function EqptStructuring() {
   return (
     <div className={classes.root}>
       <div className={classes.form}>
-      <div className={classes.header}>Add New Equipment</div>
-      <div>
-        <form style={{ width: "100%" }} onSubmit={formik.handleSubmit}>
-          <div className={classes.formrow1}>
-            <div className={classes.field1}>
-              <LabelToolTip label="System Name" info="Info" />
-              <CustomTextInput
-                className={classes.fullWidth}
-                id="system"
-                name="system"
-                value={formik.values.system}
-                onChange={formik.handleChange}
-                disabled={disableButton}
-              ></CustomTextInput>
-            </div>
-            <div className={classes.field1}>
-              <LabelToolTip label="System Type" info="Info" />
-              <CustomTextInput
-                className={classes.fullWidth}
-                id="systemType"
-                name="systemType"
-                value={formik.values.systemType}
-                onChange={formik.handleChange}
-                disabled={disableButton}
-              ></CustomTextInput>
-            </div>
-          </div>
-          <div className={classes.parent}>
-            <div style={{ width: "400px" }}>
-              <LabelToolTip label="Parent Component" />
-              <AutoSelect
-                fields={fData}
-                onChange={parentOnChange}
-                value={parentFiledValue}
-              ></AutoSelect>
-            </div>
-            <div style={{ marginTop: "20px",marginRight:'2%' }}>
-              <Button
-                className={classesButton.root}
-                variant="contained"
-                color="primary"
-                type="reset"
-                onClick={clearForm}
-              >
-                Clear
-              </Button>
-              {!disableButton && (
-                <Button variant="contained" color="primary" type="submit">
-                  Update
-                </Button>
-              )}
-            </div>
-          </div>
-        </form>
+        <div className={classes.header}>
+          <RadioGroup
+            row
+            aria-label="position"
+            name="position"
+            value={selectedOption}
+            onChange={handleOptionChange}
+          >
+            <h1>
+              <FormControlLabel
+                style={{ fontWeight: "bold", fontSize: "45px" }}
+                value="addNew"
+                control={<Radio color="primary" />}
+                label="Add New Equipment"
+              />
+            </h1>
+            <h1>
+              <FormControlLabel
+                value="parent"
+                control={<Radio color="primary" />}
+                label="Add Children Components"
+              />
+            </h1>
+          </RadioGroup>
         </div>
-        <div className={classes.formrow2}>
-          {/* //onSubmit={updateChildTree} ref={childForm} */}
+        {selectedOption === "addNew" && (
+          <div>
+            <form style={{ width: "100%" }} onSubmit={formik.handleSubmit}>
+              <div className={classes.formrow1}>
+                <div className={classes.field1}>
+                  <LabelToolTip label="System Name" info="Info" />
+                  <CustomTextInput
+                    className={classes.fullWidth}
+                    id="system"
+                    name="system"
+                    value={formik.values.system}
+                    onChange={formik.handleChange}
+                    disabled={disableButton}
+                  ></CustomTextInput>
+                </div>
+                <div className={classes.field1}>
+                  <LabelToolTip label="System Type" info="Info" />
+                  <CustomTextInput
+                    className={classes.fullWidth}
+                    id="systemType"
+                    name="systemType"
+                    value={formik.values.systemType}
+                    onChange={formik.handleChange}
+                    disabled={disableButton}
+                  ></CustomTextInput>
+                </div>
+              </div>
+              <div className={classes.parent}>
+                <div style={{ marginTop: "20px", marginRight: "2%" }}>
+                  <Button
+                    className={classesButton.root}
+                    variant="contained"
+                    color="primary"
+                    type="reset"
+                    onClick={clearForm}
+                  >
+                    Clear
+                  </Button>
+                  {!disableButton && (
+                    <Button variant="contained" color="primary" type="submit">
+                      Create
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </form>
+          </div>
+        )}
 
-          {/* This is the end */}
-          <form onSubmit={updateChildTree}>
-            <div className={classes.child}>
-              <Grid container>
-                <Grid container item spacing={4}>
-                  <Grid item xs={5}>
-                    <LabelToolTip label="Child Component Name" />
-                  </Grid>
-                  <Grid item xs={5}>
-                    <LabelToolTip label="Part Code" />
-                  </Grid>
-                  <Grid item xs={2}></Grid>
-                </Grid>
-                {childInputFields.map((child, item) => {
-                  return (
-                    <Grid container item key={item} spacing={4}>
-                      <Grid item xs={5} style={{ marginTop: "10px" }}>
-                        <CustomTextInput
-                          className={classes.fullWidth}
-                          name="childName"
-                          // id="childName"
-                          value={child.childName}
-                          onChange={(e) => handleChildChange(item, e)}
-                        />
-                      </Grid>
-                      <Grid item xs={5} style={{ marginTop: "10px" }}>
-                        <CustomTextInput
-                          className={classes.fullWidth}
-                          name="childPartId"
-                          // id="partId"
-                          value={child.childPartId}
-                          onChange={(e) => handleChildChange(item, e)}
-                        />
-                      </Grid>
-                      <Grid item xs={2} style={{ marginTop: "35px" }}>
-                        <DeleteIcon
-                          fontSize="medium"
-                          onClick={() => {
-                            onDeleteChildField(item);
-                          }}
-                        />
-                      </Grid>
+        {selectedOption === "parent" && (
+          <div className={classes.formrow2}>
+            {/* //onSubmit={updateChildTree} ref={childForm} */}
+
+            {/* This is the end */}
+            <form onSubmit={updateChildTree}>
+              <div style={{ width: "400px", margin: "20px" }}>
+                <LabelToolTip label="Parent Component" />
+                <AutoSelect
+                  fields={fData}
+                  onChange={parentOnChange}
+                  value={parentFiledValue}
+                ></AutoSelect>
+              </div>
+              <div className={classes.child} style={{ margin: "10px" }}>
+                <Grid container>
+                  <Grid container item spacing={4}>
+                    <Grid item xs={5}>
+                      <LabelToolTip label="Child Component Name" />
                     </Grid>
-                  );
-                })}
-              </Grid>
-            </div>
-            <div
-              style={{
-                float: "right",
-                marginTop: "30px",
-                marginBottom: "30px",
-              }}
-            >
-              <Button
-                variant="contained"
-                color="primary"
-                //onClick={updateChildTree}
-                type="submit"
-                disabled={!(childInputFields.length > 0)}
+                    <Grid item xs={5}>
+                      <LabelToolTip label="Part Code" />
+                    </Grid>
+                    <Grid item xs={2}></Grid>
+                  </Grid>
+                  {childInputFields.map((child, item) => {
+                    return (
+                      <Grid container item key={item} spacing={4}>
+                        <Grid item xs={5} style={{ marginTop: "10px" }}>
+                          <CustomTextInput
+                            className={classes.fullWidth}
+                            name="childName"
+                            // id="childName"
+                            value={child.childName}
+                            onChange={(e) => handleChildChange(item, e)}
+                          />
+                        </Grid>
+                        <Grid item xs={5} style={{ marginTop: "10px" }}>
+                          <CustomTextInput
+                            className={classes.fullWidth}
+                            name="childPartId"
+                            // id="partId"
+                            value={child.childPartId}
+                            onChange={(e) => handleChildChange(item, e)}
+                          />
+                        </Grid>
+                        <Grid
+                          item
+                          xs={2}
+                          style={{
+                            display: "flex",
+                            paddingLeft: "-300px",
+                            alignItems: "center",
+                            justifyContent: "start",
+                            margin: "24px 0",
+                            padding: 0,
+                          }}
+                        >
+                          <span
+                            style={{
+                              display: "inline-block",
+                              padding: "5px",
+                              boxShadow: "0 3px 10px rgba(0, 0, 0, 0.2)",
+                              borderRadius: "50%",
+                            }}
+                          >
+                            <DeleteIcon
+                              fontSize="medium"
+                              onClick={() => {
+                                onDeleteChildField(item);
+                              }}
+                            />
+                          </span>
+                        </Grid>
+                      </Grid>
+                    );
+                  })}
+                </Grid>
+              </div>
+              <div
+                style={{
+                  float: "right",
+                  marginTop: "30px",
+                  marginBottom: "30px",
+                }}
               >
-                Update All
-              </Button>
-              <Button
-                style={{ marginLeft: "20px" }}
-                variant="contained"
-                color="primary"
-                onClick={onAddNewChildField}
-              >
-                Add
-              </Button>
-            </div>
-          </form>
-        </div>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  //onClick={updateChildTree}
+                  type="submit"
+                  disabled={!(childInputFields.length > 0)}
+                >
+                  Update All
+                </Button>
+                <Button
+                  style={{ marginLeft: "20px" }}
+                  variant="contained"
+                  color="primary"
+                  onClick={onAddNewChildField}
+                >
+                  Add
+                </Button>
+              </div>
+            </form>
+          </div>
+        )}
       </div>
       <div className={classes.tree}>
         <div className={classes.treeChild}>
           {/* <FullscreenIcon style={{ float: "right", marginRight: "25px" }} /> */}
-          <TreeComponent height='400px'></TreeComponent>
+          <TreeComponent height="400px"></TreeComponent>
           {/* <div></div> */}
         </div>
       </div>
