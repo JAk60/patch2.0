@@ -2,13 +2,14 @@ import React, { useState } from "react";
 import Table from "../../../ui/Table/DataManagerTable";
 import styles from "./repairable.module.css";
 import { AgGridColumn, AgGridReact } from "ag-grid-react";
-import { Button, TextField } from "@material-ui/core";
+import { Button, TextField, Typography } from "@material-ui/core";
 import { v4 as uuid } from "uuid";
 const RepairableSubTable = (props) => {
   const [gridApi, setGridApi] = useState(null);
   const [secondRows, setSecondRows] = useState([]);
-  const [numOverhaul, setNumOverhaul] = useState("1");
+  const [runAge, setrunAge] = useState("0");
   const [gridColumnApi, setGridColumnApi] = useState(null);
+  const [overhaulNums, setOverhaulNums] = useState("0");
   //   const location = useLocation();
   let secondRowHeight = 120;
   if (secondRows.length > 0 && secondRows.length > 2) {
@@ -26,7 +27,7 @@ const RepairableSubTable = (props) => {
       headerName="Overhaul Number"
       headerTooltip="Overhaul Number"
       minWidth={500}
-      //   editable={true}
+    //   editable={true}
     />,
     <AgGridColumn
       field="runAge"
@@ -47,10 +48,30 @@ const RepairableSubTable = (props) => {
   const onSubmitNumOverhaul = () => {
     let count = 1;
     const sRows = [];
-    while (count <= +numOverhaul) {
+    console.log(runAge);
+    fetch('/component_overhaul_age', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({age: runAge}),
+    })
+      .then(response => response.json())
+      .then(data => {
+        // Handle the response data here
+        console.log(data.overhaul_nums)
+        setOverhaulNums(data.overhaul_nums)
+        console.log(overhaulNums)
+      })
+      .catch(error => {
+        // Handle errors here
+        console.error('Error:', error);
+      });
+
+    while (count <= +overhaulNums) {
       sRows.push({
         overhaulNum: count.toString(),
-        runAge: 0 ,
+        runAge: runAge * count,
         numMaint: 1,
         id: uuid(),
       });
@@ -71,23 +92,26 @@ const RepairableSubTable = (props) => {
     <div>
       <div className={styles.numOverhaulParent}>
         <div className={styles.overhaulHaul}>
-          <h2>Total Number of Overhauls performed on this Equipment :</h2>
+          <Typography variant="h5" className={styles.formTitle}>
+            Running Age Between Two Overhauls:
+          </Typography>
           <TextField
             required
             id="outlined-required"
-            label="Number of Overhauls"
-            defaultValue="1"
-            values={numOverhaul}
+            // label="Number of Overhauls"
+            // defaultValue="6000"
+            value={runAge}
             onChange={(e) => {
-              setNumOverhaul(e.target.value);
+              setrunAge(e.target.value);
             }}
+            className={styles.formInput}
           />
 
           <Button
             variant="contained"
             color="secondary"
             onClick={onSubmitNumOverhaul}
-            style={{ width: "8rem", height: "3rem", marginTop: "1rem" }}
+            className={styles.submitButton}
           >
             Submit
           </Button>

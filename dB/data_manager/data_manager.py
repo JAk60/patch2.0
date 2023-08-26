@@ -797,3 +797,9 @@ class Data_Manager:
             })
         except Exception as e:
             return jsonify({"error": str(e)})
+
+    def set_component_overhaul_age(self, age):
+        print("AGE", age)
+        nums = math.floor(20000 / int(age))
+        print(nums, "This is nums")
+        return jsonify({"overhaul_nums": nums})

@@ -620,6 +620,14 @@ def update_alpha_beta():
     return inst.update_alpha_beta(ship_name=ship_name, component_name=component_name, alpha=alpha, beta=beta)
 
 
+@app.route('/component_overhaul_age', methods=['POST'])
+def set_component_overhaul_age():
+    data = request.json
+    age = data['age']
+    inst = Data_Manager()
+    return inst.set_component_overhaul_age(age)
+
+
 if __name__ == '__main__':
     app.secret_key = os.urandom(32)
     app.run(debug=True)

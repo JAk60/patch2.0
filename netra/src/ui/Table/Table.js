@@ -138,7 +138,7 @@ console.log(rowData)
 
   return (
     <div className="ag-theme-alpine" style={{ height: height, width: "100%" }}>
-      <Typography variant="h1">
+      {/* <Typography variant="h1"> */}
       <AgGridReact
         defaultColDef={{
           flex: 1,
@@ -160,7 +160,7 @@ console.log(rowData)
       >
         {columnDefs}
       </AgGridReact>
-      </Typography>
+      {/* </Typography> */}
     </div>
   );
 };
