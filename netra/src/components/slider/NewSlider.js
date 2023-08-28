@@ -12,9 +12,13 @@ const useStyles = makeStyles({
     borderRadius: 5,
     display: "flex",
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
+  },
+  sliderMarks: {
+    fontWeight: "bold",
   },
 });
+
 
 const PrettoSlider = withStyles({
   root: {
@@ -26,8 +30,8 @@ const PrettoSlider = withStyles({
       height: 20,
       width: 20,
       backgroundColor: "#fff",
-      marginTop: -4,
-      marginLeft: -4,
+      // marginTop: -4,
+      // marginLeft: -4,
       boxShadow:
         "1px 2px 1px rgba(0,0,0,0.1),0 4px 8px rgba(0,0,0,0.13),0 0 0 1px rgba(0,0,0,0.02)",
     },
@@ -60,13 +64,17 @@ export default function StageSlider(props) {
   const styles = useStyles();
   return (
     <div className={classes.slider}>
-   
       <div className={styles.root}>
-        <PrettoSlider value={def} step={null} marks={props.marks} classes={{
-            markLabel: classes["slider-labels"], // Apply the class to the labels
-          }}disabled />
+        <PrettoSlider
+          value={def}
+          step={null}
+          marks={props.marks}
+          classes={{
+            markLabel: styles.sliderMarks, // Apply the class to the mark labels
+          }}
+          disabled
+        />
       </div>
-      
     </div>
   );
 }

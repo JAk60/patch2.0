@@ -624,8 +624,10 @@ def update_alpha_beta():
 def set_component_overhaul_age():
     data = request.json
     age = data['age']
+    ship_name = data['ship_name']
+    component_name = data['equipment_name']
     inst = Data_Manager()
-    return inst.set_component_overhaul_age(age)
+    return inst.set_component_overhaul_age(ship_name, component_name, age)
 
 
 if __name__ == '__main__':

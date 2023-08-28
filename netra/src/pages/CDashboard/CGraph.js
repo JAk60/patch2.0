@@ -95,7 +95,7 @@ const CGraph = ({ graphData, selectedParameterNames }) => {
             >
               <div>
                 {crossingThreshold}
-                <text
+                <h1
                   x={550 / 2} // Center the text horizontally
                   y={10} // Position the text 10 units from the top
                   textAnchor="middle" // Center the text relative to x position
@@ -103,9 +103,9 @@ const CGraph = ({ graphData, selectedParameterNames }) => {
                   fontSize="12px" // Text font size
                 >
                   {param.data[0]?.failure_mode_id}
-                </text>
+                </h1>
               </div>
-              <LineChart width={550} height={300} data={sortedData}>
+              <LineChart width={700} height={400} data={sortedData}>
                 <XAxis
                   dataKey="date"
                   tick={false}

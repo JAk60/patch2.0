@@ -40,16 +40,16 @@ export const getDatePicker = () => {
     // console.log(dateString, dateParse);
     return fillZeros(dd) + "/" + fillZeros(mm) + "/" + yyyy;
   };
-  function Datepicker() {}
+  function Datepicker() { }
   Datepicker.prototype.init = function (params) {
     this.textInput = React.createRef();
     const getFormattedDateMaterial = (dateString) => {
       const dateParse = new Date(
         dateString.split("/")[2] +
-          "-" +
-          dateString.split("/")[1] +
-          "-" +
-          dateString.split("/")[0]
+        "-" +
+        dateString.split("/")[1] +
+        "-" +
+        dateString.split("/")[0]
       );
       const dd = dateParse.getDate();
       const mm = dateParse.getMonth() + 1; //January is 0!
@@ -78,7 +78,7 @@ export const getDatePicker = () => {
       this.textInput.current.querySelector("input").value
     );
   };
-  Datepicker.prototype.destroy = function () {};
+  Datepicker.prototype.destroy = function () { };
   Datepicker.prototype.isPopup = function () {
     return false;
   };
@@ -179,11 +179,15 @@ const OverhaulTable = (props) => {
       headerName="Maintenance Type"
       field="maintenanceType"
       headerTooltip="Maintenance Type"
-      cellEditor="agSelectCellEditor"
+      cellEditor="agSelectCellEditor"  // Uncomment this line to use a select cell editor
+      cellEditorParams={{
+        values: ["Corrective Maintenance", "Overhaul"],
+        defaultOption: "Corrective Maintenance"  // Set the default option
+      }}
       minWidth={400}
-      cellEditorParams={{ values: ["Corrective Maintenance","Overhaul"] }}
       editable={true}
-    />,
+    />
+    ,
     <AgGridColumn
       headerName="Running Age After Previous Overhaul"
       field="totalRunAge"

@@ -7,10 +7,10 @@ import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper
 import CustomSelect from "../../../ui/Form/CustomSelect";
 import { userActions } from "../../../store/ApplicationVariable";
 import { Autocomplete } from "@material-ui/lab";
-import styles from "./coustom.module.css";
+import styles from "./custom.module.css";
 import CustomizedSnackbars from "../../../ui/CustomSnackBar";
 
-const Coustom = () => {
+const Custom = () => {
     const [selectedShipName, setShipName] = useState([]);
     const [uniqueEqIds, setUniqueEqIds] = useState([]);
     const [averagedAlphaBeta, setAveragedAlphaBeta] = useState({
@@ -338,4 +338,4 @@ const Coustom = () => {
     );
 };
 
-export default Coustom;
+export default Custom;

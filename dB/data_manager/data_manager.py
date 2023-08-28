@@ -76,14 +76,13 @@ class Data_Manager:
                         'date': item[3],
                         'maintenanceType': item[4],
                         'totalRunAge': item[5],
-                        'subSystemId': item[6]
+                        'subSystemId': item[6],
+                        'runningAge': item[7]
                     }
                     mainData.append(formatted_item)
                 failure_times = self.extract_failure_times(mainData)
                 N = [len(subarray) for subarray in failure_times]
                 T = self.extract_run_age(main_data=mainData, sub_data=subData)
-                print(failure_times, N)
-                print("This is T", T)
 
                 def para(N, x, T, k):
                     beta = (sum(n for n in N)) / (sum(sum(math.log(t /
@@ -643,13 +642,13 @@ class Data_Manager:
                 continue
             overhaul_id = data.get('overhaulId')
             if overhaul_id:
-                total_run_age = float(data.get('totalRunAge', 0))
+                total_run_age = float(data.get('runningAge', 0))
                 if overhaul_id in overhaul_data:
                     overhaul_data[overhaul_id].append(total_run_age)
                 else:
                     overhaul_data[overhaul_id] = [total_run_age]
             else:
-                total_run_age = float(data.get('totalRunAge', 0))
+                total_run_age = float(data.get('runningAge', 0))
                 present_overhaul_data.append(total_run_age)
                 # failure_times.append([total_run_age])
 
@@ -666,7 +665,7 @@ class Data_Manager:
             if data is None:
                 continue
             if 'overhaulId' not in data:
-                last_run_age = float(data.get('totalRunAge', 0))
+                last_run_age = float(data.get('runningAge', 0))
                 break
 
         if last_run_age is not None:
@@ -674,24 +673,79 @@ class Data_Manager:
 
         return run_ages
 
+    def fill_exact_runing_age(self, main_data, run_age_component):
+        flag = 0
+        component_id = None
+        clk_reset = 0
+        new_data = []
+        query = '''
+            UPDATE data_manager_overhaul_maint_data
+            SET id = ?,
+                overhaul_id = ?,
+                date = ?,
+                maintenance_type = ?,
+                running_age = ?,
+                cmms_running_age = ?,
+                associated_sub_system = ?
+            WHERE id = ?
+        '''
+        for d in main_data:
+            if d:
+                d["runningAge"] = None
+                maintenance_type, runing_age, cmms_run_age = d["maintenanceType"], d["runningAge"], d["totalRunAge"]
+                if clk_reset == 0:
+                    if float(cmms_run_age) <= run_age_component:
+                        d["runningAge"] = cmms_run_age
+                        new_data.append(d)
+                    else:
+                        d["maintenanceType"]= "Overhaul"
+                        d["runningAge"] = cmms_run_age
+                        new_data.append(d)
+                        clk_reset += 1
+                else:
+                    age = abs(int(cmms_run_age) - run_age_component * clk_reset)
+                    if age <= run_age_component:
+                        d["runningAge"] = str(age)
+                        new_data.append(d)
+                    else:
+                        d["maintenanceType"]= "Overhaul"
+                        d["runningAge"] = str(age)
+                        new_data.append(d)
+                        clk_reset += 1
+        for row in new_data:
+            print(row)
+            id = row["id"]
+            overhaulId = row.get("overhaulId")
+            date = row["date"]
+            maintenanceType = row["maintenanceType"]
+            totalRunAge = row["totalRunAge"]
+            subSystemId = row["subSystemId"]
+            runingAge = row["runningAge"]
+            cursor.execute(query, id, overhaulId, date, maintenanceType, runingAge, totalRunAge, subSystemId, id)
+            cnxn.commit()
+        return new_data
+
     def insert_overhauls(self, data):
         mainData = data[0]['mainData']
         subData = data[0]['subData']
-        print("mainData", mainData)
-        print("subData", subData)
         component_id = ""
         insert_sub_sql = '''insert into data_manager_overhauls_info (id, 
         component_id, overhaul_num, running_age, num_maintenance_event)
         values (?,?,?,?,?);'''
         insert_main_sql = '''insert into data_manager_overhaul_maint_data (id, 
-        component_id, overhaul_id, "date", maintenance_type, running_age,
+        component_id, overhaul_id, date, maintenance_type, cmms_running_age,
         associated_sub_system) values (?,?,?,?,?,?,?);'''
+        index = 0
+        run_age_component = 0
         try:
             for d in subData:
                 if d:
+                    index +=1
                     id = d['id']
                     overhaulNum = d["overhaulNum"]
                     runAge = d["runAge"]
+                    if index == 1:
+                        run_age_component = runAge
                     numMaint = d["numMaint"]
                     component_id = d["component_id"]
                     cursor.execute(insert_sub_sql, id, component_id,
@@ -711,17 +765,16 @@ class Data_Manager:
                     date = d["date"]
                     date = datetime.strptime(date, "%d/%m/%Y")
                     maintenanceType = d["maintenanceType"]
-                    totalRunAge = d["totalRunAge"]
+                    cmmsRunAge = d["totalRunAge"]
                     subSystemId = d["subSystemId"]
                     cursor.execute(insert_main_sql, id, component_id,
-                                   overhaulId, date, maintenanceType, totalRunAge, subSystemId)
+                                   overhaulId, date, maintenanceType, cmmsRunAge, subSystemId)
         except Exception as e:
             pass
+        mainData = self.fill_exact_runing_age(main_data=mainData, run_age_component=run_age_component)
         failure_times = self.extract_failure_times(mainData)
         N = [len(subarray) for subarray in failure_times]
         T = self.extract_run_age(main_data=mainData, sub_data=subData)
-        print(failure_times, N)
-        print(T)
 
         def para(N, x, T, k):
             beta = (sum(n for n in N)) / (sum(sum(math.log(t /
@@ -779,27 +832,51 @@ class Data_Manager:
 
     def update_alpha_beta(self, ship_name, component_name, alpha, beta):
         try:
-            query = "select component_id from system_configuration where ship_name=? and component_name=?"
-            cursor.execute(query, ship_name, component_name)
-            data = cursor.fetchone()
-            component_id = data[0]
-            print("component_id", component_id)
+            # Assuming you have a valid connection and cursor setup
+            cursor = cnxn.cursor()
 
-            query = '''UPDATE alpha_beta
-                    SET alpha = ?,
-                        beta = ?
-                    WHERE component_id = ?
-                '''
-            cursor.execute(query, alpha, beta, component_id)
+            # Query to fetch component_id
+            query = "SELECT component_id FROM system_configuration WHERE ship_name=? AND component_name=?"
+            cursor.execute(query, (ship_name, component_name))
+            data = cursor.fetchone()
+            
+            if data:
+                component_id = data[0]
+                print("component_id", component_id)
+            else:
+                # If component_id doesn't exist, insert a new record
+                insert_query = "INSERT INTO alpha_beta (component_id, alpha, beta) VALUES (?, ?, ?)"
+                cursor.execute(insert_query, (component_id, alpha, beta))
+                cnxn.commit()
+                return jsonify({
+                    "message": f"Alpha beta for component {component_name} is inserted"
+                })
+
+            # Update the existing record
+            update_query = '''
+                UPDATE alpha_beta
+                SET alpha = ?,
+                    beta = ?
+                WHERE component_id = ?
+            '''
+            cursor.execute(update_query, (alpha, beta, component_id))
             cnxn.commit()
+
             return jsonify({
-                "messege": f"Alpha beta for component {component_name} is setted"
+                "message": f"Alpha beta for component {component_name} is updated"
             })
         except Exception as e:
             return jsonify({"error": str(e)})
 
-    def set_component_overhaul_age(self, age):
-        print("AGE", age)
-        nums = math.floor(20000 / int(age))
-        print(nums, "This is nums")
+    def set_component_overhaul_age(self, ship_name, component_name, age):
+        age = int(age)
+        query = "select component_id from system_configuration where ship_name=? and component_name=?"
+        cursor.execute(query, ship_name, component_name)
+        data = cursor.fetchone()
+        component_id = data[0]
+        query = '''SELECT cmms_running_age from data_manager_overhaul_maint_data where component_id=?'''
+        cursor.execute(query, component_id)
+        data = cursor.fetchall()[-1]
+        cmms_running_age = int(data[0])
+        nums = math.floor(cmms_running_age/ age)
         return jsonify({"overhaul_nums": nums})

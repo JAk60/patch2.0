@@ -1,4 +1,4 @@
-.container{
+.container {
     height: 100vh;
     width: 100vw;
     display: flex;
@@ -6,23 +6,23 @@
     align-items: center;
     grid-row: 1/13;
     grid-column: 1/5;
-    background:url(Homewave.svg),linear-gradient(210deg, rgba(41,41,113,0.6) 0%, rgba(91, 114, 129, 0.6) 100%), url(https://wallpaperaccess.com/full/2579311.jpg);
+    background: url(Homewave.svg), linear-gradient(210deg, rgba(41, 41, 113, 0.6) 0%, rgba(91, 114, 129, 0.6) 100%), url(https://wallpaperaccess.com/full/2579311.jpg);
     /* background-blend-mode: ; */
-    background-size:cover;
+    background-size: cover;
 }
 
-.homeNav{
-    position: absolute;
+.homeNav {
+    position: fixed;
     top: 40px;
     right: 10px;
 }
 
-.homeNav i{
+.homeNav i {
     margin-right: 10px;
 }
 
-.homeNav a{
-    color:white;
+.homeNav a {
+    color: white;
     text-decoration: none;
     font-weight: 500;
     letter-spacing: 0.5px;
@@ -30,51 +30,62 @@
     font-size: 30px;
 }
 
-.homeLinks{
+.homeLinks {
     position: absolute;
     left: 100px;
     display: flex;
     flex-direction: column;
     height: 80%;
     justify-content: space-evenly;
-    font-size: 30px;
+    font-size: 3%;
 }
-.homeLinks a{
+
+.homeLinks a {
     display: flex;
     align-items: center;
-    color:white;
+    color: white;
     text-decoration: none;
     font-weight: 500;
     letter-spacing: 0.5px;
 }
-.circleIcon{
+
+.circleIcon {
     display: inline-block;
     background-color: #ffffff;
     border-radius: 50%;
-    box-shadow: 2px 2px 7px 0px rgba(0,0,0,0.5);
+    box-shadow: 2px 2px 7px 0px rgba(0, 0, 0, 0.5);
     text-align: center;
     margin-right: 30px;
-  }
-  .circleIcon i{
-    color:#004d90;
+}
+
+.circleIcon i {
+    color: #004d90;
     display: flex;
     flex-direction: column;
-    justify-content: center; 
+    justify-content: center;
     text-align: center;
     text-decoration: none;
     height: 90px;
-    width: 90px; 
-    font-size: 30px; 
-  }
-  .netra{
-      position: absolute;
-      right:20%;
-      font-size: 65px;
-      letter-spacing: 1px;
-      color: white;
-  }
-  .logotxt{
+    width: 90px;
+    font-size: 30px;
+}
+
+.netra {
+    position: sticky;
+    top: 20px;
+    left: 60%;
+    font-size: 65px;
+    letter-spacing: 1px;
+    color: white;
+}
+
+.logotxt {
     position: relative;
-    right: -13%;
-    top: -29px;
-  }
+    margin-left: 20px;
+    left: 21%;
+    bottom: 75px;
+}
+
+.linkbtn {
+    background-color: white;
+}

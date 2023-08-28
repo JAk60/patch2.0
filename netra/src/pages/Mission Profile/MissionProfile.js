@@ -203,7 +203,7 @@ const MissionProfile = (props) => {
       <Navigation />
       <div className={styles.body}>
         <div className={styles.module}>
-          <NewModule />
+          {/* <NewModule /> */}
         </div>
         <div className={styles.user}>
           <Button

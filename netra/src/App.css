@@ -8,7 +8,7 @@
 .container {
   display: grid;
   grid-template-columns: 0.6fr repeat(11, 1fr);
-  grid-template-rows: 10vh 10vh 15vh calc(100vh - 10vh - 10vh - 15vh);
+  grid-template-rows: 2vh 10vh 20vh calc(100vh - 10vh - 10vh - 15vh);
   font-weight: bold;
   /* overflow: hidden; */
 }

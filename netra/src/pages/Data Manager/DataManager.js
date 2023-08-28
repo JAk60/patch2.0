@@ -396,7 +396,7 @@ function DataManager(props) {
   return (
     <React.Fragment>
       <Navigation />
-      <NewModule />
+      {/* <NewModule /> */}
       <StageSlider marks={marks} default={marks[Stage]["value"]} />
       <Route
         path={[

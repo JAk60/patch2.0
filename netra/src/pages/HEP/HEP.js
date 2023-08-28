@@ -280,7 +280,7 @@ const HEP = (props) => {
     <>
       <Navigation />
       {/* <Module/> */}
-      <NewModule />
+      {/* <NewModule /> */}
       {/* <Slider marks={marks} default={marks[0]["value"]}/> */}
       <StageSlider marks={marks} default={marks[Stage]["value"]} />
       <div className={styles.flex1}>

@@ -4,20 +4,14 @@ import styles from "./repairable.module.css";
 import { AgGridColumn, AgGridReact } from "ag-grid-react";
 import { Button, TextField, Typography } from "@material-ui/core";
 import { v4 as uuid } from "uuid";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
-const RepairableSubTable = (props) => {
+const RepairableSubTableMaual = (props) => {
   const [gridApi, setGridApi] = useState(null);
   const [secondRows, setSecondRows] = useState([]);
-  const [runAge, setrunAge] = useState("0");
   const [gridColumnApi, setGridColumnApi] = useState(null);
   const [overhaulNums, setOverhaulNums] = useState("0");
-  const currSelectedData = useSelector(
-    (state) => state.userSelection.currentSelection
-  );
-  const currShipName = currSelectedData.shipName;
-  const currEquipmentName = currSelectedData.equipmentName;
-  //   const location = useLocation();
+  
   let secondRowHeight = 120;
   if (secondRows.length > 0 && secondRows.length > 2) {
     secondRowHeight = 200;
@@ -55,35 +49,30 @@ const RepairableSubTable = (props) => {
   const onSubmitNumOverhaul = () => {
     let count = 1;
     const sRows = [];
-    const payload = {
-      ship_name: currShipName,
-      equipment_name: currEquipmentName,
-      age: runAge
-  };
-    
-    fetch('/component_overhaul_age', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload),
-    })
-      .then(response => response.json())
-      .then(data => {
-        // Handle the response data here
-        console.log(data.overhaul_nums)
-        setOverhaulNums(data.overhaul_nums)
-        console.log(overhaulNums)
-      })
-      .catch(error => {
-        // Handle errors here
-        console.error('Error:', error);
-      });
+
+    // fetch('/component_overhaul_age', {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //   },
+    //   body: JSON.stringify({age: runAge}),
+    // })
+    //   .then(response => response.json())
+    //   .then(data => {
+    //     // Handle the response data here
+    //     console.log(data.overhaul_nums)
+    //     setOverhaulNums(data.overhaul_nums)
+    //     console.log(overhaulNums)
+    //   })
+    //   .catch(error => {
+    //     // Handle errors here
+    //     console.error('Error:', error);
+    //   });
 
     while (count <= +overhaulNums) {
       sRows.push({
         overhaulNum: count.toString(),
-        runAge: runAge * count,
+        runAge: 0,
         numMaint: 1,
         id: uuid(),
       });
@@ -92,6 +81,7 @@ const RepairableSubTable = (props) => {
     setSecondRows(sRows);
     props.secondTableDataUpdate(sRows);
   };
+
 
   const saveModifiedRows = (params) => {
     const allRowData = [];
@@ -105,16 +95,16 @@ const RepairableSubTable = (props) => {
       <div className={styles.numOverhaulParent}>
         <div className={styles.overhaulHaul}>
           <Typography variant="h5" className={styles.formTitle}>
-            Running Age Between Two Overhauls:
+            Number of Overhauls:
           </Typography>
           <TextField
             required
             id="outlined-required"
             // label="Number of Overhauls"
             // defaultValue="6000"
-            value={runAge}
+            value={overhaulNums}
             onChange={(e) => {
-              setrunAge(e.target.value);
+              setOverhaulNums(e.target.value);
             }}
             className={styles.formInput}
           />
@@ -152,4 +142,4 @@ const RepairableSubTable = (props) => {
   );
 };
 
-export default RepairableSubTable;
+export default RepairableSubTableMaual;

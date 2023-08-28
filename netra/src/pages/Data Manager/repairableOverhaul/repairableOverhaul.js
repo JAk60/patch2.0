@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import Coustom from "./coustom";
+import Custom from "./custom";
 import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import OverhaulTable from "../../../ui/Table/OverhaulTable";
 import RepairableSubTable from "./repairableSubTable";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
+import RepairableSubTableMaual from "./RepairableSubTableMaual";
 
 
 
@@ -31,7 +32,12 @@ const RepairableOverhaul = (props) => {
         <FormControlLabel
           value="manual"
           control={<Radio />}
-          label="Manual data entry"
+          label="Manual Data Entry"
+        />
+        <FormControlLabel
+          value="cmms"
+          control={<Radio />}
+          label="Cmms Data Entry"
         />
         <FormControlLabel
           value="ship"
@@ -42,13 +48,20 @@ const RepairableOverhaul = (props) => {
 
       {selectedOption === "manual" && (
         <div>
+          <RepairableSubTableMaual secondTableDataUpdate={secondTableDataUpdate} />
+          <OverhaulTable data={secondTableData} tableUpdate={mainTableUpdate} />
+        </div>
+      )}
+
+      {selectedOption === "cmms" && (
+        <div>
           <RepairableSubTable secondTableDataUpdate={secondTableDataUpdate} />
           <OverhaulTable data={secondTableData} tableUpdate={mainTableUpdate} />
         </div>
       )}
 
       {selectedOption === "ship" && (
-        <Coustom/>
+        <Custom />
       )}
     </div>
   );
