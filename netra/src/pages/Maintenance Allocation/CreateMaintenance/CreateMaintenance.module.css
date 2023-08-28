@@ -1,5 +1,5 @@
 .userSelection{
-    grid-row: 1/2;
+    grid-row: 2/3;
     grid-column: 2/13;
     margin: 20px;
     display: flex;
@@ -20,14 +20,15 @@
     display: flex;
     grid-row: 3/5;
     grid-column: 2/13; 
-    margin: 30px 20px 0 20px; 
+    margin: 130px 20px 0 20px; 
     box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
-    height: fit-content;
+    /* height: fit-content; */
+
     border-radius: 10px;
 
 }
 .assignDiv{
-  grid-row: 3/5;
+  grid-row: 4/5;
   grid-column: 2/13; 
   display: flex;
   flex-direction: column;
@@ -36,7 +37,7 @@
     display: flex;
     justify-content: space-between;
     padding: 20px;
-    margin: 30px 20px 0 20px; 
+    margin: 0 20px 0 20px; 
     box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
     height: fit-content;
     border-radius: 10px;
@@ -101,7 +102,7 @@
   flex-direction: column;
   justify-content: space-between;
   padding: 20px;
-  grid-row: 3/5;
+  grid-row: 4/5;
   grid-column: 2/13; 
   margin: 30px 20px 0 20px; 
   box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);

@@ -771,10 +771,12 @@ class Data_Manager:
                                    overhaulId, date, maintenanceType, cmmsRunAge, subSystemId)
         except Exception as e:
             pass
-        mainData = self.fill_exact_runing_age(main_data=mainData, run_age_component=run_age_component)
+        mainData = self.fill_exact_runing_age(main_data=mainData, run_age_component=int(run_age_component))
         failure_times = self.extract_failure_times(mainData)
+        print("THIS IS FAILURE", failure_times)
         N = [len(subarray) for subarray in failure_times]
         T = self.extract_run_age(main_data=mainData, sub_data=subData)
+        print("This is N", N)
 
         def para(N, x, T, k):
             beta = (sum(n for n in N)) / (sum(sum(math.log(t /

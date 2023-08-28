@@ -1,5 +1,5 @@
 .userSelection{
-    grid-row: 2/2;
+    grid-row: 2/3;
     grid-column: 2/13;
     margin: 20px;
     display: flex;
@@ -21,7 +21,7 @@
     display: flex;
     grid-row: 4/5;
     grid-column: 2/13; 
-    margin: 30px 20px 0 20px; 
+    margin: 0px 20px 0 20px; 
     box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
     /* height: fit-content; */
     border-radius: 10px;

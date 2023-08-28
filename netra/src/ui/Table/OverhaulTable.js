@@ -181,7 +181,7 @@ const OverhaulTable = (props) => {
       headerTooltip="Maintenance Type"
       cellEditor="agSelectCellEditor"  // Uncomment this line to use a select cell editor
       cellEditorParams={{
-        values: ["Corrective Maintenance", "Overhaul"],
+        values: ["Corrective Maintenance"],
         defaultOption: "Corrective Maintenance"  // Set the default option
       }}
       minWidth={400}
