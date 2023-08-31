@@ -30,10 +30,11 @@ class Data_Manager:
     def update_parameters(self, data):
         systemType_replaceable = data['isReplacable']
         data = data['data']
+        component_id = None
         final_data = []
         for d in data:
             id = d['id']
-            print(id)
+            component_id = id
             name = d['EquipmentName']
             if systemType_replaceable:
                 self.update_through_MLE(id)
@@ -64,6 +65,8 @@ class Data_Manager:
                         'component_id': item[1],
                     }
                     subData.append(formatted_item)
+                run_age_value = list(map(lambda item: item['runAge'], subData))[0]
+                self.fill_exact_runing_age(equipment_id= component_id, run_age_component=int(run_age_value))
                 main_query = '''select * from data_manager_overhaul_maint_data where component_id = ?'''
                 cursor.execute(main_query, (id,))
                 data = cursor.fetchall()
@@ -673,57 +676,73 @@ class Data_Manager:
 
         return run_ages
 
-    def fill_exact_runing_age(self, main_data, run_age_component):
-        flag = 0
-        component_id = None
-        clk_reset = 0
+    def fill_exact_runing_age(self, equipment_id, run_age_component):
+        query = "select * from data_manager_overhaul_maint_data where component_id = ?"
+        cursor.execute(query, equipment_id)
+        data = cursor.fetchall()
         new_data = []
-        query = '''
-            UPDATE data_manager_overhaul_maint_data
-            SET id = ?,
-                overhaul_id = ?,
-                date = ?,
-                maintenance_type = ?,
-                running_age = ?,
-                cmms_running_age = ?,
-                associated_sub_system = ?
-            WHERE id = ?
-        '''
-        for d in main_data:
-            if d:
-                d["runningAge"] = None
-                maintenance_type, runing_age, cmms_run_age = d["maintenanceType"], d["runningAge"], d["totalRunAge"]
-                if clk_reset == 0:
-                    if float(cmms_run_age) <= run_age_component:
-                        d["runningAge"] = cmms_run_age
-                        new_data.append(d)
-                    else:
-                        d["maintenanceType"]= "Overhaul"
-                        d["runningAge"] = cmms_run_age
-                        new_data.append(d)
-                        clk_reset += 1
+        clk_reset = 0
+        index = 0
+        for row in data:
+            id, component_id, overhaul_id, date, maintenance_type, running_age, associated_sub_system, cmms_running_age = row
+            cmms_running_age = int(cmms_running_age)
+            if clk_reset == 0:
+                if cmms_running_age < run_age_component:
+                    running_age = cmms_running_age
+                    new_data.append((id, component_id, overhaul_id, date, maintenance_type, running_age, associated_sub_system, cmms_running_age))
+                elif cmms_running_age == run_age_component:
+                    maintenance_type = "Overhaul"
+                    running_age = cmms_running_age
+                    new_data.append((id, component_id, overhaul_id, date, maintenance_type, running_age, associated_sub_system, cmms_running_age))
+                    clk_reset += 1
                 else:
-                    age = abs(int(cmms_run_age) - run_age_component * clk_reset)
-                    if age <= run_age_component:
-                        d["runningAge"] = str(age)
-                        new_data.append(d)
-                    else:
-                        d["maintenanceType"]= "Overhaul"
-                        d["runningAge"] = str(age)
-                        new_data.append(d)
-                        clk_reset += 1
-        for row in new_data:
-            print(row)
-            id = row["id"]
-            overhaulId = row.get("overhaulId")
-            date = row["date"]
-            maintenanceType = row["maintenanceType"]
-            totalRunAge = row["totalRunAge"]
-            subSystemId = row["subSystemId"]
-            runingAge = row["runningAge"]
-            cursor.execute(query, id, overhaulId, date, maintenanceType, runingAge, totalRunAge, subSystemId, id)
-            cnxn.commit()
-        return new_data
+                    maintenance_type = "Overhaul"
+                    id =  uuid.uuid4()
+                    running_age = run_age_component
+                    prev_date = datetime.strptime(data[index][3], "%Y-%m-%d")
+                    try:
+                        next_date = datetime.strptime(data[index+1][3], "%Y-%m-%d")
+                    except:
+                        next_date = prev_date
+                    mid_date = prev_date + (next_date - prev_date) / 2
+                    mid_date = mid_date.strftime("%Y-%m-%d")
+                    new_data.append((id, component_id, overhaul_id, mid_date, maintenance_type, running_age, associated_sub_system, running_age))
+                    clk_reset += 1
+            else:
+                age = abs(int(cmms_running_age) - run_age_component * clk_reset)
+                if age < run_age_component:
+                    running_age = age
+                    new_data.append((id, component_id, overhaul_id, date, maintenance_type, running_age, associated_sub_system, cmms_running_age))
+                elif age == run_age_component:
+                    maintenance_type = "Overhaul"
+                    running_age = age
+                    new_data.append((id, component_id, overhaul_id, date, maintenance_type, running_age, associated_sub_system, cmms_running_age))
+                    clk_reset += 1
+                else:
+                    maintenance_type = "Overhaul"
+                    id =  uuid.uuid4()
+                    running_age = age
+                    prev_date = datetime.strptime(data[index][3], "%Y-%m-%d")
+                    try:
+                        next_date = datetime.strptime(data[index+1][3], "%Y-%m-%d")
+                    except:
+                        next_date = prev_date
+                    mid_date = prev_date + (next_date - prev_date) / 2
+                    mid_date = mid_date.strftime("%Y-%m-%d")
+                    new_data.append((id, component_id, overhaul_id, mid_date, maintenance_type, running_age, associated_sub_system, running_age))
+                    clk_reset += 1
+            index +=1
+        query = "delete from data_manager_overhaul_maint_data where component_id = ?"
+        cursor.execute(query, equipment_id)
+        cnxn.commit()
+        insert_query = '''
+        insert into data_manager_overhaul_maint_data (id, 
+        component_id, overhaul_id, date, maintenance_type, running_age,
+        associated_sub_system, cmms_running_age) values (?,?,?,?,?,?,?,?)
+        '''
+        for d in new_data:
+            cursor.execute(insert_query, d)
+
 
     def insert_overhauls(self, data):
         mainData = data[0]['mainData']
@@ -771,36 +790,36 @@ class Data_Manager:
                                    overhaulId, date, maintenanceType, cmmsRunAge, subSystemId)
         except Exception as e:
             pass
-        mainData = self.fill_exact_runing_age(main_data=mainData, run_age_component=int(run_age_component))
-        failure_times = self.extract_failure_times(mainData)
-        print("THIS IS FAILURE", failure_times)
-        N = [len(subarray) for subarray in failure_times]
-        T = self.extract_run_age(main_data=mainData, sub_data=subData)
-        print("This is N", N)
+        # mainData = self.fill_exact_runing_age(main_data=mainData, run_age_component=int(run_age_component))
+        # failure_times = self.extract_failure_times(mainData)
+        # print("THIS IS FAILURE", failure_times)
+        # N = [len(subarray) for subarray in failure_times]
+        # T = self.extract_run_age(main_data=mainData, sub_data=subData)
+        # print("This is N", N)
 
-        def para(N, x, T, k):
-            beta = (sum(n for n in N)) / (sum(sum(math.log(t /
-                                                           x[T.index(t)][i]) for i in range(N[T.index(t)])) for t in T))
-            alpha = (sum(n for n in N)) / (sum(t**beta for t in T))
-            return alpha, beta
-        alpha, beta = para(N, failure_times, T, k=len(failure_times))
-        a_b_id = uuid.uuid4()
-        print(f'alpha={alpha} beta={beta}')
-        # ## insert alpha beta temp now.
-        merge_query = '''
-        MERGE INTO alpha_beta AS target
-        USING (VALUES (?, ?, ?, ?)) AS source (id, component_id, alpha, beta)
-        ON target.component_id = source.component_id
-        WHEN MATCHED THEN
-            UPDATE SET alpha = source.alpha, beta = source.beta
-        WHEN NOT MATCHED THEN
-            INSERT (id, component_id, alpha, beta)
-            VALUES (source.id, source.component_id, source.alpha, source.beta);
-        '''
+        # def para(N, x, T, k):
+        #     beta = (sum(n for n in N)) / (sum(sum(math.log(t /
+        #                                                    x[T.index(t)][i]) for i in range(N[T.index(t)])) for t in T))
+        #     alpha = (sum(n for n in N)) / (sum(t**beta for t in T))
+        #     return alpha, beta
+        # alpha, beta = para(N, failure_times, T, k=len(failure_times))
+        # a_b_id = uuid.uuid4()
+        # print(f'alpha={alpha} beta={beta}')
+        # # ## insert alpha beta temp now.
+        # merge_query = '''
+        # MERGE INTO alpha_beta AS target
+        # USING (VALUES (?, ?, ?, ?)) AS source (id, component_id, alpha, beta)
+        # ON target.component_id = source.component_id
+        # WHEN MATCHED THEN
+        #     UPDATE SET alpha = source.alpha, beta = source.beta
+        # WHEN NOT MATCHED THEN
+        #     INSERT (id, component_id, alpha, beta)
+        #     VALUES (source.id, source.component_id, source.alpha, source.beta);
+        # '''
 
-        # Assuming you have appropriate values for 'component_id', 'alpha', and 'beta'
-        cursor.execute(merge_query, (a_b_id, component_id, alpha, beta))
-        cnxn.commit()
+        # # Assuming you have appropriate values for 'component_id', 'alpha', and 'beta'
+        # cursor.execute(merge_query, (a_b_id, component_id, alpha, beta))
+        # cnxn.commit()
 
     def fetch_eeta_beta(self, component_id):
         try:
