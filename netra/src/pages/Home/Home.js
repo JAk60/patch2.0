@@ -27,7 +27,7 @@ const iconMappings = {
   ViewUpdateData: RateReviewOutlinedIcon,
   ReliabilityDashboard: BarChartOutlinedIcon,
   MonitoringDashboard: ShowChartOutlinedIcon,
-  TaskReliabilityDashboard: TableChartOutlinedIcon,
+  MissionReliabilityDashboard: TableChartOutlinedIcon,
   TimeToFailureRUL: AlarmAddOutlinedIcon,
 };
 
@@ -72,7 +72,7 @@ const Home = (props) => {
     { feature: "ViewUpdateData", levels: ["L1", "L5"] },
     { feature: "ReliabilityDashboard", levels: ["L1", "L2", "L3", "L4", "L5"] },
     { feature: "MonitoringDashboard", levels: ["L1", "L2", "L5"] },
-    { feature: "TaskReliabilityDashboard", levels: ["L1", "L2", "L4", "L3", "L5"] },
+    { feature: "MissionReliabilityDashboard", levels: ["L1", "L2", "L4", "L3", "L5"] },
     { feature: "TimeToFailureRUL", levels: ["L1", "L5"] },
   ];
 
@@ -80,7 +80,7 @@ const Home = (props) => {
     SystemConfiguration: "/system_config",
     ReliabilityDashboard: "/rDashboard",
     MonitoringDashboard: "/CDashboard",
-    TaskReliabilityDashboard: "/TaskDashboard",
+    MissionReliabilityDashboard: "/TaskDashboard",
     MissionConfiguration: "/dnd",
     ViewUpdateData: "/view_data",
     MaintenanceAllocation: "/maintenance_allocation",
