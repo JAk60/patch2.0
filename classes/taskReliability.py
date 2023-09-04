@@ -569,7 +569,7 @@ class TaskReliability:
         pass
 
 
-    def json_paraser(self, APP_ROOT, phase_duration, curr_task):
+    def json_paraser(self,APP_ROOT, PhaseInfo, phase_duration, curr_task):
         target_path = os.path.join(APP_ROOT, 'tasks/')
         files = os.listdir(target_path)
         file = f"{curr_task}.json"
@@ -736,22 +736,25 @@ class TaskReliability:
             total_reliblity = 1
             for i in range(len(groups)):
                 for j in range(total_phase):
-                    if(groups[i][j][5] == 0):
+                    print("j value",j+1)
+                    phase_name = list(PhaseInfo.keys())[j]
+                    print("phase_name", phase_name)  # Get the phase name from phaseInfo dictionary
+                    if groups[i][j][5] == 0:
                         pass
                     else:
-                        group_equi_rel, max_rel_equip, group_equip, Rel, max_rel_equip_index = taskrelcode.group_rel(groups[i][j][1],groups[i][j][2], groups[i][j][3], groups[i][j][4],phase_duration[j], groups[i][j][5],groups[i][j][6])
-                        final_results.append(f"For phase {j+1} and group {i+1}, "
-                            f"preferred equipments are {group_equip}")
-                        total_reliblity *=Rel
+                        group_equi_rel, max_rel_equip, group_equip, Rel, max_rel_equip_index = taskrelcode.group_rel(groups[i][j][1], groups[i][j][2], groups[i][j][3], groups[i][j][4], phase_duration[j], groups[i][j][5], groups[i][j][6])
+                        final_results.append(f"For {phase_name}{j+1} and group {i+1}, "  # Use phase_name instead of phase number
+                                            f"preferred equipments are {group_equip}")
+                        total_reliblity *= Rel
                     try:
                         for k in max_rel_equip_index:
-                            groups[i][j+1][4][k] += phase_duration[j]
+                            groups[i][j + 1][4][k] += phase_duration[j]
                     except:
                         pass
 
             final_results.append(f"Total Reliability: {total_reliblity}")
 
-                
+                            
             return jsonify({
                "res": final_results
             })

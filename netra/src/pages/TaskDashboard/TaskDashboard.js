@@ -125,6 +125,7 @@ const TaskDashboard = () => {
     console.log(d)
     ParallelIds = d;
   };
+  console.log("phasedata",phasedata);
   console.log(rowCompState, "This is shit!!")
   const [shipOption, setshipOption] = useState([]);
   const [taskOption, settaskOption] = useState([]);
@@ -178,14 +179,25 @@ const TaskDashboard = () => {
     setEndDate(date);
   };
 
-  console.table(phasedata, "phase data")
+  ///point1
+  const [missionD, setMissionD] = useState({});
+
+
   const onCellValueChanged = (params) => {
+    console.table(phasedata, "phase data")
+    const { data } = params;
+      const { missionType, duration } = data;
+    console.log(missionType);
     if (params.colDef.field === "duration") {
       const updatedDurations = missionDurations.map((duration, index) =>
         index === params.node.rowIndex ? params.newValue : duration
       );
       setMissionDurations(updatedDurations);
     }
+    setMissionD((prevMissionData) => ({
+      ...prevMissionData,
+      [missionType]: duration,
+    }));
   };
   const ImportColumns = [
     <AgGridColumn
@@ -357,8 +369,8 @@ const TaskDashboard = () => {
       add: defaultRow,
     });
   };
+  console.log("missionDurations",missionD);
   const updateCompTable = () => {
-    console.log(missionDurations);
     console.log(currentTaskName)
     const durationNums = missionDurations.map(str => parseFloat(str));
     fetch('/phase_json', {
@@ -367,6 +379,7 @@ const TaskDashboard = () => {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
+        "PhaseInfo": missionD,
         "duration": durationNums,
         "task_name": currentTaskName
       })
@@ -406,6 +419,7 @@ const TaskDashboard = () => {
     // debugger;
   }
   console.log(recommedation);
+  console.log(missionD);
   const saveTaskReset = () => {
     console.log(totalReliability, "tOTAL rekl")
     debugger;
@@ -440,6 +454,7 @@ const TaskDashboard = () => {
     settaskTableData([]);
     settaskMissionTableData([]);
   }
+  console.log("missiondata",missionProfileData);
   const deleteRows = () => {
     debugger;
     const selectedRows = gridApi.getSelectedRows();
@@ -577,7 +592,7 @@ const TaskDashboard = () => {
   const onSubmitHandler = () => {
     // setMission(0);
     let storedData = Object.entries(localStorage)
-    console.log(storedData)
+    console.log("Localy data",storedData)
     // storedData.pop()
     let fData = []
     storedData.forEach(ele => {
@@ -680,8 +695,6 @@ const TaskDashboard = () => {
       dispatch(taskActions.updateCurrentTask({ 'task': value[0].name }));
     }
   }
-  const minThreshold = 45
-  const maxThreshold = 60
 
 
   return (

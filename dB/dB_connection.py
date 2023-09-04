@@ -1,6 +1,6 @@
 import pyodbc
 server = 'localhost\MSSQLSERVER01'
-database = 'indian_navy'
+database = 'netra_indian_navy'
 username = 'sa'
 password = 'Previtix@1324'
 # cnxn = pyodbc.connect('DRIVER={ODBC Driver 17 for SQL Server};SERVER=' +
@@ -9,8 +9,8 @@ password = 'Previtix@1324'
 
 # cnxn = pyodbc.connect(r'Driver=SQL Server;Server=localhost;Database=master;Trusted_Connection=yes;')
 
-cnxn = pyodbc.connect(driver='{SQL Server}', server='PATHU\SQLEXPRESS02', database='indian_navy',               
+cnxn = pyodbc.connect(driver='{SQL Server}', server='DESKTOP-F92OJ09', database='Test_01',               
                trusted_connection='yes', port=1433)
-# SELECT name FROM sys.columns WHERE object_id = OBJECT_ID('indian_navy.dbo.system_configuration')
+# SELECT name FROM sys.columns WHERE object_id = OBJECT_ID('netra_indian_navy.dbo.system_configuration')
 cursor = cnxn.cursor()
 print("hello")

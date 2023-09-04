@@ -695,6 +695,8 @@ class Data_Manager:
         total_average = sum(row[0] for row in results)
         days = total_average / 5 / 30
         prev_date = None
+        counter = 0
+        data_length = len(data)
 
         for row in data:
             id, component_id, overhaul_id, date, maintenance_type, running_age, associated_sub_system, cmms_running_age = row
@@ -715,8 +717,7 @@ class Data_Manager:
                     clk_reset += 1
                 else:
                     maintenance_type = "Overhaul"
-                    id =  uuid.uuid4()
-                    running_age = run_age_component
+                    # running_age = run_age_component
                     # prev_date = datetime.strptime(data[index][3], "%Y-%m-%d")
                     # try:
                     #     next_date = datetime.strptime(data[index+1][3], "%Y-%m-%d")
@@ -724,11 +725,17 @@ class Data_Manager:
                     #     next_date = prev_date
                     # mid_date = prev_date + (next_date - prev_date) / 2
                     # mid_date = mid_date.strftime("%Y-%m-%d")
+                    prev_date = date
                     days = abs(cmms_running_age - run_age_component) / days
                     date = datetime.strptime(prev_date, "%Y-%m-%d") + timedelta(days=days)
                     date = date.strftime("%Y-%m-%d")
-                    new_data.append((id, component_id, overhaul_id, date, maintenance_type, running_age, associated_sub_system, running_age))
+                    new_data.append((id, component_id, overhaul_id, date, maintenance_type, run_age_component, associated_sub_system, run_age_component))
+                    id =  uuid.uuid4()
                     clk_reset += 1
+                    age = abs(int(cmms_running_age) - run_age_component * clk_reset)
+                    running_age = age
+                    maintenance_type = "Corrective Maintainance"
+                    new_data.append((id, component_id, overhaul_id, prev_date, maintenance_type, running_age, associated_sub_system, cmms_running_age))
             else:
                 age = abs(int(cmms_running_age) - run_age_component * clk_reset)
                 if age < run_age_component:
@@ -750,11 +757,17 @@ class Data_Manager:
                     #     next_date = prev_date
                     # mid_date = prev_date + (next_date - prev_date) / 2
                     # mid_date = mid_date.strftime("%Y-%m-%d")
+                    prev_date = date
                     days = abs(cmms_running_age - run_age_component) / days
                     date = datetime.strptime(prev_date, "%Y-%m-%d") + timedelta(days=days)
                     date = date.strftime("%Y-%m-%d")
-                    new_data.append((id, component_id, overhaul_id, date, maintenance_type, running_age, associated_sub_system, running_age))
+                    new_data.append((id, component_id, overhaul_id, date, maintenance_type, run_age_component, associated_sub_system, cmms_running_age))
+                    id =  uuid.uuid4()
                     clk_reset += 1
+                    age = abs(int(cmms_running_age) - run_age_component * clk_reset)
+                    running_age = age
+                    maintenance_type = "Corrective Maintainance"
+                    new_data.append((id, component_id, overhaul_id, prev_date, maintenance_type, running_age, associated_sub_system, cmms_running_age))
             index +=1
             prev_date = date
         query = "delete from data_manager_overhaul_maint_data where component_id = ?"

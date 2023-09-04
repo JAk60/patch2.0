@@ -594,10 +594,11 @@ def fetch_eta_beta():
 @app.route('/phase_json', methods=['POST'])
 def phasejson():
     data = request.json
+    PhaseInfo = data["PhaseInfo"]
     durations = data["duration"]
     curr_task = data["task_name"]
     inst = TaskReliability()
-    return inst.json_paraser(APP_ROOT, durations, curr_task)
+    return inst.json_paraser(APP_ROOT, PhaseInfo, durations, curr_task)
 
 
 @app.route('/get_ship_alpha_beta', methods=['POST'])

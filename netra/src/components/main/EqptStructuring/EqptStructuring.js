@@ -209,7 +209,7 @@ function EqptStructuring() {
             <form style={{ width: "100%" }} onSubmit={formik.handleSubmit}>
               <div className={classes.formrow1}>
                 <div className={classes.field1}>
-                  <LabelToolTip label="System Name" info="Info" />
+                  <LabelToolTip label="Equipment Name" info="Info" />
                   <CustomTextInput
                     className={classes.fullWidth}
                     id="system"
@@ -220,7 +220,7 @@ function EqptStructuring() {
                   ></CustomTextInput>
                 </div>
                 <div className={classes.field1}>
-                  <LabelToolTip label="System Type" info="Info" />
+                  <LabelToolTip label="CMMS ID" info="Info" />
                   <CustomTextInput
                     className={classes.fullWidth}
                     id="systemType"
@@ -274,7 +274,7 @@ function EqptStructuring() {
                       <LabelToolTip label="Child Component Name" />
                     </Grid>
                     <Grid item xs={5}>
-                      <LabelToolTip label="Part Code" />
+                      <LabelToolTip label="CMMS ID" />
                     </Grid>
                     <Grid item xs={2}></Grid>
                   </Grid>
