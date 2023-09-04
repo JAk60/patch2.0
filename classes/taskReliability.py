@@ -728,6 +728,13 @@ class TaskReliability:
             groups = sorted_data
 
             phase_duration = phase_duration
+            # print([i for i in PhaseInfo.keys()])
+            phase_seq  = []
+            index = 0
+            for i in PhaseInfo.keys():
+                for idx, j in enumerate(phase_array):
+                    if j == i:
+                        phase_seq.append(idx)
             total_phase = len(phase_duration)
 
             taskrelcode = TaskRelCode()
@@ -735,14 +742,14 @@ class TaskReliability:
             final_results = []
             total_reliblity = 1
             for i in range(len(groups)):
-                for j in range(total_phase):
-                    print("j value",j+1)
-                    phase_name = list(PhaseInfo.keys())[j]
-                    print("phase_name", phase_name)  # Get the phase name from phaseInfo dictionary
+                for idx,j in enumerate(phase_seq):
+                    # print("j value",j+1)
+                    phase_name = list(PhaseInfo.keys())[idx]
+                    # print("phase_name", phase_name)  # Get the phase name from phaseInfo dictionary
                     if groups[i][j][5] == 0:
                         pass
                     else:
-                        group_equi_rel, max_rel_equip, group_equip, Rel, max_rel_equip_index = taskrelcode.group_rel(groups[i][j][1], groups[i][j][2], groups[i][j][3], groups[i][j][4], phase_duration[j], groups[i][j][5], groups[i][j][6])
+                        group_equi_rel, max_rel_equip, group_equip, Rel, max_rel_equip_index = taskrelcode.group_rel(groups[i][j][1], groups[i][j][2], groups[i][j][3], groups[i][j][4], phase_duration[idx], groups[i][j][5], groups[i][j][6])
                         final_results.append(f"For {phase_name}{j+1} and group {i+1}, "  # Use phase_name instead of phase number
                                             f"preferred equipments are {group_equip}")
                         total_reliblity *= Rel
@@ -754,7 +761,7 @@ class TaskReliability:
 
             final_results.append(f"Total Reliability: {total_reliblity}")
 
-                            
+            print(final_results)
             return jsonify({
                "res": final_results
             })
