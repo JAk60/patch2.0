@@ -695,8 +695,6 @@ class Data_Manager:
         total_average = sum(row[0] for row in results)
         days = total_average / 5 / 30
         prev_date = None
-        counter = 0
-        data_length = len(data)
 
         for row in data:
             id, component_id, overhaul_id, date, maintenance_type, running_age, associated_sub_system, cmms_running_age = row
@@ -725,10 +723,12 @@ class Data_Manager:
                     #     next_date = prev_date
                     # mid_date = prev_date + (next_date - prev_date) / 2
                     # mid_date = mid_date.strftime("%Y-%m-%d")
-                    prev_date = date
+                    prev_date = data[index - 1][3]
                     days = abs(cmms_running_age - run_age_component) / days
+                    # print(days, "days")
                     date = datetime.strptime(prev_date, "%Y-%m-%d") + timedelta(days=days)
                     date = date.strftime("%Y-%m-%d")
+                    print(prev_date, date)
                     new_data.append((id, component_id, overhaul_id, date, maintenance_type, run_age_component, associated_sub_system, run_age_component))
                     id =  uuid.uuid4()
                     clk_reset += 1
@@ -757,11 +757,13 @@ class Data_Manager:
                     #     next_date = prev_date
                     # mid_date = prev_date + (next_date - prev_date) / 2
                     # mid_date = mid_date.strftime("%Y-%m-%d")
-                    prev_date = date
+                    prev_date = data[index - 1][3]
                     days = abs(cmms_running_age - run_age_component) / days
+                    print(prev_date, date)
+                    print(days)
                     date = datetime.strptime(prev_date, "%Y-%m-%d") + timedelta(days=days)
                     date = date.strftime("%Y-%m-%d")
-                    new_data.append((id, component_id, overhaul_id, date, maintenance_type, run_age_component, associated_sub_system, cmms_running_age))
+                    new_data.append((id, component_id, overhaul_id, date, maintenance_type, run_age_component, associated_sub_system, run_age_component * clk_reset))
                     id =  uuid.uuid4()
                     clk_reset += 1
                     age = abs(int(cmms_running_age) - run_age_component * clk_reset)
