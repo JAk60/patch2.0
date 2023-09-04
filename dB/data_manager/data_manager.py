@@ -67,7 +67,9 @@ class Data_Manager:
                     subData.append(formatted_item)
                 run_age_value = list(map(lambda item: item['runAge'], subData))[0]
                 self.fill_exact_runing_age(equipment_id= component_id, run_age_component=int(run_age_value))
-                main_query = '''select * from data_manager_overhaul_maint_data where component_id = ?'''
+                main_query = '''SELECT * FROM data_manager_overhaul_maint_data 
+                            WHERE component_id = ?
+                    '''
                 cursor.execute(main_query, (id,))
                 data = cursor.fetchall()
                 mainData = []
@@ -89,7 +91,7 @@ class Data_Manager:
 
                 def para(N, x, T, k):
                     beta = (sum(n for n in N)) / (sum(sum(math.log(t /
-                                                                   x[T.index(t)][i]) for i in range(N[T.index(t)])) for t in T))
+                                                                x[T.index(t)][i]) for i in range(N[T.index(t)])) for t in T))
                     alpha = (sum(n for n in N)) / (sum(t**beta for t in T))
                     return alpha, beta
                 alpha, beta = para(N, failure_times, T, k=len(failure_times))
@@ -677,15 +679,31 @@ class Data_Manager:
         return run_ages
 
     def fill_exact_runing_age(self, equipment_id, run_age_component):
-        query = "select * from data_manager_overhaul_maint_data where component_id = ?"
+        query = "select * from data_manager_overhaul_maint_data where component_id = ? and running_age is NULL"
         cursor.execute(query, equipment_id)
         data = cursor.fetchall()
         new_data = []
         clk_reset = 0
         index = 0
+        query = "SELECT TOP 5 average_running FROM operational_data WHERE component_id = ? ORDER BY average_running DESC"
+        cursor.execute(query, equipment_id)
+        results = cursor.fetchall()
+        num_rows = len(results)
+        while num_rows < 5:
+            results.append((0,))
+            num_rows += 1
+        total_average = sum(row[0] for row in results)
+        days = total_average / 5 / 30
+        prev_date = None
+
         for row in data:
             id, component_id, overhaul_id, date, maintenance_type, running_age, associated_sub_system, cmms_running_age = row
             cmms_running_age = int(cmms_running_age)
+            if date is None:
+                if prev_date:
+                    days = abs(cmms_running_age - run_age_component) / days
+                    date = datetime.strptime(prev_date, "%Y-%m-%d") + timedelta(days=days)
+                    date = date.strftime("%Y-%m-%d")               
             if clk_reset == 0:
                 if cmms_running_age < run_age_component:
                     running_age = cmms_running_age
@@ -699,14 +717,17 @@ class Data_Manager:
                     maintenance_type = "Overhaul"
                     id =  uuid.uuid4()
                     running_age = run_age_component
-                    prev_date = datetime.strptime(data[index][3], "%Y-%m-%d")
-                    try:
-                        next_date = datetime.strptime(data[index+1][3], "%Y-%m-%d")
-                    except:
-                        next_date = prev_date
-                    mid_date = prev_date + (next_date - prev_date) / 2
-                    mid_date = mid_date.strftime("%Y-%m-%d")
-                    new_data.append((id, component_id, overhaul_id, mid_date, maintenance_type, running_age, associated_sub_system, running_age))
+                    # prev_date = datetime.strptime(data[index][3], "%Y-%m-%d")
+                    # try:
+                    #     next_date = datetime.strptime(data[index+1][3], "%Y-%m-%d")
+                    # except:
+                    #     next_date = prev_date
+                    # mid_date = prev_date + (next_date - prev_date) / 2
+                    # mid_date = mid_date.strftime("%Y-%m-%d")
+                    days = abs(cmms_running_age - run_age_component) / days
+                    date = datetime.strptime(prev_date, "%Y-%m-%d") + timedelta(days=days)
+                    date = date.strftime("%Y-%m-%d")
+                    new_data.append((id, component_id, overhaul_id, date, maintenance_type, running_age, associated_sub_system, running_age))
                     clk_reset += 1
             else:
                 age = abs(int(cmms_running_age) - run_age_component * clk_reset)
@@ -722,16 +743,20 @@ class Data_Manager:
                     maintenance_type = "Overhaul"
                     id =  uuid.uuid4()
                     running_age = age
-                    prev_date = datetime.strptime(data[index][3], "%Y-%m-%d")
-                    try:
-                        next_date = datetime.strptime(data[index+1][3], "%Y-%m-%d")
-                    except:
-                        next_date = prev_date
-                    mid_date = prev_date + (next_date - prev_date) / 2
-                    mid_date = mid_date.strftime("%Y-%m-%d")
-                    new_data.append((id, component_id, overhaul_id, mid_date, maintenance_type, running_age, associated_sub_system, running_age))
+                    # prev_date = datetime.strptime(data[index][3], "%Y-%m-%d")
+                    # try:
+                    #     next_date = datetime.strptime(data[index+1][3], "%Y-%m-%d")
+                    # except:
+                    #     next_date = prev_date
+                    # mid_date = prev_date + (next_date - prev_date) / 2
+                    # mid_date = mid_date.strftime("%Y-%m-%d")
+                    days = abs(cmms_running_age - run_age_component) / days
+                    date = datetime.strptime(prev_date, "%Y-%m-%d") + timedelta(days=days)
+                    date = date.strftime("%Y-%m-%d")
+                    new_data.append((id, component_id, overhaul_id, date, maintenance_type, running_age, associated_sub_system, running_age))
                     clk_reset += 1
             index +=1
+            prev_date = date
         query = "delete from data_manager_overhaul_maint_data where component_id = ?"
         cursor.execute(query, equipment_id)
         cnxn.commit()
