@@ -10,6 +10,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import SelectEquipment from "../selectEquipment/selectEquipment";
 import { useSelector, useDispatch } from "react-redux";
 import { treeDataActions } from "../../../store/TreeDataStore";
+import CustomizedSnackbars from "../../../ui/CustomSnackBar";
 
 const ParameterStyles = makeStyles({
   dropdown: {
@@ -37,6 +38,19 @@ function ParameterEstimation(props) {
       equipment === "Replaceable" ? true : false;
   }
   let ParameterColumns = [];
+  const [SnackBarMessage, setSnackBarMessage] = useState({
+    severity: "error",
+    message: "This is awesome",
+    showSnackBar: false,
+  });
+
+  const onHandleSnackClose = () => {
+    setSnackBarMessage({
+      severity: "error",
+      message: "Please Add Systems",
+      showSnackBar: false,
+    });
+  };
   if (!systemRepairTypeBool) {
     // Repairable Data
     ParameterColumns = [
@@ -142,11 +156,24 @@ function ParameterEstimation(props) {
       },
     })
       .then((res) => {
-        return res.json();
+          return res.json();
       })
       .then((data) => {
-        setRows(data);
-      });
+        if(data.code !== 0){
+          setSnackBarMessage({
+            severity: "success",
+            message: "Reestimated Parameters Successfully",
+            showSnackBar: true,
+          });
+          setRows(data)
+        }else{
+          setSnackBarMessage({
+            severity: "error",
+            message: "Error Occured During Fetching Parameters",
+            showSnackBar: true,
+          });
+        }
+      })
   };
 
   return (
@@ -217,6 +244,12 @@ function ParameterEstimation(props) {
         <IconButton>
         <DeleteIcon />
         </IconButton> */}
+        {SnackBarMessage.showSnackBar && (
+        <CustomizedSnackbars
+          message={SnackBarMessage}
+          onHandleClose={onHandleSnackClose}
+        />
+      )}
     </div>
   );
 }

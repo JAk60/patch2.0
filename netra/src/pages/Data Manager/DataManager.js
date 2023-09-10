@@ -85,9 +85,10 @@ function DataManager(props) {
   };
 
   const nextModule = (settings) => {
-    if (settings.ReliabilityDashboard) {
+    // if (settings.ReliabilityDashboard) {
+    //   props.history.push("/rDashboard");
+    // }
       props.history.push("/rDashboard");
-    }
   };
 
   const [locationKeys, setLocationKeys] = useState([]);
@@ -175,6 +176,11 @@ function DataManager(props) {
         // }
         dispatch(treeDataActions.setTreeData({ treeData: d.treeD }));
       });
+      setSnackBarMessage({
+        severity: "success",
+        message: "Loaded Equipment Successfully",
+        showSnackBar: true,
+      });
   };
 
 
@@ -196,7 +202,7 @@ function DataManager(props) {
       .then((data) => {
         setSnackBarMessage({
           severity: "success",
-          message: data.message,
+          message: "Data Saved Successfully",
           showSnackBar: true,
         });
       })
@@ -393,6 +399,13 @@ function DataManager(props) {
   const handleHistoricalDataDropdownChange = (dataType) => {
     setDataType(dataType);
   };
+  const handleUpdateList = () =>{
+    setSnackBarMessage({
+      severity: "success",
+      message: "List Updated Successfully",
+      showSnackBar: true,
+    });
+  }
   return (
     <React.Fragment>
       <Navigation />
@@ -424,6 +437,7 @@ function DataManager(props) {
                   variant="contained"
                   color="primary"
                   className={ManagerClasses.buttons}
+                  onClick={() => handleUpdateList()}
                 >
                   Update List
                 </Button>

@@ -34,6 +34,7 @@ const RulLife = () => {
   const [uploadedFile, setUploadedFile] = useState(null);
   const [P, setP] = useState(0);
   const [F, setF] = useState(0);
+  const [selectedEquipmentId, setSelectedEquipmentId] = useState("");
 
   // Function to handle file upload
   const handleFileUpload = (file) => {
@@ -118,26 +119,27 @@ const RulLife = () => {
       equipmentId = filteredObjects[0].equipment_id;
     }
     console.log(matchingItems, "matching items")
-    fetch("/prev_rul", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        parameter: p,
-        equipment_id: equipmentId
-      }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setPrevrul(data);
-        setRulOpen(true);
-        console.log("RUL DATA",data);
-      })
-      .catch((error) => {
-        console.error("Fetch Error:", error);
-        throw error;
-      });
+    // fetch("/prev_rul", {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify({
+    //     parameter: p,
+    //     equipment_id: equipmentId
+    //   }),
+    // })
+    //   .then((res) => res.json())
+    //   .then((data) => {
+    //     setPrevrul(data);
+    //     setRulOpen(true);
+    //     console.log("RUL DATA",data);
+    //   })
+    //   .catch((error) => {
+    //     console.error("Fetch Error:", error);
+    //     throw error;
+    //   });
+    setSelectedEquipmentId(equipmentId);
 
     fetch("/get_pf", {
       method: "POST",
@@ -146,7 +148,8 @@ const RulLife = () => {
         Accept: "application/json",
       },
       body: JSON.stringify({
-        name: selectedParameterName
+        name: selectedParameterName,
+        equipment_id: equipmentId
       }),
     })
       .then((res) => {
@@ -164,7 +167,6 @@ const RulLife = () => {
       });
   };
 
-  console.log(prevrul);
   useEffect(() => {
     fetch("/cm_dashboard", {
       method: "GET",
@@ -299,7 +301,7 @@ const RulLife = () => {
             </div>
           </div>
           {/* {isRulOpen && ( */}
-            <RULPredictor selectedEqName={selectedEqName} prevRul={prevrul} P={P} F={F} />
+            <RULPredictor  equipmentId={selectedEquipmentId} parameter={selectedParameterName} P={P} F={F} />
           {/* )} */}
         </div>
       </div>

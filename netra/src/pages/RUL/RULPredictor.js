@@ -22,7 +22,7 @@ import { Container } from "@material-ui/core";
 
 import styles from "./rul.module.css";
 
-const RULPredictor = ({ prevRul, P, F }) => {
+const RULPredictor = ({ parameter, equipmentId, P, F }) => {
   const [sensorValue, setSensorValue] = useState("");
   const [prediction, setPrediction] = useState([]);
   const [openDialog, setOpenDialog] = useState(false);
@@ -37,14 +37,15 @@ const RULPredictor = ({ prevRul, P, F }) => {
   const [confidenceLevel, setConfidenceLevel] = useState(0.9);
 
   const handlePredict = async () => {
-    const { operating_hours } = prevRul;
-    console.log(operating_hours);
+    // console.log(operating_hours);
     const requestData = {
       vc: parseFloat(sensorValue),
       // t0: parseFloat(T0),
       // tp: parseFloat(operating_hours),
       p: parseFloat(P),
       f: parseFloat(F),
+      parameter: parameter,
+      equipmentId: equipmentId,
       confidence: parseFloat(confidenceLevel),
     };
 

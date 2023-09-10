@@ -200,7 +200,7 @@ const SystemConfiguration = (props) => {
   const onHandleSnackClose = () => {
     setSnackBarMessage({
       severity: "error",
-      message: "Please Add Systemss",
+      message: "Please Add Systems",
       showSnackBar: false,
     });
   };
@@ -234,7 +234,7 @@ const SystemConfiguration = (props) => {
           .catch((error) => {
             setSnackBarMessage({
               severity: "error",
-              message: "Some Error Occured. " + error,
+              message: "Error Occured in System Configuration, Please Try again" + error,
               showSnackBar: true,
             });
           });
@@ -242,7 +242,7 @@ const SystemConfiguration = (props) => {
         setSnackBarMessage((prevState) => {
           const data = {
             ...prevState,
-            message: "This is error",
+            message: "Error Occured in System Configuration, Please Try again",
             showSnackBar: true,
           };
           return data;
@@ -325,7 +325,7 @@ const SystemConfiguration = (props) => {
             .catch((error) => {
               setSnackBarMessage({
                 severity: "error",
-                message: "Some Error Occured. " + error,
+                message: "Error Occured in System Configuration, Please Try again" + error,
                 showSnackBar: true,
               });
             });
@@ -333,7 +333,7 @@ const SystemConfiguration = (props) => {
           setSnackBarMessage((prevState) => {
             const data = {
               ...prevState,
-              message: "This is error",
+              message: "Error Occured in System Configuration, Please Try again",
               showSnackBar: true,
             };
             return data;
@@ -382,6 +382,12 @@ const SystemConfiguration = (props) => {
         dispatch(
           treeDataActions.setFailureModes(failureModes)
         )
+      });
+
+      setSnackBarMessage({
+        severity: "success",
+        message: "System is Loaded",
+        showSnackBar: true,
       });
   };
 

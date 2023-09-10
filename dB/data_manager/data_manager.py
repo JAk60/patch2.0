@@ -32,106 +32,109 @@ class Data_Manager:
         data = data['data']
         component_id = None
         final_data = []
-        for d in data:
-            id = d['id']
-            component_id = id
-            name = d['EquipmentName']
-            if systemType_replaceable:
-                self.update_through_MLE(id)
-                sql = '''select * from eta_beta where component_id = ?'''
-                cursor.execute(sql, (id,))
-                rows = cursor.fetchone()
-                if rows:
-                    final_data.append({
-                        'EquipmentName': name,
-                        'id': id,
-                        'eta': round(rows[1], 2),
-                        'beta': rows[2]
-                    })
-            else:
-                # sql = '''select * from alpha_beta where component_id = ?'''
-                # cursor.execute(sql, (id,))
-                # rows = cursor.fetchone()
-                sub_query = '''select * from data_manager_overhauls_info where component_id = ?'''
-                cursor.execute(sub_query, (id,))
-                data = cursor.fetchall()
-                subData = []
-                for item in data:
-                    formatted_item = {
-                        'id': item[0],
-                        'overhaulNum': item[2],
-                        'numMaint': item[4],
-                        'runAge': item[3],
-                        'component_id': item[1],
-                    }
-                    subData.append(formatted_item)
-                run_age_value = list(map(lambda item: item['runAge'], subData))[0]
-                self.fill_exact_runing_age(equipment_id= component_id, run_age_component=int(run_age_value))
-                main_query = '''SELECT * FROM data_manager_overhaul_maint_data 
-                            WHERE component_id = ?
-                    '''
-                cursor.execute(main_query, (id,))
-                data = cursor.fetchall()
-                mainData = []
-                for item in data:
-                    formatted_item = {
-                        'id': item[0],
-                        'component_id': item[1],
-                        'overhaulId': item[2],
-                        'date': item[3],
-                        'maintenanceType': item[4],
-                        'totalRunAge': item[5],
-                        'subSystemId': item[6],
-                        'runningAge': item[7]
-                    }
-                    mainData.append(formatted_item)
-                failure_times = self.extract_failure_times(mainData)
-                N = [len(subarray) for subarray in failure_times]
-                T = self.extract_run_age(main_data=mainData, sub_data=subData)
-
-                def para(N, x, T, k):
-                    beta = (sum(n for n in N)) / (sum(sum(math.log(t /
-                                                                x[T.index(t)][i]) for i in range(N[T.index(t)])) for t in T))
-                    alpha = (sum(n for n in N)) / (sum(t**beta for t in T))
-                    return alpha, beta
-                alpha, beta = para(N, failure_times, T, k=len(failure_times))
-                a_b_id = uuid.uuid4()
-                # ## insert alpha beta temp now.
-                merge_query = '''
-                MERGE INTO alpha_beta AS target
-                USING (VALUES (?, ?, ?, ?)) AS source (id, component_id, alpha, beta)
-                ON target.component_id = source.component_id
-                WHEN MATCHED THEN
-                    UPDATE SET alpha = source.alpha, beta = source.beta
-                WHEN NOT MATCHED THEN
-                    INSERT (id, component_id, alpha, beta)
-                    VALUES (source.id, source.component_id, source.alpha, source.beta);
-                '''
-
-                # Assuming you have appropriate values for 'component_id', 'alpha', and 'beta'
-                cursor.execute(merge_query, (a_b_id, id, alpha, beta))
-                cnxn.commit()
-
-                sql = '''select * from alpha_beta where component_id = ?'''
-                cursor.execute(sql, (id,))
-                rows = cursor.fetchall()
-                rows = rows[-1]
-                if rows:
-                    final_data.append({
-                        'EquipmentName': name,
-                        'id': id,
-                        'alpha': rows[1],
-                        'beta': rows[2]
-                    })
+        try:
+            for d in data:
+                id = d['id']
+                component_id = id
+                name = d['EquipmentName']
+                if systemType_replaceable:
+                    self.update_through_MLE(id)
+                    sql = '''select * from eta_beta where component_id = ?'''
+                    cursor.execute(sql, (id,))
+                    rows = cursor.fetchone()
+                    if rows:
+                        final_data.append({
+                            'EquipmentName': name,
+                            'id': id,
+                            'eta': round(rows[1], 2),
+                            'beta': rows[2]
+                        })
                 else:
-                    final_data.append({
-                        'EquipmentName': name,
-                        'id': id,
-                        'alpha': '-',
-                        'beta': '-'
-                    })
+                    # sql = '''select * from alpha_beta where component_id = ?'''
+                    # cursor.execute(sql, (id,))
+                    # rows = cursor.fetchone()
+                    sub_query = '''select * from data_manager_overhauls_info where component_id = ?'''
+                    cursor.execute(sub_query, (id,))
+                    data = cursor.fetchall()
+                    subData = []
+                    for item in data:
+                        formatted_item = {
+                            'id': item[0],
+                            'overhaulNum': item[2],
+                            'numMaint': item[4],
+                            'runAge': item[3],
+                            'component_id': item[1],
+                        }
+                        subData.append(formatted_item)
+                    run_age_value = list(map(lambda item: item['runAge'], subData))[0]
+                    self.fill_exact_runing_age(equipment_id= component_id, run_age_component=int(run_age_value))
+                    main_query = '''SELECT * FROM data_manager_overhaul_maint_data 
+                                WHERE component_id = ?
+                        '''
+                    cursor.execute(main_query, (id,))
+                    data = cursor.fetchall()
+                    mainData = []
+                    for item in data:
+                        formatted_item = {
+                            'id': item[0],
+                            'component_id': item[1],
+                            'overhaulId': item[2],
+                            'date': item[3],
+                            'maintenanceType': item[4],
+                            'totalRunAge': item[5],
+                            'subSystemId': item[6],
+                            'runningAge': item[7]
+                        }
+                        mainData.append(formatted_item)
+                    failure_times = self.extract_failure_times(mainData)
+                    N = [len(subarray) for subarray in failure_times]
+                    T = self.extract_run_age(main_data=mainData, sub_data=subData)
 
-        return final_data
+                    def para(N, x, T, k):
+                        beta = (sum(n for n in N)) / (sum(sum(math.log(t /
+                                                                    x[T.index(t)][i]) for i in range(N[T.index(t)])) for t in T))
+                        alpha = (sum(n for n in N)) / (sum(t**beta for t in T))
+                        return alpha, beta
+                    alpha, beta = para(N, failure_times, T, k=len(failure_times))
+                    a_b_id = uuid.uuid4()
+                    # ## insert alpha beta temp now.
+                    merge_query = '''
+                    MERGE INTO alpha_beta AS target
+                    USING (VALUES (?, ?, ?, ?)) AS source (id, component_id, alpha, beta)
+                    ON target.component_id = source.component_id
+                    WHEN MATCHED THEN
+                        UPDATE SET alpha = source.alpha, beta = source.beta
+                    WHEN NOT MATCHED THEN
+                        INSERT (id, component_id, alpha, beta)
+                        VALUES (source.id, source.component_id, source.alpha, source.beta);
+                    '''
+
+                    # Assuming you have appropriate values for 'component_id', 'alpha', and 'beta'
+                    cursor.execute(merge_query, (a_b_id, id, alpha, beta))
+                    cnxn.commit()
+
+                    sql = '''select * from alpha_beta where component_id = ?'''
+                    cursor.execute(sql, (id,))
+                    rows = cursor.fetchall()
+                    rows = rows[-1]
+                    if rows:
+                        final_data.append({
+                            'EquipmentName': name,
+                            'id': id,
+                            'alpha': rows[1],
+                            'beta': rows[2]
+                        })
+                    else:
+                        final_data.append({
+                            'EquipmentName': name,
+                            'id': id,
+                            'alpha': '-',
+                            'beta': '-'
+                        })
+                    return final_data
+        except Exception as e:
+            self.error_return['message'] = str(e)
+            return self.error_return
 
     def insert_data(self, data_obj):
         data = data_obj['data']

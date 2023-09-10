@@ -514,20 +514,20 @@ def rul():
         return inst.rul_code()
  
 
-@app.route('/prev_rul', methods=['POST'])
-def prev_rul():
-    try:
-        data = request.get_json()
-        parameter = data['parameter']
-        equipment_id = data['equipment_id']
-        print(parameter, equipment_id)
-        rul_class = RUL_dB()
-        result = rul_class.get_prev_rul(parameter, equipment_id)
-        return result
-    except Exception as e:
-        # Handle any exceptions and return an error message
-        print(e)
-        return jsonify({"message": "Invalid request format."}), 400
+# @app.route('/prev_rul', methods=['POST'])
+# def prev_rul():
+#     try:
+#         data = request.get_json()
+#         parameter = data['parameter']
+#         equipment_id = data['equipment_id']
+#         print(parameter, equipment_id)
+#         rul_class = RUL_dB()
+#         result = rul_class.get_prev_rul(parameter, equipment_id)
+#         return result
+#     except Exception as e:
+#         # Handle any exceptions and return an error message
+#         print(e)
+#         return jsonify({"message": "Invalid request format."}), 400
 
 
 @app.route('/csv_upload', methods=['POST'])
@@ -559,8 +559,9 @@ def pf():
     data = request.get_json()
     # equipment_id = data.get('equipment_id')
     name = data.get('name')
+    equipment_id = data.get('equipment_id')
     rul_class = RUL_dB()
-    return rul_class.fetch_PF(name)
+    return rul_class.fetch_PF(name, equipment_id)
 
 @app.route('/get_credentials', methods=['POST'])
 def get_credentials():

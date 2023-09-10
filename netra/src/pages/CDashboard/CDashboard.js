@@ -156,7 +156,7 @@ console.log(PData)
           console.log(data)
           setSnackBarMessage({
             severity: "success",
-            message: data.message,
+            message: "Sensor Graph Showed Successfully",
             showSnackBar: true,
           });
           setGraphData(data['graphData']);

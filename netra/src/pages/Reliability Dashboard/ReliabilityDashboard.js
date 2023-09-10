@@ -25,6 +25,7 @@ import { SelectWithLimit } from "../../ui/Form/SelectWithLimit";
 import { useDispatch, useSelector } from "react-redux";
 import { userActions } from "../../store/ApplicationVariable";
 import AccessControl from "../Home/AccessControl";
+import CustomizedSnackbars from "../../ui/CustomSnackBar";
 
 const MissionData = (props) => {
   return (
@@ -133,6 +134,20 @@ const ReliabilityDashboard = () => {
         return [...state, mission];
       });
     }
+  };
+
+  const [SnackBarMessage, setSnackBarMessage] = useState({
+    severity: "error",
+    message: "This is awesome",
+    showSnackBar: false,
+  });
+
+  const onHandleSnackClose = () => {
+    setSnackBarMessage({
+      severity: "error",
+      message: "Please Add Systems",
+      showSnackBar: false,
+    });
   };
 
 
@@ -282,6 +297,11 @@ const ReliabilityDashboard = () => {
         });
         console.log("PPP____>>>>>>", cardD);
         setCardData(cardD);
+      });
+      setSnackBarMessage({
+        severity: "success",
+        message: "Reliblity Of Equipment Showed Successfully",
+        showSnackBar: true,
       });
   };
   
@@ -437,6 +457,12 @@ const ReliabilityDashboard = () => {
           </>
         ) : null}
       </div>
+      {SnackBarMessage.showSnackBar && (
+        <CustomizedSnackbars
+          message={SnackBarMessage}
+          onHandleClose={onHandleSnackClose}
+        />
+      )}
     </MuiPickersUtilsProvider>
     </AccessControl>
   );
