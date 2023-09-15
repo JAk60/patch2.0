@@ -315,6 +315,10 @@ def save_task_configuration():
         tc_inst = TaskReliability()
         data = request.get_json(force=True)
         taskData = data['taskData']
+        taskDataf = filter(lambda x : x["type"] == "component", taskData)
+        taskDataf = map(tc_inst.get_eq_id, taskDataf)
+        taskDataNC = filter(lambda x : x["type"] != "component", taskData)
+        taskData = list(taskDataNC) + list(taskDataf)
 
         # Check if any task has k values that exceed n
         invalid_tasks = []
