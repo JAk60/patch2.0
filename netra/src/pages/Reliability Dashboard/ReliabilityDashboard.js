@@ -20,88 +20,16 @@ import {
   KeyboardDatePicker,
 } from "@material-ui/pickers";
 import MomentUtils from "@date-io/moment";
-import MissionSlider from "./MissionSlider";
 import { SelectWithLimit } from "../../ui/Form/SelectWithLimit";
 import { useDispatch, useSelector } from "react-redux";
 import { userActions } from "../../store/ApplicationVariable";
 import AccessControl from "../Home/AccessControl";
 import CustomizedSnackbars from "../../ui/CustomSnackBar";
 
-const MissionData = (props) => {
-  return (
-    <div className={styles.missionData} style={props.style}>
-      <div className={styles.target}>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="icon icon-tabler icon-tabler-target"
-          width="14"
-          height="14"
-          viewBox="0 0 24 24"
-          stroke-width="1.5"
-          stroke="#374c93"
-          fill="none"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-          <circle cx="12" cy="12" r="1" />
-          <circle cx="12" cy="12" r="5" />
-          <circle cx="12" cy="12" r="9" />
-        </svg>{" "}
-        Target: {props.mission.target}%
-      </div>
-      <div className={styles.actual}>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="icon icon-tabler icon-tabler-shield-check"
-          width="14"
-          height="14"
-          viewBox="0 0 24 24"
-          stroke-width="1.5"
-          stroke="#f8f8f8"
-          fill="none"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        >
-          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-          <path d="M9 12l2 2l4 -4" />
-          <path d="M12 3a12 12 0 0 0 8.5 3a12 12 0 0 1 -8.5 15a12 12 0 0 1 -8.5 -15a12 12 0 0 0 8.5 -3" />
-        </svg>
-        Actual:
-        {props.mission.actual.map((data) => {
-          return (
-            <>
-              <div>
-                {data.name} {data.rel.toFixed(2)}%
-              </div>
-            </>
-          );
-        })}
-      </div>
-      <div style={{ textAlign: "center" }}>
-        <div className={styles.probabilityHead}>Probability of Achieving</div>
-        <div className={styles.probability}>
-          {props.mission.actual.map((data) => {
-            return (
-              <>
-                <div>
-                  {data.name}{" "}
-                  {data.prob.toFixed(2) == 100
-                    ? ">99%"
-                    : `${data.prob.toFixed(2)}%`}
-                </div>
-              </>
-            );
-          })}
-        </div>
-      </div>
-    </div>
-  );
-};
 const ReliabilityDashboard = () => {
   const [missionData, setMissionData] = useState([]);
   const [tempMissionData, setTempMissionData] = useState([]);
-
+  const [TooltipData,setTooltipData]= useState([])
   const [missionInfo, setMissionInfo] = useState([]);
 
   const [cardData, setCardData] = useState(null);
@@ -149,9 +77,6 @@ const ReliabilityDashboard = () => {
       showSnackBar: false,
     });
   };
-
-
-
 
   const [userSelectionData, setUserSelectionData] = useState([]);
   const dispatch = useDispatch();
@@ -232,7 +157,8 @@ const ReliabilityDashboard = () => {
       shipClass: selectedShipName,
       tempMissions: tempMissionData,
     };
-    console.log(data);
+    setTooltipData(data)
+    
     setMission(0);
     fetch("/rel_estimate_EQ", {
       method: "POST",
@@ -298,175 +224,116 @@ const ReliabilityDashboard = () => {
         console.log("PPP____>>>>>>", cardD);
         setCardData(cardD);
       });
-      setSnackBarMessage({
-        severity: "success",
-        message: "Reliblity Of Equipment Showed Successfully",
-        showSnackBar: true,
-      });
+    setSnackBarMessage({
+      severity: "success",
+      message: "Reliblity Of Equipment Showed Successfully",
+      showSnackBar: true,
+    });
   };
-  
+
   return (
-    <AccessControl allowedLevels={['L1', 'L2', 'L3', 'L4', 'L5']}>
-    <MuiPickersUtilsProvider utils={MomentUtils}>
-      <Navigation />
-      <div className={styles.body}>
-        <div className={styles.mprofile}>
-          <div style={{ width: "300px" }}>
-            <InputLabel
-              style={{
-                fontWeight: "bold",
-                color: "black",
-                fontSize: "16px",
-                marginBottom: "10px",
-              }}
-            >
-               <Typography variant="h5">Ship Name</Typography>
-            </InputLabel>
-            <SelectWithLimit
-              limit={3}
-              options={customSelectData["shipName"]}
-              getSelectedValues={getSelectedValues}
-              selectType={"shipName"}
-            />
-          </div>
-          <div style={{ width: "300px" }}>
-            <InputLabel
-              style={{
-                fontWeight: "bold",
-                color: "black",
-                fontSize: "16px",
-                marginBottom: "10px",
-              }}
-            >
-               <Typography variant="h5">Equipment Name</Typography>
-            </InputLabel>
-            <SelectWithLimit
-              limit={3}
-              options={eqDataOption}
-              getSelectedValues={getSelectedValues}
-              selectType={"equipmentName"}
-            />
-          </div>
-          {/* <CustomSelect
+    <AccessControl allowedLevels={["L1", "L2", "L3", "L4", "L5"]}>
+      <MuiPickersUtilsProvider utils={MomentUtils}>
+        <Navigation />
+        <div className={styles.body}>
+          <div className={styles.mprofile}>
+            <div style={{ width: "300px" }}>
+              <InputLabel
+                style={{
+                  fontWeight: "bold",
+                  color: "black",
+                  fontSize: "16px",
+                  marginBottom: "10px",
+                }}
+              >
+                <Typography variant="h5">Ship Name</Typography>
+              </InputLabel>
+              <SelectWithLimit
+                limit={100}
+                options={customSelectData["shipName"]}
+                getSelectedValues={getSelectedValues}
+                selectType={"shipName"}
+              />
+            </div>
+            <div style={{ width: "300px" }}>
+              <InputLabel
+                style={{
+                  fontWeight: "bold",
+                  color: "black",
+                  fontSize: "16px",
+                  marginBottom: "10px",
+                }}
+              >
+                <Typography variant="h5">Equipment Name</Typography>
+              </InputLabel>
+              <SelectWithLimit
+                limit={100}
+                options={eqDataOption}
+                getSelectedValues={getSelectedValues}
+                selectType={"equipmentName"}
+              />
+            </div>
+            {/* <CustomSelect
             label="Mission Selection"
             fields={['Mission A','Mission B','Mission C']}
             /> */}
-          <div style={{ width: "300px" }}>
-            <InputLabel
+            <div style={{ width: "300px" }}>
+              <InputLabel
+                style={{
+                  fontWeight: "bold",
+                  color: "black",
+                  fontSize: "16px",
+                  marginBottom: "10px",
+                }}
+              >
+                <Typography variant="h5">Enter Mission Duration</Typography>
+              </InputLabel>
+              <TextField
+                id="outlined-basic"
+                variant="outlined"
+                type="number"
+                selectType="missionDuration"
+                value={selectedMissionName}
+                onChange={handleChange}
+              />
+            </div>
+            <Button
+              variant="contained"
+              color="primary"
               style={{
-                fontWeight: "bold",
-                color: "black",
-                fontSize: "16px",
-                marginBottom: "10px",
+                marginTop: "2rem",
               }}
+              onClick={onSubmitHandler}
             >
-               <Typography variant="h5">Enter Mission Duration</Typography>
-            </InputLabel>
-            <TextField
-              id="outlined-basic"
-              variant="outlined"
-              type="number"
-              selectType="missionDuration"
-              value={selectedMissionName}
-              onChange={handleChange}
-            />
+              Submit
+            </Button>
           </div>
-          <Button
-            variant="contained"
-            color="primary"
-            style={{
-              marginTop: "2rem",
-            }}
-            onClick={onSubmitHandler}
-          >
-            Submit
-          </Button>
-          {/* <CreateProfile saveTempMission={saveTempMission} /> */}
-        </div>
-        {graphData.length ? (
-          <>
-            <div className={styles.midSection}>
-              <div className={styles.rchart}>
-                <div className={styles.content}>
-                  <div className={styles.relChart}>
-                    {graphData && <ReliabilityChart data={graphData} />}
-                  </div>
-                  <div className={styles.compareMission}>
-                    {cardData ? (
-                      <div className={styles.missionbox}>
-                        {/* <div className={styles.missionName}>Mission B</div> */}
-                        <MissionSlider
-                          missions={cardData}
-                          currentMission={currentMission}
-                          setMission={setMission}
-                        />
-                        <MissionData mission={cardData[currentMission]} />
-                      </div>
-                    ) : (
-                      <div className={styles.missionbox}>
-                        Select Missions to compare
-                      </div>
+          {graphData.length ? (
+            <>
+              <div className={styles.midSection}>
+                <div className={styles.rchart}>
+                  <div className={styles.content}>
+                    {graphData && (
+                      <ReliabilityChart
+                        data={graphData}
+                        family={TooltipData}
+                      />
                     )}
                   </div>
                 </div>
               </div>
-            </div>
-            <div className={styles.subSystemLevel}>
-              {showSubsystem && (
-                <div className={styles.subSystemContent}>
-                  <div className={styles.subSystemLevelChart}>
-                    <div>
-                      <div style={{ display: "flex", alignItems: "center" }}>
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          class="icon icon-tabler icon-tabler-adjustments"
-                          width="32"
-                          height="32"
-                          viewBox="0 0 24 24"
-                          stroke-width="1.5"
-                          stroke="#0d1a45"
-                          fill="none"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        >
-                          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                          <circle cx="6" cy="10" r="2" />
-                          <line x1="6" y1="4" x2="6" y2="8" />
-                          <line x1="6" y1="12" x2="6" y2="20" />
-                          <circle cx="12" cy="16" r="2" />
-                          <line x1="12" y1="4" x2="12" y2="14" />
-                          <line x1="12" y1="18" x2="12" y2="20" />
-                          <circle cx="18" cy="7" r="2" />
-                          <line x1="18" y1="4" x2="18" y2="5" />
-                          <line x1="18" y1="9" x2="18" y2="20" />
-                        </svg>
-                        Sub System Level Indicator
-                      </div>
-                    </div>
-                    <BarGraph data={subSystemData} />
-                  </div>
-                  <div style={{ width: "20%" }}>
-                    <MissionData
-                      mission={cardData[currentMission]}
-                      style={{ height: 200 }}
-                    />
-                  </div>
-                </div>
-              )}
-            </div>
-          </>
-        ) : null}
-      </div>
-      {SnackBarMessage.showSnackBar && (
-        <CustomizedSnackbars
-          message={SnackBarMessage}
-          onHandleClose={onHandleSnackClose}
-        />
-      )}
-    </MuiPickersUtilsProvider>
+            </>
+          ) : null}
+        </div>
+        {SnackBarMessage.showSnackBar && (
+          <CustomizedSnackbars
+            message={SnackBarMessage}
+            onHandleClose={onHandleSnackClose}
+          />
+        )}
+      </MuiPickersUtilsProvider>
     </AccessControl>
   );
 };
 
-
-export default ReliabilityDashboard
+export default ReliabilityDashboard;
