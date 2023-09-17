@@ -173,7 +173,7 @@ const Home = (props) => {
                 onClick={resetUserSelection}
               >
                 <Button disableRipple={true}>
-                  <IconComponent className={`${classes.linkbtn} ${classes.icon}`} />
+                  <IconComponent className={`${classes.linkbtn}`} />
                   <Typography variant="h5" className={classes.txt}>
                     {featureObj.feature !== "TimeToFailureRUL"
                       ? featureObj.feature.replace(/([A-Z])/g, ' $1')

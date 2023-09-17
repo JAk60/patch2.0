@@ -1,90 +1,85 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import styles from "./ViewData.module.css";
-import { Button, Menu, MenuItem } from "@material-ui/core";
 import { Link } from "react-router-dom";
-import Visibility from "@material-ui/icons/Visibility";
-import VisibilityOff from "@material-ui/icons/VisibilityOff";
 import { userActions } from "../../store/ApplicationVariable";
 import { useDispatch } from "react-redux";
 import AccessControl from "../Home/AccessControl";
+import StorageIcon from '@material-ui/icons/Storage';
+import HourglassEmptyIcon from '@material-ui/icons/HourglassEmpty';
+import CreateIcon from '@material-ui/icons/Create';
+import SaveAltIcon from '@material-ui/icons/SaveAlt';
+import WifiTetheringIcon from '@material-ui/icons/WifiTethering';
+import { Button, Typography, makeStyles } from "@material-ui/core";
 
 const ViewData = (props) => {
-  // useEffect(()=>{
-  //     console.log(props.settings)
-  // })
+  const useStyles = makeStyles((theme) => ({
+    linkbtn: {
+      backgroundColor: "white",
+      padding: "10px",
+      display: "flex",
+      marginRight: "40px",
+      borderRadius: "50%",
+      width: "50px",
+      height: "50px",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      color: " #004d90",
+      objectFit: "cover"
+    },
+    txt: {
+      color: "white"
+    },
+    logoImg: {
+      marginTop: "40px",
+      maxWidth: "80%",
+      height: "auto",
+    }
+  }));
+  const ViewDataPaths = [
+    { name: "Data Manager", path: "/data_manager", icon: <StorageIcon /> },
+    { name: "Historical Data", path: "/data_manager/historical_data", icon: <HourglassEmptyIcon /> },
+    { name: "User Selection Config", path: "/user_selection_config", icon: <CreateIcon /> },
+    { name: "Add System Doc", path: "/add_system_doc", icon: <SaveAltIcon /> },
+    { name: "Add Sensor Data", path: "/maintenance_allocation/add_data", icon: <WifiTetheringIcon /> },
+  ];
+
   const Logout = () => {
     props.setLoggedIn(false);
     props.history.push("/sign_in");
   };
+
   const dispatch = useDispatch();
   const resetUserSelection = () => {
     dispatch(userActions.onReset());
   };
+  const classes=useStyles();
   return (
-    <AccessControl allowedLevels={["L1", "L5"]}>
+<AccessControl allowedLevels={["L1", "L5"]}>
       <div className={styles.container}>
         <div className={styles.viewDataNav}>
-          <Link onClick={() => Logout()}>
-            <i class="fas fa-sign-out-alt"></i>Logout
+          <Link onClick={Logout}>
+            <i className="fas fa-sign-out-alt"></i>Logout
           </Link>
         </div>
         <div className={styles.viewDataLinks}>
-          <Link to="/data_manager" onClick={() => resetUserSelection()}>
-            <div className={styles.circleIcon}>
-              <i className="fas fa-database"></i>
-            </div>
-            Data Manager
-          </Link>
-          <Link
-            to="/data_manager/historical_data"
-            onClick={() => resetUserSelection()}
-          >
-            <div className={styles.circleIcon}>
-              <i className="fas fa-wrench"></i>
-            </div>
-            Equipment related data
-          </Link>
-          <Link to="/mission_profile" onClick={() => resetUserSelection()}>
-            <div className={styles.circleIcon}>
-              <i className="far fa-chart-bar"></i>
-            </div>
-            Mission profile
-          </Link>
-          <Link
-            to="/user_selection_config"
-            onClick={() => resetUserSelection()}
-          >
-            <div className={styles.circleIcon}>
-              <i className="far fa-chart-bar"></i>
-            </div>
-            User Selection Config
-          </Link>
-
-          <Link to="/add_system_doc" onClick={() => resetUserSelection()}>
-            <div className={styles.circleIcon}>
-              <i className="far fa-chart-bar"></i>
-            </div>
-            Add System Documents
-          </Link>
-
-          <Link
-            to="/maintenance_allocation/add_data"
-            onClick={() => resetUserSelection()}
-          >
-            <div className={styles.circleIcon}>
-              <i className="far fa-chart-bar"></i>
-            </div>
-            Add Sensor Data
-          </Link>
-
-          {/* <Link to="/health_prediction_input" onClick={()=>resetUserSelection()}><div className={styles.circleIcon}>
-                    <i className="far fa-chart-bar"></i>
-                    </div>Bayesian Health Inputs</Link> */}
+          {ViewDataPaths.map((link, index) => (
+            <Link key={index} to={link.path} onClick={resetUserSelection}>
+              <div className={classes.linkbtn}> 
+                {link.icon}
+              </div>
+              <Button disableRipple={true}>
+                <Typography variant="h5" className={classes.txt}>
+                  {link.name}
+                </Typography>
+              </Button>
+            </Link>
+          ))}
         </div>
         <div className={styles.netra}>
-          <img src="/netra-logo-removebg.png" width={300} height={400} />
-          <div className={styles.logotxt}>NETRA</div>
-        </div>
+        <img src="/netra-logo-removebg.png" alt="Netra Logo" className={classes.logoImg} />
+        <div className={styles.logotxt}>NETRA</div>
+      </div>
       </div>
     </AccessControl>
   );

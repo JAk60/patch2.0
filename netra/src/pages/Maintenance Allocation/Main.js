@@ -1,54 +1,65 @@
 import React from "react";
 import styles from "./MaintenanceAllocation.module.css";
-import { Button } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import AccessControl from "../Home/AccessControl";
+import BuildOutlinedIcon from '@material-ui/icons/BuildOutlined';
+import TableChartSharpIcon from '@material-ui/icons/TableChartSharp';
+import { Button, Typography, makeStyles } from "@material-ui/core";
 
 const Main = (props) => {
+  const useStyles = makeStyles((theme) => ({
+    linkbtn: {
+      backgroundColor: "white",
+      padding: "10px",
+      display: "flex",
+      marginRight: "40px",
+      borderRadius: "50%",
+      width: "50px",
+      height: "50px",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      color: " #004d90",
+      objectFit: "cover",
+    },
+    txt: {
+      color: "white"
+    },
+    logoImg: {
+      marginTop: "40px",
+      maxWidth: "80%",
+      height: "auto",
+    }
+  }));
+
+  const classes = useStyles(); // Apply makeStyles
+
+  const MainLinks = [
+    { name: "Create Maintenance Plan", path: "/maintenance_allocation/create", icon: <BuildOutlinedIcon /> },
+    { name: "Conduct Rcm Analysis", path: "/maintenance_allocation/conduct_rcm_analysis", icon: <TableChartSharpIcon /> },
+    // Add more links as needed
+  ];
+
   return (
     <AccessControl allowedLevels={['L1', 'L5', 'L6']}>
       <div className={styles.container}>
         <div className={styles.homeLinks}>
-          <Link to="/maintenance_allocation/create">
-            <div className={styles.circleIcon}>
-              <i class="fas fa-microchip"></i>
+          {MainLinks.map((link, index) => (
+            <Link key={index} to={link.path} >
+            <div className={classes.linkbtn}> 
+              {link.icon}
             </div>
-            Create Maintenance Plan
+            <Button disableRipple={true}>
+              <Typography variant="h5" className={classes.txt}>
+                {link.name}
+              </Typography>
+            </Button>
           </Link>
-          {/* <Link to="/maintenance_allocation/modify">
-          <div className={styles.circleIcon}>
-            <i class="fas fa-microchip"></i>
-          </div>
-          Modify Maintenance Plan
-        </Link>
-        <Link to="/maintenance_allocation/display">
-          <div className={styles.circleIcon}>
-            <i class="fas fa-microchip"></i>
-          </div>
-          Display Maintenance Plan
-        </Link>
-        <Link to="/maintenance_allocation/share">
-          <div className={styles.circleIcon}>
-            <i class="fas fa-microchip"></i>
-          </div>
-          Share Maintenance Plan
-        </Link> */}
-          <Link to="/maintenance_allocation/conduct_rcm_analysis">
-            <div className={styles.circleIcon}>
-              <i class="fas fa-microchip"></i>
-            </div>
-            Conduct Rcm Analysis
-          </Link>
-          {/* <Link to="/maintenance_allocation/add_data">
-          <div className={styles.circleIcon}>
-            <i class="fas fa-microchip"></i>
-          </div>
-          Add Data
-        </Link> */}
+          ))}
         </div>
         <div className={styles.netra}>
-        <img src="/netra-logo-removebg.png" width={300} height={400} />
-        <div className={styles.logotxt}>NETRA</div>
+          <img src="/netra-logo-removebg.png" width={300} height={400} alt="Netra Logo" />
+          <div className={styles.logotxt}>NETRA</div>
         </div>
       </div>
     </AccessControl>

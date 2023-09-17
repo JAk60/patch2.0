@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   TextField,
   Button,
@@ -7,9 +7,6 @@ import {
   DialogContent,
   Grid,
   Typography,
-} from "@material-ui/core";
-
-import {
   Table,
   TableBody,
   TableCell,
@@ -17,31 +14,30 @@ import {
   TableHead,
   TableRow,
   Paper,
+  FormControlLabel,
+  Checkbox,
 } from "@material-ui/core";
-import { Container } from "@material-ui/core";
 
 import styles from "./rul.module.css";
 
 const RULPredictor = ({ parameter, equipmentId, P, F }) => {
   const [sensorValue, setSensorValue] = useState("");
   const [prediction, setPrediction] = useState([]);
-  const [openDialog, setOpenDialog] = useState(false);
+  const [openRULDialog, setOpenRULDialog] = useState(false);
+  const [openNoteDialog, setOpenNoteDialog] = useState(true);
+  const [dontShowAgain, setDontShowAgain] = useState(false);
   const confidance_levels = [0.8, 0.85, 0.9, 0.95];
 
   const customTableStyle = {
     fontSize: "16px", // Adjust the font size as needed
   };
 
-  // New state variables
   const [T0, setT0] = useState("");
   const [confidenceLevel, setConfidenceLevel] = useState(0.9);
 
   const handlePredict = async () => {
-    // console.log(operating_hours);
     const requestData = {
       vc: parseFloat(sensorValue),
-      // t0: parseFloat(T0),
-      // tp: parseFloat(operating_hours),
       p: parseFloat(P),
       f: parseFloat(F),
       parameter: parameter,
@@ -65,80 +61,128 @@ const RULPredictor = ({ parameter, equipmentId, P, F }) => {
 
       const data = await response.json();
       setPrediction(data.remaining_life);
-      setOpenDialog(true);
+      setOpenRULDialog(true);
     } catch (error) {
       console.error("Error fetching RUL prediction:", error);
-      // Handle the error state here if needed
     }
   };
 
-  const handleCloseDialog = () => {
-    setOpenDialog(false);
+  const handleCloseRULDialog = () => {
+    setOpenRULDialog(false);
   };
 
-  return (
-    <div style={{marginTop: "50px"}} className={styles.Selection}>
-      <Grid>
-        <Typography variant="h4">Time Till Failure/RUL</Typography>
-        <Grid
-          item
-          xs={12}
-          sm={6}
-          md={4}
-          style={{display:"flex",justifyContent: "space-between"}}
-        >
-          <div>
-            <div className={styles.horizontalTable}>
-              <div className={styles.horizontalTableCell}>
-                <Typography variant="h6">
-                  <strong>P:{P}</strong>
-                </Typography>
-              </div>
-              <div className={styles.horizontalTableCell}>
-                <Typography variant="h6">
-                  <strong>F:{F}</strong>
-                </Typography>
-              </div>
-            </div>
+  const handleCloseNoteDialog = () => {
+    setOpenNoteDialog(false);
+    if (dontShowAgain) {
+      localStorage.setItem("dontShowDialogAgain", "true");
+    }
+  };
 
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handlePredict}
-              fullWidth
-              style={{marginTop: "20px"}}
-            >
-              Calculate
-            </Button>
-            <Dialog open={openDialog} onClose={handleCloseDialog}>
-              <DialogTitle>
-                Remaining Useful Life for Different Confidence Levels:
-              </DialogTitle>
-              <DialogContent>
-                <TableContainer component={Paper} style={customTableStyle}>
-                  <Table>
-                    <TableHead>
-                      <TableRow>
-                        <TableCell>Confidence Level</TableCell>
-                        <TableCell>Remaining Life(Hours)</TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {prediction.map((entry, index) => (
-                        <TableRow key={index}>
-                          <TableCell>{confidance_levels[index]}</TableCell>
-                          <TableCell>{entry}</TableCell>
+  const handleCheckboxChange = () => {
+    setDontShowAgain(!dontShowAgain);
+  };
+
+  useEffect(() => {
+    const dontShowAgain = localStorage.getItem("dontShowDialogAgain");
+    if (dontShowAgain === "true") {
+      setOpenNoteDialog(false);
+    }
+  }, []);
+
+  return (
+    <>
+      <div style={{ marginTop: "50px" }} className={styles.Selection}>
+        <Grid>
+          <Typography variant="h4">
+            Time Till Failure/RUL
+            <sup>
+              <button className={styles.infobtn} onClick={()=>setOpenNoteDialog(!openNoteDialog)}>i</button>
+            </sup>
+          </Typography>
+
+          <Grid
+            item
+            xs={12}
+            sm={6}
+            md={4}
+            style={{ display: "flex", justifyContent: "space-between" }}
+          >
+            <div>
+              <div className={styles.horizontalTable}>
+                <div className={styles.horizontalTableCell}>
+                  <Typography variant="h6">
+                    <strong>P:{P}</strong>
+                  </Typography>
+                </div>
+                <div className={styles.horizontalTableCell}>
+                  <Typography variant="h6">
+                    <strong>F:{F}</strong>
+                  </Typography>
+                </div>
+              </div>
+
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handlePredict}
+                fullWidth
+                style={{ marginTop: "20px" }}
+              >
+                Calculate
+              </Button>
+              <Dialog open={openRULDialog} onClose={handleCloseRULDialog}>
+                <DialogTitle>
+                  Remaining Useful Life for Different Confidence Levels:
+                </DialogTitle>
+                <DialogContent>
+                  <TableContainer component={Paper} style={customTableStyle}>
+                    <Table>
+                      <TableHead>
+                        <TableRow>
+                          <TableCell>Confidence Level</TableCell>
+                          <TableCell>Remaining Life(Hours)</TableCell>
                         </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
-              </DialogContent>
-            </Dialog>
-          </div>
+                      </TableHead>
+                      <TableBody>
+                        {prediction.map((entry, index) => (
+                          <TableRow key={index}>
+                            <TableCell>{confidance_levels[index]}</TableCell>
+                            <TableCell>{entry}</TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                </DialogContent>
+              </Dialog>
+              <Dialog open={openNoteDialog} onClose={handleCloseNoteDialog}>
+                <DialogTitle>Important Note</DialogTitle>
+                <DialogContent>
+                  <Typography variant="h5">
+                    For accurate prediction of RUL, at least 15 datasets are
+                    required. 
+                    </Typography>
+                    <Typography variant="h5">
+                    For fair predictions, at least 10 datasets are
+                    required.
+                  </Typography>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={dontShowAgain}
+                        onChange={handleCheckboxChange}
+                        color="primary"
+                      />
+                    }
+                    label="Don't show me this again"
+                  />
+                </DialogContent>
+              </Dialog>
+            </div>
+          </Grid>
         </Grid>
-      </Grid>
-    </div>
+      </div>
+    </>
   );
 };
 
