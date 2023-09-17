@@ -18,17 +18,15 @@
 
 .content{
     display: flex;
-    grid-row: 3/5;
+    grid-row: 4/5;
     grid-column: 2/13; 
-    margin: 130px 20px 0 20px; 
+    margin: 20px 20px 0 20px; 
     box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
-    /* height: fit-content; */
-
+    overflow-y: auto;
     border-radius: 10px;
-
 }
 .assignDiv{
-  grid-row: 4/5;
+  grid-row: 3/5;
   grid-column: 2/13; 
   display: flex;
   flex-direction: column;
@@ -37,10 +35,12 @@
     display: flex;
     justify-content: space-between;
     padding: 20px;
-    margin: 0 20px 0 20px; 
+    margin: 30px 20px 0 20px; 
     box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
     height: fit-content;
     border-radius: 10px;
+    margin-top: 150px;
+    align-items: center;
 }
 .tree {
     display: flex;
@@ -50,7 +50,7 @@
     /* margin-left: 20px; */
     width: 30%;
     border-radius: 10px;
-    min-height: 700px;
+    overflow: hidden;
     /* overflow: auto; */
   }
   .treeChild {
@@ -60,6 +60,7 @@
   }
   .rightSection{
     width: 70%;
+    height: 50%;
     padding: 20px;
   }
   .rightSectionCrit{
@@ -79,6 +80,12 @@
     width: 40%;
     margin: 20px 0 0 30px;
 }
+
+/* .btnDiv{
+  padding: 20px;
+  display: flex;
+  gap: 20px;
+} */
 .nextbtn{
   float: right;
   /* margin-right: 3em; */
@@ -210,4 +217,69 @@
 }
 .modal{
   padding: 20px;
+  width: 350px;
+}
+
+
+
+.tableContainer {
+  margin-top: 16px;
+
+}
+
+.table {
+  min-width: 650px;
+}
+
+.tableHeadCell {
+  font-size: 18px !important;
+  font-weight: bold !important;
+  background-color: #1976d2;
+  color: #fff !important;
+}
+
+.tableRow {
+  background-color: #f5f5f5;
+  font-size: 17px !important;
+}
+
+.tableTotalRow {
+  background-color: #2a2a70;
+  
+}
+
+.tableTotalCell {
+  padding: 8px;
+  color: #fff !important;
+  font-size: 17px !important;
+  font-weight: bold !important;
+}
+
+
+/* Add the following styles to your existing CSS file */
+.horizontalTable {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+  gap: 4px;
+  background-color: #f0f0f0;
+  padding: 10px;
+  margin: 40px 0;
+}
+
+.horizontalTableCell {
+  flex: 1;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 1px;
+  border: 1px solid #2a2a70;
+}
+
+.horizontalTableCell p {
+  margin: 0;
+}
+
+.horizontalTableCell strong {
+  font-weight: bold;
 }

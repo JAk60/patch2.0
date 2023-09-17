@@ -9,6 +9,7 @@ import { treeDataActions } from "../../../store/TreeDataStore";
 import AutoSelect from '../../../ui/Form/AutoSelect';
 import { Route } from 'react-router';
 import AssignType from './AssignType';
+import CustomizedSnackbars from '../../../ui/CustomSnackBar';
 
 
 
@@ -23,6 +24,19 @@ const CreateMaintenance=(props)=> {
 
     const currentEquipmentName = currentSelection["equipmentName"];
     const matchingItems = sData.filter(item => item.name === currentEquipmentName);
+    const [SnackBarMessage, setSnackBarMessage] = useState({
+      severity: "error",
+      message: "This is awesome",
+      showSnackBar: false,
+    });
+  
+    const onHandleSnackClose = () => {
+      setSnackBarMessage({
+        severity: "error",
+        message: "Please Add Systems",
+        showSnackBar: false,
+      });
+    };
   
     const matchingId = matchingItems[0]?.id;
     const onLoadTreeStructure = () => {
@@ -58,6 +72,12 @@ const CreateMaintenance=(props)=> {
             treeDataActions.setFailureModes(failureModes)
           )
         });
+        
+        setSnackBarMessage({
+          severity: "success",
+          message: "System is Loaded For RCM Analysis",
+          showSnackBar: true,
+        });
     };
 
       const[selectedComponent,setComponent]=useState(null)
@@ -70,7 +90,10 @@ const CreateMaintenance=(props)=> {
       <div className={styles.userSelection}>
           <UserSelection/>
           <Route exact path='/maintenance_allocation/create'>
-          <Button className={styles.btn} onClick={onLoadTreeStructure} variant='contained' color='primary'>Submit</Button>
+            <Button className={styles.btn} onClick={onLoadTreeStructure} variant='contained' color='primary'>Submit</Button>
+          </Route>
+          <Route exact path='/maintenance_allocation/create/assignMaintenance'>
+            <Button className={styles.btn} onClick={onLoadTreeStructure} variant='contained' color='primary'>Submit</Button>
           </Route>
       </div>
       <Route exact path='/maintenance_allocation/create'>
@@ -105,6 +128,12 @@ const CreateMaintenance=(props)=> {
       <Route exact path='/maintenance_allocation/create/assignMaintenance'>
           <AssignType selectedComponent={selectedComponent}/>
       </Route>
+      {SnackBarMessage.showSnackBar && (
+        <CustomizedSnackbars
+          message={SnackBarMessage}
+          onHandleClose={onHandleSnackClose}
+        />
+      )}
     </>
     );
   }

@@ -453,7 +453,7 @@ def save_rcm():
     data = request.get_json(force=True)
     rcm = RCMDB()
     res_r = rcm.save_component_rcm(data)    
-    return res
+    return res_r
 
 @app.route('/rcm_report', methods=['POST', 'GET'])
 def rcm_report():
@@ -513,6 +513,7 @@ def optimize():
 @app.route('/rul', methods=['POST'])
 def rul():
     if request.method== 'POST':
+
         # file_path = os.path.join(app.config['UPLOAD_FOLDER'], 'uploaded_data.csv')
         inst = RUL_dB()
         return inst.rul_code()

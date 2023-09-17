@@ -3,7 +3,7 @@ from uuid import uuid4
 from dB.RCM.rcm_tables import RCM_Tables
 import os
 from reportlab.lib import colors
-from reportlab.lib.pagesizes import  inch, A3
+from reportlab.lib.pagesizes import  inch, A3, landscape
 from reportlab.platypus import Image, SimpleDocTemplate, Table, PageBreak, Spacer, Paragraph
 from reportlab.lib.styles import getSampleStyleSheet
 # from db.RCM.report_gen import ReportGeneration
@@ -54,95 +54,114 @@ class RCMDB():
 
 
     def save_component_rcm(self, data):
-        print("Hello")
-        system = data["system"]
-        ship_name = data["ship_name"]
-        assembly = data["assembly"]
-        system_id = assembly["equipment_id"]
-        component = data["component"]
-        rcm_val = data["rcm_val"]
-        insert_sql = '''insert into rcm_component values(?,?,?,?,?,?,?)'''
-        update_sql = '''update rcm_component set rcm=? where component_id=?'''
-        check_sql = '''select * from rcm_component where component_id=?'''
-        for comp in component:
-            comp_name = comp["name"]
-            parent_name = comp["parentName"]
-            comp_id = comp["id"]
-            parent_id = comp["parentId"]
-            cursor.execute(check_sql, comp_id)
-            if_exists = cursor.fetchone()
-            if if_exists:
-                cursor.update(update_sql, rcm_val, comp_id)
-            else:
-                cursor.execute(insert_sql, comp_id, comp_name, rcm_val, parent_id, parent_name, system, ship_name)
-        cnxn.commit()
-        return self.success_return
-
+        try:
+            system = data["system"]
+            ship_name = data["ship_name"]
+            assembly = data["assembly"]
+            system_id = assembly["equipment_id"]
+            component = data["component"]
+            rcm_val = data["rcm_val"]
+            insert_sql = '''insert into rcm_component values(?,?,?,?,?,?,?)'''
+            update_sql = '''update rcm_component set rcm=? where component_id=?'''
+            check_sql = '''select * from rcm_component where component_id=?'''
+            
+            for comp in component:
+                comp_name = comp["name"]
+                parent_name = comp["parentName"]
+                comp_id = comp["id"]
+                parent_id = comp["parentId"]
+                
+                cursor.execute(check_sql, comp_id)
+                if_exists = cursor.fetchone()
+                if if_exists:
+                    cursor.execute(update_sql, rcm_val, comp_id)  # Use cursor.execute for update
+                else:
+                    cursor.execute(insert_sql, comp_id, comp_name, rcm_val, parent_id, parent_name, system, ship_name)
+            
+            cnxn.commit()
+            return self.success_return
+        except Exception as e:
+            return self.error_return
 
 
     def generate_rcm_report(self, APP_ROOT, SYSTEM, PLATFORM):
-        target = os.path.join(APP_ROOT, 'netra\public\{0}-{1}.pdf'.format(PLATFORM.replace(' ',''), SYSTEM.replace(' ','')))
-        if os.path.isfile(target):
-            os.remove(target)
-        report = ReportGeneration()
-        doc = SimpleDocTemplate(target, pagesize=A3)
-        height = doc.height
-        width = doc.width
-        # container for the 'Flowable' objects
-        elements = []
-        styleSheet = getSampleStyleSheet()
-        P = report.Add_Title("NETRA")
-        elements.append(P)
-        elements.append(Spacer(width=0, height=0.25 * inch))
-        elements.append(Spacer(width=0, height=0.15 * inch))
-        elements.append(Spacer(width=0, height=0.15 * inch))
-        elements.append(Spacer(width=0, height=0.15 * inch))
-
-        elements.append(report.Add_Paragraph_Header('System RCM details for Ship {0} and System {1}'.format(PLATFORM, SYSTEM)))
-        elements.append(Spacer(width=0, height=0.25 * inch))
-        elements.append(Spacer(width=0, height=0.15 * inch))
-        
-
-        # rcm_return_values = [['S.R.\nNo.', 'Component\nName', 'System\nName',
-        #                       'Platform\nName', 'RCM\nSuggested']]
-        rcm_return_values = [['S.R.\nNo.', 'System\nName',
-                              'Platform\nName', 'Component\nName', 'RCM Plan']]
-        # system_data = '''select component_name, ship_name, system, component_id from system_configuration where system=? and ship_name=? '''
-        system_data = '''select s.component_id, s.component_name, r.rcm, s.parent_name, s.system, s.ship_name 
-        from rcm_component as r right join system_configuration as s 
-        on r.component_id = s.component_id where s.system=? and s.ship_name=?'''
-        cursor.execute(system_data, SYSTEM, PLATFORM)        
-        system_data = cursor.fetchall()
-
-        for index,row in enumerate(system_data):
-            if row[2] is None:
-                n = [index+1, row[4], row[5],row[1], "Please add Data!!"]
-            else:
-                n = [index+1, row[4], row[5],row[1], row[2]]
-            rcm_return_values.append(n)
-        
-        # system_data = report.get_system(SYSTEM, PLATFORM)
-        t = Table(rcm_return_values, splitByRow=1, style=[
-            ('LINEABOVE', (0, 0), (-1, 0), 1.5, colors.blue),
-            ('LINEBELOW', (0, -1), (-1, -1), 1.5, colors.blue),
-            ('BOX', (0, 0), (-1, -1), 1, colors.black),
-            ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.gray),
-            ('ALIGN', (0, 0), (-1, -1), 'CENTRE'),
-            ('FONTSIZE', (0, 0), (-1, 0), 14),
-            ('LEADING', (0, 0), (-1, 0), 30),
-            ('BACKGROUND', (0, 0), (-1, 0), colors.lightblue)
-        ])
-        # t._argW = 0.8 * height
-        for col in range(len(t._colWidths)):
-            if col == 3 or col == 4:
-                t._colWidths[col] = (2*width) / len(t._colWidths)
-            else:
-                t._colWidths[col] = (0.4*width) / len(t._colWidths)
-        elements.append(t)
-
         try:
+            target = os.path.join(APP_ROOT, 'netra\public\{0}-{1}.pdf'.format(PLATFORM.replace(' ',''), SYSTEM.replace(' ','')))
+            if os.path.isfile(target):
+                os.remove(target)
+            report = ReportGeneration()
+            doc = SimpleDocTemplate(target, pagesize=landscape(A3))
+            height = doc.height
+            width = doc.width
+            # container for the 'Flowable' objects
+            elements = []
+            styleSheet = getSampleStyleSheet()
+            P = report.Add_Title("NETRA")
+            elements.append(P)
+            elements.append(Spacer(width=0, height=0.25 * inch))
+            elements.append(Spacer(width=0, height=0.25 * inch))
+            elements.append(Spacer(width=0, height=0.25 * inch))
+            elements.append(Spacer(width=0, height=0.25 * inch))
+
+            header_text = "RCM ANALYSIS"
+            table_data = [["SHIP NAME", "SYSTEM NAME"], [PLATFORM, SYSTEM]]
+
+            elements.append(report.Add_Header_And_Table(header_text, table_data))
+            elements.append(Spacer(width=0, height=0.25 * inch))
+            elements.append(Spacer(width=0, height=0.15 * inch))
+
+            # rcm_return_values = [['S.R.\nNo.', 'Component\nName', 'System\nName',
+            #                       'Platform\nName', 'RCM\nSuggested']]
+            rcm_return_values = [['No.', 'System',
+                                'Platform', 'Component', 'RCM Plan']]
+            # system_data = '''select component_name, ship_name, system, component_id from system_configuration where system=? and ship_name=? '''
+            system_data = '''select s.component_id, s.component_name, r.rcm, s.parent_name, s.system, s.ship_name 
+            from rcm_component as r right join system_configuration as s 
+            on r.component_id = s.component_id where s.system=? and s.ship_name=?'''
+            cursor.execute(system_data, SYSTEM, PLATFORM)        
+            system_data = cursor.fetchall()
+
+            for index,row in enumerate(system_data):
+                if row[2] is None:
+                    n = [index+1, row[4], row[5],row[1], "Please add Data"]
+                else:
+                    n = [index+1, row[4], row[5],row[1], row[2]]
+                rcm_return_values.append(n)
+            print(rcm_return_values)
+
+
+            new_cell_height = 40  # Adjust this value as needed
+            num_rows = len(rcm_return_values[0]) - 1
+            row_heights = [new_cell_height]  * (num_rows + 1)
+            row_heights[0] = new_cell_height * 2
+            
+            # system_data = report.get_system(SYSTEM, PLATFORM)
+            t = Table(rcm_return_values, splitByRow=1, style=[
+                ('BOX', (0, 0), (-1, -1), 1, colors.black),
+                ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.gray),
+                ('ALIGN', (0, 0), (-1, -1), 'CENTRE'),
+                ('FONTSIZE', (0, 0), (-1, 0), 15),
+                ('LEADING', (0, 0), (-1, 0), 30),
+                ('BACKGROUND', (0, 0), (-1, 0), colors.lightblue),
+                ('ALIGN', (0, 0), (-1, -1), 'CENTER'), 
+                ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+                ('GRID', (0, 0), (-1, -1), 1, colors.black)
+            ], rowHeights=row_heights)
+            
+            # t._argW = 0.8 * height
+
+            for col in range(len(t._colWidths)):
+                if col == 3 or col == 4:
+                    t._colWidths[col] = (2*width) / len(t._colWidths)
+                elif col== 1 or col==2:
+                    t._colWidths[col] = (0.6*width) / len(t._colWidths)
+                else:
+                    t._colWidths[col] = (0.3*width) / len(t._colWidths)
+
+            elements.append(t)
             doc.build(elements)
             return self.success_return
-        except:
+        except Exception as e:
+            print("An error occurred:", str(e))
             return self.error_return
 

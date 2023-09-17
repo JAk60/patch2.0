@@ -20,14 +20,13 @@ import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 
 const InputStyles = makeStyles({
   root: {
+    margin: '15px 0px 5px 0px',
     paddingRight: 10,
     paddingLeft: 10,
-    background: '#fff',
-    border: '1px solid #0263a1',
-    borderRadius: '5px',
-    height: 40,
-    boxShadow: '2px 3px 5px -1px rgba(0,0,0,0.2)',
-    width: '100%',
+    background: "#ebebeb",
+    borderRadius: "5px",
+    height: 50,
+    // width: '70%',
   },
 });
 
@@ -86,13 +85,21 @@ const SignUp = () => {
       })
       .then(data => {
         console.log('Success:', data);
-        history.push('/sign_in', { message: "user created successfully" });
+        if(data.error){
+          setSnackBarMessage({
+            severity: "error",
+            message: data.error,
+            showSnackBar: true,
+          });
+        }else{
+          history.push('/sign_in', { message: "user created successfully" });
+        }
       })
       .catch(error => {
         console.error('Error:', error);
         setSnackBarMessage({
           severity: "error",
-          message: "user is already exist",
+          message: error.messege,
           showSnackBar: true,
         })
       });
@@ -101,12 +108,14 @@ const SignUp = () => {
   return (
     <div className={styles.container}>
       <Paper className={styles.SignUpPaper} elevation={5}>
-        <div>
-        <img src='/netra-logo-removebg.png' height={300} />
+        <div className={styles.welcome_text}>
+          <img src='/netra-logo-removebg.png' height={300} />
           <div className={styles.netra}>NETRA</div>
         </div>
-        <div style={{ textAlign: 'center' }}>
-          <Typography variant='h4'>Sign in to your account</Typography>
+        <div className={styles.input_fields}>
+        <div className={styles.subheading}>
+          <Typography variant='h4'>Welcome</Typography>
+          <Typography variant='h6'>Create account</Typography>
         </div>
         <form id={styles.signUpForm}>
           <div className={styles.flex}>
@@ -121,7 +130,7 @@ const SignUp = () => {
               required
             />
           </div>
-  
+
           <div className={styles.flex}>
             <InputBase
               classes={InputClasses}
@@ -166,7 +175,7 @@ const SignUp = () => {
               required
             />
           </div>
-        
+
           <div className={styles.flex}>
             {/* Level of Access input */}
             <TextField
@@ -188,11 +197,12 @@ const SignUp = () => {
         </form>
         <Button
           variant='contained'
-          style={{ backgroundColor: '#1c4199', color: 'white' }}
+          style={{ backgroundColor: '#1c4199', color: 'white', marginTop: "10px" }}
           onClick={handleCreateAccount}
         >
           Create Account
         </Button>
+        </div>
       </Paper>
       {SnackBarMessage.showSnackBar && (
         <CustomizedSnackbars

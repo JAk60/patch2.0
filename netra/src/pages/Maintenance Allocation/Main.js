@@ -55,7 +55,40 @@ const Main = (props) => {
               </Typography>
             </Button>
           </Link>
+<<<<<<< HEAD
           ))}
+=======
+          {/* <Link to="/maintenance_allocation/modify">
+          <div className={styles.circleIcon}>
+            <i class="fas fa-microchip"></i>
+          </div>
+          Modify Maintenance Plan
+        </Link>
+        <Link to="/maintenance_allocation/display">
+          <div className={styles.circleIcon}>
+            <i class="fas fa-microchip"></i>
+          </div>
+          Display Maintenance Plan
+        </Link>
+        <Link to="/maintenance_allocation/share">
+          <div className={styles.circleIcon}>
+            <i class="fas fa-microchip"></i>
+          </div>
+          Share Maintenance Plan
+        </Link> */}
+          <Link to="/maintenance_allocation/conduct_rcm_analysis/create">
+            <div className={styles.circleIcon}>
+              <i class="fas fa-microchip"></i>
+            </div>
+            RCM Analysis
+          </Link>
+          {/* <Link to="/maintenance_allocation/add_data">
+          <div className={styles.circleIcon}>
+            <i class="fas fa-microchip"></i>
+          </div>
+          Add Data
+        </Link> */}
+>>>>>>> ba46c577847b5eb0a455321f4fc054af45a9af67
         </div>
         <div className={styles.netra}>
           <img src="/netra-logo-removebg.png" width={300} height={400} alt="Netra Logo" />
