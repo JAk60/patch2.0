@@ -33,11 +33,11 @@ const Main = (props) => {
           </div>
           Share Maintenance Plan
         </Link> */}
-          <Link to="/maintenance_allocation/conduct_rcm_analysis">
+          <Link to="/maintenance_allocation/conduct_rcm_analysis/create">
             <div className={styles.circleIcon}>
               <i class="fas fa-microchip"></i>
             </div>
-            Conduct Rcm Analysis
+            RCM Analysis
           </Link>
           {/* <Link to="/maintenance_allocation/add_data">
           <div className={styles.circleIcon}>

@@ -549,7 +549,7 @@ const AssignType = (props) => {
               value={condition}
               onChange={(e) => setCondition(e.target.value)}
             >
-              <FormControlLabel
+              {/* <FormControlLabel
                 value="visual"
                 control={<Radio />}
                 label="Visual Inspection"
@@ -558,7 +558,7 @@ const AssignType = (props) => {
                 value="degradation"
                 control={<Radio />}
                 label="Degradation Measurement"
-              />
+              /> */}
               <FormControlLabel
                 value="sensorBased"
                 control={<Radio />}

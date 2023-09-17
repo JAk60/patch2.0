@@ -16,9 +16,9 @@ const InputStyles = makeStyles({
     paddingLeft: 10,
     background: "#ebebeb",
     borderRadius: "5px",
-    height: 40,
-    width: '70%',
-    boxShadow: "2px 3px 5px -1px rgba(0,0,0,0.2)",
+    height: 50,
+    // width: '%',
+    // boxShadow: "2px 3px 5px -1px rgba(0,0,0,0.2)",
   },
   label: {
     fontWeight: 600
@@ -27,10 +27,10 @@ const InputStyles = makeStyles({
 
 
 const SignIn = (props) => {
-    if (props.loggedIn) {
-      props.history.push('/')
-    }
-    
+  if (props.loggedIn) {
+    props.history.push('/')
+  }
+
 
   const location = useLocation();
   const message = location.state?.message;
@@ -44,7 +44,7 @@ const SignIn = (props) => {
   const handleMClose = () => {
     setOpen(false);
   };
-  
+
 
   const [showSnackBar, setShowSnackBar] = useState(false);
   const [SnackBarMessage, setSnackBarMessage] = useState({
@@ -88,7 +88,7 @@ const SignIn = (props) => {
           console.log('Success:', data);
           localStorage.setItem('login', true);
           const isLoggedIn = localStorage.getItem('login');
-          if(isLoggedIn === 'true'){
+          if (isLoggedIn === 'true') {
             props.setLoggedIn(true)
           }
           console.log({ level: data.level, value: true })
@@ -120,32 +120,23 @@ const SignIn = (props) => {
         </MuiAlert>
       </Snackbar>
       <Paper className={styles.SignInPaper} elevation={5}>
-        <div>
-          <img src='/netra-logo-removebg.png'  height={300} />
+        <div className={styles.welcome_text}>
+          <img src='/netra-logo-removebg.png' height={300} />
           <div className={styles.netra}>NETRA</div>
         </div>
-        <div style={{ textAlign: 'center' }}>
-          {/* <h5 style={{ margin: 0 }}>Welcome</h5> */}
-          <Typography variant='h5'>Welcome</Typography>
-          <Typography variant='h6'>Sign in to your account</Typography>
+        <div className={styles.input_fields}>
+          <div className={styles.subheading}>
+            {/* <h5 style={{ margin: 0 }}>Welcome</h5> */}
+            <Typography variant='h4'>Welcome</Typography>
+            <Typography variant='h6'>Sign in to your account</Typography>
+          </div>
+          <InputBase classes={InputClasses} name='username' value={userName} onChange={(e) => setUserName(e.target.value)} id='username' placeholder='User Name' required />
+          <InputBase classes={InputClasses} name='password' id='password' value={password} onChange={(e) => setPassword(e.target.value)} placeholder='Password' type='text' required />
+          <Button variant='contained' style={{ backgroundColor: '#1c4199', color: 'white', marginTop: "10px" }} onClick={() => Login()}>Sign In</Button>
+          <Link className={styles.links} to="/sign_up">
+            Create an Account? Sign Up
+          </Link>
         </div>
-        <InputBase classes={InputClasses} name='username' value={userName} onChange={(e) => setUserName(e.target.value)} id='username' placeholder='User Name' required />
-        <InputBase classes={InputClasses} name='password' id='password' value={password} onChange={(e) => setPassword(e.target.value)} placeholder='Password' type='text' required />
-        <Button variant='contained' style={{ backgroundColor: '#1c4199', color: 'white' }} onClick={() => Login()}>Sign In</Button>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '80%' }}>
-          {/* <FormControlLabel
-            classes={{
-              label: InputClasses.label
-            }}
-            style={{ color: '#1c4199' }}
-            control={<Checkbox style={{ color: '#1c4199' }} checked={keepLogin} onChange={() => { setKeepLogin(!keepLogin) }} name="checkedA" />}
-            label="Keep me logged in"
-          />
-         */}
-        </div>
-        <Link className={styles.links} to="/sign_up">
-          Create an Account? Sign Up
-        </Link>
       </Paper>
       {SnackBarMessage.showSnackBar && (
         <CustomizedSnackbars

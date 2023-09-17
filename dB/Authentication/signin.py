@@ -13,10 +13,21 @@ class Authentication:
         hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
         return hashed_password
 
+    def is_valid_password(self, password):
+        # Check if the password meets the requirements
+        if (
+            len(password) >= 8
+            and any(char.isupper() for char in password)
+            and any(char.isalnum() for char in password)
+        ):
+            return True
+        return False
+
     def sign_in(self, username, password):
         query = "SELECT * FROM users WHERE username = ?"
-        cursor.execute(query, username)
+        cursor.execute(query, (username,))
         user = cursor.fetchone()
+
         if user and bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
             user_level = user.level
             return {'message': 'User found.', 'username': username, 'level': user_level}
@@ -25,7 +36,9 @@ class Authentication:
     
 
     def sign_up(self, username, password, level):
-        print(username, password)
+        print(self.is_valid_password(password))
+        if not self.is_valid_password(password):
+            return {"error": 'Invalid password. Password should have at least one uppercase letter, one alphanumeric character, and be at least 8 characters long.'}
         hashed_password = self.hash_password(password)
         print(hashed_password)
         try:

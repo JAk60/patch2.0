@@ -11,20 +11,42 @@
 }
 
 .SignUpPaper {
-    width: 40%;
+    width: 70%;
     height: 80%;
     display: flex;
-    flex-direction: column;
-    justify-content: space-around;
+    justify-content: center;
     align-items: center;
     padding: 40px 0;
 }
 
+.welcome_text {
+    width: 35%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.input_fields{
+    width: 35%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
 .netra {
-    text-align: center;
     letter-spacing: 1px;
     color: #1c4199;
-    font-size: 50px;
+    font-size:40px;
+}
+
+.subheading{
+    font-weight: bold;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
 .links {
@@ -35,11 +57,12 @@
 .flex {
     display: flex;
     font-size: 18px;
+    gap: 3px;
 }
 
-.flex div {
+/* .flex div {
     margin: 5px;
-}
+} */
 
 /* #signUpForm{
     width: 90%;
@@ -48,9 +71,6 @@
 
 .inputField {
     width: 100% !important;
-    margin-bottom: 10px !important;
-    border-radius: 5px !important;
-    box-shadow: 2px 3px 5px -1px rgba(0, 0, 0, 0.2) !important;
 }
 
 .accessLevelInput {
