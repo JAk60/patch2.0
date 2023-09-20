@@ -15,11 +15,13 @@ const SelectStyles = makeStyles({
 
 function UserSelection(props) {
   UserSelection.defaultProps = {
-    alignment:"horizontal",
-    inputWidth:"200px"
-  }
+    alignment: "horizontal",
+    inputWidth: "200px",
+  };
+
   const [userSelectionData, setUserSelectionData] = useState([]);
   const [userSelectionEqData, setUserSelectionEqData] = useState([]);
+  const [nomenclature, setNomenclature] = useState(""); // Added state for nomenclature dropdown
   const dispatch = useDispatch();
   const customSelectData = useSelector(
     (state) => state.userSelection.userSelection
@@ -27,6 +29,7 @@ function UserSelection(props) {
   const currentSelection = useSelector(
     (state) => state.userSelection.currentSelection
   );
+
   useEffect(() => {
     fetch("/fetch_user_selection", {
       method: "GET",
@@ -35,9 +38,7 @@ function UserSelection(props) {
         Accept: "application/json",
       },
     })
-      .then((res) => {
-        return res.json();
-      })
+      .then((res) => res.json())
       .then((data) => {
         const userData = data["data"];
         const eqData = data["eqData"];
@@ -118,31 +119,39 @@ function UserSelection(props) {
     dispatch(userActions.onChangeCurrentSelection({ selectedData: data }));
     dispatch(userActions.populateEqName({ filteredData: eqData }));
   };
+
   const onEquipmentChange = (e) => {
     let data = e.currentTarget.innerText;
     data = { equipmentName: data };
     dispatch(userActions.onChangeCurrentSelection({ selectedData: data }));
   };
+
   const onEquipmentCodeChange = (e) => {
     let data = e.currentTarget.innerText;
     data = { equipmentCode: data };
     dispatch(userActions.onChangeCurrentSelection({ selectedData: data }));
   };
+
+  const onNomenclatureChange = (e) => {
+    const selectedNomenclature = e.currentTarget.innerText;
+    setNomenclature(selectedNomenclature);
+  };
+
   const SelectClasses = SelectStyles();
-  let colwidth=4
-  props.alignment==="vertical"?colwidth=12:colwidth=4
-  
+  let colwidth = 4;
+  props.alignment === "vertical" ? (colwidth = 12) : (colwidth = 3);
+
   return (
     <Grid container spacing={3}>
       <Grid item xs={colwidth}>
         <div className={SelectClasses.spacing}>
           <CustomSelect
             style={{ width: props.inputWidth }}
-            id="ship-name"
-            label="Ship Name"
-            fields={customSelectData["shipName"]}
-            onChange={handleShipNameChange}
-            value={currentSelection["shipName"]}
+            id="command"
+            label="Command Name"
+            fields={customSelectData["command"]}
+            onChange={onCommandChange}
+            value={currentSelection["command"]}
           />
         </div>
       </Grid>
@@ -155,7 +164,6 @@ function UserSelection(props) {
             fields={customSelectData["shipCategory"]}
             onChange={onShipCategoryChange}
             value={currentSelection["shipCategory"]}
-
           />
         </div>
       </Grid>
@@ -168,20 +176,6 @@ function UserSelection(props) {
             fields={customSelectData["shipClass"]}
             onChange={onShipClassChange}
             value={currentSelection["shipClass"]}
-
-          />
-        </div>
-      </Grid>
-      <Grid item xs={colwidth}>
-        <div className={SelectClasses.spacing}>
-          <CustomSelect
-            style={{ width: props.inputWidth }}
-            id="command"
-            label="Command"
-            fields={customSelectData["command"]}
-            onChange={onCommandChange}
-            value={currentSelection["command"]}
-
           />
         </div>
       </Grid>
@@ -194,7 +188,18 @@ function UserSelection(props) {
             fields={customSelectData["department"]}
             onChange={onDepartmentChange}
             value={currentSelection["department"]}
-
+          />
+        </div>
+      </Grid>
+      <Grid item xs={colwidth}>
+        <div className={SelectClasses.spacing}>
+          <CustomSelect
+            style={{ width: props.inputWidth }}
+            id="ship-name"
+            label="Ship Name"
+            fields={customSelectData["shipName"]}
+            onChange={handleShipNameChange}
+            value={currentSelection["shipName"]}
           />
         </div>
       </Grid>
@@ -211,14 +216,13 @@ function UserSelection(props) {
           "/maintenance_allocation/",
           "/add_system_doc/",
           "/rul",
-          "/optimize"
-          
+          "/optimize",
         ]}
       >
         <Grid item xs={colwidth}>
           <div className={SelectClasses.spacing}>
             <CustomSelect
-              style={{ width: props.inputWidth}}
+              style={{ width: props.inputWidth }}
               id="equipment-name"
               label="Equipment Name"
               fields={customSelectData["equipmentName"]}
@@ -228,7 +232,35 @@ function UserSelection(props) {
           </div>
         </Grid>
       </Route>
+      <Route path={[
+        "/system_config/redundancy_info",
+        "/system_config/maintenance_info",
+        "/system_config/failure_mode",
+        "/system_config/duty_cycle",
+        "/system_config/",
+        "/data_manager/",
+        "/phase_manager/",
+        "/HEP/",
+        "/maintenance_allocation/",
+        "/add_system_doc/",
+        "/rul",
+        "/optimize",
+      ]}>
+        <Grid item xs={colwidth}>
+          <div className={SelectClasses.spacing}>
+            <CustomSelect
+              style={{ width: props.inputWidth }}
+              id="nomenclature"
+              label="Nomenclature"
+              fields={customSelectData["nomenclature"]}
+              onChange={onNomenclatureChange}
+              value={nomenclature}
+            />
+          </div>
+        </Grid>
+      </Route>
     </Grid>
   );
 }
+
 export default UserSelection;

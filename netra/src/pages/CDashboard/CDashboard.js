@@ -268,6 +268,37 @@ console.log(PData)
                 marginBottom: "10px",
               }}
             >
+              <Typography variant="h5">Select Nomainclature</Typography>
+              
+            </InputLabel>
+
+            <Autocomplete
+              classes={classes}
+              multiple
+              id="tags-standard"
+              options={paramOptions}
+              // getOptionLabel={(option) => option.name}
+              value={selectedParameterName}
+              onChange={(e, value) => setParameterName(value)}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  InputProps={{ ...params.InputProps, disableUnderline: true }}
+                  variant="standard"
+                />
+              )}
+            />
+          </div>
+
+          <div style={{ width: "300px" }}>
+            <InputLabel
+              style={{
+                fontWeight: "bold",
+                color: "black",
+                fontSize: "16px",
+                marginBottom: "10px",
+              }}
+            >
               <Typography variant="h5">Select Parameter</Typography>
               
             </InputLabel>

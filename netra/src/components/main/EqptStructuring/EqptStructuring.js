@@ -230,6 +230,17 @@ function EqptStructuring() {
                     disabled={disableButton}
                   ></CustomTextInput>
                 </div>
+                <div className={classes.field1}>
+                  <LabelToolTip label="Nomenclature" info="Info" />
+                  <CustomTextInput
+                    className={classes.fullWidth}
+                    id="systemType"
+                    name="systemType"
+                    value={formik.values.systemType}
+                    onChange={formik.handleChange}
+                    disabled={disableButton}
+                  ></CustomTextInput>
+                </div>
               </div>
               <div className={classes.parent}>
                 <div style={{ marginTop: "20px", marginRight: "2%" }}>
@@ -267,21 +278,24 @@ function EqptStructuring() {
                   value={parentFiledValue}
                 ></AutoSelect>
               </div>
-              <div className={classes.child} style={{ margin: "10px" }}>
+              <div className={classes.child} style={{ margin: "20px" }}>
                 <Grid container>
                   <Grid container item spacing={4}>
-                    <Grid item xs={5}>
+                    <Grid item xs={3}>
                       <LabelToolTip label="Child Component Name" />
                     </Grid>
-                    <Grid item xs={5}>
+                    <Grid item xs={3}>
                       <LabelToolTip label="CMMS ID" />
+                    </Grid>
+                    <Grid item xs={3}>
+                      <LabelToolTip label="Nomenclature" />
                     </Grid>
                     <Grid item xs={2}></Grid>
                   </Grid>
                   {childInputFields.map((child, item) => {
                     return (
                       <Grid container item key={item} spacing={4}>
-                        <Grid item xs={5} style={{ marginTop: "10px" }}>
+                        <Grid item xs={3} style={{ marginTop: "20px" }}>
                           <CustomTextInput
                             className={classes.fullWidth}
                             name="childName"
@@ -290,7 +304,16 @@ function EqptStructuring() {
                             onChange={(e) => handleChildChange(item, e)}
                           />
                         </Grid>
-                        <Grid item xs={5} style={{ marginTop: "10px" }}>
+                        <Grid item xs={3} style={{ marginTop: "20px" }}>
+                          <CustomTextInput
+                            className={classes.fullWidth}
+                            name="childPartId"
+                            // id="partId"
+                            value={child.childPartId}
+                            onChange={(e) => handleChildChange(item, e)}
+                          />
+                        </Grid>
+                        <Grid item xs={3} style={{ marginTop: "20px" }}>
                           <CustomTextInput
                             className={classes.fullWidth}
                             name="childPartId"
@@ -306,7 +329,7 @@ function EqptStructuring() {
                             display: "flex",
                             paddingLeft: "-300px",
                             alignItems: "center",
-                            justifyContent: "start",
+                            justifyContent: "center",
                             margin: "24px 0",
                             padding: 0,
                           }}

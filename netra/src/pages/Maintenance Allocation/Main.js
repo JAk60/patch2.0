@@ -36,7 +36,7 @@ const Main = (props) => {
 
   const MainLinks = [
     { name: "Create Maintenance Plan", path: "/maintenance_allocation/create", icon: <BuildOutlinedIcon /> },
-    { name: "Conduct Rcm Analysis", path: "/maintenance_allocation/conduct_rcm_analysis", icon: <TableChartSharpIcon /> },
+    { name: "Conduct Rcm Analysis", path: "/maintenance_allocation/conduct_rcm_analysis/create", icon: <TableChartSharpIcon /> },
     // Add more links as needed
   ];
 
@@ -55,9 +55,8 @@ const Main = (props) => {
               </Typography>
             </Button>
           </Link>
-<<<<<<< HEAD
           ))}
-=======
+
           {/* <Link to="/maintenance_allocation/modify">
           <div className={styles.circleIcon}>
             <i class="fas fa-microchip"></i>
@@ -76,19 +75,18 @@ const Main = (props) => {
           </div>
           Share Maintenance Plan
         </Link> */}
-          <Link to="/maintenance_allocation/conduct_rcm_analysis/create">
+          {/* <Link to="/maintenance_allocation/conduct_rcm_analysis/create">
             <div className={styles.circleIcon}>
               <i class="fas fa-microchip"></i>
             </div>
             RCM Analysis
-          </Link>
+          </Link> */}
           {/* <Link to="/maintenance_allocation/add_data">
           <div className={styles.circleIcon}>
             <i class="fas fa-microchip"></i>
           </div>
           Add Data
         </Link> */}
->>>>>>> ba46c577847b5eb0a455321f4fc054af45a9af67
         </div>
         <div className={styles.netra}>
           <img src="/netra-logo-removebg.png" width={300} height={400} alt="Netra Logo" />

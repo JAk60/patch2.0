@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import UserSelection from "../../../ui/userSelection/userSelection";
 import { useEffect, useRef, useState } from "react";
 import Autocomplete from "@material-ui/lab/Autocomplete/Autocomplete";
-import { TextField,Button, Select } from "@material-ui/core";
+import { TextField, Button, Select } from "@material-ui/core";
 import { treeDataActions } from "../../../store/TreeDataStore";
 import { v4 as uuid } from "uuid";
 import { useHistory } from "react-router";
@@ -22,7 +22,7 @@ import { filter } from "lodash";
 
 const Layout = (props) => {
   const [isNodeAddedMap, setIsNodeAddedMap] = useState({});
-  useEffect(()=>{
+  useEffect(() => {
     fetch("/fetch_tasks", {
       method: "GET",
       headers: {
@@ -34,12 +34,12 @@ const Layout = (props) => {
         return res.json();
       })
       .then((data) => {
-        
+
         setTaskNames(data['tasks'])
         console.log(data['tasks'])
       });
-  },[])
-  const [taskNames,setTaskNames]=useState([])
+  }, [])
+  const [taskNames, setTaskNames] = useState([])
   // Snackbar
   const [SnackBarMessage, setSnackBarMessage] = useState({
     severity: "error",
@@ -53,7 +53,7 @@ const Layout = (props) => {
       showSnackBar: false,
     });
   };
-  const history=useHistory()
+  const history = useHistory()
   const dispatch = useDispatch();
   const allElements = useSelector((state) => state.elements);
   const components = useSelector((state) => state.userSelection.componentsData);
@@ -120,7 +120,7 @@ const Layout = (props) => {
         });
       });
     setOpen(false);
-    }    
+  }
   const onLoadHandler = () => {
     console.log(loadname);
     // const ele = JSON.parse(localStorage.getItem("flow"));
@@ -128,7 +128,7 @@ const Layout = (props) => {
     fetch("/load_task_configuration", {
       method: "POST",
       body: JSON.stringify({
-        taskName:loadname
+        taskName: loadname
       }),
       headers: {
         "Content-Type": "application/json",
@@ -153,7 +153,7 @@ const Layout = (props) => {
           showSnackBar: true,
         })
       })
-      handleLoadClose()
+    handleLoadClose()
   };
   const [value, setValue] = useState([]);
   const systemData = useSelector((state) => state.treeData.treeData);
@@ -165,22 +165,22 @@ const Layout = (props) => {
   console.log(value);
   const reactFlowWrapper = useRef(null);
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
-  const [taskName,setTaskName] = useState("")
+  const [taskName, setTaskName] = useState("")
   const customSelectData = useSelector(
     (state) => state.userSelection.userSelection
   );
   // const currentSelection = useSelector(
   //   (state) => state.userSelection.currentSelection
   // );
-  const options=customSelectData["equipmentName"]
+  const options = customSelectData["equipmentName"]
   const ship_name = currentSelection["shipName"]
   // console.log(currentSelection)
   const AddNodes = () => {
     const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
-  
+
     // Check if "Task Name" node has already been added
     const isTaskNameAdded = isNodeAddedMap["Task Name"];
-  
+
     if (!isTaskNameAdded) {
       // Create the "Task Name" node
       const newNodeTaskName = {
@@ -194,11 +194,11 @@ const Layout = (props) => {
         dtype: "node",
         shipName: ship_name,
       };
-  
+
       dispatch(elementActions.addElement({ ele: newNodeTaskName }));
       setIsNodeAddedMap((prevMap) => ({ ...prevMap, "Task Name": true }));
     }
-  
+
     let i = 50; // Initialize i for positioning equipment nodes
     value.forEach((equipment) => {
       if (!isNodeAddedMap[equipment]) {
@@ -210,12 +210,12 @@ const Layout = (props) => {
           borderColor: "black",
           padding: "20px",
         };
-  
+
         const position = reactFlowInstance.project({
           x: reactFlowBounds.left + i,
           y: reactFlowBounds.top + i,
         });
-  
+
         const newNodeEquipment = {
           id: uuid(),
           type: "component",
@@ -226,15 +226,15 @@ const Layout = (props) => {
           shipName: ship_name,
           metaData: currentSelection,
         };
-  
+
         dispatch(elementActions.addElement({ ele: newNodeEquipment }));
         setIsNodeAddedMap((prevMap) => ({ ...prevMap, [equipment]: true }));
       }
-  
+
       i += 50; // Increment the positioning index for the next node
     });
   };
-  
+
 
   const [open, setOpen] = useState(false);
   const handleClickOpen = () => setOpen(true);
@@ -243,12 +243,12 @@ const Layout = (props) => {
   const [loadopen, setLoadOpen] = useState(false);
   const handleLoadClickOpen = () => setLoadOpen(true);
   const handleLoadClose = () => setLoadOpen(false);
-  const [loadname,setLoadName]=useState('')
-  const [showDetails,setShowDetails]=useState(false)
+  const [loadname, setLoadName] = useState('')
+  const [showDetails, setShowDetails] = useState(false)
 
   return (
     <div className={classes.parent}>
-        {/* <div className={classes.text_div}>
+      {/* <div className={classes.text_div}>
           <Sidebar></Sidebar>
           <div className={classes.buttonDiv}>
           <button onClick={onSaveHandler} className={classes.savebtn}>
@@ -259,12 +259,12 @@ const Layout = (props) => {
           </button>
         </div>
         </div> */}
-        <div className={classes.flow_div}>
-          <Flow reactFlowInstance={reactFlowInstance} reactFlowWrapper={reactFlowWrapper} setReactFlowInstance={setReactFlowInstance}></Flow>
-        </div>
+      <div className={classes.flow_div}>
+        <Flow reactFlowInstance={reactFlowInstance} reactFlowWrapper={reactFlowWrapper} setReactFlowInstance={setReactFlowInstance}></Flow>
+      </div>
       <div className={classes.sidebar}>
-      <div className={classes.buttonDiv}>
-          <button onClick={()=>history.push("/")} className={classes.savebtn}>
+        <div className={classes.buttonDiv}>
+          <button onClick={() => history.push("/")} className={classes.savebtn}>
             Home
           </button>
           <button onClick={handleClickOpen} className={classes.restorebtn}>
@@ -273,94 +273,111 @@ const Layout = (props) => {
           <button onClick={handleLoadClickOpen} className={classes.restorebtn}>
             Load
           </button>
-          {showDetails?<button onClick={()=>{setShowDetails(false)}} className={classes.restorebtn}>
+          {showDetails ? <button onClick={() => { setShowDetails(false) }} className={classes.restorebtn}>
             Back
-          </button>:<button onClick={()=>{setShowDetails(true)}} className={classes.restorebtn}>
+          </button> : <button onClick={() => { setShowDetails(true) }} className={classes.restorebtn}>
             Component Details
           </button>}
           {/* <Button variant="outlined" color="primary" onClick={handleClickOpen}>
         Save
       </Button> */}
-      <Dialog maxWidth='sm' fullWidth open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
-        <DialogTitle id="form-dialog-title">Enter task name</DialogTitle>
-        <DialogContent>
-          
-          <TextField
-            autoFocus
-            margin="dense"
-            id="name"
-            label="Task name"
-            type="text"
-            fullWidth
-            value={taskName}
-            onChange={(e)=>setTaskName(e.target.value)}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={onSaveHandler} color="primary">
-            Save
-          </Button>
-        </DialogActions>
-      </Dialog>
+          <Dialog maxWidth='sm' fullWidth open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+            <DialogTitle id="form-dialog-title">Enter task name</DialogTitle>
+            <DialogContent>
 
-      <Dialog maxWidth='sm' fullWidth open={loadopen} onClose={handleLoadClose} aria-labelledby="form-dialog-title">
-        <DialogTitle id="form-dialog-title">Select Task</DialogTitle>
-        <DialogContent dividers>
-          
-          <Autocomplete
-            value={loadname}
-            options={taskNames}
-            onChange={(value,newValue)=>setLoadName(newValue)}
-            renderInput={(params) => (
-              <TextField {...params} variant="standard" />
-            )}
-            />
-            
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleLoadClose} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={onLoadHandler} color="primary">
-            Load
-          </Button>
-        </DialogActions>
-      </Dialog>
-     
+              <TextField
+                autoFocus
+                margin="dense"
+                id="name"
+                label="Task name"
+                type="text"
+                fullWidth
+                value={taskName}
+                onChange={(e) => setTaskName(e.target.value)}
+              />
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleClose} color="primary">
+                Cancel
+              </Button>
+              <Button onClick={onSaveHandler} color="primary">
+                Save
+              </Button>
+            </DialogActions>
+          </Dialog>
+
+          <Dialog maxWidth='sm' fullWidth open={loadopen} onClose={handleLoadClose} aria-labelledby="form-dialog-title">
+            <DialogTitle id="form-dialog-title">Select Task</DialogTitle>
+            <DialogContent dividers>
+
+              <Autocomplete
+                value={loadname}
+                options={taskNames}
+                onChange={(value, newValue) => setLoadName(newValue)}
+                renderInput={(params) => (
+                  <TextField {...params} variant="standard" />
+                )}
+              />
+
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleLoadClose} color="primary">
+                Cancel
+              </Button>
+              <Button onClick={onLoadHandler} color="primary">
+                Load
+              </Button>
+            </DialogActions>
+          </Dialog>
+
         </div>
         {/* <p>Here the details of each component goes!!</p> */}
-       {showDetails?<ComponentDetails></ComponentDetails>:<><UserSelection alignment="vertical" inputWidth="250px"/>
-        
-        <Autocomplete
-        multiple
-      options={options}
-      //value={value}
-      onChange={handleChange}
-      // groupBy={(option) => option.parentName}
-      // getOptionLabel={(option) => option.name}
-      style={{ width: 300 }}
-      renderInput={(params) => (
-        <TextField
-          {...params}
-          label="Select Equipments"
-          variant="outlined"
-        />
-        
-      )}  
-    />
-    <Button
-                variant="contained"
-                color="primary"
-                onClick={()=>AddNodes()}
-              >
-                Load Equipments
-              </Button>
-    </>}
-    
-    
+        {showDetails ? <ComponentDetails></ComponentDetails> : <><UserSelection alignment="vertical" inputWidth="250px" />
+
+          <Autocomplete
+            multiple
+            options={options}
+            //value={value}
+            onChange={handleChange}
+            // groupBy={(option) => option.parentName}
+            // getOptionLabel={(option) => option.name}
+            style={{ width: 300 }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Select Equipments"
+                variant="outlined"
+              />
+
+            )}
+          />
+           <Autocomplete
+            multiple
+            options={options}
+            //value={value}
+            onChange={handleChange}
+            // groupBy={(option) => option.parentName}
+            // getOptionLabel={(option) => option.name}
+            style={{ width: 300 }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Select Nomenclature"
+                variant="outlined"
+              />
+
+            )}
+          />
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => AddNodes()}
+          >
+            Load Equipments
+          </Button>
+        </>}
+
+
       </div>
       {SnackBarMessage.showSnackBar && (
         <CustomizedSnackbars
@@ -369,7 +386,7 @@ const Layout = (props) => {
         />
       )}
     </div>
-    
+
   );
 };
 

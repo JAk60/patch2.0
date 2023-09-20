@@ -145,7 +145,7 @@ const CreateRCM = (props) => {
         </div>
         <div className={styles.rightSection}>
           <div className={styles.selectComponent}>
-            Select Assemblies to be included for RCM Analysis :
+            Select Assemblies to be included for RCM Analysis
             <AutoSelect
               multiple="multiple"
               fields={fData}

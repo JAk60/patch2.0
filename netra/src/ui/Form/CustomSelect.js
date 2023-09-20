@@ -66,7 +66,7 @@ const CustomSelect = (props) => {
           onChange={props.onChange}
           input={<StyledInput />}
         >
-          {props.fields.map((data) => (
+          {props.fields?.map((data) => (
             <MenuItem value={data}>{data}</MenuItem>
           ))}
         </Select>

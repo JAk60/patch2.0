@@ -273,6 +273,24 @@ const ReliabilityDashboard = () => {
                 selectType={"equipmentName"}
               />
             </div>
+            <div style={{ width: "300px" }}>
+              <InputLabel
+                style={{
+                  fontWeight: "bold",
+                  color: "black",
+                  fontSize: "16px",
+                  marginBottom: "10px",
+                }}
+              >
+                <Typography variant="h5">Equipment Nomainclature</Typography>
+              </InputLabel>
+              <SelectWithLimit
+                limit={100}
+                options={eqDataOption}
+                getSelectedValues={getSelectedValues}
+                selectType={"equipmentName"}
+              />
+            </div>
             {/* <CustomSelect
             label="Mission Selection"
             fields={['Mission A','Mission B','Mission C']}
