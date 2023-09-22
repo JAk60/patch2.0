@@ -131,6 +131,7 @@ class conditionMonitoring_dB():
     def fetch_params(self, cId):
         try:
             sql = '''select * from sensor_based_data where component_id=?'''
+            print(cId)
             cursor.execute(sql, cId)
             rows = cursor.fetchall()
             data = []

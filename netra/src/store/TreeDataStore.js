@@ -15,7 +15,7 @@ const treeData = createSlice({
     addElement(state, action) {
       state.treeData = [...state.treeData, ...action.payload.data];
       state.sortTreeData = getTreeFromFlatData({
-        flatData: state.treeData.map((node) => ({ ...node, title: node.name })),
+        flatData: state.treeData.map((node) => ({ ...node, title: node.nomenclature })),
         getKey: (node) => node.id, // resolve a node's key
         getParentKey: (node) => node.parent, // resolve a node's parent's key
         rootKey: null, // The value of the parent key when there is no parent (i.e., at root level)
@@ -25,7 +25,7 @@ const treeData = createSlice({
       state.treeData = action.payload.treeData;
       state.failureModes = action.payload.failureModes;
       state.sortTreeData = getTreeFromFlatData({
-        flatData: state.treeData.map((node) => ({ ...node, title: node.name })),
+        flatData: state.treeData.map((node) => ({ ...node, title: node.nomenclature })),
         getKey: (node) => node.id, // resolve a node's key
         getParentKey: (node) => node.parent, // resolve a node's parent's key
         rootKey: null, // The value of the parent key when there is no parent (i.e., at root level)
@@ -40,7 +40,7 @@ const treeData = createSlice({
       state.treeData = [...state.treeData, ...children];
       state.treeData.filter((x) => x.id === parentId)[0].lmu = 0;
       state.sortTreeData = getTreeFromFlatData({
-        flatData: state.treeData.map((node) => ({ ...node, title: node.name })),
+        flatData: state.treeData.map((node) => ({ ...node, title: node.nomenclature })),
         getKey: (node) => node.id, // resolve a node's key
         getParentKey: (node) => node.parent, // resolve a node's parent's key
         rootKey: null, // The value of the parent key when there is no parent (i.e., at root level)

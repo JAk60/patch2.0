@@ -110,7 +110,7 @@ const RedundancyInfo = (props) => {
   const rData = systemData.map((element, index) => {
     return {
       eqId: element.id,
-      EquipmentName: element.name,
+      EquipmentName: element.nomenclature,
       componentId: element.id,
       systemName: currentSelectedSystem,
       id: uuid(),

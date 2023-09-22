@@ -91,7 +91,7 @@ const MaintenanceInfo = (props) => {
       return {
         id: uuid(),
         component_id: element.id,
-        EquipmentName: element.name,
+        EquipmentName: element.nomenclature,
         RepairType: element.repairType,
         PreventiveMaintenaceApplicable: "No",
         PreventiveMaintenaceInterval: 0,

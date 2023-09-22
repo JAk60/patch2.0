@@ -25,6 +25,7 @@ const TreeComponent = (props) => {
       })
     );
   };
+  console.log("tdata", tData)
   return (
     <div style={{ height: props.height }}>
       <SortableTree

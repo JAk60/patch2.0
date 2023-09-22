@@ -391,8 +391,8 @@ const AssignType = (props) => {
             field={data.name}
             headerName={data.name}
             headerTooltip={data.name}
-            //minWidth={100}
-            //editable={true}
+          //minWidth={100}
+          //editable={true}
           />
         );
       }
@@ -477,7 +477,7 @@ const AssignType = (props) => {
   );
   const systemData = useSelector((state) => state.treeData.treeData);
   const failureModes = useSelector((state) => state.treeData.failureModes);
-  console.log("fffff",failureModes);
+  console.log("fffff", failureModes);
   const eqptId = systemData.filter(
     (data) => data.name === currentSelection.equipmentName
   )[0]?.id;
@@ -516,7 +516,7 @@ const AssignType = (props) => {
                   label="Calendar Based Maintenance"
                 />
               )}
-              { (
+              {(
                 <FormControlLabel
                   value="conditionBased"
                   control={<Radio onClick={() => setModal(true)} />}
@@ -829,6 +829,11 @@ const AssignType = (props) => {
                       height={200}
                     />
                   </div>
+                  <Link to="/maintenance_allocation/add_data">
+                    <Button variant="contained" color="primary">
+                      Add Sensor Data
+                    </Button>
+                  </Link>
                 </div>
                 {/* <div className={styles.levelwise}>
             <div className={styles.lwCol}>

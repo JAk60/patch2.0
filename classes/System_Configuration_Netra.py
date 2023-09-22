@@ -25,13 +25,14 @@ class System_Configuration_N():
         cursor.execute(select_sql, platform, system)
         data = cursor.fetchone()
         return data[0]
+
     def fetch_system(self, data,component_id):
         failure_data = self.fmodesData(component_id)
-        system = data['system']
+        nomenclature = data['nomenclature']
         ship_name = data['ship_name']
         sql = '''select * from system_configuration as s left join maintenance_configuration_data 
-        ab on s.component_id = ab.component_id where s.system=? and s.ship_name=?'''
-        cursor.execute(sql, system, ship_name)
+        ab on s.component_id = ab.component_id where s.nomenclature=? and s.ship_name=?'''
+        cursor.execute(sql, nomenclature, ship_name)
         data = cursor.fetchall()
         f_data = []
         if data:
@@ -53,11 +54,12 @@ class System_Configuration_N():
                     'canBeReplacedByShipStaff': r[17],
                     'isSystemParamRecorded': r[18],
                     'pmApplicable': r[15],
-                    'pmInterval': r[16]
+                    'pmInterval': r[16],
+                    'nomenclature': r[11]
                 })
         else:
-            sql = '''select * from system_configuration as s where s.system=? and s.ship_name=?'''
-            cursor.execute(sql, system, ship_name)
+            sql = '''select * from system_configuration as s where s.nomenclature=? and s.ship_name=?'''
+            cursor.execute(sql, nomenclature, ship_name)
             data = cursor.fetchall()
             for r in data:
                 f_data.append({
@@ -73,6 +75,7 @@ class System_Configuration_N():
                     'shipCategory': r[7],
                     'shipClass': r[8],
                     'shipName': r[6],
+                    'nomenclature': r[-1]
                 })
         return {"treeD": f_data, "failureMode": failure_data}
 

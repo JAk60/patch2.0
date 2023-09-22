@@ -8,6 +8,7 @@ import { v4 as uuid } from "uuid";
 import RenderParallelComponent from "../redundancy/RenderParallelComponent";
 const AdditionalInfo = (props) => {
   let systemData = useSelector((state) => state.treeData.treeData);
+  console.log(systemData);
   systemData = systemData.filter((x) => x.parentId === null);
   let ParallelIds = [];
 
@@ -20,6 +21,7 @@ const AdditionalInfo = (props) => {
       component_id: element.id,
       installation_date: "10/08/2021",
       EquipmentName: element.name,
+      nomenclature: element.nomenclature,
       AverageRunning: "",
       Unit: "",
       InstallationDate: "",
@@ -35,7 +37,7 @@ const AdditionalInfo = (props) => {
 
   const AIcolumnDefs = [
     <AgGridColumn
-      field="EquipmentName"
+      field="nomenclature"
       headerName="Equipment Name"
       headerTooltip="Equipment Name"
       width={150}

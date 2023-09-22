@@ -24,12 +24,12 @@ const CreateRCM = (props) => {
   );
   let fData = useSelector((state) => state.treeData.treeData);
   debugger;
-  fData = fData.filter(x => x.parentName === currentSelection["equipmentName"] || x.parentId === null)
-  //console.log(fData);
+  fData = fData.filter(x => x.parentName === currentSelection["nomenclature"] || x.parentId === null)
+  console.log(fData);
   const sData = useSelector((state) => state.userSelection.componentsData);
 
-  const currentEquipmentName = currentSelection["equipmentName"];
-  const matchingItems = sData.filter(item => item.name === currentEquipmentName);
+  const currentNomenclature = currentSelection["nomenclature"];
+  const matchingItems = sData.filter(item => item.name === currentNomenclature);
   const [SnackBarMessage, setSnackBarMessage] = useState({
     severity: "error",
     message: "This is awesome",
@@ -47,7 +47,7 @@ const CreateRCM = (props) => {
   const matchingId = matchingItems[0]?.id;
   const onLoadTreeStructure = () => {
     const payload = {
-      system: currentSelection["equipmentName"],
+      nomenclature: currentSelection["nomenclature"],
       ship_name: currentSelection["shipName"],
     };
 

@@ -15,13 +15,11 @@ const SelectStyles = makeStyles({
 
 function UserSelection(props) {
   UserSelection.defaultProps = {
-    alignment: "horizontal",
-    inputWidth: "200px",
-  };
-
+    alignment:"horizontal",
+    inputWidth:"200px"
+  }
   const [userSelectionData, setUserSelectionData] = useState([]);
   const [userSelectionEqData, setUserSelectionEqData] = useState([]);
-  const [nomenclature, setNomenclature] = useState(""); // Added state for nomenclature dropdown
   const dispatch = useDispatch();
   const customSelectData = useSelector(
     (state) => state.userSelection.userSelection
@@ -29,7 +27,6 @@ function UserSelection(props) {
   const currentSelection = useSelector(
     (state) => state.userSelection.currentSelection
   );
-
   useEffect(() => {
     fetch("/fetch_user_selection", {
       method: "GET",
@@ -38,11 +35,14 @@ function UserSelection(props) {
         Accept: "application/json",
       },
     })
-      .then((res) => res.json())
+      .then((res) => {
+        return res.json();
+      })
       .then((data) => {
         const userData = data["data"];
         const eqData = data["eqData"];
-        const shipName = userData.map((x) => x.shipName);
+        let shipName = userData.map((x) => x.shipName);
+        shipName = [...new Set(shipName)]
         const components = data["uniq_eq_data"];
         setUserSelectionData(userData);
         setUserSelectionEqData(eqData);
@@ -57,24 +57,20 @@ function UserSelection(props) {
 
   const handleShipNameChange = (e) => {
     const shipName = e.currentTarget.innerText;
-    const category = userSelectionData
-      .filter((x) => x.shipName === shipName)
-      .map((x) => x.shipCategory);
-    const shipClass = userSelectionData
-      .filter((x) => x.shipName === shipName)
-      .map((x) => x.shipClass);
-    const command = userSelectionData
-      .filter((x) => x.shipName === shipName)
-      .map((x) => x.command);
-    const dept = userSelectionData
-      .filter((x) => x.shipName === shipName)
-      .map((x) => x.department);
+    const filteredData = userSelectionData.filter((x) => x.shipName === shipName);
+  
+    const uniqueCategories = [...new Set(filteredData.map((x) => x.shipCategory))];
+    const uniqueClasses = [...new Set(filteredData.map((x) => x.shipClass))];
+    const uniqueCommands = [...new Set(filteredData.map((x) => x.command))];
+    const uniqueDepartments = [...new Set(filteredData.map((x) => x.department))];
+  
     const d = {
-      shipCategory: category,
-      shipClass: shipClass,
-      command: command,
-      department: dept,
+      shipCategory: uniqueCategories,
+      shipClass: uniqueClasses,
+      command: uniqueCommands,
+      department: uniqueDepartments,
     };
+  
     dispatch(
       userActions.onChangeLoad({
         filteredData: d,
@@ -82,6 +78,7 @@ function UserSelection(props) {
       })
     );
   };
+  
 
   const onShipCategoryChange = (e) => {
     let data = e.currentTarget.innerText;
@@ -114,44 +111,95 @@ function UserSelection(props) {
           x.shipClass === currentSelection.shipClass
       )
       .map((x) => x.equipmentName);
+
+      let normData = userSelectionEqData
+      .filter(
+        (x) =>
+          x.command === currentSelection.command &&
+          x.department === data &&
+          x.shipName === currentSelection.shipName &&
+          x.shipCategory === currentSelection.shipCategory &&
+          x.shipName === currentSelection.shipName &&
+          x.shipClass === currentSelection.shipClass
+      )
+      .map((x) => x.nomenclature);
+    normData = [...new Set(normData)];
+    eqData = [...new Set(eqData)];
     data = { department: data };
     eqData = { equipmentName: eqData };
+    normData = { nomenclature: normData };
     dispatch(userActions.onChangeCurrentSelection({ selectedData: data }));
     dispatch(userActions.populateEqName({ filteredData: eqData }));
+    dispatch(userActions.populateNom({ filteredData: normData }));
   };
 
   const onEquipmentChange = (e) => {
     let data = e.currentTarget.innerText;
+    let normData = userSelectionEqData
+      .filter(
+        (x) =>
+          x.command === currentSelection.command &&
+          x.department === currentSelection.department &&
+          x.shipName === currentSelection.shipName &&
+          x.shipCategory === currentSelection.shipCategory &&
+          x.shipName === currentSelection.shipName &&
+          x.shipClass === currentSelection.shipClass &&
+          x.equipmentName === data
+      )
+      .map((x) => x.nomenclature);
+    
+    normData = [...new Set(normData)];
+    console.log("nomenclature",normData);
     data = { equipmentName: data };
+    normData = { nomenclature: normData };
     dispatch(userActions.onChangeCurrentSelection({ selectedData: data }));
+    dispatch(userActions.populateNom({ filteredData: normData }));
   };
 
-  const onEquipmentCodeChange = (e) => {
+  const onNomenclatureChange = (e) =>{
     let data = e.currentTarget.innerText;
-    data = { equipmentCode: data };
+    data = { nomenclature: data };
     dispatch(userActions.onChangeCurrentSelection({ selectedData: data }));
-  };
+    
+  }
 
-  const onNomenclatureChange = (e) => {
-    const selectedNomenclature = e.currentTarget.innerText;
-    setNomenclature(selectedNomenclature);
-  };
-
+  // const onEquipmentCodeChange = (e) => {
+  //   // let data = e.currentTarget.innerText;
+  //   // data = { equipmentCode: data };
+  //   // dispatch(userActions.onChangeCurrentSelection({ selectedData: data }));
+  //   let data = e.currentTarget.innerText;
+  //   let eqData = userSelectionEqData
+  //     .filter(
+  //       (x) =>
+  //         x.command === currentSelection.command &&
+  //         x.department === data &&
+  //         x.shipName === currentSelection.shipName &&
+  //         x.shipCategory === currentSelection.shipCategory &&
+  //         x.shipName === currentSelection.shipName &&
+  //         x.shipClass === currentSelection.shipClass &&
+  //         x.equipmentName === currentSelection.equipmentName
+  //     )
+  //     .map((x) => x.equipmentName);
+  //   data = { department: data };
+  //   eqData = { equipmentName: eqData };
+  //   dispatch(userActions.onChangeCurrentSelection({ selectedData: data }));
+  //   dispatch(userActions.populateEqName({ filteredData: eqData }));
+  // // };
   const SelectClasses = SelectStyles();
-  let colwidth = 4;
-  props.alignment === "vertical" ? (colwidth = 12) : (colwidth = 3);
-
+  let colwidth=4
+  props.alignment==="vertical"?colwidth=12:colwidth=3
+  
   return (
     <Grid container spacing={3}>
       <Grid item xs={colwidth}>
         <div className={SelectClasses.spacing}>
           <CustomSelect
             style={{ width: props.inputWidth }}
-            id="command"
-            label="Command Name"
-            fields={customSelectData["command"]}
-            onChange={onCommandChange}
-            value={currentSelection["command"]}
+            id="ship-name"
+            label="Ship Name"
+            fields={customSelectData["shipName"]}
+            onChange={handleShipNameChange}
+            value={currentSelection["shipName"]}
           />
         </div>
       </Grid>
@@ -164,6 +212,7 @@ function UserSelection(props) {
             fields={customSelectData["shipCategory"]}
             onChange={onShipCategoryChange}
             value={currentSelection["shipCategory"]}
+
           />
         </div>
       </Grid>
@@ -176,6 +225,20 @@ function UserSelection(props) {
             fields={customSelectData["shipClass"]}
             onChange={onShipClassChange}
             value={currentSelection["shipClass"]}
+
+          />
+        </div>
+      </Grid>
+      <Grid item xs={colwidth}>
+        <div className={SelectClasses.spacing}>
+          <CustomSelect
+            style={{ width: props.inputWidth }}
+            id="command"
+            label="Command"
+            fields={customSelectData["command"]}
+            onChange={onCommandChange}
+            value={currentSelection["command"]}
+
           />
         </div>
       </Grid>
@@ -188,18 +251,7 @@ function UserSelection(props) {
             fields={customSelectData["department"]}
             onChange={onDepartmentChange}
             value={currentSelection["department"]}
-          />
-        </div>
-      </Grid>
-      <Grid item xs={colwidth}>
-        <div className={SelectClasses.spacing}>
-          <CustomSelect
-            style={{ width: props.inputWidth }}
-            id="ship-name"
-            label="Ship Name"
-            fields={customSelectData["shipName"]}
-            onChange={handleShipNameChange}
-            value={currentSelection["shipName"]}
+
           />
         </div>
       </Grid>
@@ -216,13 +268,14 @@ function UserSelection(props) {
           "/maintenance_allocation/",
           "/add_system_doc/",
           "/rul",
-          "/optimize",
+          "/optimize"
+          
         ]}
       >
         <Grid item xs={colwidth}>
           <div className={SelectClasses.spacing}>
             <CustomSelect
-              style={{ width: props.inputWidth }}
+              style={{ width: props.inputWidth}}
               id="equipment-name"
               label="Equipment Name"
               fields={customSelectData["equipmentName"]}
@@ -254,7 +307,7 @@ function UserSelection(props) {
               label="Nomenclature"
               fields={customSelectData["nomenclature"]}
               onChange={onNomenclatureChange}
-              value={nomenclature}
+              value={currentSelection["nomenclature"]}
             />
           </div>
         </Grid>
@@ -262,5 +315,4 @@ function UserSelection(props) {
     </Grid>
   );
 }
-
 export default UserSelection;

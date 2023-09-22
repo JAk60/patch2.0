@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useRef } from "react";
 import Navigation from "../../../components/navigation/Navigation";
 import styles from "./AddData.module.css";
 import UserSelection from "../../../ui/userSelection/userSelection";
@@ -30,6 +30,61 @@ const useStyles = makeStyles({
 
 const AddData = (props) => {
   const dispatch = useDispatch();
+  const fileInputRef = useRef(null);
+  const handleFileUpload = (file) => {
+    if (file) {
+      setLoading(true);
+
+      const reader = new FileReader();
+
+      reader.onload = (event) => {
+        const csvData = event.target.result;
+        const rows = csvData.split('\n');
+
+        // Assuming the first row contains column headers
+        const headers = rows[0].split(',').map(header => header.trim());
+        console.log(headers)
+        const parsedData = [];
+        for (let i = 1; i < rows.length; i++) {
+          const rowData = rows[i].split(',');
+
+          if (rowData.length === headers.length + 1) { // Adjusted the condition here
+            const rowObject = {};
+            let j = 0, i = 0;
+            while (j < headers.length +1) {
+              let value = rowData[j].trim();
+              if (headers[j] === 'date') {
+                // Extract date and time parts
+                let date = value
+                let time = rowData[j + 1].trim(); // Split by ', ' instead of just ','
+                value = `${date.replace(/"/g, '')}, ${time.replace(/"/g, '')}`;
+                j += 1;
+              }
+              console.log(value);
+              rowObject[headers[i]] = value;
+              j += 1, i += 1;
+            }
+            rowObject["id"] = uuid();
+            rowObject["componentId"] = selectedComponent.id;
+            // let parameter = paramData.filter(
+            //   (d) => d.name === params.data.parameterName
+            // );
+            // params.data.paramId = parameter[0]?.id;
+            parsedData.push(rowObject);
+          }
+        }
+
+        console.log(parsedData); // Now it's parsedData, not paramData
+        // Here, you can dispatch or do something else with the parsed data
+        setDataRows(parsedData);
+        setLoading(false);
+      };
+
+      reader.readAsText(file);
+    }
+  };
+
+
   const currentSelection = useSelector(
     (state) => state.userSelection.currentSelection
   );
@@ -37,16 +92,16 @@ const AddData = (props) => {
 
   const sData = useSelector((state) => state.userSelection.componentsData);
 
-  const currentEquipmentName = currentSelection["equipmentName"];
-  const matchingItems = sData.filter(item => item.name === currentEquipmentName);
+  const currentNomenclature = currentSelection["nomenclature"];
+  const matchingItems = sData.filter(item => item.name === currentNomenclature);
 
   const matchingId = matchingItems[0]?.id;
   const onLoadTreeStructure = () => {
     const payload = {
-      system: currentSelection["equipmentName"],
+      nomenclature: currentSelection["nomenclature"],
       ship_name: currentSelection["shipName"],
     };
-  
+
     if (matchingId) {
       payload.component_id = matchingId;
     }
@@ -135,34 +190,33 @@ const AddData = (props) => {
 
   const DataColumnDefs = [
     <AgGridColumn
-  field="date"
-  headerName="DateTime"
-  headerTooltip="DateTime"
-  editable={true}
-  cellEditorFramework={(params) => (
-    <MuiPickersUtilsProvider utils={MomentUtils}>
-      <DateTimePicker
-        value={params.value}
-        onChange={(date) => {
-          const formattedDate = moment(date).format("DD/MM/YYYY, HH:mm:ss");
-          const newValue = {
-            ...params.data,
-            date: formattedDate,
-          };
-          const updatedDataRows = dataRows.map((row) => {
-            if (row.id === newValue.id) {
-              return newValue;
-            }
-            return row;
-          });
-          setDataRows(updatedDataRows);
-        }}
-        format="yyyy-MM-dd HH:mm:ss"
-      />
-    </MuiPickersUtilsProvider>
-  )}
-/>
-,
+      field="date"
+      headerName="DateTime"
+      headerTooltip="DateTime"
+      editable={true}
+      cellEditorFramework={(params) => (
+        <MuiPickersUtilsProvider utils={MomentUtils}>
+          <DateTimePicker
+            value={moment(params.value, "DD/MM/YYYY, HH:mm:ss").toDate()} // Parse the date when displaying
+            onChange={(date) => {
+              const formattedDate = moment(date).format("DD/MM/YYYY, HH:mm:ss");
+              const newValue = {
+                ...params.data,
+                date: formattedDate,
+              };
+              const updatedDataRows = dataRows.map((row) => {
+                if (row.id === newValue.id) {
+                  return newValue;
+                }
+                return row;
+              });
+              setDataRows(updatedDataRows);
+            }}
+            format="DD/MM/YYYY, HH:mm:ss" // Format for display
+          />
+        </MuiPickersUtilsProvider>
+      )}
+    />,
     <AgGridColumn
       field="parameterName"
       headerName="Channel/Parameter Name"
@@ -185,12 +239,12 @@ const AddData = (props) => {
       headerTooltip="Value"
       editable={true}
     />,
-      <AgGridColumn
-        headerName="Operating Hours"
-        field="operatingHours"
-        headerTooltip="Operating Hours"
-        editable={true}
-      />,
+    <AgGridColumn
+      headerName="Operating Hours"
+      field="operatingHours"
+      headerTooltip="Operating Hours"
+      editable={true}
+    />,
   ];
 
   const addRow = () => {
@@ -276,7 +330,7 @@ const AddData = (props) => {
           </div>
         </div>
         <div className={styles.rightSection}>
-          
+
           {/* <div className={styles.userSelection} >
           <div className={styles.selectComponent}>
             Select Component
@@ -300,29 +354,37 @@ const AddData = (props) => {
             </div>
           </div> */}
           <div className={styles.userSelection}>
-  <div className={styles.selectContainer}>
-    <div className={styles.selectC}>
-      Select Component
-      <AutoSelect
-        fields={fData}
-        onChange={selectOnChange}
-        value={selectedComponent}
-      ></AutoSelect>
-    </div>
-    <div className={styles.importBtnContainer}>
-      <Button
-        className={classes.buttons}
-        variant="contained"
-        color="primary"
-      >
-        Import File
-      </Button>
-      <div {...getRootProps()}>
-        <input {...getInputProps()} />
-      </div>
-    </div>
-  </div>
-</div>
+            <div className={styles.selectContainer}>
+              <div className={styles.selectC}>
+                Select Component
+                <AutoSelect
+                  fields={fData}
+                  onChange={selectOnChange}
+                  value={selectedComponent}
+                ></AutoSelect>
+              </div>
+              <div className={styles.importBtnContainer}>
+                <input
+                  type="file"
+                  accept=".csv"
+                  onChange={(e) => handleFileUpload(e.target.files[0])}
+                  style={{ display: 'none' }}
+                  ref={fileInputRef}
+                />
+                <Button
+                  className={classes.buttons}
+                  variant="contained"
+                  color="primary"
+                  onClick={() => fileInputRef.current.click()}
+                >
+                  Import File
+                </Button>
+                <div {...getRootProps()}>
+                  <input {...getInputProps()} />
+                </div>
+              </div>
+            </div>
+          </div>
 
 
           {isloading ? (
@@ -347,13 +409,13 @@ const AddData = (props) => {
                 + Add Row
               </Button>
               <Button
-            className={classes.buttons}
-            onClick={saveParamData}
-            variant="contained"
-            color="primary"
-          >
-            Save
-          </Button>
+                className={classes.buttons}
+                onClick={saveParamData}
+                variant="contained"
+                color="primary"
+              >
+                Save
+              </Button>
             </div>
           )}
         </div>

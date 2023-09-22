@@ -202,7 +202,7 @@ const OverhaulTable = (props) => {
       minWidth={500}
       cellEditor="agSelectCellEditor"
       cellEditorParams={{
-        values: subSystem.map((x) => x.name),
+        values: subSystem.map((x) => x.nomenclature),
       }}
       editable={true}
     />,

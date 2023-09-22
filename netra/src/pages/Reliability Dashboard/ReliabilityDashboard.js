@@ -29,7 +29,7 @@ import CustomizedSnackbars from "../../ui/CustomSnackBar";
 const ReliabilityDashboard = () => {
   const [missionData, setMissionData] = useState([]);
   const [tempMissionData, setTempMissionData] = useState([]);
-  const [TooltipData,setTooltipData]= useState([])
+  const [TooltipData, setTooltipData] = useState([])
   const [missionInfo, setMissionInfo] = useState([]);
 
   const [cardData, setCardData] = useState(null);
@@ -38,8 +38,10 @@ const ReliabilityDashboard = () => {
 
   const [currentMission, setMission] = useState(0);
   const [eqDataOption, setEqDataOption] = useState([]);
+  const [nomenclatureDataOption, setNomenclatureDataOption] = useState([]);
 
   const [selectedEqName, setEquipmentName] = useState(null);
+  const [nomenclature, setNomenclature] = useState(null);
   const [selectedShipName, setShipName] = useState([]);
   const [selectedMissionName, setMissionName] = useState([]);
 
@@ -106,7 +108,8 @@ const ReliabilityDashboard = () => {
         const eqData = data["user_selection"]["eqData"];
         const mNames = mission_data.map((x) => x["missionName"]);
         setMissionData(mNames);
-        const shipName = user_selection.map((x) => x.shipName);
+        let shipName = user_selection.map((x) => x.shipName);
+        shipName = [...new Set(shipName)]
         setUserSelectionData(eqData);
         dispatch(
           userActions.onChangeLoad({ filteredData: { shipName: shipName } })
@@ -116,28 +119,36 @@ const ReliabilityDashboard = () => {
 
   const getSelectedValues = (d, selectType) => {
     debugger;
-    // console.log(selectedEqName, selectedShipName, selectedMissionName);
     if (selectType === "equipmentName") {
+      console.log(d);
       setEquipmentName(d);
-    }
-    if (selectType === "shipName") {
-      var filteredEqData = [];
-      d.map((element) => {
-        var xx = userSelectionData
+    } else if (selectType === "shipName") {
+      const uniqueEqData = new Set();
+
+      d.forEach((element) => {
+        const filteredItems = userSelectionData
           .filter((x) => x.shipName === element)
-          .map((x) => {
-            return { name: x.equipmentName, parent: element };
-          });
-        filteredEqData = [...filteredEqData, ...xx];
-        return null;
+          .map((x) => ({ name: x.equipmentName, parent: element, nomenclature: x.nomenclature }));
+
+        filteredItems.forEach((item) => {
+          uniqueEqData.add(JSON.stringify(item));
+        });
+        console.log(uniqueEqData);
       });
-      setEqDataOption(filteredEqData);
+
+      const uniqueArray = Array.from(uniqueEqData).map((item) => JSON.parse(item));
+      console.log(uniqueArray);
+      setEqDataOption(uniqueArray);
+      // setNomenclatureDataOption(uniqueArray);
       setShipName(d);
+    } else if(selectType==="nomenclature"){
+        setNomenclature(d);
     }
     // if (selectType === "missionName") {
     //   setMissionName(d);
     // }
   };
+
   console.log("graphData", graphData);
   console.log("subSystemData", subSystemData);
   console.log("cardData", cardData);
@@ -158,7 +169,7 @@ const ReliabilityDashboard = () => {
       tempMissions: tempMissionData,
     };
     setTooltipData(data)
-    
+
     setMission(0);
     fetch("/rel_estimate_EQ", {
       method: "POST",
@@ -282,13 +293,13 @@ const ReliabilityDashboard = () => {
                   marginBottom: "10px",
                 }}
               >
-                <Typography variant="h5">Equipment Nomainclature</Typography>
+                <Typography variant="h5">Equipment Nomenclature</Typography>
               </InputLabel>
               <SelectWithLimit
                 limit={100}
                 options={eqDataOption}
                 getSelectedValues={getSelectedValues}
-                selectType={"equipmentName"}
+                selectType={"nomenclature"}
               />
             </div>
             {/* <CustomSelect

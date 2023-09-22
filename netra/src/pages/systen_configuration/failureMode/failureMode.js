@@ -67,7 +67,7 @@ const FailureMode = (props) => {
   const AddRow = () => {
     const defaultRow = [
       {
-        EquipmentName: systemData[0].name,
+        EquipmentName: systemData[0].nomenclature,
         eqId: props.matchingId,
         id: uuid(),
         fixFailureMode: "",

@@ -42,7 +42,7 @@ export default function AutoSelect(props) {
       options={options}
       groupBy={(option) => option.parentName}
       // getOptionLabel={(option) => option.name}
-      getOptionLabel={(option) => option.name || ""}
+      getOptionLabel={(option) => option.nomenclature || ""}
       //style={{ width: 300 }}
       value={props.value || null}
       onChange={props.onChange}

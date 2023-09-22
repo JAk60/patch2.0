@@ -9,6 +9,7 @@ const initialState = {
     department: ["Insma", "WRSTG"],
     equipmentName: [],
     equipmentCode: [],
+    nomenclature: [],
     params: []
   },
   currentSelection: {
@@ -19,6 +20,7 @@ const initialState = {
     department: "",
     equipmentName: "",
     equipmentCode: "",
+    nomenclature: ""
   },
   overhaulSecond: [],
   overhaulMain: [],
@@ -35,20 +37,25 @@ const userSelection = createSlice({
       state.userSelection.params = params;
     },
     onChangeLoad(state, action) {
-      const data = action.payload.filteredData;
-      const sName = action.payload.currentShipName;
+      const { filteredData, currentShipName } = action.payload;
+
+      // Use immer to safely update state
       state.userSelection = {
         ...state.userSelection,
-        ...data,
+        ...filteredData,
       };
-      state.currentSelection = { ...state.currentSelection, ...sName };
-    },
+      state.currentSelection = {
+        ...state.currentSelection,
+        ...currentShipName,
+      };
+    }
+    ,
     onChangeCurrentSelection(state, action) {
       const data = action.payload.selectedData;
       state.currentSelection = { ...state.currentSelection, ...data };
     },
-    onReset(state,action){
-      state.currentSelection={
+    onReset(state, action) {
+      state.currentSelection = {
         shipName: "",
         shipCategory: "",
         shipClass: "",
@@ -56,15 +63,27 @@ const userSelection = createSlice({
         department: "",
         equipmentName: "",
         equipmentCode: "",
+        nomenclature: ""
       }
     },
     onAddingEquipmentName(state, action) {
-      const data = action.payload.filteredData;
-      const selectedData = action.payload.selectedData;
-      state.userSelection = { ...state.userSelection, ...data };
-      state.currentSelection = { ...state.currentSelection, ...selectedData };
+      const { filteredData, selectedData } = action.payload;
+
+      // Use immer to safely update state
+      state.userSelection = {
+        ...state.userSelection,
+        ...filteredData,
+      };
+      state.currentSelection = {
+        ...state.currentSelection,
+        ...selectedData,
+      };
     },
     populateEqName(state, action) {
+      const data = action.payload.filteredData;
+      state.userSelection = { ...state.userSelection, ...data };
+    },
+    populateNom(state, action) {
       const data = action.payload.filteredData;
       state.userSelection = { ...state.userSelection, ...data };
     },

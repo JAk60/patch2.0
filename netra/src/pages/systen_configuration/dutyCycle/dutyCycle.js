@@ -9,7 +9,7 @@ const DutyCycle = (props) => {
   const systemData = useSelector((state) => state.treeData.treeData);
   const rowData = systemData.map((element, index) => {
     return {
-      Component: element.name,
+      Component: element.nomenclature,
       ComponentId:element.id,
       id:uuid(),
       DutyCycle: 1,

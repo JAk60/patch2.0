@@ -173,6 +173,7 @@ const Layout = (props) => {
   //   (state) => state.userSelection.currentSelection
   // );
   const options = customSelectData["equipmentName"]
+  const  nomenclatureOptions = customSelectData["nomenclature"]
   const ship_name = currentSelection["shipName"]
   // console.log(currentSelection)
   const AddNodes = () => {
@@ -351,9 +352,9 @@ const Layout = (props) => {
 
             )}
           />
-           <Autocomplete
+          <Autocomplete
             multiple
-            options={options}
+            options={nomenclatureOptions}
             //value={value}
             onChange={handleChange}
             // groupBy={(option) => option.parentName}

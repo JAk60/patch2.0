@@ -69,11 +69,12 @@ function EqptStructuring() {
       platformType: "",
       system: "",
       systemType: "",
+      nomenclature: ""
     },
     //validationSchema: validationSchema,
     onSubmit: (values) => {
       // alert(JSON.stringify(values, null, 2));
-      const { platform, platformType, system, systemType } = values;
+      const { platform, platformType, system, systemType, nomenclature } = values;
       console.log(selectedInputs);
       const platformId = uuid();
       const systemId = uuid();
@@ -81,6 +82,7 @@ function EqptStructuring() {
       const treeNodes = [
         {
           name: system,
+          nomenclature: nomenclature,
           id: systemId,
           eqType: systemType,
           parentName: selectedInputs["shipName"],
@@ -234,9 +236,9 @@ function EqptStructuring() {
                   <LabelToolTip label="Nomenclature" info="Info" />
                   <CustomTextInput
                     className={classes.fullWidth}
-                    id="systemType"
-                    name="systemType"
-                    value={formik.values.systemType}
+                    id="nomenclature"
+                    name="nomenclature"
+                    value={formik.values.nomenclature}
                     onChange={formik.handleChange}
                     disabled={disableButton}
                   ></CustomTextInput>

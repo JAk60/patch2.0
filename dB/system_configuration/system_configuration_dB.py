@@ -28,7 +28,7 @@ class System_Configuration_dB():
                 else:
                     component_name = system['name']
                     parent_id = system['parentId']
-                    part_code = system['eqType']
+                    cmms_eq_code = system['eqType']
                     is_lmu = system['lmu']
                     parent_name = system['parentName']
                     command = system['command']
@@ -36,13 +36,14 @@ class System_Configuration_dB():
                     shipCategory = system['shipCategory']
                     shipClass = system['shipClass']
                     shipName = system['shipName']
-                    insert_system_config = '''insert into system_configuration (component_id, component_name, parent_id, part_code, is_lmu, parent_name, ship_name,
-                                  ship_category, ship_class, command, department, system)
+                    nomenclature = system['nomenclature']
+                    insert_system_config = '''insert into system_configuration (component_id, component_name, parent_id, CMMS_EquipmentCode, is_lmu, parent_name, ship_name,
+                                  ship_category, ship_class, command, department, nomenclature)
                                                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
                                                 '''
                     cursor.execute(insert_system_config, component_id, component_name,
-                                   parent_id, part_code, is_lmu, parent_name, shipName,
-                                   shipCategory, shipClass, command, department, system_head)
+                                   parent_id, cmms_eq_code, is_lmu, parent_name, shipName,
+                                   shipCategory, shipClass, command, department, nomenclature)
             cursor.commit()
             return self.success_return
         except Exception as e:

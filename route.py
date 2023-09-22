@@ -56,6 +56,7 @@ def save_system():
         data = request.get_json(force=True)
         configData = data['flatData']
         dtype = data['dtype']
+        print(configData, dtype)
         res = sys_inst.save_dataToDB(configData, dtype)
     else:
         pass
@@ -92,7 +93,7 @@ def fetch_system():
     if request.method == 'POST':
         data = request.get_json(force=True)
         conf_data = {
-            "system": data["system"],
+            "nomenclature": data["nomenclature"],
             "ship_name": data["ship_name"]
         }
         component_id = data['component_id']
@@ -283,6 +284,7 @@ def fetch_parameters():
         data = request.get_json(force=True)
         cId = data['ComponentId']
         res = cm_inst.fetch_params(cId)
+        print(res)
     else:
         pass
     return jsonify(res)

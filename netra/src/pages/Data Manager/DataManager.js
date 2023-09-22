@@ -126,13 +126,13 @@ function DataManager(props) {
 
   const sData = useSelector((state) => state.userSelection.componentsData);
 
-  const currentEquipmentName = currentSelection["equipmentName"];
-  const matchingItems = sData.filter(item => item.name === currentEquipmentName);
+  const currentNomenclature = currentSelection["nomenclature"];
+  const matchingItems = sData.filter(item => item.name === currentNomenclature);
 
   const matchingId = matchingItems[0]?.id;
   const handleOnLoadSystem = () => {
     const payload = {
-      system: currentSelection["equipmentName"],
+      system: currentSelection["nomenclature"],
       ship_name: currentSelection["shipName"],
     };
   
@@ -347,7 +347,7 @@ function DataManager(props) {
         const mainFinalData = main_data.map((x) => {
           if (x.subSystem) {
             const subSystemId = subSystem.filter(
-              (sS) => sS.name === x.subSystem
+              (sS) => sS.nomenclature === x.subSystem
             )[0].id;
             return {
               id: uuid(),

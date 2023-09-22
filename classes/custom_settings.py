@@ -5,10 +5,10 @@ from flask import jsonify
 class Custom_Settings():
     def fetch_user_selection(self, toJson=True):
         sql = '''select * from user_selection'''
-        systemSql = '''select  distinct ship_name, ship_category, ship_class, command, department, 
-        system from system_configuration'''
+        systemSql = '''select ship_name, ship_category, ship_class, command, department, 
+        component_name, nomenclature from system_configuration'''
         cursor.execute(sql)
-        unique_system_id_sql = '''select distinct component_id, component_name
+        unique_system_id_sql = '''select distinct component_id, nomenclature
          from system_configuration where parent_id is  null
         '''
         # eqData = [{} for r in eqData]
@@ -24,6 +24,7 @@ class Custom_Settings():
             'command': r[3],
             'department': r[4],
             'equipmentName': r[5],
+            'nomenclature': r[6]
         } for r in eqData]
         data = [{
             'shipName': r[0],
