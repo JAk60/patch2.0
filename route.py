@@ -220,6 +220,8 @@ def rel_estimateEQ():
         # mission_data = int(mission_data)
         eq_data = data['data']['equipments']
         temp_missions = data['data']['tempMissions']
+        nomenclature = data['data']['nomenclature']
+        print(data)
         rel_inst = Reliability()
         res = rel_inst.mission_wise_rel_systemEQ(mission_data, eq_data, temp_missions)
         return jsonify(res)

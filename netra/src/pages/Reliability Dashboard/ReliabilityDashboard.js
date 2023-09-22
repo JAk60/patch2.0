@@ -29,8 +29,9 @@ import CustomizedSnackbars from "../../ui/CustomSnackBar";
 const ReliabilityDashboard = () => {
   const [missionData, setMissionData] = useState([]);
   const [tempMissionData, setTempMissionData] = useState([]);
-  const [TooltipData, setTooltipData] = useState([])
+  const [TooltipData, setTooltipData] = useState([]);
   const [missionInfo, setMissionInfo] = useState([]);
+  
 
   const [cardData, setCardData] = useState(null);
 
@@ -109,7 +110,7 @@ const ReliabilityDashboard = () => {
         const mNames = mission_data.map((x) => x["missionName"]);
         setMissionData(mNames);
         let shipName = user_selection.map((x) => x.shipName);
-        shipName = [...new Set(shipName)]
+        shipName = [...new Set(shipName)];
         setUserSelectionData(eqData);
         dispatch(
           userActions.onChangeLoad({ filteredData: { shipName: shipName } })
@@ -117,38 +118,100 @@ const ReliabilityDashboard = () => {
       });
   }, [setUserSelectionData]);
 
+  console.log(userSelectionData);
   const getSelectedValues = (d, selectType) => {
     debugger;
     if (selectType === "equipmentName") {
-      console.log(d);
+      console.log("the D value", d);
+      const uniqueNomenData = new Set();
+
+      d.forEach((element) => {
+        const filteredItems = userSelectionData
+          .filter((x) => x.equipmentName === element.equipmentName)
+          .map((x) => ({
+            equipmentName: x.equipmentName,
+            nomenclature: x.nomenclature,
+          }));
+
+        filteredItems.forEach((item) => {
+          uniqueNomenData.add(JSON.stringify(item));
+        });
+        console.log("uniqueEqData", uniqueNomenData);
+      });
+      let uniqueNomArray = Array.from(uniqueNomenData).map((item) =>
+        JSON.parse(item)
+      );
+      const uniqueNomSet = new Set(
+        uniqueNomArray.map((item) =>
+          JSON.stringify({
+            equipmentName: item.equipmentName,
+            nomenclature: item.nomenclature,
+          })
+        )
+      );
+      const uniqueNomsArray = Array.from(uniqueNomSet).map((item) =>
+        JSON.parse(item)
+      );
+      console.log("uniqueNomsArray", uniqueNomsArray);
+      setNomenclatureDataOption(uniqueNomsArray)
       setEquipmentName(d);
+      debugger;
     } else if (selectType === "shipName") {
       const uniqueEqData = new Set();
 
       d.forEach((element) => {
         const filteredItems = userSelectionData
           .filter((x) => x.shipName === element)
-          .map((x) => ({ name: x.equipmentName, parent: element, nomenclature: x.nomenclature }));
+          .map((x) => ({
+            equipmentName: x.equipmentName,
+            parent: element,
+            nomenclature: x.nomenclature,
+          }));
 
         filteredItems.forEach((item) => {
           uniqueEqData.add(JSON.stringify(item));
         });
-        console.log(uniqueEqData);
+        console.log("uniqueEqData", uniqueEqData);
       });
 
-      const uniqueArray = Array.from(uniqueEqData).map((item) => JSON.parse(item));
-      console.log(uniqueArray);
-      setEqDataOption(uniqueArray);
-      // setNomenclatureDataOption(uniqueArray);
+      let uniqueArray = Array.from(uniqueEqData).map((item) =>
+        JSON.parse(item)
+      );
+      const uniqueNamesSet = new Set(
+        uniqueArray.map((item) =>
+          JSON.stringify({
+            equipmentName: item.equipmentName,
+            parent: item.parent,
+          })
+        )
+      );
+      const uniqueNamesArray = Array.from(uniqueNamesSet).map((item) =>
+        JSON.parse(item)
+      );
+
+      console.log("Flagggist", typeof uniqueArray);
+      setEqDataOption(uniqueNamesArray);
+      debugger;
       setShipName(d);
-    } else if(selectType==="nomenclature"){
-        setNomenclature(d);
+      // const uniqueNoemSet = new Set(
+      //   uniqueArray.map((item) =>
+      //     JSON.stringify({
+      //       nomenclature: item.nomenclature,
+      //       parent: item.parent,
+      //     })
+      //   )
+      // );
+      // const uniqueNomsArray = Array.from(uniqueNoemSet).map((item) =>
+      //   JSON.parse(item)
+      // );
+      // setNomenclatureDataOption(uniqueNomsArray);
+    } else if (selectType === "nomenclature") {
+      setNomenclature(d);
     }
-    // if (selectType === "missionName") {
-    //   setMissionName(d);
-    // }
   };
 
+  console.log("EQuip", selectedEqName);
+  console.log("EQuip", eqDataOption);
   console.log("graphData", graphData);
   console.log("subSystemData", subSystemData);
   console.log("cardData", cardData);
@@ -165,10 +228,11 @@ const ReliabilityDashboard = () => {
     const data = {
       missions: [selectedMissionName], /// its duration not the mission
       equipments: selectedEqName,
+      nomenclature: nomenclature,
       shipClass: selectedShipName,
       tempMissions: tempMissionData,
     };
-    setTooltipData(data)
+    setTooltipData(data);
 
     setMission(0);
     fetch("/rel_estimate_EQ", {
@@ -232,7 +296,7 @@ const ReliabilityDashboard = () => {
             actual: actualData,
           });
         });
-        console.log("PPP____>>>>>>", cardD);
+        console.log("PPP__>>>>>>", cardD);
         setCardData(cardD);
       });
     setSnackBarMessage({
@@ -297,7 +361,7 @@ const ReliabilityDashboard = () => {
               </InputLabel>
               <SelectWithLimit
                 limit={100}
-                options={eqDataOption}
+                options={nomenclatureDataOption}
                 getSelectedValues={getSelectedValues}
                 selectType={"nomenclature"}
               />
@@ -343,10 +407,7 @@ const ReliabilityDashboard = () => {
                 <div className={styles.rchart}>
                   <div className={styles.content}>
                     {graphData && (
-                      <ReliabilityChart
-                        data={graphData}
-                        family={TooltipData}
-                      />
+                      <ReliabilityChart data={graphData} family={TooltipData} />
                     )}
                   </div>
                 </div>

@@ -177,29 +177,51 @@ class conditionMonitoring_dB():
             return data
         except Exception as e:
             return e
+    
+    def fetch_param_id(self, id, name):
+        try:
+            sql= "select id from sensor_based_data where component_id =? and name=?"
+            cursor.execute(sql, id, name)
+            data = cursor.fetchone()[0]
+            return data
+        except Exception as e:
+            return e
 
     def insert_param_data(self, data):
-        # print(data)
         try:
             for d in data:
-
                 component_id = d['componentId']
-                parameter_id = d['paramId']
                 id = d['id']
                 name = d['parameterName']
                 value = d['value']
                 date = d['date']
                 operating_hours = d['operatingHours']
 
-                insert_param_data = '''INSERT INTO parameter_data (id, component_id,parameter_id, name,value,date, operating_hours)
+                # Check if 'paramId' is present in the dictionary 'd'
+                if 'paramId' in d and d['paramId'] is not None:
+                    parameter_id = d['paramId']
+                else:
+                    # If 'paramId' is not present or is None, fetch it from the database
+                    parameter_id = self.fetch_param_id(component_id, name)
+
+                print(parameter_id)
+
+                # Define the SQL query to insert data into the database
+                insert_param_data = '''INSERT INTO parameter_data (id, component_id, parameter_id, name, value, date, operating_hours)
                                         VALUES (?, ?, ?, ?, ?, ?, ?);'''
 
-                cursor.execute(insert_param_data, id, component_id,
-                               parameter_id, name, value, date,operating_hours)
+                # Execute the SQL query with the data
+                cursor.execute(insert_param_data, (id, component_id, parameter_id, name, value, date, operating_hours))
+
+            # Commit the changes to the database
             cursor.commit()
+            
+            # Return a success message or code
             return self.success_return
+
         except Exception as e:
             return e
+
 
     def fetch_cmdata(self, eIds, pNames):
         sql = '''select id,T1.component_id,equipment_id,name as parameter_name,

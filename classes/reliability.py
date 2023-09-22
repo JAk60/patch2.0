@@ -316,7 +316,7 @@ class Reliability:
         for tm in missions:
             data  = {}
             for sys in eqData:
-                system = sys['name']
+                system = sys['equipmentName']
                 platform = sys['parent']
                 self.__ship_name = platform
                 self.__component_name = system

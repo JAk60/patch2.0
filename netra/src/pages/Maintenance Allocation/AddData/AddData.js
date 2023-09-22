@@ -28,18 +28,21 @@ const useStyles = makeStyles({
   }
 });
 
+
+
 const AddData = (props) => {
   const dispatch = useDispatch();
   const fileInputRef = useRef(null);
   const handleFileUpload = (file) => {
+    
     if (file) {
       setLoading(true);
 
       const reader = new FileReader();
-
       reader.onload = (event) => {
         const csvData = event.target.result;
         const rows = csvData.split('\n');
+
 
         // Assuming the first row contains column headers
         const headers = rows[0].split(',').map(header => header.trim());
@@ -73,8 +76,7 @@ const AddData = (props) => {
             parsedData.push(rowObject);
           }
         }
-
-        console.log(parsedData); // Now it's parsedData, not paramData
+       // Now it's parsedData, not paramData
         // Here, you can dispatch or do something else with the parsed data
         setDataRows(parsedData);
         setLoading(false);

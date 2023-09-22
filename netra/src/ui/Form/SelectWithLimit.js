@@ -34,12 +34,12 @@ export const SelectWithLimit = ({
         multiple
         options={options}
         groupBy={(option) => option.parent}
-        getOptionLabel={(option) => option.name}
+        getOptionLabel={(option) => option?.equipmentName}
         renderTags={(tagValue, getTagProps) =>
           tagValue.map((option, index) => (
             <Chip
               key={index}
-              label={option.name}
+              label={option?.equipmentName}
               style={{ width: "fit-content" }}
               {...getTagProps({ index })}
               // Set disable explicitly after getTagProps
@@ -61,7 +61,44 @@ export const SelectWithLimit = ({
         }}
       />
     );
-  } else {
+  } else if (selectType === "nomenclature") {
+    return (
+      <Autocomplete
+        classes={Inputclasses}
+        label="lol"
+        disabled={disabled || disableInput}
+        multiple
+        options={options}
+        groupBy={(option) => option.equipmentName}
+        getOptionLabel={(option) => option?.nomenclature}
+        renderTags={(tagValue, getTagProps) =>
+          tagValue.map((option, index) => (
+            <Chip
+              key={index}
+              label={option?.nomenclature}
+              style={{ width: "fit-content" }}
+              {...getTagProps({ index })}
+              // Set disable explicitly after getTagProps
+              disabled={disabled}
+            />
+          ))
+        }
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            InputProps={{ ...params.InputProps, disableUnderline: true }}
+          />
+        )}
+        onChange={(event, newValue) => {
+          // do something else
+          // set the disable input
+          getSelectedValues(newValue, selectType);
+          setDisableInput(newValue.length >= limit);
+        }}
+      />
+    );
+  }
+  else {
     return (
       <Autocomplete
         classes={Inputclasses}
