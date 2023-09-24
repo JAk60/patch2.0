@@ -168,12 +168,12 @@ class conditionMonitoring_dB():
 
     def fetch_all_params(self):
         try:
-            sql = "select distinct(name),  equipment_id ,id, max_value, min_value from sensor_based_data where sensor_based_data.name <> ''"
+            sql = "SELECT sbd.name, sbd.equipment_id, sbd.id, sbd.max_value, sbd.min_value,sc.component_name,sc.nomenclature FROM sensor_based_data sbd JOIN system_configuration sc ON sbd.equipment_id = sc.component_id WHERE sbd.name <> '';"
             cursor.execute(sql)
             rows = cursor.fetchall()
             data = []
             for row in rows:
-                data.append({'name': row[0],'equipment_id': row[1],'id': row[2], 'max_value': row[3], 'min_value': row[4]})
+                data.append({'name': row[0],'equipment_id': row[1],'id': row[2], 'max_value': row[3], 'min_value': row[4], 'equipmentName': row[5],'nomenclature': row[6]})
             return data
         except Exception as e:
             return e

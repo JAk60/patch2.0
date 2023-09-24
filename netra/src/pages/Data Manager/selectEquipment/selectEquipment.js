@@ -14,7 +14,7 @@ function SelectEquipment(props) {
   return (
     <MultiSelect
       items={list}
-      getOptionLabel={(option) => `${option.name}`}
+      getOptionLabel={(option) => `${option.nomenclature}`}
       // getOptionDisabled={option => option.name === "foo"}
       selectedValues={selectedOptions}
       label="Select Equipment"

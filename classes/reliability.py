@@ -16,16 +16,16 @@ class Reliability:
     def lmu_rel(self, mission_name, system, platform, total_dur):
         sys_lmus = []
         # mission_name = mission_data['mission_name']
-        system_config = '''select * from system_configuration where ship_name=? and system=?'''
+        system_config = '''select * from system_configuration where ship_name=? and nomenclature=?'''
         eta_beta = '''select * from eta_beta  inner join system_configuration sc on eta_beta.component_id = sc.component_id
-                        where sc.system = ?  and sc.ship_name = ?'''
+                        where sc.nomenclature = ?  and sc.ship_name = ?'''
         cursor.execute(eta_beta, system, platform)
         eta_beta_data = cursor.fetchall()
         alpha_beta_data = []
         if len(eta_beta_data) == 0:
             alpha_beta = '''select * from alpha_beta  inner join system_configuration sc on 
                         alpha_beta.component_id = sc.component_id
-                        where sc.system = ?  and sc.ship_name = ?'''
+                        where sc.nomenclature = ?  and sc.ship_name = ?'''
             cursor.execute(alpha_beta, system, platform)
             alpha_beta_data = cursor.fetchall()
         cursor.execute(system_config, platform, system)
@@ -60,7 +60,7 @@ class Reliability:
             rel_deno = np.exp(-(0 / eta) ** beta)
             rel = rel_num / rel_deno
             lmus_rel.append(
-                {'name': lmu[6], 'id': lmu[5], 'rel': rel, 'parent_name': lmu[10], 'parent_id': lmu[7]})
+                {'name': lmu[-1], 'id': lmu[5], 'rel': rel, 'parent_name': lmu[10], 'parent_id': lmu[7]})
         if len(eta_beta_data) == 0:
             for lmu in alpha_beta_data:
                 alpha = lmu[1]
@@ -68,7 +68,7 @@ class Reliability:
                 rel = self.calculate_rel_by_power_law(
                     alpha, beta, total_dur)
                 lmus_rel.append(
-                    {'name': lmu[5], 'id': lmu[4], 'rel': rel, 'parent_name': lmu[9], 'parent_id': lmu[6]})
+                    {'name': lmu[-1], 'id': lmu[4], 'rel': rel, 'parent_name': lmu[9], 'parent_id': lmu[6]})
         sys_lmus.append({system+'_'+platform: lmus_rel})
         return sys_lmus, sys_data
 
@@ -247,14 +247,16 @@ class Reliability:
             SELECT component_id
                 FROM system_configuration
                 WHERE ship_name = ? COLLATE SQL_Latin1_General_CP1_CS_AS
-                AND component_name = ? COLLATE SQL_Latin1_General_CP1_CS_AS;
+                AND nomenclature = ? COLLATE SQL_Latin1_General_CP1_CS_AS;
         '''
         cursor.execute(query, self.__ship_name, self.__component_name)
+
         result = cursor.fetchone()
         self.__component_id = result[0]
         sum_of_average_running, error_message = self.get_curr_age()
         if error_message:
-            curr_age = 5000
+            print(error_message)
+            curr_age = 0
         else:
            curr_age = sum_of_average_running
         print("current age",curr_age)
@@ -309,28 +311,43 @@ class Reliability:
         pass
 
 
-    def mission_wise_rel_systemEQ(self, missions, eqData, temp_missions):
+    def mission_wise_rel_systemEQ(self, missions, eqData, nomenclatures, temp_missions):
         final_data = []
         m = "Temp Mission"
         target_rel = 0.9
+
+        print(eqData)
+        # nomenclature_dict = {item['equipmentName']: item['nomenclature'] for item in nomenclatures}
+        # # Add nomenclatures to eqdata based on equipmentName
+        # for item in eqData:
+        #     equipment_name = item['equipmentName']
+        #     if equipment_name in nomenclature_dict:
+        #         item['nomenclature'] = nomenclature_dict[equipment_name]
+
+        # print(eqData)
         for tm in missions:
             data  = {}
             for sys in eqData:
-                system = sys['equipmentName']
+                component = sys['equipmentName']
                 platform = sys['parent']
-                self.__ship_name = platform
-                self.__component_name = system
-                # call the method and save it to a variable
-                single_rel_duration = int(tm)
-                rel = self.system_rel(m, system, platform, single_rel_duration)
-                estimation_ach = 1
-                if rel['rel'] > target_rel:
-                        estimation_ach = 1                    
-                rel['prob_ac'] = estimation_ach
-                if platform not in data:
-                    data[platform] = []
-                data[platform].append({system: rel})
-                pass
+                instances = [item for item in nomenclatures if item['equipmentName'] == component]
+                print(instances, "instances")
+                for e in  instances:
+                    system = e['nomenclature']
+                    print(component, system, platform)
+                    self.__ship_name = platform
+                    self.__component_name = system
+                    # call the method and save it to a variable
+                    single_rel_duration = int(tm)
+                    rel = self.system_rel(m, system, platform, single_rel_duration)
+                    estimation_ach = 1
+                    if rel['rel'] > target_rel:
+                            estimation_ach = 1                    
+                    rel['prob_ac'] = estimation_ach
+                    if platform not in data:
+                        data[platform] = []
+                    data[platform].append({system: rel})
+                    print(data)
             final_data.append({m: data})
         return final_data
 

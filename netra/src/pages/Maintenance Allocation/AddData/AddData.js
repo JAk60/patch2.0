@@ -95,7 +95,7 @@ const AddData = (props) => {
   const sData = useSelector((state) => state.userSelection.componentsData);
 
   const currentNomenclature = currentSelection["nomenclature"];
-  const matchingItems = sData.filter(item => item.name === currentNomenclature);
+  const matchingItems = sData.filter(item => item.nomenclature === currentNomenclature);
 
   const matchingId = matchingItems[0]?.id;
   const onLoadTreeStructure = () => {

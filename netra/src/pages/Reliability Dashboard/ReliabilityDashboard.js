@@ -233,6 +233,7 @@ const ReliabilityDashboard = () => {
       tempMissions: tempMissionData,
     };
     setTooltipData(data);
+    console.log(TooltipData, "tooltip");
 
     setMission(0);
     fetch("/rel_estimate_EQ", {

@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from "react";
 
-import { InputLabel, TextField, makeStyles, Button, Typography } from "@material-ui/core";
+import {
+  InputLabel,
+  TextField,
+  makeStyles,
+  Button,
+  Typography,
+} from "@material-ui/core";
 import styles from "./CDashboard.module.css";
 // import { arr,arr2 } from "./data";
-import {
-  MuiPickersUtilsProvider
-} from "@material-ui/pickers";
+import { MuiPickersUtilsProvider } from "@material-ui/pickers";
 import MomentUtils from "@date-io/moment";
 import Navigation from "../../components/navigation/Navigation";
 import AccessControl from "../Home/AccessControl";
@@ -20,16 +24,19 @@ const CDashboard = () => {
   const dispatch = useDispatch();
   const [userSelectionData, setUserSelectionData] = useState([]);
   const [uniqueEqIds, setUniqueEqIds] = useState([]);
-  const [minMax, setMinMax] = useState([]);
   const [selectedEqName, setEquipmentName] = useState([]);
   const [paramOptions, setParamOptions] = useState([]);
   const [selectedShipName, setShipName] = useState([]);
   const [selectedParameterName, setParameterName] = useState([]);
   const [eqDataOption, setEqDataOption] = useState([]);
+  const [nomenclatureDataOption, setNomenclatureDataOption] = useState([]);
+  const [nomenclatureData, setNomenclatureData] = useState([]);
   const [graphData, setGraphData] = useState([]);
-  const [currMinMax, setCurrMinMax] = useState([]);
- const PData=useSelector((state)=>state.userSelection.userSelection.params)
-console.log(PData)
+
+  const PData = useSelector(
+    (state) => state.userSelection.userSelection.params
+  );
+  console.log(PData);
   useEffect(() => {
     fetch("/cm_dashboard", {
       method: "GET",
@@ -44,44 +51,28 @@ console.log(PData)
       .then((data) => {
         const params = data["parameters"];
         console.log("hello:", params);
-        setMinMax([...params]);
+        const filteredData = params.filter(item => nomenclatureData.includes(item.nomenclature));
+        console.log(filteredData);
+        setParamOptions(filteredData)
+        debugger
         const user_selection = data["user_selection"]["data"];
         const eqData = data["user_selection"]["eqData"];
         const eqIds = data["user_selection"]["uniq_eq_data"];
         setUniqueEqIds(eqIds);
-        const shipName = user_selection.map((x) => x.shipName);
+        let shipName = user_selection.map((x) => x.shipName);
+        shipName = [...new Set(shipName)];
         setUserSelectionData(eqData);
         dispatch(userActions.populateParams({ params: params }));
         dispatch(
           userActions.onChangeLoad({ filteredData: { shipName: shipName } })
         );
       });
-    }, []);
-  // ...
-
-  useEffect(() => {
-    const filteredArray = minMax.filter((item) => {
-      return selectedEqName.some(
-        (selected) => item.equipment_id === selected.id
-      );
-    });
-
-    const filteredNames = filteredArray.map((item) => item.name);
-    setParamOptions(filteredNames); // Move this line here
-
-    const CMinMax = (ele) => {
-      const FminMax = filteredArray.filter((i) => i.name === ele);
-      setCurrMinMax((prevMinMax) => [...prevMinMax, ...FminMax]);
-    };
-
-    selectedParameterName.forEach((e) => CMinMax(e));
-  }, [selectedEqName]);
-
-
+  }, [nomenclatureData]);
+console.log(selectedEqName,
+  selectedParameterName);
   const customSelectData = useSelector(
     (state) => state.userSelection.userSelection
   );
-
   const dropDownStyle = makeStyles({
     root: {
       paddingLeft: 10,
@@ -99,84 +90,43 @@ console.log(PData)
   const classes = dropDownStyle();
   const [showGraph, setShowGraph] = useState(false);
 
-  // const onSubmitHandler = () => {
-  //   fetch("/fetch_cmdata", {
-  //     method: "POST",
-  //     body: JSON.stringify({
-  //       EquipmentIds: selectedEqName.map((x) => x.id),
-  //       ParameterNames: selectedParameterName.map((x) => x),
-  //     }),
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //       Accept: "application/json",
-  //     },
-  //   })
-  //     .then((res) => {
-  //       return res.json();
-  //     })
-  //     .then((data) => {
-  //       const sortedParamData = data.map((param) => {
-  //         return {
-  //           ...param,
-  //           data: param.data.sort((a, b) => new Date(a.date) - new Date(b.date)),
-  //         };
-  //       });
-  //       setSnackBarMessage({
-  //         severity: "success",
-  //         message: data.message,
-  //         showSnackBar: true,
-  //       });
-  //       setParamData(sortedParamData);
-  //       setShowGraph(true);
-  //     })
-  //     .catch((error) => {
-  //       setSnackBarMessage({
-  //         severity: "error",
-  //         message: "Some Error Occured. " + error,
-  //         showSnackBar: true,
-  //       });
-  //     });
-  //   };
-
-    const onSubmitHandler = () => {
-      fetch("/cgraph", {
-        method: "POST",
-        body: JSON.stringify({
-          EquipmentIds: selectedEqName.map((x) => x.id),
-        }),
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
+  const onSubmitHandler = () => {
+    console.log(paramOptions[0]?.equipment_id);
+    debugger
+    fetch("/cgraph", {
+      method: "POST",
+      body: JSON.stringify({
+        equipment_id: paramOptions[0]?.equipment_id,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    })
+      .then((res) => {
+        return res.json();
       })
-        .then((res) => {
-          return res.json();
-        })
-        .then((data) => {
-          console.log(data)
-          setSnackBarMessage({
-            severity: "success",
-            message: "Sensor Graph Showed Successfully",
-            showSnackBar: true,
-          });
-          setGraphData(data['graphData']);
-          setShowGraph(true);
-        })
-        .catch((error) => {
-          setSnackBarMessage({
-            severity: "error",
-            message: "Some Error Occured. " + error,
-            showSnackBar: true,
-          });
+      .then((data) => {
+        console.log(data);
+        setSnackBarMessage({
+          severity: "success",
+          message: "Sensor Graph Showed Successfully",
+          showSnackBar: true,
         });
-    };
-    
+        setGraphData(data["graphData"]);
+        setShowGraph(true);
+      })
+      .catch((error) => {
+        setSnackBarMessage({
+          severity: "error",
+          message: "Some Error Occured. " + error,
+          showSnackBar: true,
+        });
+      });
+  };
 
-
- 
-    
   // Snackbar
-  console.log("graphData",graphData)
+  console.log("graphData", graphData);
   const [SnackBarMessage, setSnackBarMessage] = useState({
     severity: "error",
     message: "This is awesome",
@@ -191,161 +141,210 @@ console.log(PData)
   };
 
   const changeShip = (e) => {
-    var filteredEqData = [];
-
-    var xx = userSelectionData
+    const filteredEqData = userSelectionData
       .filter((x) => x.shipName === e.target.value)
       .map((x) => {
-        let id = uniqueEqIds.filter((y) => y.name === x.equipmentName);
-        return id[0];
-      });
-    filteredEqData = [...filteredEqData, ...xx];
-
-    setEqDataOption(filteredEqData);
+        const id = uniqueEqIds.find((y) => y.nomenclature === x.nomenclature);
+        return id ? id : null; // Return null if id is not found
+      })
+      .filter((id) => id !== null); // Remove null values
+    const uniqueEqNames = [...new Set(filteredEqData.map((item) => item.name))];
+    // const uniqueNomNames = [...new Set(filteredEqData.map(item => item.nomenclature))];
+    // console.log(uniqueNomNames);
+    const filteredNomenclatures = filteredEqData
+      .filter((item) => selectedEqName.includes(item.name))
+      .map((item) => item.nomenclature);
+    console.log(selectedEqName);
+    console.log(filteredNomenclatures);
+    console.log(filteredEqData);
+    setEqDataOption(uniqueEqNames);
     setShipName(e.target.value);
   };
+
+  useEffect(() => {
+    debugger
+    const filteredEqData = userSelectionData
+      .filter((x) => x.shipName === selectedShipName)
+      .map((x) => {
+        const id = uniqueEqIds.find((y) => y.nomenclature === x.nomenclature);
+        return id ? id : null; // Return null if id is not found
+      })
+      .filter((id) => id !== null); // Remove null values
+    console.log(filteredEqData);
+    let filteredNomenclatures = filteredEqData
+      .filter((item) => selectedEqName.includes(item.name))
+      .map((item) => item.nomenclature);
+    filteredNomenclatures = [...new Set(filteredNomenclatures)];
+    setNomenclatureDataOption(filteredNomenclatures);
+  }, [selectedEqName, selectedShipName]);
+
+  // const onEqchange = (e, value) => {
+  //   debugger;
+  //   // const filteredEqData = userSelectionData
+  //   //       .filter((x) => x.shipName === selectedShipName)
+  //   //       .map((x) => {
+  //   //           const id = uniqueEqIds.find((y) => y.name === x.equipmentName);
+  //   //           return id ? id : null; // Return null if id is not found
+  //   //       })
+  //   //       .filter(id => id !== null); // Remove null values
+  //   //   // const uniqueNomNames = [...new Set(filteredEqData.map(item => item.nomenclature))];
+  //   //   // console.log(uniqueNomNames);
+  //   //   const filteredNomenclatures = filteredEqData
+  //   //   .filter(item => selectedEqName.includes(item.name))
+  //   //   .map(item => item.nomenclature);
+  //   //   console.log(selectedEqName);
+  //   //   console.log(filteredNomenclatures);
+  //   //   setNomenclatureDataOption(filteredNomenclatures)
+  //   //   console.log(filteredEqData);
+  //   setEquipmentName(value);
+  // };
   return (
-    <AccessControl allowedLevels={['L1', 'L2', 'L5']}>
-    <MuiPickersUtilsProvider utils={MomentUtils}>
-      <Navigation />
-      <div className={styles.body}>
-        <div className={styles.mprofile}>
-          <div style={{ width: "300px" }}>
-            <InputLabel
+    <AccessControl allowedLevels={["L1", "L2", "L5"]}>
+      <MuiPickersUtilsProvider utils={MomentUtils}>
+        <Navigation />
+        <div className={styles.body}>
+          <div className={styles.mprofile}>
+            <div style={{ width: "300px" }}>
+              <InputLabel
+                style={{
+                  fontWeight: "bold",
+                  color: "black",
+                  fontSize: "16px",
+                  marginBottom: "10px",
+                }}
+              >
+                <Typography variant="h5">Ship Name</Typography>
+              </InputLabel>
+              <CustomSelect
+                fields={customSelectData["shipName"]}
+                onChange={changeShip}
+                value={selectedShipName}
+              />
+            </div>
+            <div style={{ width: "300px" }}>
+              <InputLabel
+                style={{
+                  fontWeight: "bold",
+                  color: "black",
+                  fontSize: "16px",
+                  marginBottom: "10px",
+                }}
+              >
+                <Typography variant="h5">Equipment Name</Typography>
+              </InputLabel>
+
+              <Autocomplete
+                classes={classes}
+                multiple
+                id="tags-standard"
+                options={eqDataOption}
+                getOptionLabel={(option) => option}
+                value={selectedEqName}
+                onChange={(e, value) => setEquipmentName(value)}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    InputProps={{
+                      ...params.InputProps,
+                      disableUnderline: true,
+                    }}
+                    variant="standard"
+                  />
+                )}
+              />
+            </div>
+            <div style={{ width: "300px" }}>
+              <InputLabel
+                style={{
+                  fontWeight: "bold",
+                  color: "black",
+                  fontSize: "16px",
+                  marginBottom: "10px",
+                }}
+              >
+                <Typography variant="h5">Select Nomainclature</Typography>
+              </InputLabel>
+
+              <Autocomplete
+                classes={classes}
+                multiple
+                id="tags-standard"
+                options={nomenclatureDataOption}
+                getOptionLabel={(option) => option}
+                value={nomenclatureData}
+                onChange={(e, value) => setNomenclatureData(value)}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    InputProps={{
+                      ...params.InputProps,
+                      disableUnderline: true,
+                    }}
+                    variant="standard"
+                  />
+                )}
+              />
+            </div>
+
+            <div style={{ width: "300px" }}>
+              <InputLabel
+                style={{
+                  fontWeight: "bold",
+                  color: "black",
+                  fontSize: "16px",
+                  marginBottom: "10px",
+                }}
+              >
+                <Typography variant="h5">Select Parameter</Typography>
+              </InputLabel>
+
+              <Autocomplete
+                classes={classes}
+                multiple
+                id="tags-standard"
+                options={paramOptions}
+                getOptionLabel={(option) => option.name}
+                value={selectedParameterName}
+                onChange={(e, value) => setParameterName(value)}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    InputProps={{
+                      ...params.InputProps,
+                      disableUnderline: true,
+                    }}
+                    variant="standard"
+                  />
+                )}
+              />
+            </div>
+
+            <Button
+              variant="contained"
+              color="primary"
               style={{
-                fontWeight: "bold",
-                color: "black",
-                fontSize: "16px",
-                marginBottom: "10px",
+                marginTop: "2rem",
               }}
+              onClick={onSubmitHandler}
             >
-              <Typography variant="h5">Ship Name</Typography>
-              
-            </InputLabel>
-            <CustomSelect
-              fields={customSelectData["shipName"]}
-              onChange={changeShip}
-              value={selectedShipName}
-            />
-          </div>
-          <div style={{ width: "300px" }}>
-            <InputLabel
-              style={{
-                fontWeight: "bold",
-                color: "black",
-                fontSize: "16px",
-                marginBottom: "10px",
-              }}
-            >
-              <Typography variant="h5">Equipment Name</Typography>
-              
-            </InputLabel>
-
-            <Autocomplete
-              classes={classes}
-              multiple
-              id="tags-standard"
-              options={eqDataOption}
-              getOptionLabel={(option) => option.name}
-              value={selectedEqName}
-              onChange={(e, value) => setEquipmentName(value)}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  InputProps={{ ...params.InputProps, disableUnderline: true }}
-                  variant="standard"
-                />
-              )}
-            />
+              Submit
+            </Button>
           </div>
 
-          <div style={{ width: "300px" }}>
-            <InputLabel
-              style={{
-                fontWeight: "bold",
-                color: "black",
-                fontSize: "16px",
-                marginBottom: "10px",
-              }}
-            >
-              <Typography variant="h5">Select Nomainclature</Typography>
-              
-            </InputLabel>
-
-            <Autocomplete
-              classes={classes}
-              multiple
-              id="tags-standard"
-              options={paramOptions}
-              // getOptionLabel={(option) => option.name}
-              value={selectedParameterName}
-              onChange={(e, value) => setParameterName(value)}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  InputProps={{ ...params.InputProps, disableUnderline: true }}
-                  variant="standard"
-                />
-              )}
+          {showGraph && (
+            <CGraph
+              graphData={graphData}
+              selectedParameterNames={selectedParameterName}
             />
-          </div>
-
-          <div style={{ width: "300px" }}>
-            <InputLabel
-              style={{
-                fontWeight: "bold",
-                color: "black",
-                fontSize: "16px",
-                marginBottom: "10px",
-              }}
-            >
-              <Typography variant="h5">Select Parameter</Typography>
-              
-            </InputLabel>
-
-            <Autocomplete
-              classes={classes}
-              multiple
-              id="tags-standard"
-              options={paramOptions}
-              // getOptionLabel={(option) => option.name}
-              value={selectedParameterName}
-              onChange={(e, value) => setParameterName(value)}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  InputProps={{ ...params.InputProps, disableUnderline: true }}
-                  variant="standard"
-                />
-              )}
-            />
-          </div>
-
-          <Button
-            variant="contained"
-            color="primary"
-            style={{
-              marginTop: "2rem",
-            }}
-            onClick={onSubmitHandler}
-          >
-            Submit
-          </Button>
+          )}
         </div>
-
-        {showGraph && (
-          <CGraph graphData={graphData} 
-          selectedParameterNames={selectedParameterName}
-         />
+        {SnackBarMessage.showSnackBar && (
+          <CustomizedSnackbars
+            message={SnackBarMessage}
+            onHandleClose={onHandleSnackClose}
+          />
         )}
-      </div>
-      {SnackBarMessage.showSnackBar && (
-        <CustomizedSnackbars
-          message={SnackBarMessage}
-          onHandleClose={onHandleSnackClose}
-        />
-      )}
-    </MuiPickersUtilsProvider>
+      </MuiPickersUtilsProvider>
     </AccessControl>
   );
 };

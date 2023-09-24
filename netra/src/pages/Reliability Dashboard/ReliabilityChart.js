@@ -12,7 +12,8 @@ import styles from "./rDashboard.module.css";
 
 const CustomTooltipContent = ({ active, payload, label, family }) => {
   if (active && payload && payload.length) {
-    const parent = family.find(item => item.name === label)?.parent;
+    const parent = family.find(item => item.equipmentName === label)?.parent;
+    console.log(parent, "parent")
     return (
       <div className={styles.customtooltip}>
         <p className={styles.label}>{`${label} : ${payload[0].value}`}</p>
@@ -26,7 +27,7 @@ const CustomTooltipContent = ({ active, payload, label, family }) => {
 
 
 const ReliabilityChart = ({ data ,family}) => {
-  console.log(family.equipments);
+  console.log(family, "family");
   let xKey = "name";
   let yKeys = ["Reliability"];
   if (data[0]) {

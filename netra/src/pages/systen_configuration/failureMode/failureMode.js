@@ -22,7 +22,7 @@ const FailureMode = (props) => {
 
   useEffect(() => {
     const tableRowData = failureModesData?.map((failureMode) => ({
-      EquipmentName: systemData[0].name,
+      EquipmentName: systemData[0].nomenclature,
       eqId: props.matchingId,
       id: uuid(),
       fixFailureMode: failureMode.failure_mode,

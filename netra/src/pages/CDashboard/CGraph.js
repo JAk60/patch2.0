@@ -11,12 +11,11 @@ import {
 import styles from "./CDashboard.module.css";
 
 const CGraph = ({ graphData, selectedParameterNames }) => {
-  // Group the data by parameter name
   const groupedData = graphData.reduce((acc, cur) => {
     if (!acc[cur.name]) {
       acc[cur.name] = {
-        equipmentName: cur.name,
-        componentName: cur.name,
+        equipmentName: cur.component_name,
+        nomenclature: cur.nomenclature,
         parameterName: cur.name,
         data: [],
       };
@@ -26,17 +25,16 @@ const CGraph = ({ graphData, selectedParameterNames }) => {
   }, {});
 
   const paramChartData = Object.values(groupedData);
-  console.log(paramChartData);
+
   const filteredParamChartData = paramChartData.filter((param) => {
-    return selectedParameterNames.includes(param.parameterName);
+    return selectedParameterNames.some(selectedParam => selectedParam.name === param.parameterName);
   });
-  console.log(filteredParamChartData);
-  // Utility function to convert date string to Date object
+debugger
   const parseDate = (dateString) => {
     const dateParts = dateString.split(", ")[0].split("/");
     const timeParts = dateString.split(", ")[1].split(":");
     const year = parseInt(dateParts[2], 10);
-    const month = parseInt(dateParts[1], 10) - 1; // Months are 0-based in JavaScript Date
+    const month = parseInt(dateParts[1], 10) - 1;
     const day = parseInt(dateParts[0], 10);
     const hour = parseInt(timeParts[0], 10);
     const minute = parseInt(timeParts[1], 10);
@@ -47,20 +45,17 @@ const CGraph = ({ graphData, selectedParameterNames }) => {
   const getDomainByUnit = (unit, minThreshold, maxThreshold) => {
     const adjustedMin = minThreshold / 1.5;
     const adjustedMax = maxThreshold * 1.5;
-    console.log(adjustedMin, adjustedMax)
-
+  
     switch (unit) {
       case "RMS":
-        return [adjustedMin, adjustedMax];
       case "kg":
-        return [adjustedMin, adjustedMax];
       case "deg C":
         return [adjustedMin, adjustedMax];
-      // Add more cases for other units as needed
       default:
         return [adjustedMin, adjustedMax];
     }
   };
+  
   const sortDataByDate = (data) => {
     return data.sort((a, b) => {
       const dateA = parseDate(a.date);
@@ -68,6 +63,7 @@ const CGraph = ({ graphData, selectedParameterNames }) => {
       return dateA - dateB;
     });
   };
+
   return (
     <div className={styles.midSection}>
       {filteredParamChartData.map((param) => {
@@ -76,7 +72,6 @@ const CGraph = ({ graphData, selectedParameterNames }) => {
         }
 
         const sortedData = sortDataByDate(param.data);
-
         const minThreshold = parseInt(sortedData[0]?.min_value);
         const maxThreshold = parseInt(sortedData[0]?.max_value);
         const crossingThreshold =
@@ -96,11 +91,11 @@ const CGraph = ({ graphData, selectedParameterNames }) => {
               <div>
                 {crossingThreshold}
                 <h1
-                  x={550 / 2} // Center the text horizontally
-                  y={10} // Position the text 10 units from the top
-                  textAnchor="middle" // Center the text relative to x position
-                  fill="black" // Text color
-                  fontSize="12px" // Text font size
+                  x={550 / 2}
+                  y={10}
+                  textAnchor="middle"
+                  fill="black"
+                  fontSize="12px"
                 >
                   {param.data[0]?.failure_mode_id}
                 </h1>
@@ -115,32 +110,29 @@ const CGraph = ({ graphData, selectedParameterNames }) => {
                     dy: 10,
                   }}
                   height={45}
-                  // Format the XAxis ticks to show formatted dates
                   tickFormatter={(dateString) => {
                     const dateObject = parseDate(dateString);
                     return dateObject.toLocaleDateString();
                   }}
                 />
-                 <YAxis
+                <YAxis
                   domain={yDomain}
                   label={{
                     value: `${param.parameterName} (${unit})`,
                     angle: -90,
                     position: "center",
-                    dx: -30, // Adjust the label's distance from the axis
-                    dy: -10, // Adjust the label's distance from the axis
+                    dx: -30,
+                    dy: -10,
                     paddingRight: "20px",
                   }}
                   width={80}
                 />
                 <CartesianGrid horizontal={false} vertical={false} />
-
                 <Line
                   layout="horizontal"
                   dataKey="value"
                   stroke={crossingThreshold ? "red" : "green"}
                 />
-
                 <ReferenceLine
                   y={parseInt(minThreshold)}
                   stroke="gray"

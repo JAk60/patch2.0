@@ -115,7 +115,7 @@ const MaintenanceData = (props) => {
   const AddRow = () => {
     let newRowData = [
       {
-        LMU: systemData[0]?.name,
+        LMU: systemData[0]?.nomenclature,
         component_id: systemData[0]?.id,
         EventType: "Preventive",
         Date: "10/08/2021",

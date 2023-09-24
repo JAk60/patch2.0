@@ -112,14 +112,14 @@ function ParameterEstimation(props) {
       if (!systemRepairTypeBool) {
         return {
           id: ele.id,
-          EquipmentName: ele.name,
+          EquipmentName: ele.nomenclature,
           eta: "-",
           beta: "-",
         };
       } else {
         return {
           id: ele.id,
-          EquipmentName: ele.name,
+          EquipmentName: ele.nomenclature,
           alpha: "-",
           beta: "-",
         };

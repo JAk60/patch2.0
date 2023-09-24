@@ -92,6 +92,7 @@ def save_hep():
 def fetch_system():
     if request.method == 'POST':
         data = request.get_json(force=True)
+        print(data)
         conf_data = {
             "nomenclature": data["nomenclature"],
             "ship_name": data["ship_name"]
@@ -220,10 +221,9 @@ def rel_estimateEQ():
         # mission_data = int(mission_data)
         eq_data = data['data']['equipments']
         temp_missions = data['data']['tempMissions']
-        nomenclature = data['data']['nomenclature']
-        print(data)
+        nomenclatures = data['data']['nomenclature']
         rel_inst = Reliability()
-        res = rel_inst.mission_wise_rel_systemEQ(mission_data, eq_data, temp_missions)
+        res = rel_inst.mission_wise_rel_systemEQ(mission_data, eq_data, nomenclatures, temp_missions)
         return jsonify(res)
 
 
@@ -643,4 +643,5 @@ def set_component_overhaul_age():
 
 if __name__ == '__main__':
     app.secret_key = os.urandom(32)
+
     app.run(debug=True)

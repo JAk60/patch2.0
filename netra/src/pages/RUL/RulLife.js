@@ -71,13 +71,13 @@ const RulLife = () => {
   console.log(selectedParameterName);
   const sData = useSelector((state) => state.userSelection.componentsData);
 
-  const currentEquipmentName = currentSelection["equipmentName"];
-  const matchingItems = sData.filter(item => item.name === currentEquipmentName);
+  const currentNomenclature = currentSelection["nomenclature"];
+  const matchingItems = sData.filter(item => item.nomenclature === currentNomenclature);
 
   const matchingId = matchingItems[0]?.id;
   const onLoadTreeStructure = () => {
     const payload = {
-      system: currentSelection["equipmentName"],
+      nomenclature: currentSelection["nomenclature"],
       ship_name: currentSelection["shipName"],
     };
 

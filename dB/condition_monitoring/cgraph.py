@@ -1,11 +1,11 @@
 from dB.dB_connection import cursor, cnxn
 from flask import jsonify
-
 class GraphDashBoard:
-    def __init__(self):
+    def _init_(self):
         pass
     
     def graph_c(self, equipment_id):
+        print(equipment_id)
         # Query 1: Fetch data from sensor_based_data table
         query1 = """
             SELECT component_id, equipment_id, failure_mode_id, name, min_value, max_value, unit
@@ -26,11 +26,16 @@ class GraphDashBoard:
 
         # Query 3: Fetch joined data from sensor_based_data and parameter_data tables
         query3 = """
-            SELECT p.name, p.value, p.date, s.equipment_id, p.operating_hours, s.min_value, s.max_value, s.failure_mode_id, s.unit
-            FROM sensor_based_data AS s
-            INNER JOIN parameter_data AS p ON s.name = p.name
+            SELECT 
+            pc.component_name, pc.nomenclature,
+            p.name, p.value, p.date,
+            s.equipment_id, p.operating_hours, s.min_value, s.max_value, s.failure_mode_id, s.unit
+            FROM parameter_data p
+            JOIN sensor_based_data s ON p.name = s.name
+            JOIN system_configuration pc ON p.component_id = pc.component_id
+            WHERE pc.component_id = ?
         """
-        cursor.execute(query3)
+        cursor.execute(query3, (equipment_id))
         result3 = cursor.fetchall()
 
         sensor_data = []
@@ -58,15 +63,17 @@ class GraphDashBoard:
         graphData = []
         for row in result3:
             graphData.append({
-                'name': row[0],
-                'value': row[1],
-                'date': row[2],
-                'equipment_id': row[3],
-                'operating_hours': row[4],
-                'min_value': row[5],
-                'max_value': row[6],
-                'failure_mode_id': row[7],
-                'unit': row[8]
+                'component_name': row[0],
+                'nomenclature': row[1],
+                'name': row[2],
+                'value': row[3],
+                'date': row[4],
+                'equipment_id': row[5],
+                'operating_hours': row[6],
+                'min_value': row[7],
+                'max_value': row[8],
+                'failure_mode_id': row[9],
+                'unit': row[10]
             })
 
         # Create a dictionary to hold the results of all queries

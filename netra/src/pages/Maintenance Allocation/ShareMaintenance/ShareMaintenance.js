@@ -18,8 +18,8 @@ const ShareMaintenance=(props)=> {
     let fData = useSelector((state) => state.treeData.treeData);
     const sData = useSelector((state) => state.userSelection.componentsData);
 
-  const currentEquipmentName = currentSelection["equipmentName"];
-  const matchingItems = sData.filter(item => item.name === currentEquipmentName);
+    const currentNomenclature = currentSelection["nomenclature"];
+  const matchingItems = sData.filter(item => item.nomenclature === currentNomenclature);
 
   const matchingId = matchingItems[0]?.id;
   const onLoadTreeStructure = () => {

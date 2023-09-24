@@ -22,6 +22,7 @@ import { filter } from "lodash";
 
 const Layout = (props) => {
   const [isNodeAddedMap, setIsNodeAddedMap] = useState({});
+  const [nomenclature,setNomenclature]= useState([])
   useEffect(() => {
     fetch("/fetch_tasks", {
       method: "GET",
@@ -169,11 +170,16 @@ const Layout = (props) => {
   const customSelectData = useSelector(
     (state) => state.userSelection.userSelection
   );
-  // const currentSelection = useSelector(
-  //   (state) => state.userSelection.currentSelection
-  // );
+  const EqipmentsDataArr = useSelector(
+    (state) => state.userSelection.componentsData
+  );
+  console.log(EqipmentsDataArr);
   const options = customSelectData["equipmentName"]
-  const  nomenclatureOptions = customSelectData["nomenclature"]
+  // const  nomenclatureOptions =
+  let filteredNomenclatures = EqipmentsDataArr.filter((item) =>
+  value.includes(item.name)
+).map((item) => item.nomenclature);
+filteredNomenclatures=[...new Set(filteredNomenclatures)]
   const ship_name = currentSelection["shipName"]
   // console.log(currentSelection)
   const AddNodes = () => {
@@ -354,9 +360,9 @@ const Layout = (props) => {
           />
           <Autocomplete
             multiple
-            options={nomenclatureOptions}
-            //value={value}
-            onChange={handleChange}
+            options={filteredNomenclatures}
+            value={nomenclature}
+            onChange={(e,value)=>setNomenclature(value)}
             // groupBy={(option) => option.parentName}
             // getOptionLabel={(option) => option.name}
             style={{ width: 300 }}
