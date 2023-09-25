@@ -207,7 +207,7 @@ filteredNomenclatures=[...new Set(filteredNomenclatures)]
     }
 
     let i = 50; // Initialize i for positioning equipment nodes
-    value.forEach((equipment) => {
+    nomenclature.forEach((equipment) => {
       if (!isNodeAddedMap[equipment]) {
         // Create equipment nodes
         const style = {

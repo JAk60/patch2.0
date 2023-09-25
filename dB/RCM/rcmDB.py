@@ -18,6 +18,7 @@ class RCMDB():
         
     def save_asm(self, data):
         try:
+            print(data, "rcm_asm")
             system = data["system"]
             ship_name = data["ship_name"]
             insert_sql = '''insert into rcm_asm values(?,?,?,?,?,?)'''
@@ -27,7 +28,7 @@ class RCMDB():
                 self.delete_asm(parent_id)
             for f in data:
                 parent_id = f["parentId"]
-                name = f["name"]
+                name = f["nomenclature"]
                 uid = uuid4()
                 comp_id = f["id"]
                 cursor.execute(insert_sql, uid, system, ship_name, name, parent_id, comp_id)
@@ -41,14 +42,15 @@ class RCMDB():
         cursor.execute(delete_sql, parent_id)
 
     def fetch_saved_asm(self, data):
-        select_sql = '''select * from rcm_asm where equipment = ? and platform = ?'''
-        eq = data["system"]
+        print(data)
+        select_sql = '''select * from rcm_asm where component = ? and platform = ?'''
+        eq = data["nomenclature"]
         platform = data["ship_name"]
         cursor.execute(select_sql, eq, platform)
         asm_d = cursor.fetchall()
         mData = []
         for d in asm_d:
-            mData.append({"id": d[0], "parentName": d[1], "platform": d[2], "name": d[3],
+            mData.append({"id": d[0], "parentName": d[1], "platform": d[2], "nomenclature": d[3],
                           "equipment_id": d[4], "component_id": d[5]}) 
         return mData
 

@@ -10,14 +10,17 @@ import {
 } from "recharts";
 import styles from "./rDashboard.module.css";
 
-const CustomTooltipContent = ({ active, payload, label, family }) => {
+const CustomTooltipContent = ({ active, payload, label, family, familyE }) => {
+  console.log("payload",payload);
   if (active && payload && payload.length) {
-    const parent = family.find(item => item.equipmentName === label)?.parent;
+    const parent = family?.shipClass[0];
+    const equipment = familyE[0].equipmentName;
     console.log(parent, "parent")
     return (
       <div className={styles.customtooltip}>
-        <p className={styles.label}>{`${label} : ${payload[0].value}`}</p>
         {parent && <p className="parent">{`${parent}`}</p>}
+        <p>{`Equipment : ${equipment}`}</p>
+        <p className={styles.label}>{`${label} : ${payload[0].value}`}</p>
       </div>
     );
   }
@@ -39,7 +42,7 @@ const ReliabilityChart = ({ data ,family}) => {
   return (
     <ResponsiveContainer height="90%" width={"100%"} debounce={50}>
       <BarChart data={[...data]} layout="horizontal" >
-        <Tooltip content={<CustomTooltipContent  family={family.equipments}/>} />
+        <Tooltip content={<CustomTooltipContent  family={family} familyE={family.equipments} />} />
         <YAxis type="number" domain={[0, 100]} tick={{ fontSize: 10 }} />
         <XAxis
           xAxisId={0}

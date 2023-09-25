@@ -73,7 +73,7 @@ const Critical_RCM = (props) => {
     fetch("/fetch_assembly_rcm", {
       method: "POST",
       body: JSON.stringify({
-        system: currentSelection["equipmentName"],
+        nomenclature: currentSelection["nomenclature"],
         ship_name: currentSelection["shipName"],
       }),
       headers: {
@@ -87,6 +87,7 @@ const Critical_RCM = (props) => {
         let treeD = d["treeD"];
         let failureModes = d["failureMode"];
         setfData(d["asm"])
+        console.log(d["asm"], "asm")
         dispatch(
           treeDataActions.setTreeData({
             treeData: treeD,
@@ -101,7 +102,7 @@ const Critical_RCM = (props) => {
       showSnackBar: true,
     });
   };
-
+console.log("fData",fData);
   const [selectedComponent, setComponent] = useState(null)
   const [selectedCriticalComponent, setCriticalComponent] = useState([])
   const selectOnChange = (e, value) => {
@@ -358,7 +359,7 @@ const Critical_RCM = (props) => {
     fetch("/rcm_report", {
       method: "POST",
       body: JSON.stringify({
-        system: currentSelection["equipmentName"],
+        nomenclature: currentSelection["nomenclature"],
         ship_name: currentSelection["shipName"],
 
       }),

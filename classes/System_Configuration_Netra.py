@@ -21,7 +21,8 @@ class System_Configuration_N():
         return res
 
     def fetch_component_id(self, platform, system):
-        select_sql = '''SELECT component_id FROM system_configuration where ship_name = ? and system = ?'''
+        print(system)
+        select_sql = '''SELECT component_id FROM system_configuration where ship_name = ? and nomenclature = ?'''
         cursor.execute(select_sql, platform, system)
         data = cursor.fetchone()
         return data[0]
