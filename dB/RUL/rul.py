@@ -118,7 +118,8 @@ class RUL_dB:
 
             # # Estimate beta and eta using MLE
             print(data)
-            print(operating_hours_threshold_reached)
+            if len(operating_hours_threshold_reached) ==0:
+                return self.error_return
             params = weibull_min.fit(operating_hours_threshold_reached, floc=0)
 
             # # Unpack the estimated parameters

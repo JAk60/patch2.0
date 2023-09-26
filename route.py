@@ -389,14 +389,16 @@ def task_rel():
     trel_inst = TaskReliability()
     final_return_data = []
     for d in data:
-        shipname = d["shipName"]
-        taskName = d["taskName"]    
-        missionDataDuration = d["data"]
-        cal_rel = d["cal_rel"]
-        missionName ='A'
-        rel = trel_inst.task_new_rel(taskName, missionName, missionDataDuration, APP_ROOT, shipname)
-        final_return_data.append({"shipName": shipname, "taskName": taskName, 
-                                  "rel": rel["task_rel"], "data": rel["all_missionRel"], "cal_rel": cal_rel})
+        if type(d) is not bool:
+            shipname = d["shipName"]
+            taskName = d["taskName"]    
+            missionDataDuration = d["data"]
+            cal_rel = d["cal_rel"]
+            missionName ='A'
+            rel = trel_inst.task_new_rel(taskName, missionName, missionDataDuration, APP_ROOT, shipname)
+            print(rel)
+            final_return_data.append({"shipName": shipname, "taskName": taskName, 
+                                    "rel": rel["task_rel"], "data": rel["all_missionRel"], "cal_rel": cal_rel}) 
     # name = data["taskName"][0]["name"]
     
     # missionDataDuration = data["missionProfileData"
@@ -442,7 +444,7 @@ def save_assembly_rcm():
 def fetch_assembly_rcm():
     data = request.get_json(force=True)
     sys_inst = System_Configuration_N()
-    component_id = sys_inst.fetch_component_id(data["ship_name"], data["system"])
+    component_id = sys_inst.fetch_component_id(data["ship_name"], data["nomenclature"])
     res = sys_inst.fetch_system(data, component_id)
     rcm = RCMDB()
     res_r = rcm.fetch_saved_asm(data)    
@@ -644,4 +646,4 @@ def set_component_overhaul_age():
 if __name__ == '__main__':
     app.secret_key = os.urandom(32)
 
-    app.run(debug=True)
+    app.run(debug=False)

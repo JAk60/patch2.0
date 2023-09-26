@@ -21,18 +21,18 @@ class TaskReliability:
     def lmu_rel(self, mission_name, system, platform, total_dur, c_age=0):
         sys_lmus = []
 
-        
+        print(system)
         # mission_name = mission_data['mission_name']
-        system_config = '''select * from system_configuration where ship_name=? and system=?'''
+        system_config = '''select * from system_configuration where ship_name=? and nomenclature=?'''
         eta_beta = '''select * from eta_beta  inner join system_configuration sc on eta_beta.component_id = sc.component_id
-                        where sc.system = ?  and sc.ship_name = ?'''
+                        where sc.nomenclature = ?  and sc.ship_name = ?'''
         cursor.execute(eta_beta, system, platform)
         eta_beta_data = cursor.fetchall()
         alpha_beta_data = []
         if len(eta_beta_data) == 0:
             alpha_beta = '''select * from alpha_beta  inner join system_configuration sc on 
                         alpha_beta.component_id = sc.component_id
-                        where sc.system = ?  and sc.ship_name = ?'''
+                        where sc.nomenclature = ?  and sc.ship_name = ?'''
             cursor.execute(alpha_beta, system, platform)
             alpha_beta_data = cursor.fetchall()
         cursor.execute(system_config, platform, system)
@@ -45,7 +45,7 @@ class TaskReliability:
               component_id = ? order by CAST(maint_date as date) desc'''
             cursor.execute(prev_main_data, lmu[5])
             first_data = cursor.fetchone()
-            ship_id = '''select component_id from system_configuration where ship_name=? and system=? and parent_id is NULL'''
+            ship_id = '''select component_id from system_configuration where ship_name=? and nomenclature=? and parent_id is NULL'''
             cursor.execute(ship_id, platform, system)
             ship_id = cursor.fetchone()[0]
             if first_data is None:
@@ -528,7 +528,8 @@ class TaskReliability:
     def get_eq_id(self, data):
         ship_name = data["shipName"]
         eq_name = data["data"]["label"]
-        select = '''select component_id from system_configuration where ship_name=? and system = ?'''
+        print(eq_name)
+        select = '''select component_id from system_configuration where ship_name=? and nomenclature = ?'''
         cursor.execute(select, ship_name, eq_name)
         id_ = cursor.fetchone()[0]
         data["equipementId"] = id_

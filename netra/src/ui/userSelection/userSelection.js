@@ -135,6 +135,7 @@ function UserSelection(props) {
 
   const onEquipmentChange = (e) => {
     let data = e.currentTarget.innerText;
+    console.log(data);
     let normData = userSelectionEqData
       .filter(
         (x) =>
@@ -144,12 +145,13 @@ function UserSelection(props) {
           x.shipCategory === currentSelection.shipCategory &&
           x.shipName === currentSelection.shipName &&
           x.shipClass === currentSelection.shipClass &&
-          x.equipmentName === data
+          x.equipmentName == data
       )
       .map((x) => x.nomenclature);
     
-    normData = [...new Set(normData)];
-    console.log("nomenclature",normData);
+      console.log("nomenclature",normData);
+      normData = [...new Set(normData)];
+      console.log("nomenclature",normData);
     data = { equipmentName: data };
     normData = { nomenclature: normData };
     dispatch(userActions.onChangeCurrentSelection({ selectedData: data }));

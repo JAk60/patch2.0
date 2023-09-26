@@ -632,6 +632,7 @@ const TaskDashboard = () => {
                 "rel": Math.round(pTD["rel"] * 100) / 100, "missionType": pTD["missionName"], "ComponentMission": pTD["missionName"]
               })
               let componentRelData = pTD["comp_rel"]
+              console.log(componentRelData)
               componentRelData.forEach((cTD) => {
                 taskMissionData.push({
                   "shipName": tData["shipName"], "taskName": tData["taskName"],
@@ -639,7 +640,7 @@ const TaskDashboard = () => {
                 })
               })
             })
-            // console.log("This is tdata", tData)
+            console.log("This is tdata", tData)
             taskData.push({ "shipName": tData["shipName"], "taskName": tData["taskName"], "rel": Math.round(tData["rel"] * 100) / 100 ,  "cal_rel": tData["cal_rel"]})
           });
           console.log(taskData, 'Taks data')

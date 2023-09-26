@@ -43,7 +43,7 @@ debugger
   };
 
   const getDomainByUnit = (unit, minThreshold, maxThreshold) => {
-    const adjustedMin = minThreshold / 1.5;
+    const adjustedMin = Math.round(minThreshold / 2);
     const adjustedMax = maxThreshold * 1.5;
   
     switch (unit) {

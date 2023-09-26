@@ -16,9 +16,11 @@ import {
   Paper,
   FormControlLabel,
   Checkbox,
+  Box,
 } from "@material-ui/core";
 
 import styles from "./rul.module.css";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
 const RULPredictor = ({ parameter, equipmentId, P, F }) => {
   const [sensorValue, setSensorValue] = useState("");
@@ -27,7 +29,7 @@ const RULPredictor = ({ parameter, equipmentId, P, F }) => {
   const [openNoteDialog, setOpenNoteDialog] = useState(true);
   const [dontShowAgain, setDontShowAgain] = useState(false);
   const confidance_levels = [0.8, 0.85, 0.9, 0.95];
-
+  const history = useHistory();
   const customTableStyle = {
     fontSize: "16px", // Adjust the font size as needed
   };
@@ -55,13 +57,13 @@ const RULPredictor = ({ parameter, equipmentId, P, F }) => {
         body: JSON.stringify(requestData),
       });
 
-      if (!response.ok) {
+      if (response.code == 0) {
         throw new Error("Failed to get RUL prediction.");
+      } else {
+        const data = await response.json();
+        setPrediction(data.remaining_life);
+        setOpenRULDialog(true);
       }
-
-      const data = await response.json();
-      setPrediction(data.remaining_life);
-      setOpenRULDialog(true);
     } catch (error) {
       console.error("Error fetching RUL prediction:", error);
     }
@@ -96,7 +98,12 @@ const RULPredictor = ({ parameter, equipmentId, P, F }) => {
           <Typography variant="h4">
             Time Till Failure/RUL
             <sup>
-              <button className={styles.infobtn} onClick={()=>setOpenNoteDialog(!openNoteDialog)}>i</button>
+              <button
+                className={styles.infobtn}
+                onClick={() => setOpenNoteDialog(!openNoteDialog)}
+              >
+                i
+              </button>
             </sup>
           </Typography>
 
@@ -130,41 +137,67 @@ const RULPredictor = ({ parameter, equipmentId, P, F }) => {
               >
                 Calculate
               </Button>
-              <Dialog open={openRULDialog} onClose={handleCloseRULDialog}>
-                <DialogTitle>
-                  Remaining Useful Life for Different Confidence Levels:
-                </DialogTitle>
-                <DialogContent>
-                  <TableContainer component={Paper} style={customTableStyle}>
-                    <Table>
-                      <TableHead>
-                        <TableRow>
-                          <TableCell>Confidence Level</TableCell>
-                          <TableCell>Remaining Life(Hours)</TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {prediction.map((entry, index) => (
-                          <TableRow key={index}>
-                            <TableCell>{confidance_levels[index]}</TableCell>
-                            <TableCell>{entry}</TableCell>
+              {prediction?.length > 0 ? (
+                <Dialog open={openRULDialog} onClose={handleCloseRULDialog}>
+                  <DialogTitle>
+                    Remaining Useful Life for Different Confidence Levels:
+                  </DialogTitle>
+                  <DialogContent>
+                    <TableContainer component={Paper} style={customTableStyle}>
+                      <Table>
+                        <TableHead>
+                          <TableRow>
+                            <TableCell>Confidence Level</TableCell>
+                            <TableCell>Remaining Life(Hours)</TableCell>
                           </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
-                </DialogContent>
-              </Dialog>
+                        </TableHead>
+                        <TableBody>
+                          {prediction?.map((entry, index) => (
+                            <TableRow key={index}>
+                              <TableCell>{confidance_levels[index]}</TableCell>
+                              <TableCell>{entry}</TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </TableContainer>
+                  </DialogContent>
+                </Dialog>
+              ) : (
+                <Dialog open={openRULDialog} onClose={handleCloseRULDialog}>
+                  <DialogTitle>Limited Data in the Dataset</DialogTitle>
+                  <DialogContent>
+                    <TableContainer style={customTableStyle}>
+                      <Table>
+                        <TableBody>
+                          <TableRow style={{display: "flex",flexDirection:"column"}}>
+                            <TableCell>
+                              <Typography variant="h5" style={{color:"navyblue"}}>Please Add Some More Data!</Typography></TableCell>
+                            <Button
+                              variant="contained"
+                              color="primary"
+                              onClick={() =>
+                                history.push("/maintenance_allocation/add_data")
+                              }
+                            >
+                              ADD Sensor Data
+                            </Button>
+                          </TableRow>
+                        </TableBody>
+                      </Table>
+                    </TableContainer>
+                  </DialogContent>
+                </Dialog>
+              )}
               <Dialog open={openNoteDialog} onClose={handleCloseNoteDialog}>
                 <DialogTitle>Important Note</DialogTitle>
                 <DialogContent>
                   <Typography variant="h5">
                     For accurate prediction of RUL, at least 15 datasets are
-                    required. 
-                    </Typography>
-                    <Typography variant="h5">
-                    For fair predictions, at least 10 datasets are
                     required.
+                  </Typography>
+                  <Typography variant="h5">
+                    For fair predictions, at least 10 datasets are required.
                   </Typography>
                   <FormControlLabel
                     control={
