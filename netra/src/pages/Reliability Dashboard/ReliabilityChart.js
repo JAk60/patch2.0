@@ -11,11 +11,15 @@ import {
 import styles from "./rDashboard.module.css";
 
 const CustomTooltipContent = ({ active, payload, label, family, familyE }) => {
-  console.log("payload",payload);
+  console.log("payload", payload, label);
   if (active && payload && payload.length) {
     const parent = family?.shipClass[0];
-    const equipment = familyE[0].equipmentName;
-    console.log(parent, "parent")
+    
+    // Find the corresponding equipmentName using the label (nomenclature)
+    const nomenclatureItem = familyE?.filter(item => item.nomenclature === label);
+    const equipment = nomenclatureItem ? nomenclatureItem[0]?.equipmentName : '';
+
+    console.log(equipment, "parent");
     return (
       <div className={styles.customtooltip}>
         {parent && <p className="parent">{`${parent}`}</p>}
@@ -42,7 +46,7 @@ const ReliabilityChart = ({ data ,family}) => {
   return (
     <ResponsiveContainer height="90%" width={"100%"} debounce={50}>
       <BarChart data={[...data]} layout="horizontal" >
-        <Tooltip content={<CustomTooltipContent  family={family} familyE={family.equipments} />} />
+        <Tooltip content={<CustomTooltipContent  family={family} familyE={family.nomenclature} />} />
         <YAxis type="number" domain={[0, 100]} tick={{ fontSize: 10 }} />
         <XAxis
           xAxisId={0}

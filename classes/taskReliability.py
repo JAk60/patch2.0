@@ -143,8 +143,8 @@ class TaskReliability:
             if parent_name == system:
                 return_final_child_data.append({'name': name, 'id': id, 'rel': rel,
                                                 'parent_name': parent_name, 'parent_id': parent_id})
-            if name == system:
-                final_system_rel['rel'] = rel
+            
+            final_system_rel['rel'] = rel
             if len(gs) > 1:
                 pass
         final_system_rel['child'] = return_final_child_data

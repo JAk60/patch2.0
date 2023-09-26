@@ -121,11 +121,12 @@ console.log("fData",fData);
         pData = [...pData, ...childs]
       }
     }
+    console.log("lmuData",lmuData);
     setfDataCritical(lmuData)
   }
 
   const lmuSelectOnChange = (e, value) => {
-    // console.log(value)
+    console.log(value)
     setCriticalComponent(value)
   }
 

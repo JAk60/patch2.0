@@ -120,7 +120,7 @@ function EqptStructuring() {
     setChildInputFields((prevstate) => {
       // const stateLen = prevstate.length;
       // // return [...prevstate, stateLen + 1];
-      return [...prevstate, { childName: "", childPartId: "" }];
+      return [...prevstate, { childName: "", childPartId: "",nomenclature: "" }];
     });
   };
   const onDeleteChildField = (index) => {
@@ -142,6 +142,7 @@ function EqptStructuring() {
         children: [],
         id: cUuid,
         eqType: x.childPartId,
+        nomenclature: x.nomenclature,
         parentName: parentFiledValue.name,
         parentId: parentFiledValue.id,
         parent: parentFiledValue.id,
@@ -318,9 +319,9 @@ function EqptStructuring() {
                         <Grid item xs={3} style={{ marginTop: "20px" }}>
                           <CustomTextInput
                             className={classes.fullWidth}
-                            name="childPartId"
+                            name="nomenclature"
                             // id="partId"
-                            value={child.childPartId}
+                            value={child.nomenclature}
                             onChange={(e) => handleChildChange(item, e)}
                           />
                         </Grid>

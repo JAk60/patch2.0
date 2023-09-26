@@ -629,19 +629,19 @@ const TaskDashboard = () => {
             perMData.forEach((pTD) => {
               taskMissionData.push({
                 "shipName": tData["shipName"], "taskName": tData["taskName"],
-                "rel": Math.round(pTD["rel"] * 100) / 100, "missionType": pTD["missionName"], "ComponentMission": pTD["missionName"]
+                "rel": pTD["rel"], "missionType": pTD["missionName"], "ComponentMission": pTD["missionName"]
               })
               let componentRelData = pTD["comp_rel"]
               console.log(componentRelData)
               componentRelData.forEach((cTD) => {
                 taskMissionData.push({
                   "shipName": tData["shipName"], "taskName": tData["taskName"],
-                  "rel": Math.round(cTD["rel"] * 100) / 100, "missionType": pTD["missionName"], "ComponentMission": cTD["compName"]
+                  "rel": cTD["rel"], "missionType": pTD["missionName"], "ComponentMission": cTD["compName"]
                 })
               })
             })
             console.log("This is tdata", tData)
-            taskData.push({ "shipName": tData["shipName"], "taskName": tData["taskName"], "rel": Math.round(tData["rel"] * 100) / 100 ,  "cal_rel": tData["cal_rel"]})
+            taskData.push({ "shipName": tData["shipName"], "taskName": tData["taskName"], "rel": tData["rel"] ,  "cal_rel": tData["cal_rel"]})
           });
           console.log(taskData, 'Taks data')
           settaskTableData(taskData)
