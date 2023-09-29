@@ -629,19 +629,19 @@ const TaskDashboard = () => {
             perMData.forEach((pTD) => {
               taskMissionData.push({
                 "shipName": tData["shipName"], "taskName": tData["taskName"],
-                "rel": pTD["rel"], "missionType": pTD["missionName"], "ComponentMission": pTD["missionName"]
+                "rel": parseFloat(pTD["rel"]).toFixed(4), "missionType": pTD["missionName"], "ComponentMission": pTD["missionName"]
               })
               let componentRelData = pTD["comp_rel"]
               console.log(componentRelData)
               componentRelData.forEach((cTD) => {
                 taskMissionData.push({
                   "shipName": tData["shipName"], "taskName": tData["taskName"],
-                  "rel": cTD["rel"], "missionType": pTD["missionName"], "ComponentMission": cTD["compName"]
+                  "rel": parseFloat(pTD["rel"]).toFixed(4), "missionType": pTD["missionName"], "ComponentMission": cTD["compName"]
                 })
               })
             })
             console.log("This is tdata", tData)
-            taskData.push({ "shipName": tData["shipName"], "taskName": tData["taskName"], "rel": tData["rel"] ,  "cal_rel": tData["cal_rel"]})
+            taskData.push({ "shipName": tData["shipName"], "taskName": tData["taskName"], "rel": parseFloat(tData["rel"]) ,  "cal_rel": parseFloat(tData["cal_rel"]).toFixed(4)})
           });
           console.log(taskData, 'Taks data')
           settaskTableData(taskData)

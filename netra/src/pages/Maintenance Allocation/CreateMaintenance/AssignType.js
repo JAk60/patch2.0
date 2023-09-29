@@ -893,14 +893,14 @@ const AssignType = (props) => {
                       style={{ display: 'none' }}
                       ref={fileInputRef}
                     />
-                    <Button
+                    {/* <Button
                       className={classes.buttons}
                       variant="contained"
                       color="primary"
                       onClick={() => fileInputRef.current.click()}
                     >
                       Import File
-                    </Button>
+                    </Button> */}
                   </div>
                 </div>
                 {/* <div className={styles.levelwise}>

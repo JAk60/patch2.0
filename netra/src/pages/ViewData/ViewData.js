@@ -39,7 +39,7 @@ const ViewData = (props) => {
   const ViewDataPaths = [
     { name: "Data Manager", path: "/data_manager", icon: <StorageIcon /> },
     { name: "Historical Data", path: "/data_manager/historical_data", icon: <HourglassEmptyIcon /> },
-    { name: "User Selection Config", path: "/user_selection_config", icon: <CreateIcon /> },
+    { name: "Add New Ship", path: "/user_selection_config", icon: <CreateIcon /> },
     { name: "Add System Doc", path: "/add_system_doc", icon: <SaveAltIcon /> },
     { name: "Add Sensor Data", path: "/maintenance_allocation/add_data", icon: <WifiTetheringIcon /> },
   ];

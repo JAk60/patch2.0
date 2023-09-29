@@ -181,7 +181,7 @@ const Layout = (props) => {
 ).map((item) => item.nomenclature);
 filteredNomenclatures=[...new Set(filteredNomenclatures)]
   const ship_name = currentSelection["shipName"]
-  // console.log(currentSelection)
+  console.log(filteredNomenclatures, "F")
   const AddNodes = () => {
     const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
 
