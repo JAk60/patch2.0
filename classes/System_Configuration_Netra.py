@@ -31,9 +31,19 @@ class System_Configuration_N():
         failure_data = self.fmodesData(component_id)
         nomenclature = data['nomenclature']
         ship_name = data['ship_name']
-        sql = '''select * from system_configuration as s left join maintenance_configuration_data 
-        ab on s.component_id = ab.component_id where s.nomenclature=? and s.ship_name=?'''
-        cursor.execute(sql, nomenclature, ship_name)
+        sql = '''SELECT s.*, ab.*
+                FROM system_configuration AS s
+                LEFT JOIN maintenance_configuration_data AS ab ON s.component_id = ab.component_id
+                WHERE (s.nomenclature = ? AND s.ship_name = ?)
+                OR s.component_id IN (
+                    SELECT DISTINCT s1.component_id
+                    FROM system_configuration AS s1
+                    LEFT JOIN system_configuration AS s2 ON s1.component_id = s2.parent_id
+                    WHERE s1.parent_id = ?
+                        OR s1.component_id = ?
+                );
+        '''
+        cursor.execute(sql, nomenclature, ship_name, component_id, component_id)
         data = cursor.fetchall()
         f_data = []
         if data:

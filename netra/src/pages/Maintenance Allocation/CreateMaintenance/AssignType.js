@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styles from "./CreateMaintenance.module.css";
 import {
   Button,
@@ -8,6 +8,7 @@ import {
   MenuItem,
   Select,
   Dialog,
+  makeStyles,
 } from "@material-ui/core";
 import Table from "../../../ui/Table/Table";
 import { AgGridColumn } from "ag-grid-react";
@@ -17,9 +18,21 @@ import CustomizedSnackbars from "../../../ui/CustomSnackBar";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
+const useStyles = makeStyles({
+  buttons: {
+    margin: 5,
+    minWidth: 170,
+    float: "right",
+  },
+  align: {
+    marginBottom: 10,
+  }
+});
+
 const AssignType = (props) => {
   const [type, setType] = useState("");
   const [ageBasedUnit, setAgeBasedUnit] = useState(null);
+  const [dataRows, setDataRows] = useState([]);
   const [calendarBasedUnit, setCalendarBasedUnit] = useState(null);
   const [condition, setCondition] = useState("visual");
   const [failureMode, setFailureMode] = useState(null);
@@ -27,10 +40,48 @@ const AssignType = (props) => {
   const [visualCorrosionLevels, setVisualCorrosionLevels] = useState(0);
   const [visualFrequency, setVisualFrequency] = useState(0);
   const [degradationWearLevels, setDegradationWearLevels] = useState(0);
+  const [pRows, setpRows] = useState([]);
   const [VisualWearRows, setVisualWearRows] = useState([]);
   const [VisualCorrosionRows, setVisualCorrosionRows] = useState([]);
   const [visualActionsRows, setVisualActionRows] = useState([]);
+  const fileInputRef = useRef(null);
   const hello = ["This", "is", "beauty"];
+  const classes = useStyles();
+  const handleFileUpload = (file) => {
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const csvData = event.target.result;
+        const rows = csvData.split('\n');
+
+        // Assuming the first row contains column headers
+        const headers = rows[0].split(',').map(header => header.trim());
+        const parsedData = [];
+
+        for (let i = 1; i < rows.length; i++) {
+          const rowData = rows[i].split(',');
+          if (rowData.length === headers.length) { // Check if the number of columns matches the headers
+            const rowObject = {};
+            for (let j = 0; j < headers.length; j++) {
+              let value = rowData[j].trim();
+              rowObject[headers[j]] = value;
+              rowObject["id"] = uuid();
+              rowObject["EquipmentId"] = eqptId;
+              rowObject["ComponentId"] = props.selectedComponent.id;
+            }
+            parsedData.push(rowObject);
+          }
+        }
+
+        // Now it's parsedData, not paramData
+        // Here, you can dispatch or do something else with the parsed data
+        setpRows(parsedData);
+      };
+
+      reader.readAsText(file);
+    }
+  };
+
   const changeVisualFrequency = (e) => {
     setVisualFrequency(e.target.value);
   };
@@ -199,7 +250,7 @@ const AssignType = (props) => {
   //Sensor Based Monitoring
   const [monitoringType, setMonitoringType] = useState("intermittent");
   const [numPara, setNumPara] = useState(0);
-  const [pRows, setpRows] = useState([]);
+
   console.log(pRows);
   const addPRows = (n) => {
     let newRows = [];
@@ -834,6 +885,23 @@ const AssignType = (props) => {
                       Add Sensor Data
                     </Button>
                   </Link>
+                  <div className={styles.importBtnContainer}>
+                    <input
+                      type="file"
+                      accept=".csv"
+                      onChange={(e) => handleFileUpload(e.target.files[0])}
+                      style={{ display: 'none' }}
+                      ref={fileInputRef}
+                    />
+                    <Button
+                      className={classes.buttons}
+                      variant="contained"
+                      color="primary"
+                      onClick={() => fileInputRef.current.click()}
+                    >
+                      Import File
+                    </Button>
+                  </div>
                 </div>
                 {/* <div className={styles.levelwise}>
             <div className={styles.lwCol}>

@@ -341,7 +341,7 @@ console.log("fData",fData);
     }
   }
   const handleDownload = () => {
-    let system = currentSelection["equipmentName"].replace(/\s/g, '')
+    let system = currentSelection["nomenclature"].replace(/\s/g, '')
     let ship_name = currentSelection["shipName"].replace(/\s/g, '')
     const link = document.createElement('a');
     link.download = `${ship_name}-${system}.pdf`;

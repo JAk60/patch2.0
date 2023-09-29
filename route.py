@@ -390,15 +390,16 @@ def task_rel():
     final_return_data = []
     for d in data:
         if type(d) is not bool:
-            shipname = d["shipName"]
-            taskName = d["taskName"]    
-            missionDataDuration = d["data"]
-            cal_rel = d["cal_rel"]
-            missionName ='A'
-            rel = trel_inst.task_new_rel(taskName, missionName, missionDataDuration, APP_ROOT, shipname)
-            print(rel)
-            final_return_data.append({"shipName": shipname, "taskName": taskName, 
-                                    "rel": rel["task_rel"], "data": rel["all_missionRel"], "cal_rel": cal_rel}) 
+            if len(d) != 0:
+                shipname = d["shipName"]
+                taskName = d["taskName"]    
+                missionDataDuration = d["data"]
+                cal_rel = d["cal_rel"]
+                missionName ='A'
+                rel = trel_inst.task_new_rel(taskName, missionName, missionDataDuration, APP_ROOT, shipname)
+                print(rel)
+                final_return_data.append({"shipName": shipname, "taskName": taskName, 
+                                        "rel": rel["task_rel"], "data": rel["all_missionRel"], "cal_rel": cal_rel}) 
     # name = data["taskName"][0]["name"]
     
     # missionDataDuration = data["missionProfileData"
@@ -467,7 +468,7 @@ def rcm_report():
     # sys_inst = System_Configuration_N()
     # res = sys_inst.fetch_system(data)
     data = request.get_json(force=True)
-    system = data["system"]
+    system = data["nomenclature"]
     ship_name = data["ship_name"]
     rcm = RCMDB()
     res_r = rcm.generate_rcm_report(APP_ROOT, system , ship_name)  
@@ -646,4 +647,4 @@ def set_component_overhaul_age():
 if __name__ == '__main__':
     app.secret_key = os.urandom(32)
 
-    app.run(debug=False)
+    app.run(debug=True)

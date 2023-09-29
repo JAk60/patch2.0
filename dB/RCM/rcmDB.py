@@ -117,9 +117,10 @@ class RCMDB():
             rcm_return_values = [['No.', 'System',
                                 'Platform', 'Component', 'RCM Plan']]
             # system_data = '''select component_name, ship_name, system, component_id from system_configuration where system=? and ship_name=? '''
-            system_data = '''select s.component_id, s.component_name, r.rcm, s.parent_name, s.system, s.ship_name 
-            from rcm_component as r right join system_configuration as s 
-            on r.component_id = s.component_id where s.system=? and s.ship_name=?'''
+            system_data = '''select s.component_id, s.component_name, r.rcm, s.parent_name, s.nomenclature, s.ship_name 
+                from rcm_component as r right join system_configuration as s 
+                on r.component_id = s.component_id where s.nomenclature=? and s.ship_name=?
+            '''
             cursor.execute(system_data, SYSTEM, PLATFORM)        
             system_data = cursor.fetchall()
 
@@ -148,7 +149,7 @@ class RCMDB():
                 ('ALIGN', (0, 0), (-1, -1), 'CENTER'), 
                 ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
                 ('GRID', (0, 0), (-1, -1), 1, colors.black)
-            ], rowHeights=row_heights)
+            ])
             
             # t._argW = 0.8 * height
 
