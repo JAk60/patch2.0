@@ -127,7 +127,7 @@ const ReliabilityDashboard = () => {
 
       d.forEach((element) => {
         const filteredItems = userSelectionData
-          .filter((x) => x.equipmentName === element.equipmentName)
+          .filter((x) => x.equipmentName === element.equipmentName && x.shipName === element.parent )
           .map((x) => ({
             equipmentName: x.equipmentName,
             nomenclature: x.nomenclature,
@@ -136,7 +136,7 @@ const ReliabilityDashboard = () => {
         filteredItems.forEach((item) => {
           uniqueNomenData.add(JSON.stringify(item));
         });
-        console.log("uniqueEqData", uniqueNomenData);
+        console.log("uniqueEqData", filteredItems);
       });
       let uniqueNomArray = Array.from(uniqueNomenData).map((item) =>
         JSON.parse(item)

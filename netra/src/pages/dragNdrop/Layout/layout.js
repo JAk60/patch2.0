@@ -12,17 +12,17 @@ import { treeDataActions } from "../../../store/TreeDataStore";
 import { v4 as uuid } from "uuid";
 import { useHistory } from "react-router";
 
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import DialogTitle from '@material-ui/core/DialogTitle';
+import Dialog from "@material-ui/core/Dialog";
+import DialogActions from "@material-ui/core/DialogActions";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogContentText from "@material-ui/core/DialogContentText";
+import DialogTitle from "@material-ui/core/DialogTitle";
 import CustomizedSnackbars from "../../../ui/CustomSnackBar";
 import { filter } from "lodash";
 
 const Layout = (props) => {
   const [isNodeAddedMap, setIsNodeAddedMap] = useState({});
-  const [nomenclature,setNomenclature]= useState([])
+  const [nomenclature, setNomenclature] = useState([]);
   useEffect(() => {
     fetch("/fetch_tasks", {
       method: "GET",
@@ -35,12 +35,11 @@ const Layout = (props) => {
         return res.json();
       })
       .then((data) => {
-
-        setTaskNames(data['tasks'])
-        console.log(data['tasks'])
+        setTaskNames(data["tasks"]);
+        console.log(data["tasks"]);
       });
-  }, [])
-  const [taskNames, setTaskNames] = useState([])
+  }, []);
+  const [taskNames, setTaskNames] = useState([]);
   // Snackbar
   const [SnackBarMessage, setSnackBarMessage] = useState({
     severity: "error",
@@ -54,11 +53,13 @@ const Layout = (props) => {
       showSnackBar: false,
     });
   };
-  const history = useHistory()
+  const history = useHistory();
   const dispatch = useDispatch();
   const allElements = useSelector((state) => state.elements);
   const components = useSelector((state) => state.userSelection.componentsData);
-  const currentSelection = useSelector((state) => state.userSelection.currentSelection);
+  const currentSelection = useSelector(
+    (state) => state.userSelection.currentSelection
+  );
   // console.log(components);
   const onSaveHandler = () => {
     // const stringObject = JSON.stringify(allElements);
@@ -87,8 +88,8 @@ const Layout = (props) => {
     fetch("/save_task_configuration", {
       method: "POST",
       body: JSON.stringify({
-        taskData: allElements['elements'],
-        taskName: taskName
+        taskData: allElements["elements"],
+        taskName: taskName,
       }),
       headers: {
         "Content-Type": "application/json",
@@ -121,7 +122,7 @@ const Layout = (props) => {
         });
       });
     setOpen(false);
-  }
+  };
   const onLoadHandler = () => {
     console.log(loadname);
     // const ele = JSON.parse(localStorage.getItem("flow"));
@@ -129,7 +130,7 @@ const Layout = (props) => {
     fetch("/load_task_configuration", {
       method: "POST",
       body: JSON.stringify({
-        taskName: loadname
+        taskName: loadname,
       }),
       headers: {
         "Content-Type": "application/json",
@@ -152,9 +153,9 @@ const Layout = (props) => {
           severity: "error",
           message: "Some Error Occured. " + error,
           showSnackBar: true,
-        })
-      })
-    handleLoadClose()
+        });
+      });
+    handleLoadClose();
   };
   const [value, setValue] = useState([]);
   const systemData = useSelector((state) => state.treeData.treeData);
@@ -166,7 +167,7 @@ const Layout = (props) => {
   console.log(value);
   const reactFlowWrapper = useRef(null);
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
-  const [taskName, setTaskName] = useState("")
+  const [taskName, setTaskName] = useState("");
   const customSelectData = useSelector(
     (state) => state.userSelection.userSelection
   );
@@ -174,14 +175,19 @@ const Layout = (props) => {
     (state) => state.userSelection.componentsData
   );
   console.log(EqipmentsDataArr);
-  const options = customSelectData["equipmentName"]
+  const options = customSelectData["equipmentName"];
+  const selectedship = currentSelection["shipName"];
   // const  nomenclatureOptions =
   let filteredNomenclatures = EqipmentsDataArr.filter((item) =>
-  value.includes(item.name)
+  value.includes(item.name) && item.ship_name === selectedship
 ).map((item) => item.nomenclature);
-filteredNomenclatures=[...new Set(filteredNomenclatures)]
-  const ship_name = currentSelection["shipName"]
-  console.log(filteredNomenclatures, "F")
+  filteredNomenclatures = [...new Set(filteredNomenclatures)];
+  const ship_name = currentSelection["shipName"];
+  console.log(filteredNomenclatures, "F");
+
+
+
+
   const AddNodes = () => {
     const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
 
@@ -242,7 +248,6 @@ filteredNomenclatures=[...new Set(filteredNomenclatures)]
     });
   };
 
-
   const [open, setOpen] = useState(false);
   const handleClickOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -250,8 +255,8 @@ filteredNomenclatures=[...new Set(filteredNomenclatures)]
   const [loadopen, setLoadOpen] = useState(false);
   const handleLoadClickOpen = () => setLoadOpen(true);
   const handleLoadClose = () => setLoadOpen(false);
-  const [loadname, setLoadName] = useState('')
-  const [showDetails, setShowDetails] = useState(false)
+  const [loadname, setLoadName] = useState("");
+  const [showDetails, setShowDetails] = useState(false);
 
   return (
     <div className={classes.parent}>
@@ -267,7 +272,11 @@ filteredNomenclatures=[...new Set(filteredNomenclatures)]
         </div>
         </div> */}
       <div className={classes.flow_div}>
-        <Flow reactFlowInstance={reactFlowInstance} reactFlowWrapper={reactFlowWrapper} setReactFlowInstance={setReactFlowInstance}></Flow>
+        <Flow
+          reactFlowInstance={reactFlowInstance}
+          reactFlowWrapper={reactFlowWrapper}
+          setReactFlowInstance={setReactFlowInstance}
+        ></Flow>
       </div>
       <div className={classes.sidebar}>
         <div className={classes.buttonDiv}>
@@ -280,18 +289,37 @@ filteredNomenclatures=[...new Set(filteredNomenclatures)]
           <button onClick={handleLoadClickOpen} className={classes.restorebtn}>
             Load
           </button>
-          {showDetails ? <button onClick={() => { setShowDetails(false) }} className={classes.restorebtn}>
-            Back
-          </button> : <button onClick={() => { setShowDetails(true) }} className={classes.restorebtn}>
-            Component Details
-          </button>}
+          {showDetails ? (
+            <button
+              onClick={() => {
+                setShowDetails(false);
+              }}
+              className={classes.restorebtn}
+            >
+              Back
+            </button>
+          ) : (
+            <button
+              onClick={() => {
+                setShowDetails(true);
+              }}
+              className={classes.restorebtn}
+            >
+              Component Details
+            </button>
+          )}
           {/* <Button variant="outlined" color="primary" onClick={handleClickOpen}>
         Save
       </Button> */}
-          <Dialog maxWidth='sm' fullWidth open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+          <Dialog
+            maxWidth="sm"
+            fullWidth
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="form-dialog-title"
+          >
             <DialogTitle id="form-dialog-title">Enter task name</DialogTitle>
             <DialogContent>
-
               <TextField
                 autoFocus
                 margin="dense"
@@ -313,10 +341,15 @@ filteredNomenclatures=[...new Set(filteredNomenclatures)]
             </DialogActions>
           </Dialog>
 
-          <Dialog maxWidth='sm' fullWidth open={loadopen} onClose={handleLoadClose} aria-labelledby="form-dialog-title">
+          <Dialog
+            maxWidth="sm"
+            fullWidth
+            open={loadopen}
+            onClose={handleLoadClose}
+            aria-labelledby="form-dialog-title"
+          >
             <DialogTitle id="form-dialog-title">Select Task</DialogTitle>
             <DialogContent dividers>
-
               <Autocomplete
                 value={loadname}
                 options={taskNames}
@@ -325,7 +358,6 @@ filteredNomenclatures=[...new Set(filteredNomenclatures)]
                   <TextField {...params} variant="standard" />
                 )}
               />
-
             </DialogContent>
             <DialogActions>
               <Button onClick={handleLoadClose} color="primary">
@@ -336,55 +368,55 @@ filteredNomenclatures=[...new Set(filteredNomenclatures)]
               </Button>
             </DialogActions>
           </Dialog>
-
         </div>
         {/* <p>Here the details of each component goes!!</p> */}
-        {showDetails ? <ComponentDetails></ComponentDetails> : <><UserSelection alignment="vertical" inputWidth="250px" />
+        {showDetails ? (
+          <ComponentDetails></ComponentDetails>
+        ) : (
+          <>
+            <UserSelection alignment="vertical" inputWidth="250px" />
 
-          <Autocomplete
-            multiple
-            options={options}
-            //value={value}
-            onChange={handleChange}
-            // groupBy={(option) => option.parentName}
-            // getOptionLabel={(option) => option.name}
-            style={{ width: 300 }}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label="Select Equipments"
-                variant="outlined"
-              />
-
-            )}
-          />
-          <Autocomplete
-            multiple
-            options={filteredNomenclatures}
-            value={nomenclature}
-            onChange={(e,value)=>setNomenclature(value)}
-            // groupBy={(option) => option.parentName}
-            // getOptionLabel={(option) => option.name}
-            style={{ width: 300 }}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label="Select Nomenclature"
-                variant="outlined"
-              />
-
-            )}
-          />
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => AddNodes()}
-          >
-            Load Equipments
-          </Button>
-        </>}
-
-
+            <Autocomplete
+              multiple
+              options={options}
+              //value={value}
+              onChange={handleChange}
+              // groupBy={(option) => option.parentName}
+              // getOptionLabel={(option) => option.name}
+              style={{ width: 300 }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Select Equipments"
+                  variant="outlined"
+                />
+              )}
+            />
+            <Autocomplete
+              multiple
+              options={filteredNomenclatures}
+              value={nomenclature}
+              onChange={(e, value) => setNomenclature(value)}
+              // groupBy={(option) => option.parentName}
+              // getOptionLabel={(option) => option.name}
+              style={{ width: 300 }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Select Nomenclature"
+                  variant="outlined"
+                />
+              )}
+            />
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => AddNodes()}
+            >
+              Load Equipments
+            </Button>
+          </>
+        )}
       </div>
       {SnackBarMessage.showSnackBar && (
         <CustomizedSnackbars
@@ -393,7 +425,6 @@ filteredNomenclatures=[...new Set(filteredNomenclatures)]
         />
       )}
     </div>
-
   );
 };
 
