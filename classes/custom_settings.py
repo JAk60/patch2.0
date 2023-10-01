@@ -8,7 +8,7 @@ class Custom_Settings():
         systemSql = '''select ship_name, ship_category, ship_class, command, department, 
         component_name, nomenclature from system_configuration where parent_id is  null'''
         cursor.execute(sql)
-        unique_system_id_sql = '''select distinct component_id,component_name, nomenclature
+        unique_system_id_sql = '''select distinct ship_name ,component_id,component_name, nomenclature
          from system_configuration where parent_id is  null
         '''
         # eqData = [{} for r in eqData]
@@ -33,7 +33,7 @@ class Custom_Settings():
             'command': r[3],
             'department': r[4],
         } for r in data]
-        uniq_eq_data = [{"name": r[1],"nomenclature":r[2], "id": r[0]} for r in uniq_eq_data]
+        uniq_eq_data = [{"name": r[2],"nomenclature":r[3], "id": r[1], "ship_name": r[0]} for r in uniq_eq_data]
         fData = {'data': data, 'eqData': eqData, "uniq_eq_data": uniq_eq_data}
         if toJson:
             fData = jsonify(fData)

@@ -28,13 +28,35 @@ const useStyles = makeStyles({
   }
 });
 
+const headers = [
+  'date',
+  'parameterName',
+  'value',
+  'operatingHours',
+];
+
+function downloadBlankCSV() {
+  const csvContent = headers.join(',');
+
+  const blob = new Blob([csvContent], { type: 'text/csv' });
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'blank_data.csv';
+  document.body.appendChild(a);
+  a.click();
+  window.URL.revokeObjectURL(url);
+  document.body.removeChild(a);
+}
+
+
 
 
 const AddData = (props) => {
   const dispatch = useDispatch();
   const fileInputRef = useRef(null);
   const handleFileUpload = (file) => {
-    
+
     if (file) {
       setLoading(true);
 
@@ -54,7 +76,7 @@ const AddData = (props) => {
           if (rowData.length === headers.length + 1) { // Adjusted the condition here
             const rowObject = {};
             let j = 0, i = 0;
-            while (j < headers.length +1) {
+            while (j < headers.length + 1) {
               let value = rowData[j].trim();
               if (headers[j] === 'date') {
                 // Extract date and time parts
@@ -76,7 +98,7 @@ const AddData = (props) => {
             parsedData.push(rowObject);
           }
         }
-       // Now it's parsedData, not paramData
+        // Now it's parsedData, not paramData
         // Here, you can dispatch or do something else with the parsed data
         setDataRows(parsedData);
         setLoading(false);
@@ -384,6 +406,11 @@ const AddData = (props) => {
                 <div {...getRootProps()}>
                   <input {...getInputProps()} />
                 </div>
+              </div>
+              <div className={styles.importBtnContainer}>
+                <Button variant="contained" color="primary" onClick={downloadBlankCSV}>
+                  Download Blank CSV
+                </Button>
               </div>
             </div>
           </div>

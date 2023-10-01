@@ -273,7 +273,7 @@ class TaskReliability:
         #     final_data.append({m: data})
         # return final_data
     
-    def get_curr_age(self):
+    def get_curr_ages(self):
         
         query1 = "SELECT MAX(date) AS last_overhaul_date FROM data_manager_overhaul_maint_data WHERE maintenance_type = 'Overhaul' and component_id= ?"
         cursor.execute(query1, self.__component_id)
@@ -297,7 +297,23 @@ class TaskReliability:
         return sum_of_average_running, None    
     
     def calculate_rel_by_power_law(self, alpha, beta, duration):
-        curr_age = 2000
+        query = '''
+            SELECT component_id
+                FROM system_configuration
+                WHERE ship_name = ? COLLATE SQL_Latin1_General_CP1_CS_AS
+                AND nomenclature = ? COLLATE SQL_Latin1_General_CP1_CS_AS;
+        '''
+        cursor.execute(query, self.__ship_name, self.__component_name)
+
+        result = cursor.fetchone()
+        self.__component_id = result[0]
+        sum_of_average_running, error_message = self.get_curr_ages()
+        if error_message:
+            print(error_message)
+            curr_age = 0
+        else:
+           curr_age = sum_of_average_running
+        print("current age",curr_age)
         N_currentAge = alpha*(curr_age**beta)
         missionAge = curr_age + duration
         N_mission = alpha*(missionAge**beta)
@@ -404,6 +420,9 @@ class TaskReliability:
             missionRel = 1
             for comp in components:
                 compName = comp["name"]
+                self.__component_name = compName
+                self.__ship_name = parent
+                self.__component_id = comp["EquipmentId"]
                 eq_data = [{'name': compName, 'parent': parent}]
                 if index == 0:
                     Lrel = self.mission_wise_rel_new_dash(missionTypeName, eq_data, curr_age, duration)
@@ -590,6 +609,7 @@ class TaskReliability:
 
         sum_of_average_running = result2[0]
         return sum_of_average_running
+
 
 
     def task_formatter(self, json_data):

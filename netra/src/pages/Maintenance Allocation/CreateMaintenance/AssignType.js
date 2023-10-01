@@ -29,6 +29,32 @@ const useStyles = makeStyles({
   }
 });
 
+const headers = [
+  'name',
+  'unit',
+  'min',
+  'max',
+  'P',
+  'F',
+  'level',
+  'frequency',
+  'data',
+];
+
+function downloadBlankCSV() {
+  const csvContent = headers.join(',');
+
+  const blob = new Blob([csvContent], { type: 'text/csv' });
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'blank_data.csv';
+  document.body.appendChild(a);
+  a.click();
+  window.URL.revokeObjectURL(url);
+  document.body.removeChild(a);
+}
+
 const AssignType = (props) => {
   const [type, setType] = useState("");
   const [ageBasedUnit, setAgeBasedUnit] = useState(null);
@@ -880,27 +906,37 @@ const AssignType = (props) => {
                       height={200}
                     />
                   </div>
-                  <Link to="/maintenance_allocation/add_data">
-                    <Button variant="contained" color="primary">
-                      Add Sensor Data
-                    </Button>
-                  </Link>
-                  <div className={styles.importBtnContainer}>
-                    <input
-                      type="file"
-                      accept=".csv"
-                      onChange={(e) => handleFileUpload(e.target.files[0])}
-                      style={{ display: 'none' }}
-                      ref={fileInputRef}
-                    />
-                    {/* <Button
-                      className={classes.buttons}
-                      variant="contained"
-                      color="primary"
-                      onClick={() => fileInputRef.current.click()}
-                    >
-                      Import File
-                    </Button> */}
+                  <div className={styles.FooterClass}>
+                    <div className={styles.importBtnContainer}>
+                      <Link to="/maintenance_allocation/add_data">
+                        <Button variant="contained" color="primary">
+                          Add Sensor Data
+                        </Button>
+                      </Link>
+                    </div>
+                    <div className={styles.importBtnContainer}>
+                      <input
+                        type="file"
+                        accept=".csv"
+                        onChange={(e) => handleFileUpload(e.target.files[0])}
+                        style={{ display: 'none' }}
+                        ref={fileInputRef}
+                      />
+                      <Button
+                        className={classes.buttons}
+                        variant="contained"
+                        color="primary"
+                        style={{marginTop: "50px"}}
+                        onClick={() => fileInputRef.current.click()}
+                      >
+                        Import File
+                      </Button>
+                    </div>
+                    <div className={styles.importBtnContainer}>
+                      <Button variant="contained" color="primary" onClick={downloadBlankCSV}  style={{marginTop: "50px"}}>
+                        Download Blank CSV
+                      </Button>
+                    </div>
                   </div>
                 </div>
                 {/* <div className={styles.levelwise}>

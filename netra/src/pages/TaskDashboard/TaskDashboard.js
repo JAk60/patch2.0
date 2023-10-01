@@ -125,7 +125,7 @@ const TaskDashboard = () => {
     console.log(d)
     ParallelIds = d;
   };
-  console.log("phasedata",phasedata);
+  console.log("phasedata", phasedata);
   console.log(rowCompState, "This is shit!!")
   const [shipOption, setshipOption] = useState([]);
   const [taskOption, settaskOption] = useState([]);
@@ -186,7 +186,7 @@ const TaskDashboard = () => {
   const onCellValueChanged = (params) => {
     console.table(phasedata, "phase data")
     const { data } = params;
-      const { missionType, duration } = data;
+    const { missionType, duration } = data;
     console.log(missionType);
     if (params.colDef.field === "duration") {
       const updatedDurations = missionDurations.map((duration, index) =>
@@ -247,7 +247,7 @@ const TaskDashboard = () => {
           "Action Station",
         ],
       }}
-      
+
       width="220"
       editable={true}
     />,
@@ -264,7 +264,7 @@ const TaskDashboard = () => {
         currentTask: selectedTaskName
       }}
       //onCellClicked={onCellChanged}
-      width="220"
+      width="300"
       editable={true}
     />
   ];
@@ -369,7 +369,7 @@ const TaskDashboard = () => {
       add: defaultRow,
     });
   };
-  console.log("missionDurations",missionD);
+  console.log("missionDurations", missionD);
   const updateCompTable = () => {
     console.log(currentTaskName)
     const durationNums = missionDurations.map(str => parseFloat(str));
@@ -393,7 +393,7 @@ const TaskDashboard = () => {
         // const match = data.res[2].match(totalReliabilityRegex);
         // console.log(match)
 
-        const totalRel = data.res[data.res.length -1];
+        const totalRel = data.res[data.res.length - 1];
         // console.log(totalRel)
         const reliabilityValue = totalRel.split(":")[1];
         console.log(reliabilityValue);
@@ -454,7 +454,7 @@ const TaskDashboard = () => {
     settaskTableData([]);
     settaskMissionTableData([]);
   }
-  console.log("missiondata",missionProfileData);
+  console.log("missiondata", missionProfileData);
   const deleteRows = () => {
     debugger;
     const selectedRows = gridApi.getSelectedRows();
@@ -592,7 +592,7 @@ const TaskDashboard = () => {
   const onSubmitHandler = () => {
     // setMission(0);
     let storedData = Object.entries(localStorage)
-    console.log("Localy data",storedData)
+    console.log("Localy data", storedData)
     // storedData.pop()
     let fData = []
     storedData.forEach(ele => {
@@ -641,7 +641,7 @@ const TaskDashboard = () => {
               })
             })
             console.log("This is tdata", tData)
-            taskData.push({ "shipName": tData["shipName"], "taskName": tData["taskName"], "rel": parseFloat(tData["rel"]) ,  "cal_rel": parseFloat(tData["cal_rel"]).toFixed(4)})
+            taskData.push({ "shipName": tData["shipName"], "taskName": tData["taskName"], "rel": parseFloat(tData["rel"]), "cal_rel": parseFloat(tData["cal_rel"]).toFixed(4) })
           });
           console.log(taskData, 'Taks data')
           settaskTableData(taskData)
@@ -760,7 +760,7 @@ const TaskDashboard = () => {
                   marginBottom: "10px",
                 }}
               >
-                 <Typography variant="h5">Task Name</Typography>
+                <Typography variant="h5">Task Name</Typography>
               </InputLabel>
 
               <Autocomplete
@@ -833,7 +833,7 @@ const TaskDashboard = () => {
               Reset Screen
             </Button>
 
-          
+
 
 
           </div>
@@ -876,7 +876,7 @@ const TaskDashboard = () => {
               </Button>
             </div>
             <div>
-              {recommedation.res ? <PaperTable  response={recommedation}/>: ""
+              {recommedation.res ? <PaperTable response={recommedation} /> : ""
               }
             </div>
 
@@ -902,12 +902,12 @@ const TaskDashboard = () => {
               </Button>
 
               <Button
-              variant="contained"
-              color="secondary"
-              onClick={onSubmitHandler}
-            >
-              Calculate Reliability
-            </Button>
+                variant="contained"
+                color="secondary"
+                onClick={onSubmitHandler}
+              >
+                Calculate Reliability
+              </Button>
             </div>
             {/* <div style={{ width: "300px" }}>
         <TextField id="outlined-basic" label="Mission Name" 

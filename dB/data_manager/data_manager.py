@@ -883,7 +883,7 @@ class Data_Manager:
             alpha_beta_values = {}
             for component in components:
                 component_id = component["id"]
-                component_name = component["name"]
+                component_name = component["nomenclature"]
                 query = "select alpha, beta from alpha_beta where component_id= ?"
                 cursor.execute(query, component_id)
                 data = cursor.fetchone()

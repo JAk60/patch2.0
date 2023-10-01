@@ -22,12 +22,15 @@ const Custom = () => {
     const [userSelectionData, setUserSelectionData] = useState([]);
     const [selectedEqName, setEquipmentName] = useState([]);
     const [eqDataOption, setEqDataOption] = useState([]);
+    const [nomenclatureDataOption, setNomenclatureDataOption] = useState([]);
+    const [nomenclatureData, setNomenclatureData] = useState([]);
     const [selectedOption, setSelectedOption] = useState(null);
     const [selectedShip, setSelectedShip] = useState("");
     const [selectedEquipments, setSelectedEquipments] = useState([]);
     const [alphaBetaData, setAlphaBetaData] = useState([]);
     const [currShip, setCurrShip] = useState("");
     const [currEquipment, setCurrEquipment] = useState("");
+    const [selectedNomenclatures, setSelectedNomenclatures] = useState([]);
 
     const dispatch = useDispatch();
     const customSelectData = useSelector(
@@ -78,11 +81,12 @@ const Custom = () => {
             })
             .then((data) => {
                 const params = data["parameters"];
+                const filteredData = params.filter(item => nomenclatureData.includes(item.nomenclature));
                 const user_selection = data["user_selection"]["data"];
                 const eqData = data["user_selection"]["eqData"];
                 const eqIds = data["user_selection"]["uniq_eq_data"];
                 setUniqueEqIds(eqIds);
-                const shipName = user_selection.map((x) => x.shipName);
+                const shipName = [...new Set(user_selection.map((x) => x.shipName))];
                 setUserSelectionData(eqData);
                 dispatch(userActions.populateParams({ params: params }));
                 dispatch(
@@ -109,7 +113,8 @@ const Custom = () => {
                 return id[0];
             });
         filteredEqData = [...filteredEqData, ...xx];
-
+        filteredEqData = [...new Set(filteredEqData)]
+        console.log(filteredEqData, "This is equipment")
         setEqDataOption(filteredEqData);
         setShipName(e.target.value);
     };
@@ -132,16 +137,18 @@ const Custom = () => {
     const classes = dropDownStyle();
     const currShipName = currSelectedData.shipName;
     const currEquipmentName = currSelectedData.equipmentName;
+    const currNomenclature = currSelectedData.nomenclature;
 
     const handleSubmit = () => {
         // Your submit logic here
         console.log("Selected Ship Name:", selectedShipName);
         console.log("Selected Equipment Name:", selectedEqName);
+        console.log("nomenclatures", selectedNomenclatures)
 
 
         const payload = {
             ship_name: selectedShipName,
-            equipments: selectedEqName,
+            equipments: selectedNomenclatures,
         };
         fetch("/get_ship_alpha_beta", {
             method: "POST",
@@ -210,6 +217,35 @@ const Custom = () => {
             });
     };
 
+    useEffect(() => {
+        const filteredEqData = userSelectionData
+            .filter(x => x.shipName === selectedShipName)
+            .map(x => {
+                const id = uniqueEqIds.find(y => y.nomenclature === x.nomenclature)
+                return id ? id : null
+            })
+            .filter((id) => id !== null);
+        console.log(filteredEqData)
+        console.log(selectedEqName)
+        debugger
+        // const filteredNomenclatures = selectedEqName.map((selectedItem) => {
+        //     const matchingItem = filteredEqData.find((item) => item.name === selectedItem.name);
+        //     return matchingItem ? matchingItem.nomenclature : null;
+        // });
+        let filteredNomenclatures = selectedEqName.map((equipment) =>{
+            const item = filteredEqData.filter(item => item.name === equipment.name)
+            // const items = item.map((i) => i.nomenclature);
+            return item;
+        }).flat();
+
+
+        setSelectedNomenclatures(filteredNomenclatures);
+        console.log(filteredNomenclatures);
+        const nomenclatures = filteredNomenclatures.map((item)=> item.nomenclature);
+        setNomenclatureDataOption(nomenclatures);
+
+    }, [selectedEqName, selectedShipName])
+
     return (
         <div style={{ marginTop: "20px" }}>
             <div className={styles.dropdownSelections}>
@@ -240,7 +276,7 @@ const Custom = () => {
                         }}
                     >
                         <Typography variant="h5">Equipment Name</Typography>
-                        
+
                     </InputLabel>
 
                     <Autocomplete
@@ -255,6 +291,38 @@ const Custom = () => {
                             <TextField
                                 {...params}
                                 InputProps={{ ...params.InputProps, disableUnderline: true }}
+                                variant="standard"
+                            />
+                        )}
+                    />
+                </div>
+                <div style={{ width: "300px" }}>
+                    <InputLabel
+                        style={{
+                            fontWeight: "bold",
+                            color: "black",
+                            fontSize: "16px",
+                            marginBottom: "10px",
+                        }}
+                    >
+                        <Typography variant="h5">Select Nomenclature</Typography>
+                    </InputLabel>
+
+                    <Autocomplete
+                        classes={classes}
+                        multiple
+                        id="tags-standard"
+                        options={nomenclatureDataOption}
+                        getOptionLabel={(option) => option}
+                        value={nomenclatureData}
+                        onChange={(e, value) => setNomenclatureData(value)}
+                        renderInput={(params) => (
+                            <TextField
+                                {...params}
+                                InputProps={{
+                                    ...params.InputProps,
+                                    disableUnderline: true,
+                                }}
                                 variant="standard"
                             />
                         )}
@@ -309,13 +377,16 @@ const Custom = () => {
                             <Typography variant="h6"><strong>Ship Name:</strong> {currShipName}</Typography>
                         </div>
                         <div className={styles.horizontalTableCell}>
-                             <Typography variant="h6"><strong>Equipment:</strong> {currEquipmentName}</Typography>
+                            <Typography variant="h6"><strong>Equipment:</strong> {currEquipmentName}</Typography>
                         </div>
                         <div className={styles.horizontalTableCell}>
-                             <Typography variant="h6"><strong>Alpha:</strong> {averagedAlphaBeta.alpha.toFixed(6)}</Typography>
+                            <Typography variant="h6"><strong>Nomenclature:</strong> {currNomenclature}</Typography>
                         </div>
                         <div className={styles.horizontalTableCell}>
-                             <Typography variant="h6"><strong>Beta:</strong> {averagedAlphaBeta.beta.toFixed(6)}</Typography>
+                            <Typography variant="h6"><strong>Alpha:</strong> {averagedAlphaBeta.alpha.toFixed(6)}</Typography>
+                        </div>
+                        <div className={styles.horizontalTableCell}>
+                            <Typography variant="h6"><strong>Beta:</strong> {averagedAlphaBeta.beta.toFixed(6)}</Typography>
                         </div>
                     </div>
                     <Button

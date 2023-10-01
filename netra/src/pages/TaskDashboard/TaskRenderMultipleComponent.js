@@ -117,7 +117,7 @@ import React, {
         onChange={handleChange}
         // groupBy={(option) => option.name}
         getOptionLabel={(option) => option.name}
-        style={{ width: 300 }}
+        style={{ width: 850 }}
         renderInput={(params) => (
           <TextField
             {...params}

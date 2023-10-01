@@ -262,7 +262,7 @@ console.log(selectedEqName,
                   marginBottom: "10px",
                 }}
               >
-                <Typography variant="h5">Select Nomainclature</Typography>
+                <Typography variant="h5">Select Nomaenclature</Typography>
               </InputLabel>
 
               <Autocomplete

@@ -117,11 +117,18 @@ class RCMDB():
             rcm_return_values = [['No.', 'System',
                                 'Platform', 'Component', 'RCM Plan']]
             # system_data = '''select component_name, ship_name, system, component_id from system_configuration where system=? and ship_name=? '''
-            system_data = '''select s.component_id, s.component_name, r.rcm, s.parent_name, s.nomenclature, s.ship_name 
+            system_data_ = '''select s.component_id, s.component_name, r.rcm, s.parent_name, s.nomenclature, s.ship_name 
                 from rcm_component as r right join system_configuration as s 
                 on r.component_id = s.component_id where s.nomenclature=? and s.ship_name=?
             '''
-            cursor.execute(system_data, SYSTEM, PLATFORM)        
+            cursor.execute(system_data_, SYSTEM, PLATFORM)        
+            parent_id_ = cursor.fetchone()[0]
+
+            system_data = '''select s.component_id, s.component_name, r.rcm, s.parent_name, s.nomenclature, s.ship_name 
+                from rcm_component as r right join system_configuration as s 
+                on r.component_id = s.component_id where s.ship_name=? and s.parent_id=?
+            '''
+            cursor.execute(system_data, PLATFORM, parent_id_)
             system_data = cursor.fetchall()
 
             for index,row in enumerate(system_data):

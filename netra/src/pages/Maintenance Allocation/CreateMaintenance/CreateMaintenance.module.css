@@ -283,3 +283,8 @@
 .horizontalTableCell strong {
   font-weight: bold;
 }
+
+.footerClass{
+  display: flex;
+  justify-content: center;
+}
