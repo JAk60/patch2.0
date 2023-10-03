@@ -26,7 +26,7 @@ class TaskReliability:
     def lmu_rel(self, mission_name, system, platform, total_dur, c_age=0):
         sys_lmus = []
 
-        print(system)
+        # print(system)
         # mission_name = mission_data['mission_name']
         system_config = '''select * from system_configuration where ship_name=? and nomenclature=?'''
         eta_beta = '''select * from eta_beta  inner join system_configuration sc on eta_beta.component_id = sc.component_id
@@ -309,11 +309,11 @@ class TaskReliability:
         self.__component_id = result[0]
         sum_of_average_running, error_message = self.get_curr_ages()
         if error_message:
-            print(error_message)
+            # print(error_message)
             curr_age = 0
         else:
            curr_age = sum_of_average_running
-        print("current age",curr_age)
+        # print("current age",curr_age)
         N_currentAge = alpha*(curr_age**beta)
         missionAge = curr_age + duration
         N_mission = alpha*(missionAge**beta)
@@ -788,27 +788,68 @@ class TaskReliability:
 
             final_results = []
             total_reliblity = 1
+
+            rel = 1
+            # print("*"*50)
+            # print(groups)
+            # print("*"*50)
+            # print(phase_duration)
+            # print("phase seq", phase_seq)
+
             for i in range(len(groups)):
-                for idx,j in enumerate(phase_seq):
-                    # print("j value",j+1)
-                    phase_name = list(PhaseInfo.keys())[idx]
-                    # print("phase_name", phase_name)  # Get the phase name from phaseInfo dictionary
-                    if groups[i][j][5] == 0:
+                for j in phase_seq:
+                    phase_name = phase_array[j]
+                    if (groups[i][j][5] == 0 ):
                         pass
+                        # print("for phase", j + 1, " and group", i + 1,
+                        #       "no equipment required (0 out of N case)")
                     else:
-                        group_equi_rel, max_rel_equip, group_equip, Rel, max_rel_equip_index = taskrelcode.group_rel(groups[i][j][1], groups[i][j][2], groups[i][j][3], groups[i][j][4], phase_duration[idx], groups[i][j][5], groups[i][j][6])
+                        group_equi_rel, max_rel_equip, group_equip, Rel, max_rel_equip_index = taskrelcode.group_rel(groups[i][j][1],groups[i][j][2], groups[i][j][3], groups[i][j][4],phase_duration[j], groups[i][j][5],groups[i][j][6])
+                        # print ("for phase", j, " and group", i,"Reliability of all equipments is", group_equi_rel, "Reliability of the preferred equipments are",
+                        #         max_rel_equip, "preferred equipments are", group_equip,"Group Reliability is", Rel)
                         final_results.append(f"For {phase_name} and group {i+1}, "  # Use phase_name instead of phase number
                                             f"preferred equipments are {group_equip}")
-                        total_reliblity *= Rel
-                    try:
-                        for k in max_rel_equip_index:
-                            groups[i][j + 1][4][k] += phase_duration[j]
-                    except:
-                        pass
+                        print ("for phase", phase_name,"  and group", i+1,
+                                "preferred equipments are", group_equip,"Group Reliability is", Rel)
+                        
+                        rel = rel * Rel
+                        try:
+                            for k in max_rel_equip_index:
+                                for l in range(total_phase):
+                                    groups[i][l][4][k] += phase_duration[j]
+                        except:
+                            pass
 
-            final_results.append(f"Total Reliability: {total_reliblity}")
+            print("*"*100)
 
-            print(final_results)
+            # for i in range(len(groups)):
+            #     for j in phase_seq:
+            #         # print("j value",j+1)
+            #         phase_name = phase_array[j]
+            #         # print("phase_name", phase_name)  # Get the phase name from phaseInfo dictionary
+            #         if(groups[i][j][5] == 0):
+            #             pass
+            #         else:
+            #             group_equi_rel, max_rel_equip, group_equip, Rel, max_rel_equip_index = taskrelcode.group_rel(groups[i][j][1],groups[i][j][2], groups[i][j][3], groups[i][j][4],phase_duration[j], groups[i][j][5],groups[i][j][6])
+            #         #     print ("for phase", j+1,"  and group", i+1,
+            #         # "preferred equipments are", group_equip,"Group Reliability is", Rel)
+            #             final_results.append(f"For {phase_name} and group {i+1}, "  # Use phase_name instead of phase number
+            #                                 f"preferred equipments are {group_equip}")
+            #             print(f"For {phase_name} and group {i+1}, "  # Use phase_name instead of phase number
+            #                                 f"preferred equipments are {group_equip}")
+            #             total_reliblity *= Rel
+            #             try:
+            #                 for k in max_rel_equip_index:
+            #                     for l in range(total_phase):
+            #                         groups[i][l][4][k] += phase_duration[j]
+            #             except:
+            #                 pass
+
+            final_results.append(f"Total Reliability: {rel}")
+            print(f"Total Reliability: {rel}")
+
+
+            # print(final_results)
             return jsonify({
                "res": final_results
             })

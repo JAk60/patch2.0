@@ -636,7 +636,7 @@ const TaskDashboard = () => {
               componentRelData.forEach((cTD) => {
                 taskMissionData.push({
                   "shipName": tData["shipName"], "taskName": tData["taskName"],
-                  "rel": parseFloat(pTD["rel"]).toFixed(4), "missionType": pTD["missionName"], "ComponentMission": cTD["compName"]
+                  "rel": parseFloat(cTD["rel"]).toFixed(4), "missionType": pTD["missionName"], "ComponentMission": cTD["compName"]
                 })
               })
             })
