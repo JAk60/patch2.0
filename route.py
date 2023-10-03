@@ -646,4 +646,4 @@ def set_component_overhaul_age():
 
 if __name__ == '__main__':
     app.secret_key = os.urandom(32)
-    app.run(debug=True)
+    app.run(debug=False)

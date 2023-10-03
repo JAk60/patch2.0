@@ -21,6 +21,7 @@ class TaskReliability:
         self.__ship_name = None
         self.__component_name = None
         self.__component_id = None
+        self.__phase_used_components = {}
 
     mission_json = None
     def lmu_rel(self, mission_name, system, platform, total_dur, c_age=0):
@@ -313,12 +314,26 @@ class TaskReliability:
             curr_age = 0
         else:
            curr_age = sum_of_average_running
+
+
+        if self.__component_name in self.__phase_used_components:
+            duration_ = self.__phase_used_components[self.__component_name] + duration
+            self.__phase_used_components[self.__component_name] = duration_
+        else:
+           self.__phase_used_components[self.__component_name] = 0
+
         # print("current age",curr_age)
+        curr_age = curr_age + self.__phase_used_components[self.__component_name]
         N_currentAge = alpha*(curr_age**beta)
         missionAge = curr_age + duration
         N_mission = alpha*(missionAge**beta)
         N = N_mission - N_currentAge
         rel = (np.e**(-N))
+        # if self.__component_name in self.__phase_used_components:
+        #     duration = self.__phase_used_components[self.__component_name] + duration
+        #     self.__phase_used_components[self.__component_name] = duration
+        if self.__phase_used_components[self.__component_name] == 0:
+            self.__phase_used_components[self.__component_name] = duration
         return rel
 
     def get_DC_EM(self, lmuName, component_id=None, system_name=None, platform_name=None):
@@ -809,8 +824,8 @@ class TaskReliability:
                         #         max_rel_equip, "preferred equipments are", group_equip,"Group Reliability is", Rel)
                         final_results.append(f"For {phase_name} and group {i+1}, "  # Use phase_name instead of phase number
                                             f"preferred equipments are {group_equip}")
-                        print ("for phase", phase_name,"  and group", i+1,
-                                "preferred equipments are", group_equip,"Group Reliability is", Rel)
+                        # print ("for phase", phase_name,"  and group", i+1,
+                        #         "preferred equipments are", group_equip,"Group Reliability is", Rel)
                         
                         rel = rel * Rel
                         try:

@@ -1,0 +1,186 @@
+[
+    {
+        "data": {
+            "label": "TRIAL 1"
+        },
+        "dtype": "node",
+        "id": "be9fcdfa-1b0c-460a-929e-d66375e85339",
+        "position": {
+            "x": 308,
+            "y": 18
+        },
+        "shipName": "SHIP 1",
+        "sourcePosition": "bottom",
+        "targetPosition": "top",
+        "type": "systemNode"
+    },
+    {
+        "animated": false,
+        "dtype": "edge",
+        "id": "54313f9c-c927-4266-b565-c018b7472295",
+        "source": "be9fcdfa-1b0c-460a-929e-d66375e85339",
+        "sourceHandle": "a",
+        "style": {
+            "stroke": "rgb(97, 173, 226)"
+        },
+        "target": "f6228a10-8d4a-44d5-b25c-ccff398c4899",
+        "targetHandle": null,
+        "type": "smoothstep"
+    },
+    {
+        "animated": false,
+        "dtype": "edge",
+        "id": "c5fec625-9352-468a-bcfc-22845209bad9",
+        "source": "be9fcdfa-1b0c-460a-929e-d66375e85339",
+        "sourceHandle": "a",
+        "style": {
+            "stroke": "rgb(97, 173, 226)"
+        },
+        "target": "1d9e0821-1b59-476d-9633-af74793db550",
+        "targetHandle": null,
+        "type": "smoothstep"
+    },
+    {
+        "animated": false,
+        "dtype": "edge",
+        "id": "7c1e39aa-5928-4cbf-a501-e66150e9752c",
+        "source": "be9fcdfa-1b0c-460a-929e-d66375e85339",
+        "sourceHandle": "a",
+        "style": {
+            "stroke": "rgb(191, 65, 111)"
+        },
+        "target": "21c1b7e1-cb2d-49f4-b672-7b664800b809",
+        "targetHandle": null,
+        "type": "smoothstep"
+    },
+    {
+        "data": {
+            "k": 1,
+            "k_as": 1,
+            "k_c": 2,
+            "k_ds": 1,
+            "k_elh": 1,
+            "label": "GT 1",
+            "n": 2,
+            "parallel_comp": [
+                {
+                    "label": "GT 2",
+                    "value": "1d9e0821-1b59-476d-9633-af74793db550"
+                }
+            ]
+        },
+        "dtype": "node",
+        "equipementId": "d9c1759b-ff6f-4b03-a502-3728ae82cd04",
+        "id": "f6228a10-8d4a-44d5-b25c-ccff398c4899",
+        "metaData": {
+            "command": "WESTERN",
+            "department": "ENGINEERING",
+            "equipmentCode": "",
+            "equipmentName": "",
+            "nomenclature": "",
+            "shipCategory": "DESTROYER",
+            "shipClass": "KOLKATA(P-15A)",
+            "shipName": "SHIP 1"
+        },
+        "position": {
+            "x": 86,
+            "y": 104
+        },
+        "shipName": "SHIP 1",
+        "sourcePosition": "bottom",
+        "style": {
+            "background": "rgb(97, 173, 226)",
+            "border": "1px solid black",
+            "borderColor": "black",
+            "borderRadius": "5px",
+            "padding": "20px"
+        },
+        "targetPosition": "top",
+        "type": "component"
+    },
+    {
+        "data": {
+            "k": 1,
+            "k_as": 1,
+            "k_c": 2,
+            "k_ds": 1,
+            "k_elh": 1,
+            "label": "GT 2",
+            "n": 2,
+            "parallel_comp": [
+                {
+                    "label": "GT 1",
+                    "value": "f6228a10-8d4a-44d5-b25c-ccff398c4899"
+                }
+            ]
+        },
+        "dtype": "node",
+        "equipementId": "28ca54a0-20e6-47ad-b4ee-85fc6c6583d3",
+        "id": "1d9e0821-1b59-476d-9633-af74793db550",
+        "metaData": {
+            "command": "WESTERN",
+            "department": "ENGINEERING",
+            "equipmentCode": "",
+            "equipmentName": "",
+            "nomenclature": "",
+            "shipCategory": "DESTROYER",
+            "shipClass": "KOLKATA(P-15A)",
+            "shipName": "SHIP 1"
+        },
+        "position": {
+            "x": 308,
+            "y": 104
+        },
+        "shipName": "SHIP 1",
+        "sourcePosition": "bottom",
+        "style": {
+            "background": "rgb(97, 173, 226)",
+            "border": "1px solid black",
+            "borderColor": "black",
+            "borderRadius": "5px",
+            "padding": "20px"
+        },
+        "targetPosition": "top",
+        "type": "component"
+    },
+    {
+        "data": {
+            "k": 0,
+            "k_as": 1,
+            "k_c": 0,
+            "k_ds": 1,
+            "k_elh": 0,
+            "label": "SRGM 1",
+            "n": 1,
+            "parallel_comp": []
+        },
+        "dtype": "node",
+        "equipementId": "1edec8bb-a18d-444a-8c6b-fdf00e59a03a",
+        "id": "21c1b7e1-cb2d-49f4-b672-7b664800b809",
+        "metaData": {
+            "command": "WESTERN",
+            "department": "ELECTRICAL",
+            "equipmentCode": "",
+            "equipmentName": "",
+            "nomenclature": "",
+            "shipCategory": "DESTROYER",
+            "shipClass": "KOLKATA(P-15A)",
+            "shipName": "SHIP 1"
+        },
+        "position": {
+            "x": 530,
+            "y": 104
+        },
+        "shipName": "SHIP 1",
+        "sourcePosition": "bottom",
+        "style": {
+            "background": "rgb(191, 65, 111)",
+            "border": "1px solid black",
+            "borderColor": "black",
+            "borderRadius": "5px",
+            "padding": "20px"
+        },
+        "targetPosition": "top",
+        "type": "component"
+    }
+]
