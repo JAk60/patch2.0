@@ -133,8 +133,25 @@ class Data_Manager:
                         })
                     return final_data
         except Exception as e:
-            self.error_return['message'] = str(e)
-            return self.error_return
+            sql = '''select * from alpha_beta where component_id = ?'''
+            cursor.execute(sql, (id,))
+            rows = cursor.fetchall()
+            rows = rows[-1]
+            if rows:
+                final_data.append({
+                    'EquipmentName': name,
+                    'id': id,
+                    'alpha': rows[1],
+                    'beta': rows[2]
+                })
+            else:
+                final_data.append({
+                    'EquipmentName': name,
+                    'id': id,
+                    'alpha': '-',
+                    'beta': '-'
+                })
+            return final_data
 
     def insert_data(self, data_obj):
         data = data_obj['data']
@@ -161,7 +178,7 @@ class Data_Manager:
         if dt == "maintData":
             res = self.insert_maintenance_data(data)
         if dt == "overhauls":
-            self.insert_overhauls(data)
+            res = self.insert_overhauls(data)
         cnxn.commit()
         return res
 
@@ -291,6 +308,7 @@ class Data_Manager:
             component_id = d['component_id']
             alpha = d['alpha']
             beta = d['beta']
+
             try:
                 cursor.execute(insert_sql, id, alpha, beta, component_id)
             except Exception as e:
@@ -797,8 +815,12 @@ class Data_Manager:
         insert_main_sql = '''insert into data_manager_overhaul_maint_data (id, 
         component_id, overhaul_id, date, maintenance_type, cmms_running_age,
         associated_sub_system) values (?,?,?,?,?,?,?);'''
+        last_age_entry_sql = '''select max(cmms_running_age) from data_manager_overhaul_maint_data'''
+        cursor.execute(last_age_entry_sql)
+        last_cmms_age = cursor.fetchone()[0]
         index = 0
         run_age_component = 0
+        print(mainData)
         try:
             for d in subData:
                 if d:
@@ -814,6 +836,26 @@ class Data_Manager:
                                    overhaulNum, runAge, numMaint)
         except Exception as e:
             pass
+        
+        
+        last_age_entry_sql = '''SELECT COALESCE(MAX(cmms_running_age), 0) FROM data_manager_overhaul_maint_data WHERE component_id = ?'''
+        cursor.execute(last_age_entry_sql, component_id)
+        last_cmms_age = float(cursor.fetchone()[0])
+        run_ages_array = []
+
+        for d in mainData:
+            if d:
+                run_ages_array.append(float(d["totalRunAge"]))
+
+        small_values = all(value < last_cmms_age for value in run_ages_array)
+        if small_values:
+            self.error_return["message"] = f"The current running age corresponding to defect should be greater then previous value. \n Previous value is {last_cmms_age}"
+            return self.error_return
+        is_sorted = all(run_ages_array[i] <= run_ages_array[i + 1] for i in range(len(run_ages_array) - 1))
+        if is_sorted == False:
+            self.error_return["message"] = f"The current running age corresponding to defect should be greater then previous value. \n Previous value is {last_cmms_age}"
+            return self.error_return
+
 
         try:
             for d in mainData:
@@ -832,7 +874,10 @@ class Data_Manager:
                     cursor.execute(insert_main_sql, id, component_id,
                                    overhaulId, date, maintenanceType, cmmsRunAge, subSystemId)
         except Exception as e:
-            pass
+            self.error_return["message"] = str(e)
+            return self.error_return
+        
+        return self.success_return
         # mainData = self.fill_exact_runing_age(main_data=mainData, run_age_component=int(run_age_component))
         # failure_times = self.extract_failure_times(mainData)
         # print("THIS IS FAILURE", failure_times)

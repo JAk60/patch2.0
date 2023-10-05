@@ -4,7 +4,7 @@
             "label": "GUN FIRING TASK 1"
         },
         "dtype": "node",
-        "id": "24c3d90c-bcd4-4af6-92eb-a3ffa546efbc",
+        "id": "30076b7f-1a9c-435c-9a5b-7a5995071ccf",
         "position": {
             "x": 1085,
             "y": 18
@@ -17,160 +17,160 @@
     {
         "animated": false,
         "dtype": "edge",
-        "id": "76c73b5b-2e76-4d5f-858f-b2c24a4238d9",
-        "source": "24c3d90c-bcd4-4af6-92eb-a3ffa546efbc",
+        "id": "159a3eb9-0a93-4ff1-af44-b63c0833835b",
+        "source": "30076b7f-1a9c-435c-9a5b-7a5995071ccf",
         "sourceHandle": "a",
         "style": {
-            "stroke": "rgb(15, 252, 189)"
+            "stroke": "rgb(161, 105, 234)"
         },
-        "target": "278e1582-d3a1-4091-812f-2f072472d570",
+        "target": "38c36986-ba84-4ec9-be1f-3417b2caf6ba",
         "targetHandle": null,
         "type": "smoothstep"
     },
     {
         "animated": false,
         "dtype": "edge",
-        "id": "74bfb55d-ef45-4d76-80f7-847bede6683e",
-        "source": "24c3d90c-bcd4-4af6-92eb-a3ffa546efbc",
+        "id": "2481fc5b-c317-4f72-9f6b-81bfb44c777e",
+        "source": "30076b7f-1a9c-435c-9a5b-7a5995071ccf",
         "sourceHandle": "a",
         "style": {
-            "stroke": "rgb(15, 252, 189)"
+            "stroke": "rgb(161, 105, 234)"
         },
-        "target": "fe5aa99b-d492-4a03-b052-bab3ec202030",
+        "target": "fd7ec651-2170-4267-8551-2f9acba73fdc",
         "targetHandle": null,
         "type": "smoothstep"
     },
     {
         "animated": false,
         "dtype": "edge",
-        "id": "150b0242-f3ed-4ff8-9391-1ef7a81e7f41",
-        "source": "24c3d90c-bcd4-4af6-92eb-a3ffa546efbc",
+        "id": "4e6d12be-8b6f-4c42-a973-df05ca7441d8",
+        "source": "30076b7f-1a9c-435c-9a5b-7a5995071ccf",
         "sourceHandle": "a",
         "style": {
-            "stroke": "rgb(15, 252, 189)"
+            "stroke": "rgb(161, 105, 234)"
         },
-        "target": "6c72c531-31a9-4800-b481-81aa766df4e1",
+        "target": "ad2c1671-5bbb-4991-b647-e6e97752507a",
         "targetHandle": null,
         "type": "smoothstep"
     },
     {
         "animated": false,
         "dtype": "edge",
-        "id": "93933003-92e5-4097-a880-1b8bc5cbd846",
-        "source": "24c3d90c-bcd4-4af6-92eb-a3ffa546efbc",
+        "id": "e452d7e1-5ac4-44cb-82c8-06ceeacfddd7",
+        "source": "30076b7f-1a9c-435c-9a5b-7a5995071ccf",
         "sourceHandle": "a",
         "style": {
-            "stroke": "rgb(15, 252, 189)"
+            "stroke": "rgb(161, 105, 234)"
         },
-        "target": "794d4cf1-334e-41bc-b123-a5ee4c2aac19",
+        "target": "8fbc6863-cb6e-4117-a146-a8c4aace7843",
         "targetHandle": null,
         "type": "smoothstep"
     },
     {
         "animated": false,
         "dtype": "edge",
-        "id": "45176549-528c-4ee2-98c8-3212dc6974b6",
-        "source": "24c3d90c-bcd4-4af6-92eb-a3ffa546efbc",
+        "id": "94a655cc-3fa9-46d2-a55f-09314185a858",
+        "source": "30076b7f-1a9c-435c-9a5b-7a5995071ccf",
         "sourceHandle": "a",
         "style": {
-            "stroke": "rgb(87, 224, 167)"
+            "stroke": "rgb(209, 139, 69)"
         },
-        "target": "4587d9b4-39c6-4564-82d8-20d325ca82e3",
+        "target": "c898fa3d-0351-461f-9238-2917db555602",
         "targetHandle": null,
         "type": "smoothstep"
     },
     {
         "animated": false,
         "dtype": "edge",
-        "id": "331ba331-8da2-4579-aa74-95f6ef6c707e",
-        "source": "24c3d90c-bcd4-4af6-92eb-a3ffa546efbc",
+        "id": "669dfc93-0cf0-4a8e-8840-f636f28e55e7",
+        "source": "30076b7f-1a9c-435c-9a5b-7a5995071ccf",
         "sourceHandle": "a",
         "style": {
-            "stroke": "rgb(87, 224, 167)"
+            "stroke": "rgb(209, 139, 69)"
         },
-        "target": "4db31f88-adb8-4612-a25a-f08c7c39355e",
+        "target": "ff87d0ca-532c-4b64-8639-d7a3fdb6f771",
         "targetHandle": null,
         "type": "smoothstep"
     },
     {
         "animated": false,
         "dtype": "edge",
-        "id": "6c43474f-c993-4936-bfb5-017f4692bdeb",
-        "source": "24c3d90c-bcd4-4af6-92eb-a3ffa546efbc",
+        "id": "63985461-2460-40f9-bad1-cec59ba98874",
+        "source": "30076b7f-1a9c-435c-9a5b-7a5995071ccf",
         "sourceHandle": "a",
         "style": {
-            "stroke": "rgb(87, 224, 167)"
+            "stroke": "rgb(209, 139, 69)"
         },
-        "target": "c7c64c1f-df5c-4dbd-af41-0429f15574ee",
+        "target": "efce7c69-ecf9-4d54-b93c-802611ea8823",
         "targetHandle": null,
         "type": "smoothstep"
     },
     {
         "animated": false,
         "dtype": "edge",
-        "id": "ba11005d-ac73-42b8-970d-4b78cbc71cc2",
-        "source": "24c3d90c-bcd4-4af6-92eb-a3ffa546efbc",
+        "id": "5400c9e5-49a6-45c9-97a8-562d56f0e3b0",
+        "source": "30076b7f-1a9c-435c-9a5b-7a5995071ccf",
         "sourceHandle": "a",
         "style": {
-            "stroke": "rgb(112, 133, 255)"
+            "stroke": "rgb(17, 216, 107)"
         },
-        "target": "af7c525f-1e09-402c-9d7d-8c6decd67acb",
+        "target": "3a125965-9166-496d-b675-ab693634cd6c",
         "targetHandle": null,
         "type": "smoothstep"
     },
     {
         "animated": false,
         "dtype": "edge",
-        "id": "bf38c20c-db15-4151-889a-61c9f66bacff",
-        "source": "24c3d90c-bcd4-4af6-92eb-a3ffa546efbc",
+        "id": "55bccbd3-4f85-4c0d-99e4-85927082bb3e",
+        "source": "30076b7f-1a9c-435c-9a5b-7a5995071ccf",
         "sourceHandle": "a",
         "style": {
-            "stroke": "rgb(112, 133, 255)"
+            "stroke": "rgb(17, 216, 107)"
         },
-        "target": "041d9a9e-e671-4a80-82e9-18fdf6aa3087",
+        "target": "d30e9f3d-3f60-4c28-bb86-68f2691f696f",
         "targetHandle": null,
         "type": "smoothstep"
     },
     {
         "animated": false,
         "dtype": "edge",
-        "id": "e75b2410-c333-40d6-b2cc-3b29d3417538",
-        "source": "24c3d90c-bcd4-4af6-92eb-a3ffa546efbc",
+        "id": "98e412df-a8c3-413b-a910-a87221fa67d6",
+        "source": "30076b7f-1a9c-435c-9a5b-7a5995071ccf",
         "sourceHandle": "a",
         "style": {
-            "stroke": "rgb(53, 121, 163)"
+            "stroke": "rgb(173, 26, 89)"
         },
-        "target": "932eed07-ef54-45c0-9953-83d5c2654936",
+        "target": "24be5009-a5fb-4fed-a854-bacd657cb722",
         "targetHandle": null,
         "type": "smoothstep"
     },
     {
         "data": {
-            "k": 3,
+            "k": 2,
             "k_as": 4,
             "k_c": 3,
             "k_ds": 4,
-            "k_elh": 3,
+            "k_elh": 2,
             "label": "GT 1",
             "n": 4,
             "parallel_comp": [
                 {
                     "label": "GT 2",
-                    "value": "fe5aa99b-d492-4a03-b052-bab3ec202030"
-                },
-                {
-                    "label": "GT 4",
-                    "value": "794d4cf1-334e-41bc-b123-a5ee4c2aac19"
+                    "value": "fd7ec651-2170-4267-8551-2f9acba73fdc"
                 },
                 {
                     "label": "GT 3",
-                    "value": "6c72c531-31a9-4800-b481-81aa766df4e1"
+                    "value": "ad2c1671-5bbb-4991-b647-e6e97752507a"
+                },
+                {
+                    "label": "GT 4",
+                    "value": "8fbc6863-cb6e-4117-a146-a8c4aace7843"
                 }
             ]
         },
         "dtype": "node",
         "equipementId": "d9c1759b-ff6f-4b03-a502-3728ae82cd04",
-        "id": "278e1582-d3a1-4091-812f-2f072472d570",
+        "id": "38c36986-ba84-4ec9-be1f-3417b2caf6ba",
         "metaData": {
             "command": "WESTERN",
             "department": "ENGINEERING",
@@ -188,7 +188,7 @@
         "shipName": "SHIP 1",
         "sourcePosition": "bottom",
         "style": {
-            "background": "rgb(15, 252, 189)",
+            "background": "rgb(161, 105, 234)",
             "border": "1px solid black",
             "borderColor": "black",
             "borderRadius": "5px",
@@ -199,31 +199,31 @@
     },
     {
         "data": {
-            "k": 3,
+            "k": 2,
             "k_as": 4,
             "k_c": 3,
             "k_ds": 4,
-            "k_elh": 3,
+            "k_elh": 2,
             "label": "GT 2",
             "n": 4,
             "parallel_comp": [
                 {
-                    "label": "GT 4",
-                    "value": "794d4cf1-334e-41bc-b123-a5ee4c2aac19"
+                    "label": "GT 3",
+                    "value": "ad2c1671-5bbb-4991-b647-e6e97752507a"
                 },
                 {
-                    "label": "GT 3",
-                    "value": "6c72c531-31a9-4800-b481-81aa766df4e1"
+                    "label": "GT 4",
+                    "value": "8fbc6863-cb6e-4117-a146-a8c4aace7843"
                 },
                 {
                     "label": "GT 1",
-                    "value": "278e1582-d3a1-4091-812f-2f072472d570"
+                    "value": "38c36986-ba84-4ec9-be1f-3417b2caf6ba"
                 }
             ]
         },
         "dtype": "node",
         "equipementId": "28ca54a0-20e6-47ad-b4ee-85fc6c6583d3",
-        "id": "fe5aa99b-d492-4a03-b052-bab3ec202030",
+        "id": "fd7ec651-2170-4267-8551-2f9acba73fdc",
         "metaData": {
             "command": "WESTERN",
             "department": "ENGINEERING",
@@ -241,7 +241,7 @@
         "shipName": "SHIP 1",
         "sourcePosition": "bottom",
         "style": {
-            "background": "rgb(15, 252, 189)",
+            "background": "rgb(161, 105, 234)",
             "border": "1px solid black",
             "borderColor": "black",
             "borderRadius": "5px",
@@ -252,31 +252,31 @@
     },
     {
         "data": {
-            "k": 3,
+            "k": 2,
             "k_as": 4,
             "k_c": 3,
             "k_ds": 4,
-            "k_elh": 3,
+            "k_elh": 2,
             "label": "GT 3",
             "n": 4,
             "parallel_comp": [
                 {
                     "label": "GT 2",
-                    "value": "fe5aa99b-d492-4a03-b052-bab3ec202030"
+                    "value": "fd7ec651-2170-4267-8551-2f9acba73fdc"
                 },
                 {
                     "label": "GT 4",
-                    "value": "794d4cf1-334e-41bc-b123-a5ee4c2aac19"
+                    "value": "8fbc6863-cb6e-4117-a146-a8c4aace7843"
                 },
                 {
                     "label": "GT 1",
-                    "value": "278e1582-d3a1-4091-812f-2f072472d570"
+                    "value": "38c36986-ba84-4ec9-be1f-3417b2caf6ba"
                 }
             ]
         },
         "dtype": "node",
         "equipementId": "08a5ac05-955f-418d-8c96-985d20bcffa7",
-        "id": "6c72c531-31a9-4800-b481-81aa766df4e1",
+        "id": "ad2c1671-5bbb-4991-b647-e6e97752507a",
         "metaData": {
             "command": "WESTERN",
             "department": "ENGINEERING",
@@ -294,7 +294,7 @@
         "shipName": "SHIP 1",
         "sourcePosition": "bottom",
         "style": {
-            "background": "rgb(15, 252, 189)",
+            "background": "rgb(161, 105, 234)",
             "border": "1px solid black",
             "borderColor": "black",
             "borderRadius": "5px",
@@ -305,31 +305,31 @@
     },
     {
         "data": {
-            "k": 3,
+            "k": 2,
             "k_as": 4,
             "k_c": 3,
             "k_ds": 4,
-            "k_elh": 3,
+            "k_elh": 2,
             "label": "GT 4",
             "n": 4,
             "parallel_comp": [
                 {
                     "label": "GT 2",
-                    "value": "fe5aa99b-d492-4a03-b052-bab3ec202030"
+                    "value": "fd7ec651-2170-4267-8551-2f9acba73fdc"
                 },
                 {
                     "label": "GT 3",
-                    "value": "6c72c531-31a9-4800-b481-81aa766df4e1"
+                    "value": "ad2c1671-5bbb-4991-b647-e6e97752507a"
                 },
                 {
                     "label": "GT 1",
-                    "value": "278e1582-d3a1-4091-812f-2f072472d570"
+                    "value": "38c36986-ba84-4ec9-be1f-3417b2caf6ba"
                 }
             ]
         },
         "dtype": "node",
         "equipementId": "8d97f4ea-069f-4580-8949-876d96e4400e",
-        "id": "794d4cf1-334e-41bc-b123-a5ee4c2aac19",
+        "id": "8fbc6863-cb6e-4117-a146-a8c4aace7843",
         "metaData": {
             "command": "WESTERN",
             "department": "ENGINEERING",
@@ -347,7 +347,7 @@
         "shipName": "SHIP 1",
         "sourcePosition": "bottom",
         "style": {
-            "background": "rgb(15, 252, 189)",
+            "background": "rgb(161, 105, 234)",
             "border": "1px solid black",
             "borderColor": "black",
             "borderRadius": "5px",
@@ -358,27 +358,27 @@
     },
     {
         "data": {
-            "k": 2,
+            "k": 1,
             "k_as": 3,
-            "k_c": 2,
+            "k_c": 1,
             "k_ds": 3,
-            "k_elh": 2,
+            "k_elh": 1,
             "label": "GTG 1",
             "n": 3,
             "parallel_comp": [
                 {
                     "label": "GTG 2",
-                    "value": "4db31f88-adb8-4612-a25a-f08c7c39355e"
+                    "value": "ff87d0ca-532c-4b64-8639-d7a3fdb6f771"
                 },
                 {
                     "label": "GTG 3",
-                    "value": "c7c64c1f-df5c-4dbd-af41-0429f15574ee"
+                    "value": "efce7c69-ecf9-4d54-b93c-802611ea8823"
                 }
             ]
         },
         "dtype": "node",
         "equipementId": "dfd776c0-0b83-4efb-b55b-c7a3d6276bca",
-        "id": "4587d9b4-39c6-4564-82d8-20d325ca82e3",
+        "id": "c898fa3d-0351-461f-9238-2917db555602",
         "metaData": {
             "command": "WESTERN",
             "department": "ENGINEERING",
@@ -396,7 +396,7 @@
         "shipName": "SHIP 1",
         "sourcePosition": "bottom",
         "style": {
-            "background": "rgb(87, 224, 167)",
+            "background": "rgb(209, 139, 69)",
             "border": "1px solid black",
             "borderColor": "black",
             "borderRadius": "5px",
@@ -407,27 +407,27 @@
     },
     {
         "data": {
-            "k": 2,
+            "k": 1,
             "k_as": 3,
-            "k_c": 2,
+            "k_c": 1,
             "k_ds": 3,
-            "k_elh": 2,
+            "k_elh": 1,
             "label": "GTG 2",
             "n": 3,
             "parallel_comp": [
                 {
                     "label": "GTG 3",
-                    "value": "c7c64c1f-df5c-4dbd-af41-0429f15574ee"
+                    "value": "efce7c69-ecf9-4d54-b93c-802611ea8823"
                 },
                 {
                     "label": "GTG 1",
-                    "value": "4587d9b4-39c6-4564-82d8-20d325ca82e3"
+                    "value": "c898fa3d-0351-461f-9238-2917db555602"
                 }
             ]
         },
         "dtype": "node",
         "equipementId": "dd61b004-1ea1-48c6-95d8-adecad0c2243",
-        "id": "4db31f88-adb8-4612-a25a-f08c7c39355e",
+        "id": "ff87d0ca-532c-4b64-8639-d7a3fdb6f771",
         "metaData": {
             "command": "WESTERN",
             "department": "ENGINEERING",
@@ -445,7 +445,7 @@
         "shipName": "SHIP 1",
         "sourcePosition": "bottom",
         "style": {
-            "background": "rgb(87, 224, 167)",
+            "background": "rgb(209, 139, 69)",
             "border": "1px solid black",
             "borderColor": "black",
             "borderRadius": "5px",
@@ -456,27 +456,27 @@
     },
     {
         "data": {
-            "k": 2,
+            "k": 1,
             "k_as": 3,
-            "k_c": 2,
+            "k_c": 1,
             "k_ds": 3,
-            "k_elh": 2,
+            "k_elh": 1,
             "label": "GTG 3",
             "n": 3,
             "parallel_comp": [
                 {
                     "label": "GTG 2",
-                    "value": "4db31f88-adb8-4612-a25a-f08c7c39355e"
+                    "value": "ff87d0ca-532c-4b64-8639-d7a3fdb6f771"
                 },
                 {
                     "label": "GTG 1",
-                    "value": "4587d9b4-39c6-4564-82d8-20d325ca82e3"
+                    "value": "c898fa3d-0351-461f-9238-2917db555602"
                 }
             ]
         },
         "dtype": "node",
         "equipementId": "566f0e42-8bde-4f59-a898-f42b1548bd69",
-        "id": "c7c64c1f-df5c-4dbd-af41-0429f15574ee",
+        "id": "efce7c69-ecf9-4d54-b93c-802611ea8823",
         "metaData": {
             "command": "WESTERN",
             "department": "ENGINEERING",
@@ -494,7 +494,7 @@
         "shipName": "SHIP 1",
         "sourcePosition": "bottom",
         "style": {
-            "background": "rgb(87, 224, 167)",
+            "background": "rgb(209, 139, 69)",
             "border": "1px solid black",
             "borderColor": "black",
             "borderRadius": "5px",
@@ -505,23 +505,23 @@
     },
     {
         "data": {
-            "k": 2,
-            "k_as": 1,
+            "k": 1,
+            "k_as": 2,
             "k_c": 1,
-            "k_ds": 1,
-            "k_elh": 2,
+            "k_ds": 2,
+            "k_elh": 1,
             "label": "AC 1",
             "n": 2,
             "parallel_comp": [
                 {
                     "label": "AC 2",
-                    "value": "041d9a9e-e671-4a80-82e9-18fdf6aa3087"
+                    "value": "d30e9f3d-3f60-4c28-bb86-68f2691f696f"
                 }
             ]
         },
         "dtype": "node",
         "equipementId": "bc57e7c1-e4bd-4891-a09e-6bfdf0c3f2e1",
-        "id": "af7c525f-1e09-402c-9d7d-8c6decd67acb",
+        "id": "3a125965-9166-496d-b675-ab693634cd6c",
         "metaData": {
             "command": "WESTERN",
             "department": "ENGINEERING",
@@ -539,7 +539,7 @@
         "shipName": "SHIP 1",
         "sourcePosition": "bottom",
         "style": {
-            "background": "rgb(112, 133, 255)",
+            "background": "rgb(17, 216, 107)",
             "border": "1px solid black",
             "borderColor": "black",
             "borderRadius": "5px",
@@ -550,23 +550,23 @@
     },
     {
         "data": {
-            "k": 2,
-            "k_as": 1,
+            "k": 1,
+            "k_as": 2,
             "k_c": 1,
-            "k_ds": 1,
-            "k_elh": 2,
+            "k_ds": 2,
+            "k_elh": 1,
             "label": "AC 2",
             "n": 2,
             "parallel_comp": [
                 {
                     "label": "AC 1",
-                    "value": "af7c525f-1e09-402c-9d7d-8c6decd67acb"
+                    "value": "3a125965-9166-496d-b675-ab693634cd6c"
                 }
             ]
         },
         "dtype": "node",
         "equipementId": "f700729d-2250-4557-bb6c-901428702809",
-        "id": "041d9a9e-e671-4a80-82e9-18fdf6aa3087",
+        "id": "d30e9f3d-3f60-4c28-bb86-68f2691f696f",
         "metaData": {
             "command": "WESTERN",
             "department": "ENGINEERING",
@@ -584,7 +584,7 @@
         "shipName": "SHIP 1",
         "sourcePosition": "bottom",
         "style": {
-            "background": "rgb(112, 133, 255)",
+            "background": "rgb(17, 216, 107)",
             "border": "1px solid black",
             "borderColor": "black",
             "borderRadius": "5px",
@@ -606,7 +606,7 @@
         },
         "dtype": "node",
         "equipementId": "1edec8bb-a18d-444a-8c6b-fdf00e59a03a",
-        "id": "932eed07-ef54-45c0-9953-83d5c2654936",
+        "id": "24be5009-a5fb-4fed-a854-bacd657cb722",
         "metaData": {
             "command": "WESTERN",
             "department": "ELECTRICAL",
@@ -624,7 +624,7 @@
         "shipName": "SHIP 1",
         "sourcePosition": "bottom",
         "style": {
-            "background": "rgb(53, 121, 163)",
+            "background": "rgb(173, 26, 89)",
             "border": "1px solid black",
             "borderColor": "black",
             "borderRadius": "5px",

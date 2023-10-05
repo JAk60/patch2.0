@@ -200,11 +200,20 @@ function DataManager(props) {
         return res.json();
       })
       .then((data) => {
-        setSnackBarMessage({
-          severity: "success",
-          message: "Data Saved Successfully",
-          showSnackBar: true,
-        });
+        console.log(data)
+        if(data.code){
+          setSnackBarMessage({
+            severity: "success",
+            message: "Data Saved Successfully",
+            showSnackBar: true,
+          });
+        } else{
+          setSnackBarMessage({
+            severity: "error",
+            message: data.message,
+            showSnackBar: true,
+          });
+        }
       })
       .catch((error) => {
         setSnackBarMessage({
