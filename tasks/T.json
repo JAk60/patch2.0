@@ -4,149 +4,72 @@
             "label": "T"
         },
         "dtype": "node",
-        "id": "63f16484-db62-4384-8694-f53548acce6e",
+        "id": "e01c81fe-0a2e-493e-8aba-8011272d96d3",
         "position": {
             "x": 601,
             "y": 601
         },
-        "shipName": "INS CHENNAI",
+        "shipName": "SHIP 1",
         "type": "systemNode"
     },
     {
         "animated": false,
         "dtype": "edge",
-        "id": "aef1be25-b5c2-485f-819e-c82f19a851b7",
-        "source": "63f16484-db62-4384-8694-f53548acce6e",
-        "sourceHandle": "a",
+        "id": "c33f7351-8d88-46d1-a54d-75f0c790008c",
+        "source": "e01c81fe-0a2e-493e-8aba-8011272d96d3",
         "style": {
-            "stroke": "rgb(145, 43, 10)"
+            "stroke": "rgb(17, 119, 1)"
         },
-        "target": "9e51a155-8f55-43b9-bb8e-02320a615eb7",
-        "targetHandle": null,
+        "target": "e9af975d-b639-4320-96fd-95c16cdc013e",
         "type": "smoothstep"
     },
     {
         "animated": false,
         "dtype": "edge",
-        "id": "193859d9-e4db-4951-81ec-c1634cc8ad86",
-        "source": "63f16484-db62-4384-8694-f53548acce6e",
-        "sourceHandle": "a",
+        "id": "837fb7e6-abf6-44d5-8a0c-6235be5fea67",
+        "source": "e01c81fe-0a2e-493e-8aba-8011272d96d3",
         "style": {
-            "stroke": "rgb(145, 43, 10)"
+            "stroke": "rgb(17, 119, 1)"
         },
-        "target": "c69de13e-457d-4509-91f1-94f923b5203a",
-        "targetHandle": null,
-        "type": "smoothstep"
-    },
-    {
-        "animated": false,
-        "dtype": "edge",
-        "id": "d3633a18-e9ef-4f6e-8392-c9577391c043",
-        "source": "63f16484-db62-4384-8694-f53548acce6e",
-        "sourceHandle": "a",
-        "style": {
-            "stroke": "rgb(145, 43, 10)"
-        },
-        "target": "70725017-b327-4556-8e5e-957682b8d25d",
-        "targetHandle": null,
-        "type": "smoothstep"
-    },
-    {
-        "animated": false,
-        "dtype": "edge",
-        "id": "352e996f-ca03-447b-b0c0-90c89707db5c",
-        "source": "63f16484-db62-4384-8694-f53548acce6e",
-        "sourceHandle": "a",
-        "style": {
-            "stroke": "rgb(145, 43, 10)"
-        },
-        "target": "6624285a-103f-4439-a764-882e324624ec",
-        "targetHandle": null,
-        "type": "smoothstep"
-    },
-    {
-        "animated": false,
-        "dtype": "edge",
-        "id": "a5617b62-0649-4156-8652-96bcdea95494",
-        "source": "63f16484-db62-4384-8694-f53548acce6e",
-        "sourceHandle": "a",
-        "style": {
-            "stroke": "rgb(12, 118, 175)"
-        },
-        "target": "5d2471c3-3eae-4173-937e-f8b576a02c74",
-        "targetHandle": null,
-        "type": "smoothstep"
-    },
-    {
-        "animated": false,
-        "dtype": "edge",
-        "id": "21cd06cb-3cda-45cc-864b-7d6424eaa8ab",
-        "source": "63f16484-db62-4384-8694-f53548acce6e",
-        "sourceHandle": "a",
-        "style": {
-            "stroke": "rgb(12, 118, 175)"
-        },
-        "target": "4cb83094-ecc7-4403-8c44-8c668f6d087e",
-        "targetHandle": null,
-        "type": "smoothstep"
-    },
-    {
-        "animated": false,
-        "dtype": "edge",
-        "id": "c5185e36-428a-4057-857d-be412c819a3f",
-        "source": "63f16484-db62-4384-8694-f53548acce6e",
-        "sourceHandle": "a",
-        "style": {
-            "stroke": "rgb(67, 97, 168)"
-        },
-        "target": "7bd18eb9-2a00-4332-960c-643daab7251b",
-        "targetHandle": null,
+        "target": "2d56bf18-dc93-42d4-a9a1-69d0e9989034",
         "type": "smoothstep"
     },
     {
         "data": {
-            "k": 2,
-            "k_as": 4,
-            "k_c": 3,
-            "k_ds": 3,
-            "k_elh": 2,
-            "label": "GT1",
-            "n": 4,
+            "k": 1,
+            "k_as": 2,
+            "k_c": 1,
+            "k_ds": 1,
+            "k_elh": 1,
+            "label": "GT 1",
+            "n": 2,
             "parallel_comp": [
                 {
-                    "label": "GT2",
-                    "value": "c69de13e-457d-4509-91f1-94f923b5203a"
-                },
-                {
-                    "label": "GT3",
-                    "value": "70725017-b327-4556-8e5e-957682b8d25d"
-                },
-                {
-                    "label": "GT4",
-                    "value": "6624285a-103f-4439-a764-882e324624ec"
+                    "label": "GT 2",
+                    "value": "2d56bf18-dc93-42d4-a9a1-69d0e9989034"
                 }
             ]
         },
         "dtype": "node",
-        "equipementId": "ca0eb768-d1b6-4df1-b77f-ec06bae9f7e1",
-        "id": "9e51a155-8f55-43b9-bb8e-02320a615eb7",
+        "equipementId": "d9c1759b-ff6f-4b03-a502-3728ae82cd04",
+        "id": "e9af975d-b639-4320-96fd-95c16cdc013e",
         "metaData": {
-            "command": "Western Naval Command",
+            "command": "WESTERN",
             "department": "ENGINEERING",
             "equipmentCode": "",
             "equipmentName": "",
             "nomenclature": "",
-            "shipCategory": "DESTROYER AND FRIGATES",
-            "shipClass": "KOLKATA (P-15A)",
-            "shipName": "INS CHENNAI"
+            "shipCategory": "DESTROYER",
+            "shipClass": "KOLKATA(P-15A)",
+            "shipName": "SHIP 1"
         },
         "position": {
             "x": 51,
             "y": 51
         },
-        "shipName": "INS CHENNAI",
+        "shipName": "SHIP 1",
         "style": {
-            "background": "rgb(145, 43, 10)",
+            "background": "rgb(17, 119, 1)",
             "border": "1px solid black",
             "borderColor": "black",
             "borderRadius": "5px",
@@ -156,274 +79,40 @@
     },
     {
         "data": {
-            "k": 2,
-            "k_as": 4,
-            "k_c": 3,
-            "k_ds": 3,
-            "k_elh": 2,
-            "label": "GT2",
-            "n": 4,
+            "k": 1,
+            "k_as": 2,
+            "k_c": 1,
+            "k_ds": 1,
+            "k_elh": 1,
+            "label": "GT 2",
+            "n": 2,
             "parallel_comp": [
                 {
-                    "label": "GT3",
-                    "value": "70725017-b327-4556-8e5e-957682b8d25d"
-                },
-                {
-                    "label": "GT4",
-                    "value": "6624285a-103f-4439-a764-882e324624ec"
-                },
-                {
-                    "label": "GT1",
-                    "value": "9e51a155-8f55-43b9-bb8e-02320a615eb7"
+                    "label": "GT 1",
+                    "value": "e9af975d-b639-4320-96fd-95c16cdc013e"
                 }
             ]
         },
         "dtype": "node",
-        "equipementId": "ea6475c6-5e49-407a-b0f0-b058eead7ecd",
-        "id": "c69de13e-457d-4509-91f1-94f923b5203a",
+        "equipementId": "28ca54a0-20e6-47ad-b4ee-85fc6c6583d3",
+        "id": "2d56bf18-dc93-42d4-a9a1-69d0e9989034",
         "metaData": {
-            "command": "Western Naval Command",
+            "command": "WESTERN",
             "department": "ENGINEERING",
             "equipmentCode": "",
             "equipmentName": "",
             "nomenclature": "",
-            "shipCategory": "DESTROYER AND FRIGATES",
-            "shipClass": "KOLKATA (P-15A)",
-            "shipName": "INS CHENNAI"
+            "shipCategory": "DESTROYER",
+            "shipClass": "KOLKATA(P-15A)",
+            "shipName": "SHIP 1"
         },
         "position": {
             "x": 101,
             "y": 101
         },
-        "shipName": "INS CHENNAI",
+        "shipName": "SHIP 1",
         "style": {
-            "background": "rgb(145, 43, 10)",
-            "border": "1px solid black",
-            "borderColor": "black",
-            "borderRadius": "5px",
-            "padding": "20px"
-        },
-        "type": "component"
-    },
-    {
-        "data": {
-            "k": 2,
-            "k_as": 4,
-            "k_c": 3,
-            "k_ds": 3,
-            "k_elh": 2,
-            "label": "GT3",
-            "n": 4,
-            "parallel_comp": [
-                {
-                    "label": "GT2",
-                    "value": "c69de13e-457d-4509-91f1-94f923b5203a"
-                },
-                {
-                    "label": "GT4",
-                    "value": "6624285a-103f-4439-a764-882e324624ec"
-                },
-                {
-                    "label": "GT1",
-                    "value": "9e51a155-8f55-43b9-bb8e-02320a615eb7"
-                }
-            ]
-        },
-        "dtype": "node",
-        "equipementId": "b694a59a-fefb-44fa-949e-5ff273426d9f",
-        "id": "70725017-b327-4556-8e5e-957682b8d25d",
-        "metaData": {
-            "command": "Western Naval Command",
-            "department": "ENGINEERING",
-            "equipmentCode": "",
-            "equipmentName": "",
-            "nomenclature": "",
-            "shipCategory": "DESTROYER AND FRIGATES",
-            "shipClass": "KOLKATA (P-15A)",
-            "shipName": "INS CHENNAI"
-        },
-        "position": {
-            "x": 151,
-            "y": 151
-        },
-        "shipName": "INS CHENNAI",
-        "style": {
-            "background": "rgb(145, 43, 10)",
-            "border": "1px solid black",
-            "borderColor": "black",
-            "borderRadius": "5px",
-            "padding": "20px"
-        },
-        "type": "component"
-    },
-    {
-        "data": {
-            "k": 2,
-            "k_as": 4,
-            "k_c": 3,
-            "k_ds": 3,
-            "k_elh": 2,
-            "label": "GT4",
-            "n": 4,
-            "parallel_comp": [
-                {
-                    "label": "GT2",
-                    "value": "c69de13e-457d-4509-91f1-94f923b5203a"
-                },
-                {
-                    "label": "GT3",
-                    "value": "70725017-b327-4556-8e5e-957682b8d25d"
-                },
-                {
-                    "label": "GT1",
-                    "value": "9e51a155-8f55-43b9-bb8e-02320a615eb7"
-                }
-            ]
-        },
-        "dtype": "node",
-        "equipementId": "be59fa90-4326-4b32-b97b-6f1eee649a4d",
-        "id": "6624285a-103f-4439-a764-882e324624ec",
-        "metaData": {
-            "command": "Western Naval Command",
-            "department": "ENGINEERING",
-            "equipmentCode": "",
-            "equipmentName": "",
-            "nomenclature": "",
-            "shipCategory": "DESTROYER AND FRIGATES",
-            "shipClass": "KOLKATA (P-15A)",
-            "shipName": "INS CHENNAI"
-        },
-        "position": {
-            "x": 201,
-            "y": 201
-        },
-        "shipName": "INS CHENNAI",
-        "style": {
-            "background": "rgb(145, 43, 10)",
-            "border": "1px solid black",
-            "borderColor": "black",
-            "borderRadius": "5px",
-            "padding": "20px"
-        },
-        "type": "component"
-    },
-    {
-        "data": {
-            "k": 0,
-            "k_as": 1,
-            "k_c": 0,
-            "k_ds": 1,
-            "k_elh": 0,
-            "label": "SRGM",
-            "n": 1,
-            "parallel_comp": []
-        },
-        "dtype": "node",
-        "equipementId": "ea5f7824-0b28-4dbf-9005-854faebd6871",
-        "id": "7bd18eb9-2a00-4332-960c-643daab7251b",
-        "metaData": {
-            "command": "Western Naval Command",
-            "department": "ELECTRICAL",
-            "equipmentCode": "",
-            "equipmentName": "",
-            "nomenclature": "",
-            "shipCategory": "DESTROYER AND FRIGATES",
-            "shipClass": "KOLKATA (P-15A)",
-            "shipName": "INS CHENNAI"
-        },
-        "position": {
-            "x": 51,
-            "y": 51
-        },
-        "shipName": "INS CHENNAI",
-        "style": {
-            "background": "rgb(67, 97, 168)",
-            "border": "1px solid black",
-            "borderColor": "black",
-            "borderRadius": "5px",
-            "padding": "20px"
-        },
-        "type": "component"
-    },
-    {
-        "data": {
-            "k": 1,
-            "k_as": 2,
-            "k_c": 1,
-            "k_ds": 2,
-            "k_elh": 1,
-            "label": "GTG J1",
-            "n": 2,
-            "parallel_comp": [
-                {
-                    "label": "GTG J3",
-                    "value": "4cb83094-ecc7-4403-8c44-8c668f6d087e"
-                }
-            ]
-        },
-        "dtype": "node",
-        "equipementId": "64c0b583-600a-471d-a1c9-d727d24eee25",
-        "id": "5d2471c3-3eae-4173-937e-f8b576a02c74",
-        "metaData": {
-            "command": "Western Naval Command",
-            "department": "ENGINEERING",
-            "equipmentCode": "",
-            "equipmentName": "",
-            "nomenclature": "",
-            "shipCategory": "DESTROYER AND FRIGATES",
-            "shipClass": "KOLKATA (P-15A)",
-            "shipName": "INS CHENNAI"
-        },
-        "position": {
-            "x": 29,
-            "y": 44
-        },
-        "shipName": "INS CHENNAI",
-        "style": {
-            "background": "rgb(12, 118, 175)",
-            "border": "1px solid black",
-            "borderColor": "black",
-            "borderRadius": "5px",
-            "padding": "20px"
-        },
-        "type": "component"
-    },
-    {
-        "data": {
-            "k": 1,
-            "k_as": 2,
-            "k_c": 1,
-            "k_ds": 2,
-            "k_elh": 1,
-            "label": "GTG J3",
-            "n": 2,
-            "parallel_comp": [
-                {
-                    "label": "GTG J1",
-                    "value": "5d2471c3-3eae-4173-937e-f8b576a02c74"
-                }
-            ]
-        },
-        "dtype": "node",
-        "equipementId": "528b194f-dfa4-400b-94f3-b081564ec1ff",
-        "id": "4cb83094-ecc7-4403-8c44-8c668f6d087e",
-        "metaData": {
-            "command": "Western Naval Command",
-            "department": "ENGINEERING",
-            "equipmentCode": "",
-            "equipmentName": "",
-            "nomenclature": "",
-            "shipCategory": "DESTROYER AND FRIGATES",
-            "shipClass": "KOLKATA (P-15A)",
-            "shipName": "INS CHENNAI"
-        },
-        "position": {
-            "x": 79,
-            "y": 94
-        },
-        "shipName": "INS CHENNAI",
-        "style": {
-            "background": "rgb(12, 118, 175)",
+            "background": "rgb(17, 119, 1)",
             "border": "1px solid black",
             "borderColor": "black",
             "borderRadius": "5px",

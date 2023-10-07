@@ -15,11 +15,20 @@ export const saveSensor=(data,setSnackBarMessage)=>{
           return res.json();
         })
         .then((data) => {
-          setSnackBarMessage({
-            severity: "success",
-            message: data.message,
-            showSnackBar: true,
-          });
+          console.log(data)
+          if(data.code){
+            setSnackBarMessage({
+              severity: "success",
+              message: data.message,
+              showSnackBar: true,
+            });
+          }else{
+            setSnackBarMessage({
+              severity: "error",
+              message: data.message,
+              showSnackBar: true,
+            });
+          }
         })
         .catch((error) => {
           setSnackBarMessage({

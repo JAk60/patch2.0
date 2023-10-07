@@ -107,14 +107,22 @@ console.log(selectedEqName,
         return res.json();
       })
       .then((data) => {
-        console.log(data);
-        setSnackBarMessage({
-          severity: "success",
-          message: "Sensor Graph Showed Successfully",
-          showSnackBar: true,
-        });
-        setGraphData(data["graphData"]);
-        setShowGraph(true);
+        if(data.code){
+          setSnackBarMessage({
+            severity: "success",
+            message: "Sensor Graph Showed Successfully",
+            showSnackBar: true,
+          });
+          setGraphData(data.response["graphData"]);
+          setShowGraph(true);
+        }
+        else{
+          setSnackBarMessage({
+            severity: "error",
+            message: data.message,
+            showSnackBar: true,
+          });
+        }
       })
       .catch((error) => {
         setSnackBarMessage({

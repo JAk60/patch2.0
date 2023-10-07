@@ -1,0 +1,38 @@
+.background {
+    grid-row: 1/6;
+    grid-column: 1/13;
+    background-repeat: no-repeat;
+  }
+  
+  .flex {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    height: 100%;
+    width:98%;
+  }
+  
+  .table {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-left: 100px;
+    margin-top: 200px;
+    width: 98%;
+  }
+  .img {
+    float: right;
+    margin-top: 3%;
+    margin-right: 40px;
+  }
+  .button {
+    margin-bottom: 10px;
+  }
+  .content {
+  width: 60%; /* Adjust as needed */
+  margin: 80px auto; /* Center content horizontally */
+}
+.typo{
+    color: white;
+    padding-bottom: 50px;
+}

@@ -31,7 +31,7 @@ const ReliabilityDashboard = () => {
   const [tempMissionData, setTempMissionData] = useState([]);
   const [TooltipData, setTooltipData] = useState([]);
   const [missionInfo, setMissionInfo] = useState([]);
-  
+
 
   const [cardData, setCardData] = useState(null);
 
@@ -127,7 +127,7 @@ const ReliabilityDashboard = () => {
 
       d.forEach((element) => {
         const filteredItems = userSelectionData
-          .filter((x) => x.equipmentName === element.equipmentName && x.shipName === element.parent )
+          .filter((x) => x.equipmentName === element.equipmentName && x.shipName === element.parent)
           .map((x) => ({
             equipmentName: x.equipmentName,
             nomenclature: x.nomenclature,
@@ -245,66 +245,69 @@ const ReliabilityDashboard = () => {
       },
     })
       .then((res) => res.json())
-      .then((d) => {
+      .then((res) => {
         debugger;
-        console.log(d);
-        console.log(d[0]["Temp Mission"]);
-        const reliabilityDataArray = [];
-        // reliabilityDataArray.push({
-        //   name: "Target Reliability",
-        //   Reliability: 90.0,
-        // })
-
-        d.forEach((missionData) => {
-          Object.keys(missionData["Temp Mission"]).forEach((ship) => {
-            const shipData = missionData["Temp Mission"][ship];
-            shipData.forEach((data) => {
-              Object.keys(data).forEach((name) => {
-                const relValue = data[name].rel;
-                reliabilityDataArray.push({
-                  name,
-                  reliability: 100 * relValue,
-                });
-              });
-            });
-          });
-        });
-
-        console.log("---------------->>>>>", reliabilityDataArray);
-
-        setGraphData(reliabilityDataArray);
-        const cardD = [];
-
-        d.forEach((missionData) => {
-          const actualData = [];
-          Object.keys(missionData["Temp Mission"]).forEach((ship) => {
-            const shipDataArray = missionData["Temp Mission"][ship];
-            shipDataArray.forEach((shipData) => {
-              Object.keys(shipData).forEach((name) => {
-                const relValue = 100 * shipData[name].rel;
-                actualData.push({
-                  name,
-                  rel: relValue,
-                  prob: 100 * shipData[name].prob_ac,
+        if (res.code) {
+          const d = res.results
+          const reliabilityDataArray = [];
+          d.forEach((missionData) => {
+            Object.keys(missionData["Temp Mission"]).forEach((ship) => {
+              const shipData = missionData["Temp Mission"][ship];
+              shipData.forEach((data) => {
+                Object.keys(data).forEach((name) => {
+                  const relValue = data[name].rel;
+                  reliabilityDataArray.push({
+                    name,
+                    reliability: 100 * relValue,
+                  });
                 });
               });
             });
           });
 
-          cardD.push({
-            name: selectedMissionName,
-            target: 90, // Replace this with the actual target value if available
-            actual: actualData,
+          console.log("---------------->>>>>", reliabilityDataArray);
+
+          setGraphData(reliabilityDataArray);
+          const cardD = [];
+
+          d.forEach((missionData) => {
+            const actualData = [];
+            Object.keys(missionData["Temp Mission"]).forEach((ship) => {
+              const shipDataArray = missionData["Temp Mission"][ship];
+              shipDataArray.forEach((shipData) => {
+                Object.keys(shipData).forEach((name) => {
+                  const relValue = 100 * shipData[name].rel;
+                  actualData.push({
+                    name,
+                    rel: relValue,
+                    prob: 100 * shipData[name].prob_ac,
+                  });
+                });
+              });
+            });
+
+            cardD.push({
+              name: selectedMissionName,
+              target: 90, // Replace this with the actual target value if available
+              actual: actualData,
+            });
           });
-        });
-        console.log("PPP__>>>>>>", cardD);
-        setCardData(cardD);
+          console.log("PPP__>>>>>>", cardD);
+          setCardData(cardD);
+          setSnackBarMessage({
+            severity: "success",
+            message: res.message,
+            showSnackBar: true,
+          });
+        }else{
+          setSnackBarMessage({
+            severity: "error",
+            message: res.message,
+            showSnackBar: true,
+          });
+        }
       });
-    setSnackBarMessage({
-      severity: "success",
-      message: "Reliblity Of Equipment Showed Successfully",
-      showSnackBar: true,
-    });
+    
   };
 
   return (

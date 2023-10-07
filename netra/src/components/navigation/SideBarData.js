@@ -1,7 +1,7 @@
-import HomeIcon from "@material-ui/icons/Home";
-import Build from "@material-ui/icons/Build";
-import PieChartIcon from "@material-ui/icons/PieChart";
-import StorageIcon from "@material-ui/icons/Storage";
+import HomeIcon from '@material-ui/icons/Home';
+import SettingsIcon from '@material-ui/icons/Settings';
+import BarChartIcon from '@material-ui/icons/BarChart';
+import RateReviewIcon from '@material-ui/icons/RateReview';
 
 const SideBarData = [
   {
@@ -11,17 +11,17 @@ const SideBarData = [
   },
   {
     title: "System Configuration",
-    icon: <Build fontSize="large" />,
+    icon: <SettingsIcon fontSize="large" />,
     path: "/system_config",
   },
   {
     title: "Dashboard",
-    icon: <PieChartIcon fontSize="large" />,
+    icon: <BarChartIcon fontSize="large" />,
     path: "/rDashboard",
   },
   {
     title: "Update Data",
-    icon: <StorageIcon fontSize="large" />,
+    icon: <RateReviewIcon fontSize="large" />,
     path: "/view_data",
   },
 ];

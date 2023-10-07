@@ -187,7 +187,7 @@ const Layout = (props) => {
 
 
 
-
+console.log("reactFlowInstance,",reactFlowInstance);
   const AddNodes = () => {
     const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
 

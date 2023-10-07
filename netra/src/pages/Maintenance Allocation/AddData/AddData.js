@@ -87,7 +87,8 @@ const AddData = (props) => {
               }
               console.log(value);
               rowObject[headers[i]] = value;
-              j += 1, i += 1;
+              j += 1;
+              i += 1;
             }
             rowObject["id"] = uuid();
             rowObject["componentId"] = selectedComponent.id;
@@ -197,19 +198,20 @@ const AddData = (props) => {
     })
       .then((res) => res.json())
       .then((data) => {
-        setSnackBarMessage({
-          severity: "success",
-          message: data.message,
-          showSnackBar: true,
-        });
+        if(data.code){
+          setSnackBarMessage({
+            severity: "success",
+            message: data.message,
+            showSnackBar: true,
+          });
+        }else{
+          setSnackBarMessage({
+            severity: "error",
+            message: data.message,
+            showSnackBar: true,
+          });
+        }
       })
-      .catch((error) => {
-        setSnackBarMessage({
-          severity: "error",
-          message: "Some Error Occured. " + error,
-          showSnackBar: true,
-        });
-      });
   };
 
   const DataColumnDefs = [

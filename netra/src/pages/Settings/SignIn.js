@@ -78,38 +78,29 @@ const SignIn = (props) => {
         },
         body: JSON.stringify(data)
       })
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-          return response.json();
+        .then(res => {
+          return res.json();
         })
         .then(data => {
-          console.log('Success:', data);
-          localStorage.setItem('login', true);
-          const isLoggedIn = localStorage.getItem('login');
-          if (isLoggedIn === 'true') {
-            props.setLoggedIn(true)
+          console.log(data)
+          if (data.code) {
+            localStorage.setItem('login', true);
+            const isLoggedIn = localStorage.getItem('login');
+            if (isLoggedIn === 'true') {
+              props.setLoggedIn(true)
+            }
+            console.log({ level: data.message.level, value: true })
+            dispatch(setLevel({ level: data.message.level, value: true }))
+            localStorage.setItem('userData', JSON.stringify({ level: data.message.level, value: true }));
+          } else {
+            setSnackBarMessage({
+              severity: "error",
+              message: data.message,
+              showSnackBar: true,
+            })
           }
-          console.log({ level: data.level, value: true })
-          dispatch(setLevel({ level: data.level, value: true }))
-          localStorage.setItem('userData', JSON.stringify({ level: data.level, value: true }));
-          // props.history.push('/')
         })
-        .catch(error => {
-          setSnackBarMessage({
-            severity: "error",
-            message: "Enter Correct Login details",
-            showSnackBar: true,
-          })
-        });
-    }
-    else {
-      setSnackBarMessage({
-        severity: "error",
-        message: "Enter Correct Login details",
-        showSnackBar: true,
-      })
+      
     }
   }
   return (

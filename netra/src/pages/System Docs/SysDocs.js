@@ -152,17 +152,17 @@ const SysDocs = (props) => {
         .then((data) => {
             if (data.code == 1){
                 // resetForm()
-          setSnackBarMessage({
-            severity: "success",
-            message: data.message,
-            showSnackBar: true,
+              setSnackBarMessage({
+                severity: "success",
+                message: data.message,
+                showSnackBar: true,
           });
         }else{
             setSnackBarMessage({
                 severity: "error",
                 message: data.message,
                 showSnackBar: true,
-              });
+          });
         }
         })
     //   

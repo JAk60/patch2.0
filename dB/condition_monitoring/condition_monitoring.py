@@ -9,7 +9,7 @@ class conditionMonitoring_dB():
         conditionMonitoringdB_Table()
         self.success_return = {"message": "Data Saved Successfully.",
                                "code": 1}
-        self.error_return = {"message": "Some Error Occured, Please try agian.",
+        self.error_return = {"message": "Some Error Occured, Please try again.",
                              "code": 0}
 
     def save_dataToDB(self, data, dtype):
@@ -22,8 +22,6 @@ class conditionMonitoring_dB():
                 res = self.insert_sensor_alarm_attributes(data['alarmAtts'])
 
             except Exception as e:
-                print(e)
-                self.error_return['message'] = str(e)
                 return self.error_return
         if dtype == 'insertParamData':
             res = self.insert_param_data(data)
@@ -36,7 +34,6 @@ class conditionMonitoring_dB():
     def insert_sensor(self, data):
         try:
             for d in data:
-                print(d)
                 component_id = d['ComponentId']
                 equipment_id = d['EquipmentId']
                 sensor_id = d['id']
@@ -48,28 +45,26 @@ class conditionMonitoring_dB():
                 unit = d['unit']
                 min_value = d['min']
                 max_value = d['max']
-                param_data = d['data']
-                level = d['level']
+                # param_data = d['data']
+                # level = d['level']
                 P = d['P']  # Assuming you have a 'P' field in the data
                 F = d['F']  # Assuming you have an 'F' field in the data
 
                 insert_sensor_based = '''
                     INSERT INTO sensor_based_data
                         (id, component_id, equipment_id, name, failure_mode_id, frequency, unit,
-                        min_value, max_value, data, level, P, F)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                        min_value, max_value, P, F)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 '''
 
                 cursor.execute(insert_sensor_based, sensor_id, component_id, equipment_id, name, failure_mode_id,
-                                                     frequency, unit, min_value, max_value,
-                                                    param_data, level, P, F)
+                                                     frequency, unit, min_value, max_value, P, F)
             cursor.commit()
-            return self.success_return()  # Assuming success_return() returns the desired response for success
+            return self.success_return  # Assuming success_return() returns the desired response for success
         except Exception as e:
         # Handle any exceptions that might occur during the execution or database commit
         # You can log the error or raise an appropriate exception
-            print(f"Error occurred: {str(e)}")
-            return self.error_return()  # Assuming error_return() returns the desired response for errors
+            return self.error_return  # Assuming error_return() returns the desired response for errors
 
     def insert_sensor_param_attributes(self, data):
         # print(data)
@@ -220,7 +215,7 @@ class conditionMonitoring_dB():
             return self.success_return
 
         except Exception as e:
-            return e
+            return self.error_return
 
 
     def fetch_cmdata(self, eIds, pNames):

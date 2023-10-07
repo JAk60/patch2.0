@@ -36,9 +36,9 @@ const headers = [
   'max',
   'P',
   'F',
-  'level',
+  // 'level',
   'frequency',
-  'data',
+  // 'data',
 ];
 
 function downloadBlankCSV() {
@@ -291,9 +291,8 @@ const AssignType = (props) => {
           unit: "",
           min: "",
           max: "",
-          level: "",
           frequency: "",
-          data: "",
+          // data: "",
         },
       ];
       n--;
@@ -352,13 +351,13 @@ const AssignType = (props) => {
       // minWidth={100}
       editable={true}
     />,
-    <AgGridColumn
-      field="level"
-      headerName="Level"
-      headerTooltip="Level"
-      // minWidth={100}
-      editable={true}
-    />,
+    // <AgGridColumn
+    //   field="level"
+    //   headerName="Level"
+    //   headerTooltip="Level"
+    //   // minWidth={100}
+    //   editable={true}
+    // />,
     monitoringType === "intermittent" ? (
       <AgGridColumn
         field="frequency"
@@ -368,17 +367,17 @@ const AssignType = (props) => {
         editable={true}
       />
     ) : null,
-    <AgGridColumn
-      field="data"
-      headerName="Data"
-      headerTooltip="Data"
-      // minWidth={100}
-      editable={true}
-      cellEditor="agSelectCellEditor"
-      cellEditorParams={{
-        values: ["From Excel File", "From DB"],
-      }}
-    />,
+    // <AgGridColumn
+    //   field="data"
+    //   headerName="Data"
+    //   headerTooltip="Data"
+    //   // minWidth={100}
+    //   editable={true}
+    //   cellEditor="agSelectCellEditor"
+    //   cellEditorParams={{
+    //     values: ["From Excel File", "From DB"],
+    //   }}
+    // />,
   ];
   const lvlwiseColumnDefs = [
     <AgGridColumn

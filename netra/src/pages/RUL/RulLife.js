@@ -156,15 +156,26 @@ const RulLife = () => {
         return res.json();
       })
       .then((data) => {
-        console.log(data)
-        setP(data[0].P)
-        setF(data[0].F)
-        console.log(P, F)
+        if(data.code && data.results.length == 1){
+          setP(data.results[0].P)
+          setF(data.results[0].F)
+        }else if(data.results.length == 0){
+          setSnackBarMessage({
+            severity: "error",
+            message: "Please Fill The Information",
+            showSnackBar: true,
+          });
+        }
+        else{
+          setSnackBarMessage({
+            severity: "error",
+            message: data.message,
+            showSnackBar: true,
+          });
+        }
         
       })
-      .catch((error) => {
-        // Handle fetch error
-      });
+
   };
 
   useEffect(() => {

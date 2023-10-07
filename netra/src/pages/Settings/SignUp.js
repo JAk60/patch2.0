@@ -77,32 +77,22 @@ const SignUp = () => {
       },
       body: JSON.stringify(data)
     })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json();
+      .then(res => {
+
+        return res.json();
       })
       .then(data => {
-        console.log('Success:', data);
-        if(data.error){
+
+        if(data.code){
+          history.push('/sign_in', { message: data.message }); 
+        }else{
           setSnackBarMessage({
             severity: "error",
-            message: data.error,
+            message: data.message,
             showSnackBar: true,
           });
-        }else{
-          history.push('/sign_in', { message: "user created successfully" });
         }
       })
-      .catch(error => {
-        console.error('Error:', error);
-        setSnackBarMessage({
-          severity: "error",
-          message: error.messege,
-          showSnackBar: true,
-        })
-      });
   }
 
   return (

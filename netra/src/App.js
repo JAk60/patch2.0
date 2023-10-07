@@ -32,6 +32,7 @@ import RulLife from './pages/RUL/RulLife';
 import Login from './pages/Home/Login'
 import { useDispatch } from "react-redux";
 import { setLevel } from "./store/Levels";
+import Help from "./pages/Help/Help";
 
 const theme = createMuiTheme({
   palette: {
@@ -119,6 +120,7 @@ function App() {
             />
             <Route path="/user_approval" exact component={UserApproval} />
             <Route path="/edit_profile" exact component={EditProfile} />
+            <Route path="/know_netra" exact component={Help} />
             <Route
               path="/view_data"
               exact

@@ -1,4 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { v4 as uuid } from "uuid";
+
 const initialState = {
   elements: [],
   node: {
@@ -23,6 +25,24 @@ const elements = createSlice({
     addElement(state, action) {
       debugger;
       let ele = action.payload.ele;
+    
+      // Check if the added element is a component (excluding main nodes)
+      if (ele.type === "component") {
+        // Find the main node
+        const mainNode = state.elements.find(node => node.type === "systemNode");
+    
+        // If a main node is found, add a connection from the main node to the new component
+        if (mainNode) {
+          state.elements.push({
+            id: uuid(),
+            type: "smoothstep", // Assuming this is the type of edge
+            source: mainNode.id,
+            target: ele.id,
+            dtype: "edge",
+          });
+        }
+      }
+    
       state.elements.push(ele);
     },
     removeElement(state, action) {

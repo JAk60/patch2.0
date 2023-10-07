@@ -62,11 +62,13 @@ class RUL_dB:
             for row in data:
                 result.append({'P': row[0], 'F': row[1]})
 
-            return jsonify(result)
+            self.success_return["results"] = result
+            return self.success_return
+
         except Exception as e:
             # Handle any exceptions that might occur during the execution
-            print(f"Error occurred: {str(e)}")
-            return jsonify({'error': 'An error occurred.'}), 500
+            self.error_return["messege"] = str(e)
+            self.error_return
 
     
     def rul_code(self):
@@ -151,7 +153,9 @@ class RUL_dB:
                 remaining_life_results.append(remaining_life)
 
             # Return the result as JSON
-            return jsonify({"confidence": confidence_levels, "remaining_life": remaining_life_results})
+            self.success_return["results"] = {"confidence": confidence_levels, "remaining_life": remaining_life_results}
+            return self.success_return
+            
         except Exception as e:
             self.error_return['message'] = str(e)
             return self.error_return

@@ -101,8 +101,27 @@ const Flow = ({reactFlowInstance,reactFlowWrapper,setReactFlowInstance}) => {
   const onElementClick = (event, node) => {
     dispatch(elementActions.setNodeDetail(node));
   };
-  const onLoad = (_reactFlowInstance) =>
+  const onLoad = (_reactFlowInstance) => {
     setReactFlowInstance(_reactFlowInstance);
+  
+    // Find the main node
+    const mainNode = ielements.find(node => node.type === "systemNode");
+  
+    // If a main node is found, connect all components to it
+    if (mainNode) {
+      const componentNodes = ielements.filter(node => node.type === "component");
+      const edgesToAdd = componentNodes.map(componentNode => ({
+        id: uuid(),
+        type: "smoothstep", // Assuming this is the type of edge
+        source: mainNode.id,
+        target: componentNode.id,
+        dtype: "edge",
+      }));
+  
+      dispatch(elementActions.onConnect(edgesToAdd));
+    }
+  };
+  
 
   const onLayout = useCallback(
     (direction) => {
@@ -151,13 +170,18 @@ const Flow = ({reactFlowInstance,reactFlowWrapper,setReactFlowInstance}) => {
     }
     const newNode = {
       id: uuid(),
-      type,
-      position,
-      data: { label: `Please Define Name` },
+      type: "component",
+      position: { x: 150, y: 150 },
+      data: { label: "New Component" },
       dtype: "node",
-      style: style,
+      style: {
+        background: "blue",
+        color: "white",
+      },
     };
+    
     dispatch(elementActions.addElement({ ele: newNode }));
+    
   };
 
   const onHoverBegin=(event, node)=>{
@@ -215,7 +239,7 @@ const Flow = ({reactFlowInstance,reactFlowWrapper,setReactFlowInstance}) => {
             onElementClick={onElementClick}
             onNodeContextMenu={onContextMenu}
             // onNodeDoubleClick={onDoubleClick}
-
+            fitView
             onNodeMouseEnter={onHoverBegin}
             onNodeMouseMove={duringHover}
             onNodeMouseLeave={onHoverEnd}

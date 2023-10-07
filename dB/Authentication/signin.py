@@ -5,8 +5,11 @@ import bcrypt
 
 class Authentication:
     def __init__(self):
+        self.success_return = {"message": "Data Saved Successfully.",
+                               "code": 1}
+        self.error_return = {"message": "Some Error Occured, Please try agian.",
+                             "code": 0}
         SignInDB()
-        pass
 
     def hash_password(self, password):
         salt = bcrypt.gensalt()
@@ -30,32 +33,31 @@ class Authentication:
 
         if user and bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
             user_level = user.level
-            return {'message': 'User found.', 'username': username, 'level': user_level}
+            self.success_return["message"] = {'message': 'User found.', 'username': username, 'level': user_level}
+            return self.success_return
         else:
-            return {'error': 'Invalid username or password.'}, 401
+            self.error_return["message"] = "Invalid username or Password"
+            return self.error_return
     
 
     def sign_up(self, username, password, level):
-        print(self.is_valid_password(password))
         if not self.is_valid_password(password):
-            return {"error": 'Invalid password. Password should have at least one uppercase letter, one alphanumeric character, and be at least 8 characters long.'}
+            self.error_return["message"] = "Invalid password. \n Password should have at least one uppercase letter, any of this @, !, & * alphaumeric character  \n password at least 8 characters long."
+            return self.error_return
         hashed_password = self.hash_password(password)
-        print(hashed_password)
+
         try:
             query = "INSERT INTO users (username, password, level) VALUES (?, ?, ?)"
             cursor.execute(query, (username, hashed_password, level))
             cursor.commit()
 
 
-            return {
-                "messege": "user is created successfully"
-            }
+            self.success_return["message"] =  f"{username}'s Account is Created. Please Login"
+            return self.success_return
 
         except Exception as e:
-            return {
-                "messege": "user is already present"
-            }
-
+            self.error_return["message"] = "User is Already Present"
+            return self.error_return
 
 
 
