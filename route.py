@@ -664,8 +664,9 @@ def set_component_overhaul_age():
     inst = Data_Manager()
     return inst.set_component_overhaul_age(ship_name, component_name, age)
 
-@app.route('/pdf/<path:filename>')
+@app.route('/pdf/<path:filename>', methods=["GET"])
 def download_pdf(filename):
+    print(filename)
     return send_from_directory('static/pdf', filename, as_attachment=True, mimetype='application/pdf')
 
 

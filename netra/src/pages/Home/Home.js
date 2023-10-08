@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 // import Snackbar from "@mui/material/Snackbar";
 // import MuiAlert from "@mui/material/lab/Alert";
-import LiveHelpOutlinedIcon from '@material-ui/icons/LiveHelpOutlined';
+import HelpOutlineIcon from '@material-ui/icons/HelpOutline';
 import { userActions } from "../../store/ApplicationVariable";
 import { resetLevels } from "../../store/Levels";
 import { makeStyles } from "@material-ui/core/styles";
@@ -162,7 +162,7 @@ const Home = (props) => {
           </MenuItem>
         </Menu>
         <Link onClick={() => props.history.push("/know_netra")}>
-        <LiveHelpOutlinedIcon fontSize="large"/>Help
+          <i class="far fa-question-circle"></i>Help
         </Link>
       </div>
       <div className={styles.homeLinks}>

@@ -9,41 +9,47 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import Button from "@material-ui/core/Button";
 
 const modules = {
-    "System Configuration": {
-      info: "Information about System Configuration module.",
-      pdfLink: "./PDF/system_config_pdf.pdf",
-    },
-    "Reliability Dashboard": {
-      info: "Information about Reliability Dashboard module.",
-      pdfLink: "/rDashboard_pdf",
-    },
-    "Monitoring Dashboard": {
-      info: "Information about Monitoring Dashboard module.",
-      pdfLink: "/CDashboard_pdf",
-    },
-    "Mission Reliability Dashboard": {
-      info: "Information about Mission Reliability Dashboard module.",
-      pdfLink: "/TaskDashboard_pdf",
-    },
-    "Mission Configuration": {
-      info: "Information about Mission Configuration module.",
-      pdfLink: "/dnd_pdf",
-    },
-    "View Or UpdateData": {
-      info: "Information about View or Update Data module.",
-      pdfLink: "/view_data_pdf",
-    },
-    "Maintenance Allocation": {
-      info: "Information about Maintenance Allocation module.",
-      pdfLink: "/maintenance_allocation_pdf",
-    },
-    "Time To Failure RUL": {
-      info: "Information about Time to Failure and RUL module.",
-      pdfLink: "/rul_pdf",
-    },
-  };
-  
-  
+  "System Configuration": {
+    info: " Creating an equipment structure, defining parent- child relations, parallel-series configuration.",
+    pdfLink: "pdf/system_config_pdf.pdf",
+  },
+  "Reliability Dashboard": {
+    info: " Displays the reliability of an equipment for the specified duration.",
+    pdfLink: "/rDashboard_pdf",
+  },
+  "Monitoring Dashboard": {
+    info: " Displays the graph for sensor values",
+    pdfLink: "/CDashboard_pdf",
+  },
+  "Mission Reliability Dashboard": {
+    info: " Displays the reliability for a particular mission.<br/> User can specify the mission duration, phases and the equipments for the task.",
+    pdfLink: "/TaskDashboard_pdf",
+  },
+  "Mission Configuration": {
+    info: "User can configure the task and select equipments for the particular task",
+    pdfLink: "/dnd_pdf",
+  },
+  "View Or UpdateData": {
+    info: ` A) Data Manager - monthly utilisation,maintenance data <br/>
+      B) Equipment Related Data - Parameter estimation using historical data <br/>
+      C) User Selection Configuration - Adding a new ship <br/>
+      D) Add System Documents - Documents related with equipments (Manuals/Training books) <br/>
+      E) Add Sensor Data`,
+    pdfLink: "/view_data_pdf",
+  },
+  "Maintenance Allocation": {
+    info: `A) Create maintenance plan-To specify maintenance plans (Sensor based / Inspection based )
+              To specify sensors<br/>
+          B) Conduct RCM analysis `,
+    pdfLink: "/maintenance_allocation_pdf",
+  },
+  "Time To Failure RUL": {
+    info: " Remaining useful life prediction",
+    pdfLink: "/rul_pdf",
+  },
+};
+
+
 
 function Help() {
   const [expanded, setExpanded] = useState(null);
@@ -52,8 +58,9 @@ function Help() {
     setExpanded(isExpanded ? panel : null);
   };
   const handleDownload = (moduleName) => {
+    debugger
     const module = modules[moduleName];
-  
+
     if (module && module.pdfLink) {
       fetch(module.pdfLink)
         .then(response => response.blob())
@@ -69,52 +76,50 @@ function Help() {
         .catch(error => console.error('Error:', error));
     }
   };
-  
-  
+
+
 
   return (
     <div
       className={classes.background}
-      style={{ backgroundImage: "url(/wave2.svg)" }}
+    style={{ backgroundImage: "url(/wave2.svg)" }}
     >
       <div className={classes.flex}>
         <Navigation />
         <div className={classes.content}>
-          <Typography variant="h1" gutterBottom className={classes.typo}>
-             Welcome to Netra !!
-          </Typography>
+          <div className={classes.text_heading}>
+              NETRA DOCUMENTATION
+          </div>
           {Object.keys(modules).map((module, index) => (
             <Accordion
               key={index}
               expanded={expanded === module}
               onChange={handleChange(module)}
+              className={classes.accordion}
             >
               <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
                 aria-controls={`${module}-content`}
                 id={`${module}-header`}
               >
-                <Typography variant="h5">{module}</Typography>
+                <div className={classes.heading}>{module}</div>
               </AccordionSummary>
-              <AccordionDetails>
-                <Typography>{modules[module].info}</Typography>
-                <Button
-                  onClick={() => handleDownload(module)}
-                  variant="outlined"
-                  color="primary"
-                >
-                  Download PDF
-                </Button>
+              <AccordionDetails className={classes.info}>
+                <Typography variant="h6" dangerouslySetInnerHTML={{ __html: modules[module].info }}></Typography>
+                <button onClick={() => handleDownload(module)} className={classes.button}>
+                  GET DOCUMENT
+                </button>
               </AccordionDetails>
+
             </Accordion>
           ))}
         </div>
-        <img
+        {/* <img
           src="/netra-logo-removebg.png"
-          width={180}
-          height={190}
+          width={200}
+          height={200}
           alt="Netra Logo"
-        />
+        /> */}
       </div>
     </div>
   );

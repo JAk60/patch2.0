@@ -5,6 +5,7 @@ from operator import itemgetter
 import pandas as pd
 import math
 from datetime import datetime
+from classes.overhaulsAlgos import OverhaulsAlgos
 
 
 class Reliability:
@@ -265,6 +266,54 @@ class Reliability:
         sum_of_average_running = result2[0]
         return sum_of_average_running, None
 
+
+    def estimate_alpha_beta(self, component_id):
+        '''CODE TO RE-ESTIMATE ALPHA BETA'''
+        try:
+            instance = OverhaulsAlgos()
+            sub_query = "select * from data_manager_overhauls_info where component_id = ?"
+            cursor.execute(sub_query, (component_id,))
+            data = cursor.fetchall()
+            subData = []
+            for item in data:
+                formatted_item = {
+                    "id": item[0],
+                    "overhaulNum": item[2],
+                    "numMaint": item[4],
+                    "runAge": item[3],
+                    "component_id": item[1],
+                }
+                subData.append(formatted_item)
+            run_age_value = list(map(lambda item: item["runAge"], subData))[0]
+            instance.insert_overhauls_data(
+                equipment_id=component_id,
+                run_age_component=float(run_age_value),
+            )
+
+            main_query = """SELECT * FROM data_manager_overhaul_maint_data 
+                        WHERE component_id = ?
+                """
+            cursor.execute(main_query, (component_id,))
+            data = cursor.fetchall()
+            mainData = []
+            for item in data:
+                formatted_item = {
+                    "id": item[0],
+                    "component_id": item[1],
+                    "overhaulId": item[2],
+                    "date": item[3],
+                    "maintenanceType": item[4],
+                    "totalRunAge": item[5],
+                    "subSystemId": item[6],
+                    "runningAge": item[7],
+                }
+                mainData.append(formatted_item)
+
+            instance.alpha_beta_calculation(mainData, subData, component_id)
+        except Exception as e:
+            pass
+
+
     def calculate_rel_by_power_law(self, alpha, beta, duration):
         query = """
             SELECT component_id
@@ -273,9 +322,9 @@ class Reliability:
                 AND nomenclature = ? COLLATE SQL_Latin1_General_CP1_CS_AS;
         """
         cursor.execute(query, self.__ship_name, self.__component_name)
-
         result = cursor.fetchone()
         self.__component_id = result[0]
+        # self.estimate_alpha_beta(component_id=self.__component_id)
         sum_of_average_running, error_message = self.get_curr_age()
         if error_message:
             print(error_message)
@@ -375,5 +424,5 @@ class Reliability:
             return self.success_return
 
         except Exception as e:
-            # self.error_return["message"] = str(e)
+            self.error_return["message"] = str(e)
             return self.error_return
