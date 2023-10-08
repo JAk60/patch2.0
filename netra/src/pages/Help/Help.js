@@ -15,19 +15,19 @@ const modules = {
   },
   "Reliability Dashboard": {
     info: " Displays the reliability of an equipment for the specified duration.",
-    pdfLink: "/rDashboard_pdf",
+    pdfLink: "pdf/reliblity_dashboard_pdf.pdf",
   },
   "Monitoring Dashboard": {
     info: " Displays the graph for sensor values",
-    pdfLink: "/CDashboard_pdf",
+    pdfLink: "pdf/monitoring_dashboard.pdf",
   },
   "Mission Reliability Dashboard": {
     info: " Displays the reliability for a particular mission.<br/> User can specify the mission duration, phases and the equipments for the task.",
-    pdfLink: "/TaskDashboard_pdf",
+    pdfLink: "pdf/mission_rel_dashboard_pdf.pdf",
   },
   "Mission Configuration": {
     info: "User can configure the task and select equipments for the particular task",
-    pdfLink: "/dnd_pdf",
+    pdfLink: "pdf/mission_configuration_pdf.pdf",
   },
   "View Or UpdateData": {
     info: ` A) Data Manager - monthly utilisation,maintenance data <br/>
@@ -45,7 +45,7 @@ const modules = {
   },
   "Time To Failure RUL": {
     info: " Remaining useful life prediction",
-    pdfLink: "/rul_pdf",
+    pdfLink: "pdf/rul_pdf.pdf",
   },
 };
 

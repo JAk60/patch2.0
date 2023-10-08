@@ -19,188 +19,193 @@ class OverhaulsAlgos:
         return days
 
     def insert_overhauls_data(self, equipment_id, run_age_component):
-        new_data = []
-        clk_reset = 0
-        index = 0
+        try:
+            new_data = []
+            clk_reset = 0
+            index = 0
 
-        query = "SELECT * FROM data_manager_overhaul_maint_data where component_id = ? AND running_age is NULL"
-        cursor.execute(query, equipment_id)
-        data = cursor.fetchall()
-        data = self.historic_data_interpolation(data=data, component_id=equipment_id)
-        days = self.days_addition_logic(equipment_id)
-        prev_date = None
+            query = "SELECT * FROM data_manager_overhaul_maint_data where component_id = ? AND running_age is NULL"
+            cursor.execute(query, equipment_id)
+            data = cursor.fetchall()
+            data = self.historic_data_interpolation(data=data, component_id=equipment_id)
+            days = self.days_addition_logic(equipment_id)
+            prev_date = None
 
-        for row in data:
-            (
-                id,
-                component_id,
-                overhaul_id,
-                date,
-                maintenance_type,
-                running_age,
-                associated_sub_system,
-                cmms_running_age,
-            ) = row
-            cmms_running_age = int(cmms_running_age)
-            if date is None:
-                if prev_date:
-                    days = abs(cmms_running_age - run_age_component) / days
-                    date = datetime.strptime(prev_date, "%Y-%m-%d") + timedelta(
-                        days=days
-                    )
-                    date = date.strftime("%Y-%m-%d")
-            if clk_reset == 0:
-                if cmms_running_age < run_age_component:
-                    running_age = cmms_running_age
-                    new_data.append(
-                        (
-                            id,
-                            component_id,
-                            overhaul_id,
-                            date,
-                            maintenance_type,
-                            running_age,
-                            associated_sub_system,
-                            cmms_running_age,
+            for row in data:
+                (
+                    id,
+                    component_id,
+                    overhaul_id,
+                    date,
+                    maintenance_type,
+                    running_age,
+                    associated_sub_system,
+                    cmms_running_age,
+                ) = row
+                cmms_running_age = int(cmms_running_age)
+                if date is None:
+                    if prev_date:
+                        days = abs(cmms_running_age - run_age_component) / days
+                        date = datetime.strptime(prev_date, "%Y-%m-%d") + timedelta(
+                            days=days
                         )
-                    )
-                elif cmms_running_age == run_age_component:
-                    maintenance_type = "Overhaul"
-                    running_age = cmms_running_age
-                    new_data.append(
-                        (
-                            id,
-                            component_id,
-                            overhaul_id,
-                            date,
-                            maintenance_type,
-                            running_age,
-                            associated_sub_system,
-                            cmms_running_age,
+                        date = date.strftime("%Y-%m-%d")
+                if clk_reset == 0:
+                    if cmms_running_age < run_age_component:
+                        running_age = cmms_running_age
+                        new_data.append(
+                            (
+                                id,
+                                component_id,
+                                overhaul_id,
+                                date,
+                                maintenance_type,
+                                running_age,
+                                associated_sub_system,
+                                cmms_running_age,
+                            )
                         )
-                    )
-                    clk_reset += 1
+                    elif cmms_running_age == run_age_component:
+                        maintenance_type = "Overhaul"
+                        running_age = cmms_running_age
+                        new_data.append(
+                            (
+                                id,
+                                component_id,
+                                overhaul_id,
+                                date,
+                                maintenance_type,
+                                running_age,
+                                associated_sub_system,
+                                cmms_running_age,
+                            )
+                        )
+                        clk_reset += 1
+                    else:
+                        maintenance_type = "Overhaul"
+                        prev_date = data[index - 1][3]
+                        days = abs(cmms_running_age - run_age_component) / days
+                        date = datetime.strptime(prev_date, "%Y-%m-%d") + timedelta(
+                            days=days
+                        )
+                        date = date.strftime("%Y-%m-%d")
+                        new_data.append(
+                            (
+                                id,
+                                component_id,
+                                overhaul_id,
+                                date,
+                                maintenance_type,
+                                run_age_component,
+                                associated_sub_system,
+                                run_age_component,
+                            )
+                        )
+                        id = uuid.uuid4()
+                        clk_reset += 1
+                        age = abs(int(cmms_running_age) - run_age_component * clk_reset)
+                        running_age = age
+                        maintenance_type = "Corrective Maintainance"
+                        new_data.append(
+                            (
+                                id,
+                                component_id,
+                                overhaul_id,
+                                prev_date,
+                                maintenance_type,
+                                running_age,
+                                associated_sub_system,
+                                cmms_running_age,
+                            )
+                        )
                 else:
-                    maintenance_type = "Overhaul"
-                    prev_date = data[index - 1][3]
-                    days = abs(cmms_running_age - run_age_component) / days
-                    date = datetime.strptime(prev_date, "%Y-%m-%d") + timedelta(
-                        days=days
-                    )
-                    date = date.strftime("%Y-%m-%d")
-                    new_data.append(
-                        (
-                            id,
-                            component_id,
-                            overhaul_id,
-                            date,
-                            maintenance_type,
-                            run_age_component,
-                            associated_sub_system,
-                            run_age_component,
-                        )
-                    )
-                    id = uuid.uuid4()
-                    clk_reset += 1
                     age = abs(int(cmms_running_age) - run_age_component * clk_reset)
-                    running_age = age
-                    maintenance_type = "Corrective Maintainance"
-                    new_data.append(
-                        (
-                            id,
-                            component_id,
-                            overhaul_id,
-                            prev_date,
-                            maintenance_type,
-                            running_age,
-                            associated_sub_system,
-                            cmms_running_age,
+                    if age < run_age_component:
+                        running_age = age
+                        new_data.append(
+                            (
+                                id,
+                                component_id,
+                                overhaul_id,
+                                date,
+                                maintenance_type,
+                                running_age,
+                                associated_sub_system,
+                                cmms_running_age,
+                            )
                         )
-                    )
-            else:
-                age = abs(int(cmms_running_age) - run_age_component * clk_reset)
-                if age < run_age_component:
-                    running_age = age
-                    new_data.append(
-                        (
-                            id,
-                            component_id,
-                            overhaul_id,
-                            date,
-                            maintenance_type,
-                            running_age,
-                            associated_sub_system,
-                            cmms_running_age,
+                    elif age == run_age_component:
+                        maintenance_type = "Overhaul"
+                        running_age = age
+                        new_data.append(
+                            (
+                                id,
+                                component_id,
+                                overhaul_id,
+                                date,
+                                maintenance_type,
+                                running_age,
+                                associated_sub_system,
+                                cmms_running_age,
+                            )
                         )
-                    )
-                elif age == run_age_component:
-                    maintenance_type = "Overhaul"
-                    running_age = age
-                    new_data.append(
-                        (
-                            id,
-                            component_id,
-                            overhaul_id,
-                            date,
-                            maintenance_type,
-                            running_age,
-                            associated_sub_system,
-                            cmms_running_age,
+                        clk_reset += 1
+                    else:
+                        maintenance_type = "Overhaul"
+                        id = uuid.uuid4()
+                        running_age = age
+                        prev_date = data[index - 1][3]
+                        days = abs(cmms_running_age - run_age_component) / days
+                        date = datetime.strptime(prev_date, "%Y-%m-%d") + timedelta(
+                            days=days
                         )
-                    )
-                    clk_reset += 1
-                else:
-                    maintenance_type = "Overhaul"
-                    id = uuid.uuid4()
-                    running_age = age
-                    prev_date = data[index - 1][3]
-                    days = abs(cmms_running_age - run_age_component) / days
-                    date = datetime.strptime(prev_date, "%Y-%m-%d") + timedelta(
-                        days=days
-                    )
-                    date = date.strftime("%Y-%m-%d")
-                    new_data.append(
-                        (
-                            id,
-                            component_id,
-                            overhaul_id,
-                            date,
-                            maintenance_type,
-                            run_age_component,
-                            associated_sub_system,
-                            run_age_component * clk_reset,
+                        date = date.strftime("%Y-%m-%d")
+                        new_data.append(
+                            (
+                                id,
+                                component_id,
+                                overhaul_id,
+                                date,
+                                maintenance_type,
+                                run_age_component,
+                                associated_sub_system,
+                                run_age_component * clk_reset,
+                            )
                         )
-                    )
-                    id = uuid.uuid4()
-                    clk_reset += 1
-                    age = abs(int(cmms_running_age) - run_age_component * clk_reset)
-                    running_age = age
-                    maintenance_type = "Corrective Maintainance"
-                    new_data.append(
-                        (
-                            id,
-                            component_id,
-                            overhaul_id,
-                            prev_date,
-                            maintenance_type,
-                            running_age,
-                            associated_sub_system,
-                            cmms_running_age,
+                        id = uuid.uuid4()
+                        clk_reset += 1
+                        age = abs(int(cmms_running_age) - run_age_component * clk_reset)
+                        running_age = age
+                        maintenance_type = "Corrective Maintainance"
+                        new_data.append(
+                            (
+                                id,
+                                component_id,
+                                overhaul_id,
+                                prev_date,
+                                maintenance_type,
+                                running_age,
+                                associated_sub_system,
+                                cmms_running_age,
+                            )
                         )
-                    )
-            index += 1
-            prev_date = date
-        query = "DELETE FROM data_manager_overhaul_maint_data WHERE component_id = ?"
-        cursor.execute(query, equipment_id)
-        cnxn.commit()
-        insert_query = """
-            INSERT INTO data_manager_overhaul_maint_data (id, 
-            component_id, overhaul_id, date, maintenance_type, running_age,
-            associated_sub_system, cmms_running_age) VALUES (?,?,?,?,?,?,?,?)
-        """
-        for d in new_data:
-            cursor.execute(insert_query, d)
-        cnxn.commit()
+                index += 1
+                prev_date = date
+            if len(new_data) != 0:
+                query = "DELETE FROM data_manager_overhaul_maint_data WHERE component_id = ?"
+                cursor.execute(query, equipment_id)
+                cnxn.commit()
+                insert_query = """
+                    INSERT INTO data_manager_overhaul_maint_data (id, 
+                    component_id, overhaul_id, date, maintenance_type, running_age,
+                    associated_sub_system, cmms_running_age) VALUES (?,?,?,?,?,?,?,?)
+                """
+                for d in new_data:
+                    cursor.execute(insert_query, d)
+                cnxn.commit()
+        except Exception as e:
+            print(e)
+            pass
 
     def equipment_failure_times(self, input_data):
         failure_times = []
@@ -280,7 +285,7 @@ class OverhaulsAlgos:
     def historic_data_interpolation(self, data, component_id):
         interpolated_data = []
         for item in data:
-            if item[-1] == None or item[-1] == '0':
+            if item[-1] == None or item[-1] == '0' or item[-1] == '':
                 age = self._get_interpolated_age(date=item[3], component_id=component_id)
                 item[-1] = age
             interpolated_data.append(item)

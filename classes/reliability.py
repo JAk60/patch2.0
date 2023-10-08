@@ -324,7 +324,7 @@ class Reliability:
         cursor.execute(query, self.__ship_name, self.__component_name)
         result = cursor.fetchone()
         self.__component_id = result[0]
-        # self.estimate_alpha_beta(component_id=self.__component_id)
+        self.estimate_alpha_beta(component_id=self.__component_id)
         sum_of_average_running, error_message = self.get_curr_age()
         if error_message:
             print(error_message)

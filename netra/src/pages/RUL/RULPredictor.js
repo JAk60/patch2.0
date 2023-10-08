@@ -61,7 +61,7 @@ const RULPredictor = ({ parameter, equipmentId, P, F }) => {
         throw new Error("Failed to get RUL prediction.");
       } else {
         const data = await response.json();
-        setPrediction(data.remaining_life);
+        setPrediction(data.results.remaining_life);
         setOpenRULDialog(true);
       }
     } catch (error) {
