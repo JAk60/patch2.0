@@ -873,6 +873,8 @@ class TaskReliability:
                         #         max_rel_equip, "preferred equipments are", group_equip,"Group Reliability is", Rel)
                         final_results.append(f"For {phase_name} and group {i+1}, "  # Use phase_name instead of phase number
                                             f"preferred equipments are {group_equip}")
+                        print(f"For {phase_name} and group {i+1}, "  # Use phase_name instead of phase number
+                                            f"preferred equipments are {group_equip}")
                         # print ("for phase", phase_name,"  and group", i+1,
                         #         "preferred equipments are", group_equip,"Group Reliability is", Rel)
                         
@@ -910,6 +912,7 @@ class TaskReliability:
             #                 pass
 
             final_results.append(f"Total Reliability: {rel}")
+            print(final_results)
             print(f"Total Reliability: {rel}")
 
 

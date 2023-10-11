@@ -43,8 +43,8 @@ const SystemConfiguration = (props) => {
   const setFinalTableData = (d) => {
     finalTableData = d;
   };
-  
- 
+
+
 
   const systemConfigurationTreeData = useSelector(
     (state) => state.treeData.treeData
@@ -347,7 +347,10 @@ const SystemConfiguration = (props) => {
   const sData = useSelector((state) => state.userSelection.componentsData);
 
   const currentNomenclature = currentSelection["nomenclature"];
-  const matchingItems = sData.filter(item => item.nomenclature === currentNomenclature);
+  // console.log(sData)S
+  const matchingItems = sData.filter(item => item.nomenclature === currentNomenclature && item.ship_name === currentSelection["shipName"])
+  
+  console.log(matchingItems)
 
   const matchingId = matchingItems[0]?.id;
   const onLoadTreeStructure = () => {
@@ -355,7 +358,7 @@ const SystemConfiguration = (props) => {
       nomenclature: currentSelection["nomenclature"],
       ship_name: currentSelection["shipName"],
     };
-  
+
     if (matchingId) {
       payload.component_id = matchingId;
     }
@@ -384,55 +387,55 @@ const SystemConfiguration = (props) => {
         )
       });
 
-      setSnackBarMessage({
-        severity: "success",
-        message: "System is Loaded",
-        showSnackBar: true,
-      });
+    setSnackBarMessage({
+      severity: "success",
+      message: "System is Loaded",
+      showSnackBar: true,
+    });
   };
 
   return (
     <React.Fragment>
       <AccessControl allowedLevels={['L1', 'L5', 'L6']}>
-      <Navigation />
-      {/* <NewModule /> */}
-      <StageSlider marks={marks} default={marks[Stage]["value"]} />
-      <div className={styles.flex}>
-        <div className={styles.user}>
-          <UserSelection />
-        </div>
-        <div className={styles.buttons}>
-          <Route path="/system_config">
-            <Route path={["/system_config/"]}>
-              <Button
-                variant="contained"
-                color="primary"
-                className={SystemClasses.buttons}
-                onClick={onLoadTreeStructure}
+        <Navigation />
+        {/* <NewModule /> */}
+        <StageSlider marks={marks} default={marks[Stage]["value"]} />
+        <div className={styles.flex}>
+          <div className={styles.user}>
+            <UserSelection />
+          </div>
+          <div className={styles.buttons}>
+            <Route path="/system_config">
+              <Route path={["/system_config/"]}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  className={SystemClasses.buttons}
+                  onClick={onLoadTreeStructure}
+                >
+                  Load System
+                </Button>
+              </Route>
+              <Route
+                exact
+                path={[
+                  "/system_config/redundancy_info",
+                  "/system_config/maintenance_info",
+                  "/system_config/failure_mode",
+                  "/system_config/duty_cycle",
+                  "/system_config/additional_info",
+                ]}
               >
-                Load System
-              </Button>
-            </Route>
-            <Route
-              exact
-              path={[
-                "/system_config/redundancy_info",
-                "/system_config/maintenance_info",
-                "/system_config/failure_mode",
-                "/system_config/duty_cycle",
-                "/system_config/additional_info",
-              ]}
-            >
-              <Button
-                variant="contained"
-                color="primary"
-                className={SystemClasses.buttons}
-                onClick={() => PreviousStage()}
-              >
-                Back
-              </Button>
-            </Route>
-            {/* <Button
+                <Button
+                  variant="contained"
+                  color="primary"
+                  className={SystemClasses.buttons}
+                  onClick={() => PreviousStage()}
+                >
+                  Back
+                </Button>
+              </Route>
+              {/* <Button
               variant="contained"
               color="primary"
               className={SystemClasses.buttons}
@@ -440,35 +443,35 @@ const SystemConfiguration = (props) => {
               Replicate
             </Button> */}
 
-            <Button
-              variant="contained"
-              color="primary"
-              className={SystemClasses.buttons}
-              onClick={onSaveButtonClickHandler}
-            >
-              Save
-            </Button>
-            <Route
-              exact
-              path={[
-                "/system_config",
-                "/system_config/redundancy_info",
-                "/system_config/maintenance_info",
-                "/system_config/failure_mode",
-                "/system_config/duty_cycle",
-              ]}
-            >
               <Button
                 variant="contained"
                 color="primary"
                 className={SystemClasses.buttons}
-                onClick={() => NextStage()}
+                onClick={onSaveButtonClickHandler}
               >
-                Next Stage
+                Save
               </Button>
-            </Route>
-            <Route exact path="/system_config/additional_info">
-              {/* <Button
+              <Route
+                exact
+                path={[
+                  "/system_config",
+                  "/system_config/redundancy_info",
+                  "/system_config/maintenance_info",
+                  "/system_config/failure_mode",
+                  "/system_config/duty_cycle",
+                ]}
+              >
+                <Button
+                  variant="contained"
+                  color="primary"
+                  className={SystemClasses.buttons}
+                  onClick={() => NextStage()}
+                >
+                  Next Stage
+                </Button>
+              </Route>
+              <Route exact path="/system_config/additional_info">
+                {/* <Button
                 onClick={() => nextModule(props.settings)}
                 variant="contained"
                 color="primary"
@@ -476,50 +479,50 @@ const SystemConfiguration = (props) => {
               >
                 Next Module
               </Button> */}
+              </Route>
+              <Route exact path="/system_config/additional_info">
+                <Button
+                  onClick={() => history.push("/data_manager")}
+                  component={Link}
+                  variant="contained"
+                  color="primary"
+                  className={SystemClasses.buttons}
+                >
+                  Next Module
+                </Button>
+              </Route>
             </Route>
-            <Route exact path="/system_config/additional_info">
-              <Button
-              onClick={() => history.push("/data_manager")}
-                component={Link}
-                variant="contained"
-                color="primary"
-                className={SystemClasses.buttons}
-              >
-                Next Module
-              </Button>
-            </Route>
-          </Route>
+          </div>
         </div>
-      </div>
-      <Switch>
-        <Route path="/system_config" exact={true}>
-          <EqptStructuring />
-        </Route>
-        <Route path="/system_config/redundancy_info" exact={true}>
-          <RedundancyInfo tableUpdate={setFinalTableData}></RedundancyInfo>
-        </Route>
-        <Route path="/system_config/maintenance_info" exact={true}>
-          <MaintenanceInfo tableUpdate={setFinalTableData}></MaintenanceInfo>
-        </Route>
-        <Route path="/system_config/failure_mode" exact={true}>
-          <FailureMode
-            tableUpdate={setFinalTableData}
-            matchingId={matchingId}
-          ></FailureMode>
-        </Route>
-        <Route path="/system_config/duty_cycle" exact={true}>
-          <DutyCycle tableUpdate={setFinalTableData}></DutyCycle>
-        </Route>
-        <Route path="/system_config/additional_info" exact={true}>
-          <AdditionalInfo tableUpdate={setFinalTableData}></AdditionalInfo>
-        </Route>
-      </Switch>
-      {SnackBarMessage.showSnackBar && (
-        <CustomizedSnackbars
-          message={SnackBarMessage}
-          onHandleClose={onHandleSnackClose}
-        />
-      )}
+        <Switch>
+          <Route path="/system_config" exact={true}>
+            <EqptStructuring />
+          </Route>
+          <Route path="/system_config/redundancy_info" exact={true}>
+            <RedundancyInfo tableUpdate={setFinalTableData}></RedundancyInfo>
+          </Route>
+          <Route path="/system_config/maintenance_info" exact={true}>
+            <MaintenanceInfo tableUpdate={setFinalTableData}></MaintenanceInfo>
+          </Route>
+          <Route path="/system_config/failure_mode" exact={true}>
+            <FailureMode
+              tableUpdate={setFinalTableData}
+              matchingId={matchingId}
+            ></FailureMode>
+          </Route>
+          <Route path="/system_config/duty_cycle" exact={true}>
+            <DutyCycle tableUpdate={setFinalTableData}></DutyCycle>
+          </Route>
+          <Route path="/system_config/additional_info" exact={true}>
+            <AdditionalInfo tableUpdate={setFinalTableData}></AdditionalInfo>
+          </Route>
+        </Switch>
+        {SnackBarMessage.showSnackBar && (
+          <CustomizedSnackbars
+            message={SnackBarMessage}
+            onHandleClose={onHandleSnackClose}
+          />
+        )}
       </AccessControl>
     </React.Fragment>
   );
