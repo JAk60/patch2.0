@@ -155,6 +155,8 @@ class Data_Manager:
             res = self.insert_maintenance_data(data)
         if dt == "overhauls":
             res = self.insert_overhauls(data)
+        if dt == "overhaul_age":
+            res = self.insert_overhaul_age(data)
         cnxn.commit()
         return res
 
@@ -912,3 +914,46 @@ class Data_Manager:
         cmms_running_age = int(data[0])
         nums = math.floor(cmms_running_age / age)
         return jsonify({"overhaul_nums": nums})
+
+
+    def insert_overhaul_age(self, data):
+        try:
+            sub_data = data[0]["subData"]
+            for d in sub_data:
+                id = d["id"]
+                ship_name = d["ship_name"]
+                component_name = d["equipment_name"]
+                nomenclature = d["nomenclature"]
+                overhaul_age = d["runAge"]
+                sql = '''select component_id from system_configuration where ship_name =? and component_name= ? and nomenclature=?'''
+                cursor.execute(sql, ship_name, component_name, nomenclature)
+                equipment_id = cursor.fetchone()[0]
+                insert_sql = '''
+                            insert into data_manager_overhauls_info (id, 
+                    component_id, overhaul_num, running_age, num_maintenance_event)
+                    values (?,?,?,?,?);
+                    '''
+                cursor.execute(insert_sql, id, equipment_id, "1", overhaul_age, "1")
+            return self.success_return
+        except Exception as e:
+            self.error_return["message"] = str(e)
+            return self.error_return
+
+
+
+    def get_component_overhaul_hours(self, data):
+        try:
+            ship_name = data["ship_name"]
+            component_name = data["equipment_name"]
+            nomenclature = data["nomenclature"]
+            sql = '''select component_id from system_configuration where ship_name =? and component_name= ? and nomenclature=?'''
+            cursor.execute(sql, ship_name, component_name, nomenclature)
+            equipment_id = cursor.fetchone()[0]
+            overhaul_sql = '''select running_age from data_manager_overhauls_info where component_id = ?'''
+            cursor.execute(overhaul_sql, equipment_id)
+            data = cursor.fetchall()[-1][0]
+            self.success_return["result"] = data
+            return self.success_return
+        except Exception as e:
+            print(e)
+            return self.error_return

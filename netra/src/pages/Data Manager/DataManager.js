@@ -88,7 +88,7 @@ function DataManager(props) {
     // if (settings.ReliabilityDashboard) {
     //   props.history.push("/rDashboard");
     // }
-      props.history.push("/rDashboard");
+    props.history.push("/rDashboard");
   };
 
   const [locationKeys, setLocationKeys] = useState([]);
@@ -135,7 +135,7 @@ function DataManager(props) {
       nomenclature: currentSelection["nomenclature"],
       ship_name: currentSelection["shipName"],
     };
-  
+
     if (matchingId) {
       payload.component_id = matchingId;
     }
@@ -176,11 +176,11 @@ function DataManager(props) {
         // }
         dispatch(treeDataActions.setTreeData({ treeData: d.treeD }));
       });
-      setSnackBarMessage({
-        severity: "success",
-        message: "Loaded Equipment Successfully",
-        showSnackBar: true,
-      });
+    setSnackBarMessage({
+      severity: "success",
+      message: "Loaded Equipment Successfully",
+      showSnackBar: true,
+    });
   };
 
 
@@ -201,13 +201,13 @@ function DataManager(props) {
       })
       .then((data) => {
         console.log(data)
-        if(data.code){
+        if (data.code) {
           setSnackBarMessage({
             severity: "success",
             message: "Data Saved Successfully",
             showSnackBar: true,
           });
-        } else{
+        } else {
           setSnackBarMessage({
             severity: "error",
             message: data.message,
@@ -372,7 +372,22 @@ function DataManager(props) {
       } catch {
         console.log("Error");
       }
-    } else if (dataType === "interval") {
+    } else if(dataType === "overhaul_age"){
+      const main_data = tableRows["mainTable"];
+      const sub_data = tableRows["subTable"];
+      const subFinalData = sub_data.map((x) => {
+        return {
+          id: uuid(),
+          runAge: x.runAge,
+          nomenclature: x.nomenclature,
+          ship_name: x.shipName,
+          equipment_name: x.equipmentName
+
+        }
+      })
+      data = [{ mainData: main_data, subData: subFinalData }];
+    }
+      else if (dataType === "interval") {
       data = tableRows.map((x) => {
         return {
           component_id: x.id,
@@ -390,25 +405,25 @@ function DataManager(props) {
     handleSaveSupport({ data, dataType: dataType });
   };
 
-  
+
 
   const handleTableUpdatedRows = (allRows, dataType) => {
     setTableRows(allRows);
     debugger
-    if(location.pathname == '/data_manager/historical_data/repairable_overhaul'){
+    if (location.pathname == '/data_manager/historical_data/repairable_overhaul') {
       setDataType(dataType);
     }
-    else if(location.pathname == '/data_manager/maintenance_data'){
+    else if (location.pathname == '/data_manager/maintenance_data') {
       setDataType(dataType);
     }
-    else{
+    else {
       setDataType(dataType)
     }
   };
   const handleHistoricalDataDropdownChange = (dataType) => {
     setDataType(dataType);
   };
-  const handleUpdateList = () =>{
+  const handleUpdateList = () => {
     setSnackBarMessage({
       severity: "success",
       message: "List Updated Successfully",

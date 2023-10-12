@@ -670,6 +670,13 @@ def download_pdf(filename):
     return send_from_directory('static/pdf', filename, as_attachment=True, mimetype='application/pdf')
 
 
+@app.route('/get_overhaul_hours', methods=["POST"])
+def get_overhaul_hours():
+    data = request.json
+    inst = Data_Manager()
+    return inst.get_component_overhaul_hours(data)
+
+
 if __name__ == "__main__":
     app.secret_key = os.urandom(32)
     app.run(debug=True)

@@ -6,22 +6,34 @@ import OverhaulTable from "../../../ui/Table/OverhaulTable";
 import RepairableSubTable from "./repairableSubTable";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import RepairableSubTableMaual from "./RepairableSubTableMaual";
+import OverhaulEntryTable from "./OverhaulEntryTable";
+import { useSelector } from "react-redux";
 
 
 
 const RepairableOverhaul = (props) => {
+  const currSelectedData = useSelector(
+    (state) => state.userSelection.currentSelection
+  );
   const [secondTableData, setSecondTableData] = useState([]);
+  const currNomenclature = currSelectedData.nomenclature;
   const [selectedOption, setSelectedOption] = useState("manual");
   const secondTableDataUpdate = (data, isUpdated = false) => {
+    console.log(data)
     setSecondTableData(data);
   };
 
   const mainTableUpdate = (data) => {
-    props?.tableUpdate(data, "overhauls");
+    console.log(data)
+    if (data.mainTable.length == 0 && data.subTable[0].hasOwnProperty("nomenclature")) {
+      props?.tableUpdate(data, "overhaul_age");
+    } else {
+      props?.tableUpdate(data, "overhauls");
+    }
   };
 
-  return (
-    <div style={{ marginTop: "5rem" }}>
+  return (<>
+    {currNomenclature && <div style={{ marginTop: "5rem" }}>
       <RadioGroup
         row
         aria-label="option"
@@ -34,15 +46,20 @@ const RepairableOverhaul = (props) => {
           control={<Radio />}
           label="Manual Data Entry"
         />
-        <FormControlLabel
+        {/* <FormControlLabel
           value="cmms"
           control={<Radio />}
           label="Cmms Data Entry"
-        />
+        /> */}
         <FormControlLabel
           value="ship"
           control={<Radio />}
           label="Insert From another ship"
+        />
+        <FormControlLabel
+          value="overhaul_hours"
+          control={<Radio />}
+          label="Insert Overhaul Hours"
         />
       </RadioGroup>
 
@@ -53,17 +70,21 @@ const RepairableOverhaul = (props) => {
         </div>
       )}
 
-      {selectedOption === "cmms" && (
+      {/* {selectedOption === "cmms" && (
         <div>
           <RepairableSubTable secondTableDataUpdate={secondTableDataUpdate} />
           <OverhaulTable data={secondTableData} tableUpdate={mainTableUpdate} />
         </div>
-      )}
+      )} */}
 
       {selectedOption === "ship" && (
         <Custom />
       )}
-    </div>
+      {selectedOption === "overhaul_hours" && (
+        <OverhaulEntryTable secondTableDataUpdate={secondTableDataUpdate} tableUpdate={mainTableUpdate} />
+      )}
+    </div>}
+  </>
   );
 };
 

@@ -179,6 +179,7 @@ function HistoricalData(props) {
   };
 
   const updateFinalRowData = (allRows, dataType) => {
+    console.log(allRows)
     props.tableUpdate(allRows, dataType);
   };
   debugger;

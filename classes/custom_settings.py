@@ -35,7 +35,6 @@ class Custom_Settings():
         } for r in data]
         uniq_eq_data = [{"name": r[2],"nomenclature":r[3], "id": r[1], "ship_name": r[0]} for r in uniq_eq_data]
         fData = {'data': data, 'eqData': eqData, "uniq_eq_data": uniq_eq_data}
-        print(fData)
         if toJson:
             fData = jsonify(fData)
         return fData
