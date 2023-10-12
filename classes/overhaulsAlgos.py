@@ -10,12 +10,14 @@ class OverhaulsAlgos:
         query = "SELECT TOP 5 average_running FROM operational_data WHERE component_id = ? ORDER BY average_running DESC"
         cursor.execute(query, equipment_id)
         results = cursor.fetchall()
+        print(results, "results")
         num_rows = len(results)
         while num_rows < 5:
             results.append((0,))
             num_rows += 1
         total_average = sum(row[0] for row in results)
         days = total_average / 5 / 30
+        print(days, "days")
         return days
 
     def insert_overhauls_data(self, equipment_id, run_age_component):
@@ -45,10 +47,10 @@ class OverhaulsAlgos:
                 cmms_running_age = int(cmms_running_age)
                 if date is None:
                     if prev_date:
-                        days = abs(cmms_running_age - run_age_component) / days
                         date = datetime.strptime(prev_date, "%Y-%m-%d") + timedelta(
                             days=days
                         )
+                        print(date, "this is date")
                         date = date.strftime("%Y-%m-%d")
                 if clk_reset == 0:
                     if cmms_running_age < run_age_component:
@@ -84,7 +86,7 @@ class OverhaulsAlgos:
                     else:
                         maintenance_type = "Overhaul"
                         prev_date = data[index - 1][3]
-                        days = abs(cmms_running_age - run_age_component) / days
+                        # days = abs(cmms_running_age - run_age_component) / days
                         date = datetime.strptime(prev_date, "%Y-%m-%d") + timedelta(
                             days=days
                         )
@@ -155,7 +157,7 @@ class OverhaulsAlgos:
                         id = uuid.uuid4()
                         running_age = age
                         prev_date = data[index - 1][3]
-                        days = abs(cmms_running_age - run_age_component) / days
+                        # days = abs(cmms_running_age - run_age_component) / days
                         date = datetime.strptime(prev_date, "%Y-%m-%d") + timedelta(
                             days=days
                         )
@@ -252,6 +254,10 @@ class OverhaulsAlgos:
         failure_times = self.equipment_failure_times(mainData)
         N = [len(subarray) for subarray in failure_times]
         T = self. extract_running_ages(main_data=mainData, sub_data=subData)
+        print("failure_times value:-",failure_times)
+        print("N value:-",len(failure_times))
+        print("N value:-",N)
+        print("T value:-",T)
         def para(N, x, T, k):
             beta = (sum(n for n in N)) / (sum(sum(math.log(t /
                                                         x[T.index(t)][i]) for i in range(N[T.index(t)])) for t in T))

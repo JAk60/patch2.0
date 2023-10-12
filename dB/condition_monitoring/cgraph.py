@@ -90,8 +90,8 @@ class GraphDashBoard:
 
             # Create a dictionary to hold the results of all queries
             response = {
-                "sensor_based_data": sensor_data,
-                "parameter_data": parameter_data,
+                # "sensor_based_data": sensor_data,
+                # "parameter_data": parameter_data,
                 "graphData": graphData,
             }
             self.success_return["response"] = response

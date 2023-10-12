@@ -331,13 +331,19 @@ class Reliability:
             curr_age = 0
         else:
             curr_age = sum_of_average_running
-        print("current age", curr_age)
         N_currentAge = alpha * (curr_age**beta)
         missionAge = curr_age + duration
         N_mission = alpha * (missionAge**beta)
         N = N_mission - N_currentAge
         rel = np.e ** (-N)
         print("relib ", rel)
+        # curr_age = 0
+        # N_currentAge = alpha * (curr_age**beta)
+        # missionAge = curr_age + duration
+        # N_mission = alpha * (missionAge**beta)
+        # N = N_mission - N_currentAge
+        # rel = np.e ** (-N)
+        # print("cage rel", rel)
         return rel
 
     def get_DC_EM(
@@ -406,6 +412,16 @@ class Reliability:
                         self.__ship_name = platform
                         self.__component_name = system
                         # call the method and save it to a variable
+                        query = """
+                                SELECT component_id
+                                    FROM system_configuration
+                                    WHERE ship_name = ? COLLATE SQL_Latin1_General_CP1_CS_AS
+                                    AND nomenclature = ? COLLATE SQL_Latin1_General_CP1_CS_AS;
+                            """
+                        cursor.execute(query, self.__ship_name, self.__component_name)
+                        result = cursor.fetchone()
+                        self.__component_id = result[0]
+                        self.estimate_alpha_beta(component_id=self.__component_id)
                         single_rel_duration = int(tm)
                         rel = self.system_rel(m, system, platform, single_rel_duration)
                         estimation_ach = 1

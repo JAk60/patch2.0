@@ -12,11 +12,7 @@ import { useSelector } from "react-redux";
 
 
 const RepairableOverhaul = (props) => {
-  const currSelectedData = useSelector(
-    (state) => state.userSelection.currentSelection
-  );
   const [secondTableData, setSecondTableData] = useState([]);
-  const currNomenclature = currSelectedData.nomenclature;
   const [selectedOption, setSelectedOption] = useState("manual");
   const secondTableDataUpdate = (data, isUpdated = false) => {
     console.log(data)
@@ -33,7 +29,7 @@ const RepairableOverhaul = (props) => {
   };
 
   return (<>
-    {currNomenclature && <div style={{ marginTop: "5rem" }}>
+  <div style={{ marginTop: "5rem" }}>
       <RadioGroup
         row
         aria-label="option"
@@ -83,7 +79,7 @@ const RepairableOverhaul = (props) => {
       {selectedOption === "overhaul_hours" && (
         <OverhaulEntryTable secondTableDataUpdate={secondTableDataUpdate} tableUpdate={mainTableUpdate} />
       )}
-    </div>}
+    </div>
   </>
   );
 };
