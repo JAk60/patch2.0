@@ -11,25 +11,51 @@ import {
 import styles from "./CDashboard.module.css";
 
 const CGraph = ({ graphData, selectedParameterNames }) => {
+  console.log("selectedParameterNames",selectedParameterNames);
   const groupedData = graphData.reduce((acc, cur) => {
-    if (!acc[cur.name]) {
-      acc[cur.name] = {
+    if (!acc[cur.nomenclature]) {
+      acc[cur.nomenclature] = {
         equipmentName: cur.component_name,
         nomenclature: cur.nomenclature,
-        parameterName: cur.name,
         data: [],
       };
     }
-    acc[cur.name].data.push(cur);
+    acc[cur.nomenclature].data.push(cur);
     return acc;
   }, {});
-
+  console.log("groupedData", groupedData);
   const paramChartData = Object.values(groupedData);
 
-  const filteredParamChartData = paramChartData.filter((param) => {
-    return selectedParameterNames.some(selectedParam => selectedParam.name === param.parameterName);
-  });
-debugger
+
+  const manipulatedData = {};
+
+  for (const key in groupedData) {
+    if (groupedData.hasOwnProperty(key)) {
+      const item = groupedData[key];
+      const { nomenclature, data } = item;
+  
+      if (!manipulatedData[nomenclature]) {
+        manipulatedData[nomenclature] = {
+          equipmentName: item.equipmentName,
+          nomenclature: item.nomenclature,
+          data: {},
+        };
+      }
+  
+      data?.forEach(entry => {
+        const parameterName = entry.name;
+        if (!manipulatedData[nomenclature].data[parameterName]) {
+          manipulatedData[nomenclature].data[parameterName] = [];
+        }
+        manipulatedData[nomenclature].data[parameterName].push(entry);
+      });
+    }
+  }
+  
+  console.log("GG",manipulatedData);
+
+
+  debugger;
   const parseDate = (dateString) => {
     const dateParts = dateString.split(", ")[0].split("/");
     const timeParts = dateString.split(", ")[1].split(":");
@@ -45,7 +71,7 @@ debugger
   const getDomainByUnit = (unit, minThreshold, maxThreshold) => {
     const adjustedMin = Math.round(minThreshold / 2);
     const adjustedMax = maxThreshold * 1.5;
-  
+
     switch (unit) {
       case "RMS":
       case "kg":
@@ -55,7 +81,7 @@ debugger
         return [adjustedMin, adjustedMax];
     }
   };
-  
+
   const sortDataByDate = (data) => {
     return data.sort((a, b) => {
       const dateA = parseDate(a.date);
@@ -66,23 +92,27 @@ debugger
 
   return (
     <div className={styles.midSection}>
-      {filteredParamChartData.map((param) => {
-        if (param.data.length === 0) {
+      {selectedParameterNames.map((param) => {
+        const { name, nomenclature } = param;
+        const paramData = manipulatedData[nomenclature]?.data[name] || [];
+        console.log(paramData);
+        if (paramData.length === 0) {
           return null;
         }
 
-        const sortedData = sortDataByDate(param.data);
-        const minThreshold = parseInt(sortedData[0]?.min_value);
-        const maxThreshold = parseInt(sortedData[0]?.max_value);
+        const sortedData = sortDataByDate(paramData)
+        console.log(sortedData);
+        const minThreshold = parseInt(sortedData[0]?.min_value, 10);
+        const maxThreshold = parseInt(sortedData[0]?.max_value, 10);
         const crossingThreshold =
-          (sortedData[sortedData.length - 1]?.value ?? 0) < minThreshold ||
-          (sortedData[sortedData.length - 1]?.value ?? 0) > maxThreshold;
+          sortedData[sortedData.length - 1]?.value < minThreshold ||
+          sortedData[sortedData.length - 1]?.value > maxThreshold;
 
         const unit = sortedData[0]?.unit;
         const yDomain = getDomainByUnit(unit, minThreshold, maxThreshold);
 
         return (
-          <div className={`${styles.rchart}`} key={param.parameterName}>
+          <div className={`${styles.rchart}`} key={`${name}-${nomenclature}`}>
             <div
               className={`${styles.content} ${
                 crossingThreshold ? styles.blinkingChart : ""
@@ -97,7 +127,8 @@ debugger
                   fill="black"
                   fontSize="12px"
                 >
-                  {param.data[0]?.failure_mode_id}
+                  {paramData[0]?.failure_mode_id}
+                  {` (${param.nomenclature})`}
                 </h1>
               </div>
               <LineChart width={700} height={400} data={sortedData}>
@@ -111,14 +142,14 @@ debugger
                   }}
                   height={45}
                   tickFormatter={(dateString) => {
-                    const dateObject = parseDate(dateString);
+                    const dateObject = new Date(dateString);
                     return dateObject.toLocaleDateString();
                   }}
                 />
                 <YAxis
                   domain={yDomain}
                   label={{
-                    value: `${param.parameterName} (${unit})`,
+                    value: `${name} (${unit})`,
                     angle: -90,
                     position: "center",
                     dx: -30,
@@ -134,7 +165,7 @@ debugger
                   stroke={crossingThreshold ? "red" : "green"}
                 />
                 <ReferenceLine
-                  y={parseInt(minThreshold)}
+                  y={minThreshold}
                   stroke="gray"
                   strokeDasharray="6 6"
                   label={{
@@ -145,7 +176,7 @@ debugger
                   }}
                 />
                 <ReferenceLine
-                  y={parseInt(maxThreshold)}
+                  y={maxThreshold}
                   stroke="gray"
                   strokeDasharray="6 6"
                   label={{
@@ -171,5 +202,6 @@ debugger
     </div>
   );
 };
+
 
 export default CGraph;

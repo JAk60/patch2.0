@@ -578,9 +578,9 @@ def rul():
 @app.route("/cgraph", methods=["POST"])
 def cgraph():
     data = request.get_json()
-    equipment_id = data.get("equipment_id")
+    equipment_ids = data.get("equipment_id")
     graph = GraphDashBoard()
-    return graph.graph_c(equipment_id)
+    return graph.graph_c(equipment_ids)
 
 
 @app.route("/get_pf", methods=["POST"])

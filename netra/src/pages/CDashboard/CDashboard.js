@@ -36,7 +36,7 @@ const CDashboard = () => {
   const PData = useSelector(
     (state) => state.userSelection.userSelection.params
   );
-  console.log(PData);
+  console.log(paramOptions);
   useEffect(() => {
     fetch("/cm_dashboard", {
       method: "GET",
@@ -90,13 +90,14 @@ console.log(selectedEqName,
   const classes = dropDownStyle();
   const [showGraph, setShowGraph] = useState(false);
 
+  const uniqueEquipmentIds = [...new Set(paramOptions.map(item => item.equipment_id))];
   const onSubmitHandler = () => {
-    console.log(paramOptions[0]?.equipment_id);
+    console.log(uniqueEquipmentIds);
     debugger
     fetch("/cgraph", {
       method: "POST",
       body: JSON.stringify({
-        equipment_id: paramOptions[0]?.equipment_id,
+        equipment_id: uniqueEquipmentIds,
       }),
       headers: {
         "Content-Type": "application/json",
@@ -312,6 +313,7 @@ console.log(selectedEqName,
                 id="tags-standard"
                 options={paramOptions}
                 getOptionLabel={(option) => option.name}
+                groupBy={(option) => option.nomenclature}
                 value={selectedParameterName}
                 onChange={(e, value) => setParameterName(value)}
                 renderInput={(params) => (
@@ -343,6 +345,7 @@ console.log(selectedEqName,
             <CGraph
               graphData={graphData}
               selectedParameterNames={selectedParameterName}
+              nomenclatureData={nomenclatureData}
             />
           )}
         </div>

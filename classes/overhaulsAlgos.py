@@ -24,7 +24,7 @@ class OverhaulsAlgos:
             clk_reset = 0
             index = 0
 
-            query = "SELECT * FROM data_manager_overhaul_maint_data where component_id = ? AND running_age is NULL ORDER BY cmms_running_age"
+            query = "SELECT * FROM data_manager_overhaul_maint_data where component_id = ? AND running_age is NULL"
             cursor.execute(query, equipment_id)
             data = cursor.fetchall()
             data = self.historic_data_interpolation(data=data, component_id=equipment_id)
@@ -204,6 +204,7 @@ class OverhaulsAlgos:
                     cursor.execute(insert_query, d)
                 cnxn.commit()
         except Exception as e:
+            print("OVERHAULS ALGO")
             print(e)
             pass
 
@@ -248,8 +249,11 @@ class OverhaulsAlgos:
 
     def extract_running_ages(self, sub_data, failure_times):
         run_age = [float(entry["runAge"]) for entry in sub_data][0]
-
-        running_ages = [i[-1] for i in failure_times]
+        running_ages = []
+        if run_age not in failure_times:
+            running_ages.append(run_age)
+        else:
+            running_ages = [i[-1] for i in failure_times]
         return running_ages
         # for data in reversed(main_data):
         #     if data is None:
@@ -294,10 +298,24 @@ class OverhaulsAlgos:
         cnxn.commit()
 
     def _get_interpolated_age(self, date, component_id):
-        query = "SELECT SUM(average_running) FROM operational_data WHERE operation_date<= ?  AND component_id = ?"
+        query = "SELECT SUM(average_running) FROM operational_data WHERE operation_date<?  AND component_id = ?"
         cursor.execute(query, date, component_id)
-        data = cursor.fetchone()[0]
-        return data
+        age = cursor.fetchone()[0]
+        print(age, "age")
+        date = datetime.strptime(date, '%Y-%m-%d')
+        utilization_date = f"{date.year}-{date.month}-01"
+        sql = "SELECT average_running FROM operational_data where operation_date=? and component_id=?"
+        cursor.execute(sql, utilization_date, component_id)
+        utilization = cursor.fetchone()[0]
+        if utilization == 0:
+            query = "SELECT TOP 5 average_running FROM operational_data WHERE component_id = ? ORDER BY average_running DESC"
+            cursor.execute(query, component_id)
+            results = sum(row[0] for row in cursor.fetchall())
+            daily_avg = results / 5 * 30
+        else:
+            daily_avg = utilization / 30
+        age = age + daily_avg * int(date.day) 
+        return age
 
 
     def historic_data_interpolation(self, data, component_id):

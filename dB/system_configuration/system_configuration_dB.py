@@ -118,16 +118,22 @@ class System_Configuration_dB():
                 component_id = data['eqId']
                 failure_mode = data['fixFailureMode']
                 # responsible_component = data["rComponent_id"]
-                insert_failure = '''insert into failure_modes (failure_mode_id, component_id, 
-                                    failure_mode)
-                                    VALUES (?, ?, ?);'''
+                insert_failure = '''
+            INSERT INTO failure_modes (failure_mode_id, component_id, failure_mode)
+            SELECT ?, ?, ?
+            WHERE NOT EXISTS (
+            SELECT 1 
+            FROM failure_modes 
+            WHERE component_id = ? AND failure_mode = ?
+                    );
+                    '''
 
                 cursor.execute(insert_failure, failure_id,
-                               component_id, failure_mode)
+                            component_id, failure_mode, component_id, failure_mode)
             cnxn.commit()
             return self.success_return
         except Exception as e:
-            self.error_return['message'] = str(e)
+            self.error_return['message'] = 'Failure mode already exists.'
             return self.error_return
 
     def insert_duty_cycle(self, data):
