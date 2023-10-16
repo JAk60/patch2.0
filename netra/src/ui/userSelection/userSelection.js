@@ -81,25 +81,25 @@ function UserSelection(props) {
   
 
   const onShipCategoryChange = (e) => {
-    let data = e.currentTarget.innerText;
+    let data = e.target.value;
     data = { shipCategory: data };
     dispatch(userActions.onChangeCurrentSelection({ selectedData: data }));
   };
 
   const onShipClassChange = (e) => {
-    let data = e.currentTarget.innerText;
+    let data = e.target.value;
     data = { shipClass: data };
     dispatch(userActions.onChangeCurrentSelection({ selectedData: data }));
   };
 
   const onCommandChange = (e) => {
-    let data = e.currentTarget.innerText;
+    let data = e.target.value;
     data = { command: data };
     dispatch(userActions.onChangeCurrentSelection({ selectedData: data }));
   };
 
   const onDepartmentChange = (e) => {
-    let data = e.currentTarget.innerText;
+    let data = e.target.value;
     let eqData = userSelectionEqData
       .filter(
         (x) =>
@@ -134,8 +134,7 @@ function UserSelection(props) {
   };
 
   const onEquipmentChange = (e) => {
-    let data = e.currentTarget.innerText;
-    console.log(data);
+    let data = e.target.value;
     let normData = userSelectionEqData
       .filter(
         (x) =>
@@ -159,7 +158,7 @@ function UserSelection(props) {
   };
 
   const onNomenclatureChange = (e) =>{
-    let data = e.currentTarget.innerText;
+    let data = e.target.value;
     data = { nomenclature: data };
     dispatch(userActions.onChangeCurrentSelection({ selectedData: data }));
     

@@ -12,7 +12,7 @@ import { AgGridColumn } from "ag-grid-react";
 import MomentUtils from "@date-io/moment";
 import Navigation from "../../components/navigation/Navigation";
 import styles from "./tDashboard.module.css";
-import moment from "moment";
+import moment, { duration } from "moment";
 import CustomSelect from "../../ui/Form/CustomSelect";
 import ReliabilityChart from "../Reliability Dashboard/ReliabilityChart";
 import MissionSlider from "../Reliability Dashboard/MissionSlider";
@@ -109,6 +109,7 @@ const MissionData = (props) => {
 
 
 const TaskDashboard = () => {
+  const precision = 2;
   const [gridApi, setGridApi] = useState(null);
   const [gridCompApi, setGridCompApi] = useState(null);
   const [gridTaskApi, setGriTaskdApi] = useState(null);
@@ -134,6 +135,7 @@ const TaskDashboard = () => {
   const [loading, setLoading] = useState(false);
   const [recommedation, setRecommedation] = useState([]);
   const [totalReliability, setTotalReliability] = useState(null);
+  const [showPaper, setShowPaper] = useState(false);
 
 
   const [selectedTaskShip, setselectedTaskShip] = useState("");
@@ -180,7 +182,7 @@ const TaskDashboard = () => {
   };
 
   ///point1
-  const [missionD, setMissionD] = useState({});
+  const [missionD, setMissionD] = useState([]);
 
 
   const onCellValueChanged = (params) => {
@@ -194,10 +196,11 @@ const TaskDashboard = () => {
       );
       setMissionDurations(updatedDurations);
     }
-    setMissionD((prevMissionData) => ({
-      ...prevMissionData,
-      [missionType]: duration,
-    }));
+    // setMissionD(prev =>{
+    //   return [...prev, {[missionType]: duration}];
+
+    // });
+    console.log(missionD)
   };
   const ImportColumns = [
     <AgGridColumn
@@ -369,40 +372,77 @@ const TaskDashboard = () => {
       add: defaultRow,
     });
   };
-  console.log("missionDurations", missionD);
+  // console.log("missionDurations", missionProfileData);
   const updateCompTable = () => {
     console.log(currentTaskName)
     const durationNums = missionDurations.map(str => parseFloat(str));
+    const mission_phases_data = missionProfileData.map((item, index) => (
+      {
+        ...item,
+        duration: durationNums[index]
+      }
+    ))
+    console.log(mission_phases_data)
     fetch('/phase_json', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        "PhaseInfo": missionD,
-        "duration": durationNums,
+        "phases": mission_phases_data,
+        // "duration": durationNums,
         "task_name": currentTaskName
       })
     })
       .then(response => response.json())
       .then(data => {
         // Handle the response data here
-        console.log(data);
-        setRecommedation(data)
-        // const totalReliabilityRegex = /Total Reliability: (\d+\.\d+)/;
-        // const match = data.res[2].match(totalReliabilityRegex);
-        // console.log(match)
+        console.log(data)
+        if (data.code) {
+          const recommendation_array = data.recommedation.results
+          const results = mission_phases_data.map((item) => {
+            if (recommendation_array.hasOwnProperty(item["id"])) {
+              return {
+                ...item,
+                ["components"]: recommendation_array[item["id"]]
+              }
+            }
+          })
+          console.log(results)
+          setSnackBarMessage({
+            severity: "Success",
+            message: data.message,
+            showSnackBar: true,
+          });
+          const reliabilityValue = data.recommedation.rel;
+          setTotalReliability(reliabilityValue.toFixed(precision));
+          setRecommedation(results)
+          setShowPaper(!showPaper);
 
-        const totalRel = data.res[data.res.length - 1];
-        // console.log(totalRel)
-        const reliabilityValue = totalRel.split(":")[1];
-        console.log(reliabilityValue);
-        setTotalReliability(reliabilityValue);
-        setSnackBarMessage({
-          severity: "Success",
-          message: `Reliblity Calculated Sucessfully`,
-          showSnackBar: true,
-        });
+        } else {
+          setSnackBarMessage({
+            severity: "error",
+            message: data.message,
+            showSnackBar: true,
+          });
+        }
+
+        // console.log(data);
+        // setRecommedation(data)
+        // // const totalReliabilityRegex = /Total Reliability: (\d+\.\d+)/;
+        // // const match = data.res[2].match(totalReliabilityRegex);
+        // // console.log(match)
+
+        // const totalRel = data.res[data.res.length - 1];
+        // // console.log(totalRel)
+        // const reliabilityValue = totalRel.split(":")[1];
+        // console.log(reliabilityValue);
+        // setTotalReliability(reliabilityValue);
+        // setSnackBarMessage({
+        //   severity: "Success",
+        //   message: `Reliblity Calculated Sucessfully`,
+        //   showSnackBar: true,
+        // });
       })
       .catch(error => {
         // Handle errors here
@@ -629,19 +669,19 @@ const TaskDashboard = () => {
             perMData.forEach((pTD) => {
               taskMissionData.push({
                 "shipName": tData["shipName"], "taskName": tData["taskName"],
-                "rel": parseFloat(pTD["rel"]).toFixed(4), "missionType": pTD["missionName"], "ComponentMission": pTD["missionName"]
+                "rel": parseFloat(pTD["rel"]).toFixed(precision), "missionType": pTD["missionName"], "ComponentMission": pTD["missionName"]
               })
               let componentRelData = pTD["comp_rel"]
               console.log(componentRelData)
               componentRelData.forEach((cTD) => {
                 taskMissionData.push({
                   "shipName": tData["shipName"], "taskName": tData["taskName"],
-                  "rel": parseFloat(cTD["rel"]).toFixed(4), "missionType": pTD["missionName"], "ComponentMission": cTD["compName"]
+                  "rel": parseFloat(cTD["rel"]).toFixed(precision), "missionType": pTD["missionName"], "ComponentMission": cTD["compName"]
                 })
               })
             })
             console.log("This is tdata", tData)
-            taskData.push({ "shipName": tData["shipName"], "taskName": tData["taskName"], "rel": parseFloat(tData["rel"]), "cal_rel": parseFloat(tData["cal_rel"]).toFixed(4) })
+            taskData.push({ "shipName": tData["shipName"], "taskName": tData["taskName"], "rel": parseFloat(tData["rel"]).toFixed(precision), "cal_rel": parseFloat(tData["cal_rel"]).toFixed(precision) })
           });
           console.log(taskData, 'Taks data')
           settaskTableData(taskData)
@@ -876,7 +916,7 @@ const TaskDashboard = () => {
               </Button>
             </div>
             <div>
-              {recommedation.res ? <PaperTable response={recommedation} /> : ""
+              {showPaper && <PaperTable response={recommedation} rel={totalReliability}/>
               }
             </div>
 

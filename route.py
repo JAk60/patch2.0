@@ -87,7 +87,6 @@ def save_hep():
 def fetch_system():
     if request.method == "POST":
         data = request.get_json(force=True)
-        print(data)
         conf_data = {
             "nomenclature": data["nomenclature"],
             "ship_name": data["ship_name"],
@@ -626,11 +625,10 @@ def fetch_eta_beta():
 @app.route("/phase_json", methods=["POST"])
 def phasejson():
     data = request.json
-    PhaseInfo = data["PhaseInfo"]
-    durations = data["duration"]
+    phases = data["phases"]
     curr_task = data["task_name"]
     inst = TaskReliability()
-    return inst.json_paraser(APP_ROOT, PhaseInfo, durations, curr_task)
+    return inst.json_paraser(APP_ROOT, phases, curr_task)
 
 
 @app.route("/get_ship_alpha_beta", methods=["POST"])

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Table from "../../../ui/Table/DataManagerTable";
 import styles from "./repairable.module.css";
 import { AgGridColumn, AgGridReact } from "ag-grid-react";
@@ -11,7 +11,14 @@ const RepairableSubTableMaual = (props) => {
   const [secondRows, setSecondRows] = useState([]);
   const [gridColumnApi, setGridColumnApi] = useState(null);
   const [overhaulNums, setOverhaulNums] = useState("0");
-  
+  const currSelectedData = useSelector(
+    (state) => state.userSelection.currentSelection
+  );
+  const [currAge, setCurrAge] = useState("0");
+  const currNomenclature = currSelectedData.nomenclature;
+  const currShipName = currSelectedData.shipName;
+  const currEquipmentName = currSelectedData.equipmentName;
+
   let secondRowHeight = 120;
   if (secondRows.length > 0 && secondRows.length > 2) {
     secondRowHeight = 200;
@@ -69,10 +76,11 @@ const RepairableSubTableMaual = (props) => {
     //     console.error('Error:', error);
     //   });
 
+
     while (count <= +overhaulNums) {
       sRows.push({
         overhaulNum: count.toString(),
-        runAge: 0,
+        runAge: currAge,
         numMaint: 1,
         id: uuid(),
       });
@@ -89,6 +97,36 @@ const RepairableSubTableMaual = (props) => {
     console.log(allRowData);
     props.secondTableDataUpdate(allRowData, true);
   };
+
+  useEffect(() => {
+    if (currNomenclature) {
+      const payload = {
+        ship_name: currShipName,
+        equipment_name: currEquipmentName,
+        nomenclature: currNomenclature,
+      };
+      fetch("/get_overhaul_hours", {
+        method: "POST",
+        body: JSON.stringify(payload),
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data);
+          if (data.code) {
+            setCurrAge(data.result);
+          } else {
+            setCurrAge("0");
+          }
+        });
+    } else {
+      // Handle the case when currNomenclature is null or empty
+      setCurrAge("0"); // Reset currAge to "0"
+    }
+  }, [currNomenclature]);
 
   return (
     <div>

@@ -10,14 +10,12 @@ class OverhaulsAlgos:
         query = "SELECT TOP 5 average_running FROM operational_data WHERE component_id = ? ORDER BY average_running DESC"
         cursor.execute(query, equipment_id)
         results = cursor.fetchall()
-        print(results, "results")
         num_rows = len(results)
         while num_rows < 5:
             results.append((0,))
             num_rows += 1
         total_average = sum(row[0] for row in results)
         days = total_average / 5 / 30
-        print(days, "days")
         return days
 
     def insert_overhauls_data(self, equipment_id, run_age_component):
@@ -26,12 +24,13 @@ class OverhaulsAlgos:
             clk_reset = 0
             index = 0
 
-            query = "SELECT * FROM data_manager_overhaul_maint_data where component_id = ? AND running_age is NULL"
+            query = "SELECT * FROM data_manager_overhaul_maint_data where component_id = ? AND running_age is NULL ORDER BY cmms_running_age"
             cursor.execute(query, equipment_id)
             data = cursor.fetchall()
             data = self.historic_data_interpolation(data=data, component_id=equipment_id)
             days = self.days_addition_logic(equipment_id)
             prev_date = None
+            multiplication_factor = 1
 
             for row in data:
                 (
@@ -44,13 +43,12 @@ class OverhaulsAlgos:
                     associated_sub_system,
                     cmms_running_age,
                 ) = row
-                cmms_running_age = int(cmms_running_age)
+                cmms_running_age = float(cmms_running_age)
                 if date is None:
                     if prev_date:
                         date = datetime.strptime(prev_date, "%Y-%m-%d") + timedelta(
                             days=days
                         )
-                        print(date, "this is date")
                         date = date.strftime("%Y-%m-%d")
                 if clk_reset == 0:
                     if cmms_running_age < run_age_component:
@@ -86,7 +84,6 @@ class OverhaulsAlgos:
                     else:
                         maintenance_type = "Overhaul"
                         prev_date = data[index - 1][3]
-                        # days = abs(cmms_running_age - run_age_component) / days
                         date = datetime.strptime(prev_date, "%Y-%m-%d") + timedelta(
                             days=days
                         )
@@ -105,7 +102,7 @@ class OverhaulsAlgos:
                         )
                         id = uuid.uuid4()
                         clk_reset += 1
-                        age = abs(int(cmms_running_age) - run_age_component * clk_reset)
+                        age = abs(float(cmms_running_age) - run_age_component * clk_reset)
                         running_age = age
                         maintenance_type = "Corrective Maintainance"
                         new_data.append(
@@ -121,7 +118,7 @@ class OverhaulsAlgos:
                             )
                         )
                 else:
-                    age = abs(int(cmms_running_age) - run_age_component * clk_reset)
+                    age = abs(float(cmms_running_age) - run_age_component * clk_reset)
                     if age < run_age_component:
                         running_age = age
                         new_data.append(
@@ -138,6 +135,7 @@ class OverhaulsAlgos:
                         )
                     elif age == run_age_component:
                         maintenance_type = "Overhaul"
+                        multiplication_factor += 1
                         running_age = age
                         new_data.append(
                             (
@@ -148,7 +146,7 @@ class OverhaulsAlgos:
                                 maintenance_type,
                                 running_age,
                                 associated_sub_system,
-                                cmms_running_age,
+                                run_age_component * multiplication_factor,
                             )
                         )
                         clk_reset += 1
@@ -156,8 +154,8 @@ class OverhaulsAlgos:
                         maintenance_type = "Overhaul"
                         id = uuid.uuid4()
                         running_age = age
+                        multiplication_factor += 1
                         prev_date = data[index - 1][3]
-                        # days = abs(cmms_running_age - run_age_component) / days
                         date = datetime.strptime(prev_date, "%Y-%m-%d") + timedelta(
                             days=days
                         )
@@ -171,12 +169,12 @@ class OverhaulsAlgos:
                                 maintenance_type,
                                 run_age_component,
                                 associated_sub_system,
-                                run_age_component * clk_reset,
+                                run_age_component * multiplication_factor,
                             )
                         )
                         id = uuid.uuid4()
                         clk_reset += 1
-                        age = abs(int(cmms_running_age) - run_age_component * clk_reset)
+                        age = abs(float(cmms_running_age) - run_age_component * clk_reset)
                         running_age = age
                         maintenance_type = "Corrective Maintainance"
                         new_data.append(
@@ -211,53 +209,67 @@ class OverhaulsAlgos:
 
     def equipment_failure_times(self, input_data):
         failure_times = []
-        overhaul_data = {}
+        # overhaul_data = {}
         present_overhaul_data = []
-
         for data in input_data:
             if data is None:
                 continue
-            overhaul_id = data.get("overhaulId")
-            if overhaul_id:
-                total_run_age = float(data.get("runningAge", 0))
-                if overhaul_id in overhaul_data:
-                    overhaul_data[overhaul_id].append(total_run_age)
-                else:
-                    overhaul_data[overhaul_id] = [total_run_age]
             else:
-                total_run_age = float(data.get("runningAge", 0))
-                present_overhaul_data.append(total_run_age)
-                # failure_times.append([total_run_age])
-
-        for overhaul_id, data in overhaul_data.items():
-            failure_times.append(data)
-        failure_times.append(present_overhaul_data)
+                if data["maintenanceType"] == "Overhaul":
+                    present_overhaul_data.append(float(data["totalRunAge"]))
+                    failure_times.append(present_overhaul_data)
+                    present_overhaul_data = []
+                else:
+                    present_overhaul_data.append(float(data["totalRunAge"]))
+                    
+        if(len(present_overhaul_data)  != 0):
+            failure_times.append(present_overhaul_data)
         return failure_times
 
-    def extract_running_ages(self, main_data, sub_data):
-        run_ages = [float(entry["runAge"]) for entry in sub_data]
+        # for data in input_data:
+        #     if data is None:
+        #         continue
+        #     overhaul_id = data.get("overhaulId")
+        #     if overhaul_id:
+        #         total_run_age = float(data.get("totalRunAge", 0))
+        #         if overhaul_id in overhaul_data:
+        #             overhaul_data[overhaul_id].append(total_run_age)
+        #         else:
+        #             overhaul_data[overhaul_id] = [total_run_age]
+        #     else:
+        #         total_run_age = float(data.get("totalRunAge", 0))
+        #         present_overhaul_data.append(total_run_age)
+        #         # failure_times.append([total_run_age])
 
-        last_run_age = None
-        for data in reversed(main_data):
-            if data is None:
-                continue
-            if "overhaulId" not in data:
-                last_run_age = float(data.get("runningAge", 0))
-                break
+        # for overhaul_id, data in overhaul_data.items():
+        #     failure_times.append(data)
+        # failure_times.append(present_overhaul_data)
+        # return failure_times
 
-        if last_run_age is not None:
-            run_ages.append(last_run_age)
+    def extract_running_ages(self, sub_data, failure_times):
+        run_age = [float(entry["runAge"]) for entry in sub_data][0]
 
-        return run_ages
+        running_ages = [i[-1] for i in failure_times]
+        return running_ages
+        # for data in reversed(main_data):
+        #     if data is None:
+        #         continue
+        #     if "overhaulId" not in data:
+        #         last_run_age = float(data.get("runningAge", 0))
+        #         break
+
+        # if last_run_age is not None:
+        #     run_ages.append(last_run_age)
+
+        # return run_ages
 
     def alpha_beta_calculation(self, mainData, subData, id):
         failure_times = self.equipment_failure_times(mainData)
         N = [len(subarray) for subarray in failure_times]
-        T = self. extract_running_ages(main_data=mainData, sub_data=subData)
-        print("failure_times value:-",failure_times)
-        print("N value:-",len(failure_times))
-        print("N value:-",N)
-        print("T value:-",T)
+        T = self. extract_running_ages(sub_data=subData, failure_times=failure_times)
+        print(f"FALIURE TIMES: {failure_times}")
+        print(f"N: {N}")
+        print(f"T: {T}")
         def para(N, x, T, k):
             beta = (sum(n for n in N)) / (sum(sum(math.log(t /
                                                         x[T.index(t)][i]) for i in range(N[T.index(t)])) for t in T))

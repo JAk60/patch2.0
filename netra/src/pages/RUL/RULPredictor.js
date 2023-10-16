@@ -23,6 +23,7 @@ import styles from "./rul.module.css";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
 const RULPredictor = ({ parameter, equipmentId, P, F }) => {
+  const precision = 2;
   const [sensorValue, setSensorValue] = useState("");
   const [prediction, setPrediction] = useState([]);
   const [openRULDialog, setOpenRULDialog] = useState(false);
@@ -56,13 +57,13 @@ const RULPredictor = ({ parameter, equipmentId, P, F }) => {
         },
         body: JSON.stringify(requestData),
       });
-
-      if (response.code == 0) {
-        throw new Error("Failed to get RUL prediction.");
-      } else {
-        const data = await response.json();
+      const data = await response.json();
+      console.log(data)
+      if (data.code) {
         setPrediction(data.results.remaining_life);
         setOpenRULDialog(true);
+      } else {
+        console.log(data)
       }
     } catch (error) {
       console.error("Error fetching RUL prediction:", error);
@@ -155,7 +156,7 @@ const RULPredictor = ({ parameter, equipmentId, P, F }) => {
                           {prediction?.map((entry, index) => (
                             <TableRow key={index}>
                               <TableCell>{confidance_levels[index]}</TableCell>
-                              <TableCell>{entry}</TableCell>
+                              <TableCell>{entry.toFixed(precision)}</TableCell>
                             </TableRow>
                           ))}
                         </TableBody>

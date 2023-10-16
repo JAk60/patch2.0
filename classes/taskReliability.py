@@ -20,6 +20,11 @@ from classes.overhaulsAlgos import OverhaulsAlgos
 class TaskReliability:
     # Saving Reliability.
     def __init__(self):
+        self.success_return = {"message": "Data Saved Successfully.", "code": 1}
+        self.error_return = {
+            "message": "Some Error Occured, Please try agian.",
+            "code": 0,
+        }
         self.__ship_name = None
         self.__component_name = None
         self.__component_id = None
@@ -344,6 +349,16 @@ class TaskReliability:
             instance.alpha_beta_calculation(mainData, subData, component_id)
         except Exception as e:
             pass
+
+    def get_default_current_age(self):
+        query = '''
+            SELECT COALESCE(SUM(average_running), 0) AS sum_of_average_running
+            FROM operational_data
+            WHERE component_id = ?;
+        '''
+        cursor.execute(query, self.__component_id)
+        result = cursor.fetchone()
+        return result[0]
     
     def calculate_rel_by_power_law(self, alpha, beta, duration):
         query = '''
@@ -360,7 +375,7 @@ class TaskReliability:
         sum_of_average_running, error_message = self.get_curr_ages()
         if error_message:
             # print(error_message)
-            curr_age = 0
+            curr_age = self.get_default_current_age()
         else:
            curr_age = sum_of_average_running
 
@@ -680,7 +695,7 @@ class TaskReliability:
         pass
 
 
-    def json_paraser(self,APP_ROOT, PhaseInfo, phase_duration, curr_task):
+    def json_paraser(self,APP_ROOT, phases, curr_task):
         target_path = os.path.join(APP_ROOT, 'tasks/')
         files = os.listdir(target_path)
         file = f"{curr_task}.json"
@@ -838,15 +853,16 @@ class TaskReliability:
 
             groups = sorted_data
 
-            phase_duration = phase_duration
-            # print([i for i in PhaseInfo.keys()])
+            phase_duration = [duration["duration"] for duration in phases]
+
             phase_seq  = []
             index = 0
-            for i in PhaseInfo.keys():
+            for phase in phases:
                 for idx, j in enumerate(phase_array):
-                    if j == i:
+                    if j == phase["missionType"]:
                         phase_seq.append(idx)
-            total_phase = len(phase_duration)
+            total_phase = len(phases)
+            print(phase_seq)
 
             taskrelcode = TaskRelCode()
 
@@ -859,25 +875,36 @@ class TaskReliability:
             # print("*"*50)
             # print(phase_duration)
             # print("phase seq", phase_seq)
+            # phases
+            results = {}
 
             for i in range(len(groups)):
-                for j in phase_seq:
+                for idx, j in enumerate(phase_seq):
                     phase_name = phase_array[j]
                     if (groups[i][j][5] == 0 ):
                         pass
                         # print("for phase", j + 1, " and group", i + 1,
                         #       "no equipment required (0 out of N case)")
                     else:
-                        group_equi_rel, max_rel_equip, group_equip, Rel, max_rel_equip_index = taskrelcode.group_rel(groups[i][j][1],groups[i][j][2], groups[i][j][3], groups[i][j][4],phase_duration[j], groups[i][j][5],groups[i][j][6])
+                        # print("DURATION", groups[i][j][4])
+                        phase_id = phases[idx]["id"]
+                        group_equi_rel, max_rel_equip, group_equip, Rel, max_rel_equip_index = taskrelcode.group_rel(groups[i][j][1],groups[i][j][2], groups[i][j][3], groups[i][j][4],phase_duration[idx], groups[i][j][5],groups[i][j][6])
                         # print ("for phase", j, " and group", i,"Reliability of all equipments is", group_equi_rel, "Reliability of the preferred equipments are",
                         #         max_rel_equip, "preferred equipments are", group_equip,"Group Reliability is", Rel)
-                        final_results.append(f"For {phase_name} and group {i+1}, "  # Use phase_name instead of phase number
-                                            f"preferred equipments are {group_equip}")
-                        print(f"For {phase_name} and group {i+1}, "  # Use phase_name instead of phase number
-                                            f"preferred equipments are {group_equip}")
+                        # final_results.append(f"For {phase_name} and group {i+1}, "  # Use phase_name instead of phase number
+                        #                     f"preferred equipments are {group_equip}")
+                        if phase_id not in results:
+                            results[phase_id] = group_equip
+                        else:
+                            for e in group_equip:
+                                results[phase_id].append(e)
+                        # print(f"For {phase_name} and group {i+1}, "  # Use phase_name instead of phase number
+                        #                     f"preferred equipments are {group_equip} ")
                         # print ("for phase", phase_name,"  and group", i+1,
                         #         "preferred equipments are", group_equip,"Group Reliability is", Rel)
                         
+                        # results.append(f"For {phase_name} and group {i+1}, "  # Use phase_name instead of phase number
+                        #                     f"preferred equipments are {group_equip} DURATION {phase_duration[idx]}")
                         rel = rel * Rel
                         try:
                             for k in max_rel_equip_index:
@@ -885,7 +912,7 @@ class TaskReliability:
                                     groups[i][l][4][k] += phase_duration[j]
                         except:
                             pass
-
+            print(results)
             print("*"*100)
 
             # for i in range(len(groups)):
@@ -911,17 +938,17 @@ class TaskReliability:
             #             except:
             #                 pass
 
-            final_results.append(f"Total Reliability: {rel}")
-            print(final_results)
-            print(f"Total Reliability: {rel}")
+            # final_results.append(f"Total Reliability: {rel}")
+            # print(final_results)
+            # print(f"Total Reliability: {rel}")
 
 
             # print(final_results)
-            return jsonify({
-               "res": final_results
-            })
+            self.success_return["recommedation"] = {
+                "results": results,
+                "rel": rel
+            }
+            return self.success_return
         else:
-            return jsonify({
-                "messege": "JSON is not setted"
-            })
+            self.error_return
            

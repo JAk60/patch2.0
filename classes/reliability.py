@@ -291,7 +291,7 @@ class Reliability:
             )
 
             main_query = """SELECT * FROM data_manager_overhaul_maint_data 
-                        WHERE component_id = ?
+                        WHERE component_id = ?  ORDER BY cmms_running_age
                 """
             cursor.execute(main_query, (component_id,))
             data = cursor.fetchall()
@@ -311,7 +311,20 @@ class Reliability:
 
             instance.alpha_beta_calculation(mainData, subData, component_id)
         except Exception as e:
+            print(e)
             pass
+
+    def get_default_current_age(self):
+        query = '''
+            SELECT COALESCE(SUM(average_running), 0) AS sum_of_average_running
+            FROM operational_data
+            WHERE component_id = ?;
+        '''
+        cursor.execute(query, self.__component_id)
+        result = cursor.fetchone()
+        return result[0]
+
+        
 
 
     def calculate_rel_by_power_law(self, alpha, beta, duration):
@@ -324,26 +337,22 @@ class Reliability:
         cursor.execute(query, self.__ship_name, self.__component_name)
         result = cursor.fetchone()
         self.__component_id = result[0]
-        self.estimate_alpha_beta(component_id=self.__component_id)
+        # self.estimate_alpha_beta(component_id=self.__component_id)
         sum_of_average_running, error_message = self.get_curr_age()
         if error_message:
-            print(error_message)
-            curr_age = 0
+            curr_age = self.get_default_current_age()
         else:
             curr_age = sum_of_average_running
+        print(f"CURRENT AGE: {curr_age}")
+        print(f"ALPHA: {alpha}")
+        print(f"BETA: {beta}")
         N_currentAge = alpha * (curr_age**beta)
         missionAge = curr_age + duration
         N_mission = alpha * (missionAge**beta)
         N = N_mission - N_currentAge
         rel = np.e ** (-N)
-        print("relib ", rel)
-        # curr_age = 0
-        # N_currentAge = alpha * (curr_age**beta)
-        # missionAge = curr_age + duration
-        # N_mission = alpha * (missionAge**beta)
-        # N = N_mission - N_currentAge
-        # rel = np.e ** (-N)
-        # print("cage rel", rel)
+        print(f"RELIBLITY: {rel}")
+        print("*"*100)
         return rel
 
     def get_DC_EM(
@@ -405,10 +414,12 @@ class Reliability:
                         for item in nomenclatures
                         if item["equipmentName"] == component
                     ]
-                    print(instances, "instances")
                     for e in instances:
                         system = e["nomenclature"]
-                        print(component, system, platform)
+                        print("*"*100)
+                        print(f"COMPONENT NAME: {component}")
+                        print(f"SHIP NAME: {platform}")
+                        print(f"NOMENCLATURE: {system}")
                         self.__ship_name = platform
                         self.__component_name = system
                         # call the method and save it to a variable
@@ -431,7 +442,6 @@ class Reliability:
                         if platform not in data:
                             data[platform] = []
                         data[platform].append({system: rel})
-                        print(data)
                 final_data.append({m: data})
             self.success_return[
                 "message"

@@ -90,7 +90,6 @@ class RUL_dB:
             p = req_data['p']
             f = req_data['f']
             confidence_levels =[0.8, 0.85, 0.9, 0.95]
-            print(req_data)
             threshold = f
             idx = []
             result = []
@@ -119,8 +118,8 @@ class RUL_dB:
 
 
             # # Estimate beta and eta using MLE
-            print(data)
             if len(operating_hours_threshold_reached) ==0:
+                self.error_return["message"] = "Threshold is not reached"
                 return self.error_return
             params = weibull_min.fit(operating_hours_threshold_reached, floc=0)
 
@@ -157,6 +156,7 @@ class RUL_dB:
             return self.success_return
             
         except Exception as e:
+            print(e)
             self.error_return['message'] = str(e)
             return self.error_return
 
