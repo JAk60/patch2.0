@@ -44,6 +44,9 @@ const ViewData = (props) => {
     { name: "Add Sensor Data", path: "/maintenance_allocation/add_data", icon: <WifiTetheringIcon /> },
   ];
 
+
+  const userLevel = JSON.parse(localStorage.getItem("userData"))
+  console.log(userLevel);
   const Logout = () => {
     props.setLoggedIn(false);
     props.history.push("/sign_in");
@@ -55,7 +58,7 @@ const ViewData = (props) => {
   };
   const classes=useStyles();
   return (
-<AccessControl allowedLevels={["L1", "L5"]}>
+    <AccessControl allowedLevels={["L1", "L5", "L6"]}>
       <div className={styles.container}>
         <div className={styles.viewDataNav}>
           <Link onClick={Logout}>
@@ -63,23 +66,28 @@ const ViewData = (props) => {
           </Link>
         </div>
         <div className={styles.viewDataLinks}>
-          {ViewDataPaths.map((link, index) => (
-            <Link key={index} to={link.path} onClick={resetUserSelection}>
-              <div className={classes.linkbtn}> 
-                {link.icon}
-              </div>
-              <Button disableRipple={true}>
-                <Typography variant="h5" className={classes.txt}>
-                  {link.name}
-                </Typography>
-              </Button>
-            </Link>
-          ))}
+          {ViewDataPaths.map((link, index) => {
+            if (userLevel.level !== "L6" || (userLevel.level === "L6" && link.name !== "Add New Ship")) {
+              return (
+                <Link key={index} to={link.path} onClick={resetUserSelection}>
+                  <div className={classes.linkbtn}>
+                    {link.icon}
+                  </div>
+                  <Button disableRipple={true}>
+                    <Typography variant="h5" className={classes.txt}>
+                      {link.name}
+                    </Typography>
+                  </Button>
+                </Link>
+              );
+            }
+            return null;
+          })}
         </div>
         <div className={styles.netra}>
-        <img src="/netra-logo-removebg.png" alt="Netra Logo" className={classes.logoImg} />
-        <div className={styles.logotxt}>NETRA</div>
-      </div>
+          <img src="/netra-logo-removebg.png" alt="Netra Logo" className={classes.logoImg} />
+          <div className={styles.logotxt}>NETRA</div>
+        </div>
       </div>
     </AccessControl>
   );

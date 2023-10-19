@@ -24,7 +24,7 @@ class OverhaulsAlgos:
             clk_reset = 0
             index = 0
 
-            query = "SELECT * FROM data_manager_overhaul_maint_data where component_id = ? AND running_age is NULL"
+            query = "SELECT * FROM data_manager_overhaul_maint_data where component_id = ? AND running_age is NULL ORDER BY date"
             cursor.execute(query, equipment_id)
             data = cursor.fetchall()
             data = self.historic_data_interpolation(data=data, component_id=equipment_id)
@@ -301,17 +301,21 @@ class OverhaulsAlgos:
         query = "SELECT SUM(average_running) FROM operational_data WHERE operation_date<?  AND component_id = ?"
         cursor.execute(query, date, component_id)
         age = cursor.fetchone()[0]
-        print(age, "age")
         date = datetime.strptime(date, '%Y-%m-%d')
         utilization_date = f"{date.year}-{date.month}-01"
         sql = "SELECT average_running FROM operational_data where operation_date=? and component_id=?"
         cursor.execute(sql, utilization_date, component_id)
-        utilization = cursor.fetchone()[0]
+        result = cursor.fetchone()
+        if result: 
+            utilization = result[0]
+        else:
+            utilization = 0
         if utilization == 0:
-            query = "SELECT TOP 5 average_running FROM operational_data WHERE component_id = ? ORDER BY average_running DESC"
-            cursor.execute(query, component_id)
-            results = sum(row[0] for row in cursor.fetchall())
-            daily_avg = results / 5 * 30
+            # query = "SELECT TOP 5 average_running FROM operational_data WHERE component_id = ? ORDER BY average_running DESC"
+            # cursor.execute(query, component_id)
+            # results = sum(row[0] for row in cursor.fetchall())
+            # daily_avg = results / 5 * 30
+            return age
         else:
             daily_avg = utilization / 30
         age = age + daily_avg * int(date.day) 

@@ -70,7 +70,7 @@ const Home = (props) => {
     { feature: "SystemConfiguration", levels: ["L1", "L5", "L6"] },
     { feature: "MissionConfiguration", levels: ["L1", "L5"] },
     { feature: "MaintenanceAllocation", levels: ["L1", "L5", "L6"] },
-    { feature: "ViewOrUpdateData", levels: ["L1", "L5"] },
+    { feature: "ViewOrUpdateData", levels: ["L1", "L5", "L6"] },
     { feature: "ReliabilityDashboard", levels: ["L1", "L2", "L3", "L4", "L5"] },
     { feature: "MonitoringDashboard", levels: ["L1", "L2", "L5"] },
     { feature: "MissionReliabilityDashboard", levels: ["L1", "L2", "L4", "L3", "L5"] },
