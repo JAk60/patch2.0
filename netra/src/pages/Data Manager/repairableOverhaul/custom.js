@@ -233,7 +233,7 @@ const Custom = () => {
         //     return matchingItem ? matchingItem.nomenclature : null;
         // });
         let filteredNomenclatures = selectedEqName.map((equipment) =>{
-            const item = filteredEqData.filter(item => item.name === equipment.name)
+            const item = filteredEqData.filter(item => item.nomenclature === equipment.nomenclature)
             // const items = item.map((i) => i.nomenclature);
             return item;
         }).flat();

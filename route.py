@@ -2,6 +2,7 @@ from flask import Flask, json, session, request, jsonify, send_file, send_from_d
 from datetime import datetime
 import os
 import io
+import middleware
 from dB.dB_connection import cnxn, cursor
 from os import listdir
 from werkzeug.utils import secure_filename
@@ -677,4 +678,5 @@ def get_overhaul_hours():
 
 if __name__ == "__main__":
     app.secret_key = os.urandom(32)
+    app.wsgi_app = middleware.TaskMiddleWare(app.wsgi_app, APP_ROOT)
     app.run(debug=False)

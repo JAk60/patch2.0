@@ -23,6 +23,9 @@ class OverhaulsAlgos:
             new_data = []
             clk_reset = 0
             index = 0
+            empty_age_query = "UPDATE data_manager_overhaul_maint_data SET running_age=NULL, cmms_running_age=NULL"
+            cursor.execute(empty_age_query)
+            cnxn.commit()
 
             query = "SELECT * FROM data_manager_overhaul_maint_data where component_id = ? AND running_age is NULL ORDER BY date"
             cursor.execute(query, equipment_id)
