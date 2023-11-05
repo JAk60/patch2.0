@@ -1,12 +1,17 @@
 from dB.dB_connection import cursor, cnxn
 from dB.dB_utility import check_table_exist
-
+import bcrypt
 
 class SignInDB:
     def __init__(self):
         self.table_init()
         cnxn.commit()
-
+    
+    def hash_password(self, password):
+        salt = bcrypt.gensalt()
+        hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
+        return hashed_password
+    
     def table_init(self):
         is_exist = check_table_exist('users')
         if not is_exist:
@@ -15,7 +20,19 @@ class SignInDB:
                     id INT PRIMARY KEY IDENTITY(1,1),
                     username VARCHAR(500) UNIQUE,
                     password VARCHAR(500),
-                    level NVARCHAR(2) CHECK (level IN ('L1', 'L2', 'L3', 'L4', 'L5', 'L6'))
+                    level NVARCHAR(2) CHECK (level IN ('L1', 'L2', 'L3', 'L4', 'L5', 'L6','S'))
                 )
             '''
+        try:
             cursor.execute(actual_sql)
+            default_user_sql = '''
+                INSERT INTO users (username, password, level)
+                VALUES (?, ?, ?)
+            '''
+            cursor.execute(default_user_sql, 'Jake609', self.hash_password('Jake@123'), 'S')
+        except Exception as e:
+            print(e)
+            pass
+            
+
+

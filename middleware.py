@@ -6,10 +6,12 @@ from dB.dB_connection import cursor, cnxn
 import os
 from flask import json
 from dB.dB_connection import cursor
+from dB.Authentication.signin_dB import SignInDB
 
 class TaskMiddleWare(object):
     def __init__(self, app, APP_ROOT):
         self.app = app
+        SignInDB()
         self.app_route = APP_ROOT
         self.ship_names_to_remove = set()
 

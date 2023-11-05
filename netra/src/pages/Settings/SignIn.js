@@ -124,8 +124,8 @@ const SignIn = (props) => {
           <InputBase classes={InputClasses} name='username' value={userName} onChange={(e) => setUserName(e.target.value)} id='username' placeholder='User Name' required />
           <InputBase classes={InputClasses} name='password' id='password' value={password} onChange={(e) => setPassword(e.target.value)} placeholder='Password' type='text' required />
           <Button variant='contained' style={{ backgroundColor: '#1c4199', color: 'white', marginTop: "10px" }} onClick={() => Login()}>Sign In</Button>
-          <Link className={styles.links} to="/sign_up">
-            Create an Account? Sign Up
+          <Link className={styles.links} to="/forgot_password">
+            Forgot Password ?
           </Link>
         </div>
       </Paper>

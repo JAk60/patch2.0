@@ -33,6 +33,7 @@ import Login from './pages/Home/Login'
 import { useDispatch } from "react-redux";
 import { setLevel } from "./store/Levels";
 import Help from "./pages/Help/Help";
+import ForgotPass from "./pages/Settings/ForgotPassword/Forgot_Password";
 
 const theme = createMuiTheme({
   palette: {
@@ -119,7 +120,7 @@ function App() {
               component={ConfigureHistory2}
             />
             <Route path="/user_approval" exact component={UserApproval} />
-            <Route path="/edit_profile" exact component={EditProfile} />
+            <Route path="/forgot_password" exact component={ForgotPass} />
             <Route path="/know_netra" exact component={Help} />
             <Route
               path="/view_data"

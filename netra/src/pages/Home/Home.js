@@ -1,25 +1,26 @@
 import React, { useState, useEffect } from "react";
+import { SpeedDial, SpeedDialIcon, SpeedDialAction } from "@material-ui/lab";
 import styles from "./Home.module.css";
-import { Menu, MenuItem, Typography, IconButton, Avatar, ButtonBase, Button } from "@material-ui/core";
+import {
+  Typography,
+  Button,
+} from "@material-ui/core";
 import { Link } from "react-router-dom";
-import { ExitToApp, VpnKey, AccountCircle } from "@material-ui/icons"; // Remove the import for AlignVerticalBottomSharp
-import EqualizerIcon from '@material-ui/icons/Equalizer';// Add the import for AlignVerticalBottomSharp
+import { ExitToApp, VpnKey, AccountCircle,HelpOutline } from "@material-ui/icons"; // Remove the import for AlignVerticalBottomSharp
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
-// import Snackbar from "@mui/material/Snackbar";
-// import MuiAlert from "@mui/material/lab/Alert";
-import HelpOutlineIcon from '@material-ui/icons/HelpOutline';
 import { userActions } from "../../store/ApplicationVariable";
 import { resetLevels } from "../../store/Levels";
 import { makeStyles } from "@material-ui/core/styles";
-import SettingsIcon from '@material-ui/icons/Settings';
-import DirectionsBoatOutlinedIcon from '@material-ui/icons/DirectionsBoatOutlined';
-import BuildOutlinedIcon from '@material-ui/icons/BuildOutlined';
-import RateReviewOutlinedIcon from '@material-ui/icons/RateReviewOutlined';
-import BarChartOutlinedIcon from '@material-ui/icons/BarChartOutlined';
-import ShowChartOutlinedIcon from '@material-ui/icons/ShowChartOutlined';
-import TableChartOutlinedIcon from '@material-ui/icons/TableChartOutlined';
-import AlarmAddOutlinedIcon from '@material-ui/icons/AlarmAddOutlined';
+import SettingsIcon from "@material-ui/icons/Settings";
+import DirectionsBoatOutlinedIcon from "@material-ui/icons/DirectionsBoatOutlined";
+import BuildOutlinedIcon from "@material-ui/icons/BuildOutlined";
+import RateReviewOutlinedIcon from "@material-ui/icons/RateReviewOutlined";
+import BarChartOutlinedIcon from "@material-ui/icons/BarChartOutlined";
+import ShowChartOutlinedIcon from "@material-ui/icons/ShowChartOutlined";
+import TableChartOutlinedIcon from "@material-ui/icons/TableChartOutlined";
+import AlarmAddOutlinedIcon from "@material-ui/icons/AlarmAddOutlined";
+import SAdmin from "../SAdmin/SAdmin";
 
 const iconMappings = {
   SystemConfiguration: SettingsIcon,
@@ -45,17 +46,17 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "center",
     alignItems: "center",
     color: " #004d90",
-    objectFit: "cover"
+    objectFit: "cover",
   },
   txt: {
-    color: "white"
+    color: "white",
   },
   logoImg: {
     marginTop: "40px",
     marginLeft: "70px",
     maxWidth: "70%",
     height: "auto",
-  }
+  },
 }));
 
 const Home = (props) => {
@@ -73,9 +74,28 @@ const Home = (props) => {
     { feature: "ViewOrUpdateData", levels: ["L1", "L5", "L6"] },
     { feature: "ReliabilityDashboard", levels: ["L1", "L2", "L3", "L4", "L5"] },
     { feature: "MonitoringDashboard", levels: ["L1", "L2", "L5"] },
-    { feature: "MissionReliabilityDashboard", levels: ["L1", "L2", "L4", "L3", "L5"] },
+    {
+      feature: "MissionReliabilityDashboard",
+      levels: ["L1", "L2", "L4", "L3", "L5"],
+    },
     { feature: "TimeToFailureRUL", levels: ["L1", "L5"] },
   ];
+  
+
+  const speedDialActions = [
+    { icon: <ExitToApp />, name: "Logout", onClick: () => Logout() },
+    {
+      icon: <VpnKey />,
+      name: "Admin",
+      onClick: () => props.history.push("/sign_up"),
+    },
+    {
+      icon: <HelpOutline />,
+      name: "Help",
+      onClick: () => props.history.push("/know_netra"),
+    },
+  ];
+
 
   const featurePaths = {
     SystemConfiguration: "/system_config",
@@ -90,17 +110,6 @@ const Home = (props) => {
 
   console.log("level", level, trueLevels);
 
-  const handleMClose = () => {
-    setOpen(false);
-  };
-
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
 
   useEffect(() => {
     if (!props.loggedIn) {
@@ -117,57 +126,56 @@ const Home = (props) => {
       props.setLoggedIn(false);
     }
     props.history.push("/sign_in");
-    dispatch(resetLevels({
-      L1: false,
-      L2: false,
-      L3: false,
-      L4: false,
-      L5: false,
-      L6: false,
-    }));
+    dispatch(
+      resetLevels({
+        L1: false,
+        L2: false,
+        L3: false,
+        L4: false,
+        L5: false,
+        L6: false,
+      })
+    );
   };
 
   const resetUserSelection = () => {
     dispatch(userActions.onReset());
   };
 
+
+  if (trueLevels.includes('S')) {
+    return <SAdmin logout={Logout}/>;
+  }
   return (
     <div className={styles.container}>
       <div className={styles.homeNav}>
-        <Link onClick={() => Logout()}>
-          <i class="fas fa-sign-out-alt"></i>Logout
-        </Link>
-        {/* <Link onClick={() => props.history.push("/configure_history2")}>
-          <i class="fas fa-history"></i>Configuration History
-        </Link> */}
-        <Link
-          aria-controls="simple-menu"
-          aria-haspopup="true"
-          onClick={handleClick}
+        <SpeedDial
+          ariaLabel="SpeedDial"
+          icon={<SpeedDialIcon />}
+          onClose={() => setOpen(false)}
+          onOpen={() => setOpen(true)}
+          open={open}
+          direction="down"
         >
-          <i class="fas fa-key"></i>User Authentication
-        </Link>
-        <Menu
-          id="simple-menu"
-          anchorEl={anchorEl}
-          keepMounted
-          open={Boolean(anchorEl)}
-          onClose={handleClose}
-        >
-          <MenuItem onClick={() => props.history.push("/user_approval")}>
-            Account Request
-          </MenuItem>
-          <MenuItem onClick={() => props.history.push("/edit_profile")}>
-            Forgot Password
-          </MenuItem>
-        </Menu>
-        <Link onClick={() => props.history.push("/know_netra")}>
-          <i class="far fa-question-circle"></i>Help
-        </Link>
+          {speedDialActions.map((action) => (
+            <SpeedDialAction
+              key={action.name}
+              icon={action.icon}
+              tooltipTitle={action.name}
+              tooltipOpen
+              onClick={() => {
+                setOpen(false);
+                action.onClick();
+              }}
+            />
+          ))}
+        </SpeedDial>
       </div>
       <div className={styles.homeLinks}>
         {featureAccess.map((featureObj) => {
-          const isAllowed = featureObj.levels.some(level => trueLevels.includes(level));
+          const isAllowed = featureObj.levels.some((level) =>
+            trueLevels.includes(level)
+          );
           const IconComponent = iconMappings[featureObj.feature];
           if (isAllowed && IconComponent) {
             return (
@@ -180,7 +188,7 @@ const Home = (props) => {
                   <IconComponent className={`${classes.linkbtn}`} />
                   <Typography variant="h5" className={classes.txt}>
                     {featureObj.feature !== "TimeToFailureRUL"
-                      ? featureObj.feature.replace(/([A-Z])/g, ' $1')
+                      ? featureObj.feature.replace(/([A-Z])/g, " $1")
                       : "Time To Failure / RUL"}
                   </Typography>
                 </Button>
@@ -191,11 +199,16 @@ const Home = (props) => {
         })}
       </div>
       <div className={styles.netra}>
-        <img src="/netra-logo-removebg.png" alt="Netra Logo" className={classes.logoImg} />
+        <img
+          src="/netra-logo-removebg.png"
+          alt="Netra Logo"
+          className={classes.logoImg}
+        />
         <div className={styles.logotxt}>NETRA</div>
       </div>
     </div>
   );
 };
+
 
 export default Home;

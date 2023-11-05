@@ -1,4 +1,5 @@
 from flask import Flask, json, session, request, jsonify, send_file, send_from_directory
+from flask_mail import Mail, Message
 from datetime import datetime
 import os
 import io
@@ -20,6 +21,8 @@ from dB.data_manager.data_manager import Data_Manager
 from dB.system_configuration.system_configurationdB_table import (
     SystemConfigurationdBTable,
 )
+from dB.Dashboard.DashBoard import DashBoard
+from dB.password_reset.passwordReset import EmailSender
 from classes.System_Configuration_Netra import System_Configuration_N
 from classes.custom_settings import Custom_Settings
 from dB.task_configuration.task_configuration import taskConfiguration_dB
@@ -32,6 +35,17 @@ from dB.Authentication.signin import Authentication
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 app = Flask(__name__)
+# Configure Flask-Mail
+app.config['MAIL_SERVER'] = 'smtp.ethereal.email'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USERNAME'] = 'malachi.legros@ethereal.email'
+app.config['MAIL_PASSWORD'] = 'cgpV3BG4Df74wx1nAb'
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USE_SSL'] = False
+
+mail = Mail(app)
+with app.open_resource("./dB/password_reset/netra.png") as fp:
+    logo_data = fp.read()
 
 UPLOAD_FOLDER = "uploads"
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
@@ -675,8 +689,31 @@ def get_overhaul_hours():
     inst = Data_Manager()
     return inst.get_component_overhaul_hours(data)
 
+@app.route('/reset_password', methods=["POST"])
+def reset_password():
+    data = request.json
+    username=data["username"]
+    inst = EmailSender(mail)
+    return inst.send_notification_email(username,logo_data)
+
+@app.route('/get_users', methods=['GET'])
+def get_users():
+    inst = DashBoard()
+    return inst.fetch_users()
+
+@app.route('/update_user', methods=['PUT'])
+def update_user_endpoint():
+    data = request.json
+    inst = DashBoard()
+    return inst.update_user(data)
+
+@app.route('/delete_user', methods=['POST'])
+def delete_user():
+    data = request.json
+    inst = DashBoard()
+    return inst.delete_user(data)
 
 if __name__ == "__main__":
     app.secret_key = os.urandom(32)
     app.wsgi_app = middleware.TaskMiddleWare(app.wsgi_app, APP_ROOT)
-    app.run(debug=False)
+    app.run(debug=True)
