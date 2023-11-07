@@ -125,7 +125,9 @@ const ManageUsers = () => {
 
   return (
     <Container>
-      <Typography variant="h4">Manage Users</Typography>
+      <Typography variant="h4" style={{ margin: "20px" }}>
+        Manage Users
+      </Typography>
 
       <div
         style={{

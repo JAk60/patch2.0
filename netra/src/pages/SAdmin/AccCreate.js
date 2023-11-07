@@ -26,6 +26,10 @@ const useStyles = makeStyles({
     width: "70%",
     padding: "40px 0;",
     textAlign: "center",
+    padding: "20px 20px 30px 20px",
+    borderRadius: "10px",
+    marginTop: "30px",
+    boxShadow: "0 3px 10px rgb(0 0 0 / 0.2)",
   },
   input: {
     margin: "15px 0px",
@@ -36,11 +40,11 @@ const useStyles = makeStyles({
     height: "50px",
     width: "30%",
     fontSize: "16px",
-},
-level: {
-      borderRadius: "5px",
+  },
+  level: {
+    borderRadius: "5px",
     background: "#ebebeb",
-    width: "30%"
+    width: "30%",
   },
   button: {
     backgroundColor: "#1c4199",
@@ -56,7 +60,7 @@ level: {
   option: {
     fontSize: "16px",
     border: "1px solid black",
-  }
+  },
 });
 
 const AccCreate = () => {
@@ -183,12 +187,24 @@ const AccCreate = () => {
               variant="outlined"
               className={classes.level}
             >
-              <option value="L1" className={classes.option}>Ship HoD</option>
-              <option value="L2" className={classes.option}>Ship CO</option>
-              <option value="L3" className={classes.option}>Fleet/ Command HQ</option>
-              <option value="L4" className={classes.option}>NHQ</option>
-              <option value="L5" className={classes.option}>Admin/ INSMA</option>
-              <option value="L6" className={classes.option}>OEM</option>
+              <option value="L1" className={classes.option}>
+                Ship HoD
+              </option>
+              <option value="L2" className={classes.option}>
+                Ship CO
+              </option>
+              <option value="L3" className={classes.option}>
+                Fleet/ Command HQ
+              </option>
+              <option value="L4" className={classes.option}>
+                NHQ
+              </option>
+              <option value="L5" className={classes.option}>
+                Admin/ INSMA
+              </option>
+              <option value="L6" className={classes.option}>
+                OEM
+              </option>
             </TextField>
           </form>
           <Button

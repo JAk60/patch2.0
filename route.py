@@ -38,8 +38,8 @@ app = Flask(__name__)
 # Configure Flask-Mail
 app.config['MAIL_SERVER'] = 'smtp.ethereal.email'
 app.config['MAIL_PORT'] = 587
-app.config['MAIL_USERNAME'] = 'malachi.legros@ethereal.email'
-app.config['MAIL_PASSWORD'] = 'cgpV3BG4Df74wx1nAb'
+app.config['MAIL_USERNAME'] = 'favian.jacobs@ethereal.email'
+app.config['MAIL_PASSWORD'] = 'bstZAfTvzfUHs56uva'
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USE_SSL'] = False
 
@@ -712,6 +712,12 @@ def delete_user():
     data = request.json
     inst = DashBoard()
     return inst.delete_user(data)
+
+
+@app.route('/card_counts', methods=['GET'])
+def card_counts():
+    inst = DashBoard()
+    return inst.card_counts()
 
 if __name__ == "__main__":
     app.secret_key = os.urandom(32)
