@@ -1,21 +1,35 @@
 from dB.dB_connection import cursor, cnxn
 from flask import Flask, jsonify
-
+import base64
+import hashlib
+from cryptography.fernet import Fernet
 
 class DashBoard():
+    def hash_uuid(self, user_uuid):
+        hashed_uuid = hashlib.sha256(user_uuid.encode('utf-8')).digest()
+        return hashed_uuid
+    
+    def decrypt_password(self, encrypted_password, user_uuid):
+        key = self.hash_uuid(user_uuid)  # Ensure that the hash_uuid function is accessible
+        cipher_suite = Fernet(base64.urlsafe_b64encode(key))
+        decrypted_password = cipher_suite.decrypt(bytes(encrypted_password,'utf-8'))
+        return decrypted_password.decode('utf-8')
+
     def fetch_users(self):
         sql = '''select * from users'''
         cursor.execute(sql)
         users = []
         for row in cursor.fetchall():
+            decrypted_password = self.decrypt_password(row.password, row.user_id)
             user = {
-                'id': row.id,
+                'id': row.user_id,
                 'username': row.username,
-                'password': row.password,
+                'password': decrypted_password,
                 'level': row.level
             }
             users.append(user)
         return jsonify(users)
+
 
     def update_user(self, data):
         # Assuming data is a dictionary containing the updated information
@@ -28,7 +42,7 @@ class DashBoard():
                     username = ?,
                     password = ?,
                     level = ?
-                WHERE id = ?
+                WHERE user_id = ?
             '''
 
         # Get the values from data
@@ -44,7 +58,7 @@ class DashBoard():
         return jsonify({'message': 'User updated successfully'})
 
     def delete_user(self, data):
-        sql = '''DELETE FROM users WHERE id = ?'''
+        sql = '''DELETE FROM users WHERE user_id = ?'''
         cursor.execute(sql, (data,))
         cnxn.commit()
 

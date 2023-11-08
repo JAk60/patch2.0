@@ -11,9 +11,33 @@ import {
   TableCell,
   Container,
   Button,
+  InputAdornment,
+  IconButton,
 } from "@material-ui/core";
+import { Visibility, VisibilityOff } from "@material-ui/icons";
 
-const ManageUsers = () => {
+const PasswordField = ({ value }) => {
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleTogglePasswordVisibility = () => {
+    setShowPassword((prevShowPassword) => !prevShowPassword);
+  };
+
+  return (
+    <div style={{ display: 'flex', alignItems: 'center' }}>
+      <Typography variant="body1">
+        {showPassword ? value : "*".repeat(value.length)}
+      </Typography>
+      <IconButton onClick={handleTogglePasswordVisibility}>
+        {showPassword ? <Visibility /> : <VisibilityOff />}
+      </IconButton>
+    </div>
+  );
+};
+
+
+
+const ManageUsers = ({ usselect }) => {
   const [userList, setUserList] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [editingUser, setEditingUser] = useState(null);
@@ -41,7 +65,7 @@ const ManageUsers = () => {
 
     // For demonstration purposes, using placeholder data
   }, []);
-  console.log(editedUser);
+
   const filteredUserList = userList.filter((user) =>
     user.username.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -80,7 +104,7 @@ const ManageUsers = () => {
   const handleRowDoubleClick = (user) => {
     setSelectedRow(user.id);
   };
-  console.log(selectedRow);
+
   const handleDeleteUser = () => {
     fetch("/delete_user", {
       method: "POST",
@@ -168,7 +192,6 @@ const ManageUsers = () => {
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell>ID</TableCell>
             <TableCell>Username</TableCell>
             <TableCell>Password</TableCell>
             <TableCell>Level</TableCell>
@@ -180,12 +203,7 @@ const ManageUsers = () => {
             <TableRow
               key={user.id}
               onDoubleClick={() => handleRowDoubleClick(user)}
-              style={{
-                backgroundColor: selectedRow === user.id ? "red" : "inherit",
-                color: selectedRow === user.id ? "white" : "inherit",
-              }}
             >
-              <TableCell>{user.id}</TableCell>
               <TableCell>
                 {editingUser && editingUser.id === user.id ? (
                   <TextField
@@ -204,7 +222,7 @@ const ManageUsers = () => {
               </TableCell>
               <TableCell>
                 {editingUser && editingUser.id === user.id ? (
-                  <TextField
+                  <PasswordField
                     value={editedUser.password}
                     onChange={(e) =>
                       setEditedUser({
@@ -212,10 +230,9 @@ const ManageUsers = () => {
                         password: e.target.value,
                       })
                     }
-                    variant="outlined"
                   />
                 ) : (
-                  user.password
+                  <PasswordField value={user.password} />
                 )}
               </TableCell>
               <TableCell>

@@ -70,7 +70,7 @@ const SAdmin = ({ logout }) => {
       .then((response) => response.json())
       .then((data) => setCardData(data))
       .catch((error) => console.error("Error fetching card counts:", error));
-  }, []);
+  }, [selectedMenu]);
   return (
     <div style={{ display: "flex" }}>
       <CssBaseline />
@@ -140,7 +140,7 @@ const SAdmin = ({ logout }) => {
       <div className={classes.content}>
         {selectedMenu === "Welcome" && <WelcomePage cardData={cardData} />}
         {selectedMenu === "Create Account" && <AccCreate />}
-        {selectedMenu === "Manage User" && <ManageUsers />}
+        {selectedMenu === "Manage User" && <ManageUsers usselect={selectedMenu} />}
       </div>
     </div>
   );
