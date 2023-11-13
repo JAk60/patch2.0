@@ -32,6 +32,7 @@ from dB.dB_utility import add_user_selection_data
 from dB.RCM.rcmDB import RCMDB
 from dB.PM.optimize import optimizer
 from dB.Authentication.signin import Authentication
+from dB.Oem_Upload.oem import OEMData
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 app = Flask(__name__)
@@ -718,6 +719,15 @@ def delete_user():
 def card_counts():
     inst = DashBoard()
     return inst.card_counts()
+
+@app.route("/upload_oem_data", methods=["POST"])
+def oem_data():
+    data = request.json["data"]
+    inst = OEMData()
+    inst.upload_data(data=data)
+    return jsonify({
+        "messege": "JSON DATA"
+    })
 
 if __name__ == "__main__":
     app.secret_key = os.urandom(32)

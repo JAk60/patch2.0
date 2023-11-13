@@ -16,6 +16,8 @@ const DutyCycle = (props) => {
     };
   });
 
+
+
   const DCcolumnDefs = [
     <AgGridColumn
       field="Component"

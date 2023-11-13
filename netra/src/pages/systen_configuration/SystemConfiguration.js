@@ -496,7 +496,7 @@ const SystemConfiguration = (props) => {
         </div>
         <Switch>
           <Route path="/system_config" exact={true}>
-            <EqptStructuring />
+            <EqptStructuring tableUpdate={setFinalTableData}/>
           </Route>
           <Route path="/system_config/redundancy_info" exact={true}>
             <RedundancyInfo tableUpdate={setFinalTableData}></RedundancyInfo>
