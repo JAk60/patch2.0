@@ -17,7 +17,6 @@ const InputStyles = makeStyles({
     background: "#ebebeb",
     borderRadius: "5px",
     height: 50,
-    // width: '70%',
   },
 });
 
@@ -29,7 +28,8 @@ const ForgotPass = () => {
     message: "",
     showSnackBar: false,
   });
-const history =useHistory();
+  const history = useHistory();
+
   const onHandleSnackClose = () => {
     setSnackBarMessage({
       severity: "error",
@@ -38,12 +38,21 @@ const history =useHistory();
     });
   };
 
-
-
   const handleCreateAccount = () => {
+    const managerEmail = "pradeep.patell707@gmail.com"; // Replace with the actual manager's email
+    const subject = "Forgot Password";
+    const body = `Username: ${username}\nDetails: ...`;
+
+    const mailtoLink = `mailto:${managerEmail}?subject=${encodeURIComponent(
+      subject
+    )}&body=${encodeURIComponent(body)}`;
+
+    window.location.href = mailtoLink;
+
+    // The following code remains unchanged
     const data = {
-      username: username, // Replace with the new username to insert
-    }
+      username: username,
+    };
 
     fetch("/reset_password", {
       method: "POST",
@@ -72,7 +81,7 @@ const history =useHistory();
     <div className={styles.container}>
       <Paper className={styles.SignUpPaper} elevation={5}>
         <div className={styles.welcome_text}>
-          <img src="/netra-logo-removebg.png" height={300} />
+          <img src="/netra-logo-removebg.png" height={300} alt="Netra Logo" />
           <div className={styles.netra}>NETRA</div>
         </div>
         <div className={styles.input_fields}>

@@ -617,7 +617,7 @@ const TaskDashboard = () => {
                 gridApi={gridApi}
                 rowData={rowState}
                 tableUpdate={updateFinalRowData}
-                tableSize={180}
+                tableSize={250}
               />
             </div>
             <div className={styles.tableFooter}>
@@ -651,7 +651,6 @@ const TaskDashboard = () => {
                 <PaperTable response={recommedation} rel={totalReliability} />
               )}
             </div>
-
             <div className={styles.table}>
               <Table
                 columnDefs={compColumns}
@@ -659,7 +658,7 @@ const TaskDashboard = () => {
                 gridApi={gridCompApi}
                 rowData={rowCompState}
                 tableUpdate={updateFinalRowData}
-                tableSize={180}
+                tableSize={250}
               />
             </div>
             <div className={styles.tableFooter}>
@@ -690,7 +689,7 @@ const TaskDashboard = () => {
                 gridApi={gridTaskApi}
                 rowData={taskTableData}
                 tableUpdate={() => {}}
-                tableSize={180}
+                tableSize={250}
               ></Table>
             )}
           </div>

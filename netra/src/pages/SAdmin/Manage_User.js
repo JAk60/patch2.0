@@ -1,22 +1,25 @@
-import React, { useState, useEffect } from "react";
 import {
+  Button,
   Card,
   CardContent,
-  Typography,
-  TextField,
-  Table,
-  TableHead,
-  TableBody,
-  TableRow,
-  TableCell,
   Container,
-  Button,
-  InputAdornment,
+  Dialog,
+  DialogActions,
+  DialogContent,
   IconButton,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  TextField,
+  Typography,
 } from "@material-ui/core";
 import { Visibility, VisibilityOff } from "@material-ui/icons";
+import React, { useEffect, useState } from "react";
 
-const PasswordField = ({ value }) => {
+const PasswordField = ({ value, onChange, editMode }) => {
+  console.log("editMode",editMode);
   const [showPassword, setShowPassword] = useState(false);
 
   const handleTogglePasswordVisibility = () => {
@@ -24,53 +27,50 @@ const PasswordField = ({ value }) => {
   };
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center' }}>
-      <Typography variant="body1">
-        {showPassword ? value : "*".repeat(value.length)}
-      </Typography>
-      <IconButton onClick={handleTogglePasswordVisibility}>
-        {showPassword ? <Visibility /> : <VisibilityOff />}
-      </IconButton>
+    <div style={{ display: "flex", alignItems: "center" }}>
+      {editMode ? (
+        <TextField value={value} onChange={onChange} variant="outlined" />
+      ) : (
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <Typography variant="body1">
+            {showPassword ? value : "*".repeat(value.length)}
+          </Typography>
+          <IconButton onClick={handleTogglePasswordVisibility}>
+            {showPassword ? <Visibility /> : <VisibilityOff />}
+          </IconButton>
+        </div>
+      )}
     </div>
   );
 };
-
-
 
 const ManageUsers = ({ usselect }) => {
   const [userList, setUserList] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [editingUser, setEditingUser] = useState(null);
   const [editedUser, setEditedUser] = useState(null);
+  const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
-  const [SUser, setSUser] = useState(""); // New state for user with level 'S' as a string
+  const [sUser, setSUser] = useState("");
 
   useEffect(() => {
-    // Fetch user data from the backend and set it in the state
-    // Example API call:
     fetch("/get_users")
       .then((response) => response.json())
       .then((data) => {
-        // Find the user with level 'S' and set it as a string
         const sUser = data.find((user) => user.level === "S");
         if (sUser) {
           setSUser(JSON.stringify(sUser));
         }
 
-        // Filter out users with level 'S' from the main list
         const filteredUsers = data.filter((user) => user.level !== "S");
         setUserList(filteredUsers);
       })
       .catch((error) => console.error("Error fetching users:", error));
-
-    // For demonstration purposes, using placeholder data
   }, []);
 
   const filteredUserList = userList.filter((user) =>
     user.username.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
-  const levels = ["L1", "L2", "L3", "L4", "L5"];
 
   const handleEditUser = (user) => {
     setEditingUser(user);
@@ -88,24 +88,25 @@ const ManageUsers = ({ usselect }) => {
       })
         .then((response) => response.json())
         .then((data) => {
-          console.log(data); // Log the response from the server
+          console.log(data);
           const updatedUserList = userList.map((user) =>
             user.id === editedUser.id ? editedUser : user
           );
           setUserList(updatedUserList);
           setEditingUser(null);
-          setEditedUser(null); // Reset edited user data
-          setSelectedRow(null); // Reset selected row
+          setEditedUser(null);
+          setSelectedRow(null);
         })
         .catch((error) => console.error("Error updating user:", error));
     }
   };
 
-  const handleRowDoubleClick = (user) => {
+  const handleDeleteUser = (user) => {
     setSelectedRow(user.id);
+    setDeleteConfirmationOpen(true);
   };
 
-  const handleDeleteUser = () => {
+  const handleConfirmDelete = () => {
     fetch("/delete_user", {
       method: "POST",
       headers: {
@@ -126,17 +127,17 @@ const ManageUsers = ({ usselect }) => {
         (user) => user.id !== selectedRow
       );
       setUserList(updatedUserList);
-      setSelectedRow(null);
     }
+
+    setDeleteConfirmationOpen(false);
   };
 
+  const levels = ["L1", "L2", "L3", "L4", "L5"];
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (e.target.closest("tr") === null && editingUser !== null) {
         setEditingUser(null);
-        setEditedUser(null); // Reset edited user data
-      } else if (selectedRow !== null) {
-        setSelectedRow(null);
+        setEditedUser(null);
       }
     };
 
@@ -145,7 +146,7 @@ const ManageUsers = ({ usselect }) => {
     return () => {
       document.removeEventListener("click", handleClickOutside);
     };
-  }, [editingUser, selectedRow]);
+  }, [editingUser]);
 
   return (
     <Container>
@@ -178,7 +179,6 @@ const ManageUsers = ({ usselect }) => {
         ))}
       </div>
 
-      {/* Search Bar */}
       <TextField
         label="Search by Username"
         variant="outlined"
@@ -188,7 +188,6 @@ const ManageUsers = ({ usselect }) => {
         style={{ marginTop: "20px" }}
       />
 
-      {/* User Table */}
       <Table>
         <TableHead>
           <TableRow>
@@ -200,10 +199,7 @@ const ManageUsers = ({ usselect }) => {
         </TableHead>
         <TableBody>
           {filteredUserList.map((user) => (
-            <TableRow
-              key={user.id}
-              onDoubleClick={() => handleRowDoubleClick(user)}
-            >
+            <TableRow key={user.id}>
               <TableCell>
                 {editingUser && editingUser.id === user.id ? (
                   <TextField
@@ -230,9 +226,10 @@ const ManageUsers = ({ usselect }) => {
                         password: e.target.value,
                       })
                     }
+                    editMode={editingUser} // Pass the inverse of edit mode
                   />
                 ) : (
-                  <PasswordField value={user.password} />
+                  <PasswordField value={user.password} editMode={false} />
                 )}
               </TableCell>
               <TableCell>
@@ -253,18 +250,45 @@ const ManageUsers = ({ usselect }) => {
               </TableCell>
               <TableCell>
                 {editingUser && editingUser.id === user.id ? (
-                  <Button onClick={handleSaveUser}>Save</Button>
+                  <>
+                    <Button onClick={handleSaveUser}>Save</Button>
+                    <Button onClick={handleDeleteUser}>Delete</Button>
+                  </>
                 ) : (
-                  <Button onClick={() => handleEditUser(user)}>Edit</Button>
-                )}
-                {selectedRow === user.id && (
-                  <Button onClick={handleDeleteUser}>Delete</Button>
+                  <>
+                    <Button onClick={() => handleEditUser(user)}>Edit</Button>
+                    <Button onClick={() => handleDeleteUser(user)}>
+                      Delete
+                    </Button>
+                  </>
                 )}
               </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
+
+      <Dialog
+        open={deleteConfirmationOpen}
+        onClose={() => setDeleteConfirmationOpen(false)}
+      >
+        <DialogContent>
+          <Typography variant="body1">
+            Are you sure you want to delete this user?
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => setDeleteConfirmationOpen(false)}
+            color="primary"
+          >
+            Cancel
+          </Button>
+          <Button onClick={handleConfirmDelete} color="primary">
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 };

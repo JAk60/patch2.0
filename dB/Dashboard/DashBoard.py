@@ -12,7 +12,7 @@ class DashBoard():
     def decrypt_password(self, encrypted_password, user_uuid):
         key = self.hash_uuid(user_uuid)  # Ensure that the hash_uuid function is accessible
         cipher_suite = Fernet(base64.urlsafe_b64encode(key))
-        decrypted_password = cipher_suite.decrypt(bytes(encrypted_password,'utf-8'))
+        decrypted_password = cipher_suite.decrypt(encrypted_password)
         return decrypted_password.decode('utf-8')
 
     def fetch_users(self):
@@ -20,6 +20,7 @@ class DashBoard():
         cursor.execute(sql)
         users = []
         for row in cursor.fetchall():
+            print(row.user_id)
             decrypted_password = self.decrypt_password(row.password, row.user_id)
             user = {
                 'id': row.user_id,

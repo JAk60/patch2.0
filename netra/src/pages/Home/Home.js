@@ -1,26 +1,28 @@
-import React, { useState, useEffect } from "react";
-import { SpeedDial, SpeedDialIcon, SpeedDialAction } from "@material-ui/lab";
-import styles from "./Home.module.css";
-import {
-  Typography,
-  Button,
-} from "@material-ui/core";
-import { Link } from "react-router-dom";
-import { ExitToApp, VpnKey, AccountCircle,HelpOutline } from "@material-ui/icons"; // Remove the import for AlignVerticalBottomSharp
-import { useDispatch, useSelector } from "react-redux";
-import { useLocation } from "react-router-dom";
-import { userActions } from "../../store/ApplicationVariable";
-import { resetLevels } from "../../store/Levels";
+import { Button, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
-import SettingsIcon from "@material-ui/icons/Settings";
-import DirectionsBoatOutlinedIcon from "@material-ui/icons/DirectionsBoatOutlined";
-import BuildOutlinedIcon from "@material-ui/icons/BuildOutlined";
-import RateReviewOutlinedIcon from "@material-ui/icons/RateReviewOutlined";
+import {
+  ExitToApp,
+  HelpOutline,
+  VpnKey
+} from "@material-ui/icons"; // Remove the import for AlignVerticalBottomSharp
+import AccountBalanceOutlinedIcon from "@material-ui/icons/AccountBalanceOutlined";
+import AlarmAddOutlinedIcon from "@material-ui/icons/AlarmAddOutlined";
 import BarChartOutlinedIcon from "@material-ui/icons/BarChartOutlined";
+import BuildOutlinedIcon from "@material-ui/icons/BuildOutlined";
+import DirectionsBoatOutlinedIcon from "@material-ui/icons/DirectionsBoatOutlined";
+import FormatAlignJustifyOutlinedIcon from "@material-ui/icons/FormatAlignJustifyOutlined";
+import RateReviewOutlinedIcon from "@material-ui/icons/RateReviewOutlined";
+import SettingsIcon from "@material-ui/icons/Settings";
 import ShowChartOutlinedIcon from "@material-ui/icons/ShowChartOutlined";
 import TableChartOutlinedIcon from "@material-ui/icons/TableChartOutlined";
-import AlarmAddOutlinedIcon from "@material-ui/icons/AlarmAddOutlined";
+import { SpeedDial, SpeedDialAction, SpeedDialIcon } from "@material-ui/lab";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useLocation } from "react-router-dom";
+import { userActions } from "../../store/ApplicationVariable";
+import { resetLevels } from "../../store/Levels";
 import SAdmin from "../SAdmin/SAdmin";
+import styles from "./Home.module.css";
 
 const iconMappings = {
   SystemConfiguration: SettingsIcon,
@@ -80,15 +82,14 @@ const Home = (props) => {
     },
     { feature: "TimeToFailureRUL", levels: ["L1", "L5"] },
   ];
-  
 
   const speedDialActions = [
     { icon: <ExitToApp />, name: "Logout", onClick: () => Logout() },
-    {
-      icon: <VpnKey />,
-      name: "Admin",
-      onClick: () => props.history.push("/sign_up"),
-    },
+    // {
+    //   icon: <VpnKey />,
+    //   name: "Admin",
+    //   onClick: () => props.history.push("/sign_up"),
+    // },
     {
       icon: <HelpOutline />,
       name: "Help",
@@ -96,6 +97,14 @@ const Home = (props) => {
     },
   ];
 
+
+  if (trueLevels.includes("L5")) {
+    speedDialActions.push({
+      icon: <VpnKey />,
+      name: "Admin",
+      onClick: () => props.history.push("/sign_up"),
+    });
+  }
 
   const featurePaths = {
     SystemConfiguration: "/system_config",
@@ -109,7 +118,6 @@ const Home = (props) => {
   };
 
   console.log("level", level, trueLevels);
-
 
   useEffect(() => {
     if (!props.loggedIn) {
@@ -142,16 +150,19 @@ const Home = (props) => {
     dispatch(userActions.onReset());
   };
 
-
-  if (trueLevels.includes('S')) {
-    return <SAdmin logout={Logout}/>;
+  if (trueLevels.includes("S")) {
+    return <SAdmin logout={Logout} />;
   }
   return (
     <div className={styles.container}>
       <div className={styles.homeNav}>
         <SpeedDial
           ariaLabel="SpeedDial"
-          icon={<SpeedDialIcon />}
+          icon={
+            <SpeedDialIcon
+              openIcon={<AccountBalanceOutlinedIcon />}
+            />
+          }
           onClose={() => setOpen(false)}
           onOpen={() => setOpen(true)}
           open={open}
@@ -209,6 +220,5 @@ const Home = (props) => {
     </div>
   );
 };
-
 
 export default Home;

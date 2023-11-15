@@ -1,24 +1,20 @@
-import ComponentDetails from "../ComponentDetails/ComponentDetails";
-import Flow from "../Flow/flow";
-import styles from "./layout.module.css";
-import Sidebar from "../SideBar/Sidebar";
-import { elementActions } from "../../../store/elements";
-import { useDispatch, useSelector } from "react-redux";
-import UserSelection from "../../../ui/userSelection/userSelection";
-import { useEffect, useRef, useState } from "react";
-import Autocomplete from "@material-ui/lab/Autocomplete/Autocomplete";
-import { TextField, Button, Select, Drawer, Container } from "@material-ui/core";
-import { treeDataActions } from "../../../store/TreeDataStore";
-import { v4 as uuid } from "uuid";
-import { useHistory } from "react-router";
-import { makeStyles } from '@material-ui/core/styles';
+import { Button, Container, Drawer, TextField } from "@material-ui/core";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
+import { makeStyles } from "@material-ui/core/styles";
+import Autocomplete from "@material-ui/lab/Autocomplete/Autocomplete";
+import { useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useHistory } from "react-router";
+import { v4 as uuid } from "uuid";
+import { elementActions } from "../../../store/elements";
 import CustomizedSnackbars from "../../../ui/CustomSnackBar";
-
+import UserSelection from "../../../ui/userSelection/userSelection";
+import ComponentDetails from "../ComponentDetails/ComponentDetails";
+import Flow from "../Flow/flow";
+import styles from "./layout.module.css";
 
 const drawerWidth = 320;
 
@@ -30,11 +26,11 @@ const useStyles = makeStyles((theme) => ({
   drawerPaper: {
     width: drawerWidth,
     marginTop: theme.spacing(1),
-  }
+  },
 }));
 
 const Layout = (props) => {
-const muiCss=useStyles();
+  const muiCss = useStyles();
 
   const [isNodeAddedMap, setIsNodeAddedMap] = useState({});
   const [nomenclature, setNomenclature] = useState([]);
@@ -271,6 +267,31 @@ const muiCss=useStyles();
   const [loadname, setLoadName] = useState("");
   const [showDetails, setShowDetails] = useState(false);
 
+  const [selectAllNomenclature, setSelectAllNomenclature] = useState(false);
+
+  const handleChangeNomenclature = (e, value) => {
+    if (value.includes("Select All")) {
+      setSelectAllNomenclature(true);
+      setNomenclature(filteredNomenclatures);
+    } else {
+      setSelectAllNomenclature(false);
+      setNomenclature(value.filter((val) => val !== "Select All"));
+    }
+  };
+
+  const [selectAllEquipments, setSelectAllEquipments] = useState(false);
+
+
+  const handleChangeEquipments = (e, value) => {
+    if (value.includes("Select All")) {
+      setSelectAllEquipments(true);
+      setValue(options);
+    } else {
+      setSelectAllEquipments(false);
+      setValue(value.filter((val) => val !== "Select All"));
+    }
+  };
+
   return (
     <div className={styles.parent}>
       {/* <div className={styles.text_div}>
@@ -291,150 +312,155 @@ const muiCss=useStyles();
           setReactFlowInstance={setReactFlowInstance}
         ></Flow>
       </div>
-      <Drawer anchor="right" variant="permanent" className={muiCss.sidebar} classes={{
+      <Drawer
+        anchor="right"
+        variant="permanent"
+        className={muiCss.sidebar}
+        classes={{
           paper: muiCss.drawerPaper,
-        }}>
-          <Container>
-        <div className={styles.buttonDiv}>
-          <button onClick={() => history.push("/")} className={styles.savebtn}>
-            Home
-          </button>
-          <button onClick={handleClickOpen} className={styles.restorebtn}>
-            Save
-          </button>
-          <button onClick={handleLoadClickOpen} className={styles.restorebtn}>
-            Load
-          </button>
-          {showDetails ? (
+        }}
+      >
+        <Container>
+          <div className={styles.buttonDiv}>
             <button
-              onClick={() => {
-                setShowDetails(false);
-              }}
-              className={styles.restorebtn}
+              onClick={() => history.push("/")}
+              className={styles.savebtn}
             >
-              Back
+              Home
             </button>
-          ) : (
-            <button
-              onClick={() => {
-                setShowDetails(true);
-              }}
-              className={styles.restorebtn}
-            >
-              Component Details
+            <button onClick={handleClickOpen} className={styles.restorebtn}>
+              Save
             </button>
-          )}
-          {/* <Button variant="outlined" color="primary" onClick={handleClickOpen}>
+            <button onClick={handleLoadClickOpen} className={styles.restorebtn}>
+              Load
+            </button>
+            {showDetails ? (
+              <button
+                onClick={() => {
+                  setShowDetails(false);
+                }}
+                className={styles.restorebtn}
+              >
+                Back
+              </button>
+            ) : (
+              <button
+                onClick={() => {
+                  setShowDetails(true);
+                }}
+                className={styles.restorebtn}
+              >
+                Component Details
+              </button>
+            )}
+            {/* <Button variant="outlined" color="primary" onClick={handleClickOpen}>
         Save
       </Button> */}
-          <Dialog
-            maxWidth="sm"
-            fullWidth
-            open={open}
-            onClose={handleClose}
-            aria-labelledby="form-dialog-title"
-          >
-            <DialogTitle id="form-dialog-title">Enter task name</DialogTitle>
-            <DialogContent>
-              <TextField
-                autoFocus
-                margin="dense"
-                id="name"
-                label="Task name"
-                type="text"
-                fullWidth
-                value={taskName}
-                onChange={(e) => setTaskName(e.target.value)}
-              />
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={handleClose} color="primary">
-                Cancel
-              </Button>
-              <Button onClick={onSaveHandler} color="primary">
-                Save
-              </Button>
-            </DialogActions>
-          </Dialog>
+            <Dialog
+              maxWidth="sm"
+              fullWidth
+              open={open}
+              onClose={handleClose}
+              aria-labelledby="form-dialog-title"
+            >
+              <DialogTitle id="form-dialog-title">Enter task name</DialogTitle>
+              <DialogContent>
+                <TextField
+                  autoFocus
+                  margin="dense"
+                  id="name"
+                  label="Task name"
+                  type="text"
+                  fullWidth
+                  value={taskName}
+                  onChange={(e) => setTaskName(e.target.value)}
+                />
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleClose} color="primary">
+                  Cancel
+                </Button>
+                <Button onClick={onSaveHandler} color="primary">
+                  Save
+                </Button>
+              </DialogActions>
+            </Dialog>
 
-          <Dialog
-            maxWidth="sm"
-            fullWidth
-            open={loadopen}
-            onClose={handleLoadClose}
-            aria-labelledby="form-dialog-title"
-          >
-            <DialogTitle id="form-dialog-title">Select Task</DialogTitle>
-            <DialogContent dividers>
+            <Dialog
+              maxWidth="sm"
+              fullWidth
+              open={loadopen}
+              onClose={handleLoadClose}
+              aria-labelledby="form-dialog-title"
+            >
+              <DialogTitle id="form-dialog-title">Select Task</DialogTitle>
+              <DialogContent dividers>
+                <Autocomplete
+                  value={loadname}
+                  options={taskNames}
+                  onChange={(value, newValue) => setLoadName(newValue)}
+                  renderInput={(params) => (
+                    <TextField {...params} variant="standard" />
+                  )}
+                />
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleLoadClose} color="primary">
+                  Cancel
+                </Button>
+                <Button onClick={onLoadHandler} color="primary">
+                  Load
+                </Button>
+              </DialogActions>
+            </Dialog>
+          </div>
+          {/* <p>Here the details of each component goes!!</p> */}
+          {showDetails ? (
+            <ComponentDetails></ComponentDetails>
+          ) : (
+            <>
+              <UserSelection alignment="vertical" inputWidth="250px" />
+
               <Autocomplete
-                value={loadname}
-                options={taskNames}
-                onChange={(value, newValue) => setLoadName(newValue)}
+                multiple
+                options={["Select All", ...options]}
+                value={selectAllEquipments ? options : value}
+                onChange={handleChangeEquipments}
+                style={{ width: 250, marginLeft: 10, marginTop: 12 }}
                 renderInput={(params) => (
-                  <TextField {...params} variant="standard" />
+                  <TextField
+                    {...params}
+                    label="Select Equipments"
+                    variant="outlined"
+                  />
                 )}
               />
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={handleLoadClose} color="primary">
-                Cancel
+              <Autocomplete
+                multiple
+                options={["Select All", ...filteredNomenclatures]}
+                value={
+                  selectAllNomenclature ? filteredNomenclatures : nomenclature
+                }
+                onChange={handleChangeNomenclature}
+                style={{ width: 250, marginLeft: 10, marginTop: 12 }}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Select Nomenclature"
+                    variant="outlined"
+                  />
+                )}
+              />
+              <Button
+                variant="contained"
+                color="primary"
+                style={{ marginLeft: 45, marginTop: 7 }}
+                onClick={() => AddNodes()}
+              >
+                Load Equipments
               </Button>
-              <Button onClick={onLoadHandler} color="primary">
-                Load
-              </Button>
-            </DialogActions>
-          </Dialog>
-        </div>
-        {/* <p>Here the details of each component goes!!</p> */}
-        {showDetails ? (
-          <ComponentDetails></ComponentDetails>
-        ) : (
-          <>
-            <UserSelection alignment="vertical" inputWidth="250px" />
-
-
-            <Autocomplete
-              multiple
-              options={options}
-              //value={value}
-              onChange={handleChange}
-              // groupBy={(option) => option.parentName}
-              // getOptionLabel={(option) => option.name}
-              style={{ width: 250,marginLeft: 10 ,marginTop: 12}}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Select Equipments"
-                  variant="outlined"
-                />
-              )}
-            />
-            <Autocomplete
-              multiple
-              options={filteredNomenclatures}
-              value={nomenclature}
-              onChange={(e, value) => setNomenclature(value)}
-              // groupBy={(option) => option.parentName}
-              // getOptionLabel={(option) => option.name}
-              style={{ width: 250,marginLeft: 10,marginTop: 12 }}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Select Nomenclature"
-                  variant="outlined"
-                />
-              )}
-            />
-            <Button
-              variant="contained"
-              color="primary"
-              style={{ marginLeft: 45,marginTop: 7 }}
-              onClick={() => AddNodes()}
-            >
-              Load Equipments
-            </Button>
-          </>
-        )}
+            </>
+          )}
         </Container>
       </Drawer>
       {SnackBarMessage.showSnackBar && (

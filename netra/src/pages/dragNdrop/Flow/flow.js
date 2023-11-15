@@ -226,7 +226,7 @@ const Flow = ({reactFlowInstance,reactFlowWrapper,setReactFlowInstance}) => {
     <ReactFlowProvider>
       <div className={customCSSClasses.react_flow_pane_parent}>
         <div style={{ height: "98vh", width: "100%" }} ref={reactFlowWrapper}>
-          <CustomContextMenu/>
+          {/* <CustomContextMenu/> */}
           <ReactFlow
             style={styles}
             elements={ielements}
