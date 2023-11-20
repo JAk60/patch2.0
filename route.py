@@ -732,4 +732,4 @@ def oem_data():
 if __name__ == "__main__":
     app.secret_key = os.urandom(32)
     app.wsgi_app = middleware.TaskMiddleWare(app.wsgi_app, APP_ROOT)
-    app.run(debug=True)
+    app.run(debug=False)

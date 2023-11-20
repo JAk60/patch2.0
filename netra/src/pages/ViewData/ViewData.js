@@ -10,6 +10,7 @@ import CreateIcon from '@material-ui/icons/Create';
 import SaveAltIcon from '@material-ui/icons/SaveAlt';
 import WifiTetheringIcon from '@material-ui/icons/WifiTethering';
 import { Button, Typography, makeStyles } from "@material-ui/core";
+import BackToHomeFab from "../../components/navigation/MuiFap";
 
 const ViewData = (props) => {
   const useStyles = makeStyles((theme) => ({
@@ -25,7 +26,7 @@ const ViewData = (props) => {
       justifyContent: "center",
       alignItems: "center",
       color: " #004d90",
-      objectFit: "cover"
+      objectFit: "cover",
     },
     txt: {
       color: "white"
@@ -60,11 +61,7 @@ const ViewData = (props) => {
   return (
     <AccessControl allowedLevels={["L1", "L5", "L6"]}>
       <div className={styles.container}>
-        <div className={styles.viewDataNav}>
-          <Link onClick={Logout}>
-            <i className="fas fa-sign-out-alt"></i>Logout
-          </Link>
-        </div>
+      <BackToHomeFab />
         <div className={styles.viewDataLinks}>
           {ViewDataPaths.map((link, index) => {
             if (userLevel.level !== "L6" || (userLevel.level === "L6" && link.name !== "Add New Ship")) {

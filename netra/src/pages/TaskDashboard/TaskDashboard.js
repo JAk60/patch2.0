@@ -491,15 +491,15 @@ const TaskDashboard = () => {
   const shipNameChange = (event, value) => {
     debugger;
     let tt = entireData;
-
+    console.log(tt)
+    console.log(value)
     if (
       tt &&
       tt["task_ship_name"] &&
-      Array.isArray(value) &&
-      value.length > 0 &&
-      value[0].name
+      (Array.isArray(value) || typeof value === 'object') &&
+      (Array.isArray(value) ? value.length > 0 && value[0].name : value.name)
     ) {
-      const selectedShipName = value[0].name;
+      const selectedShipName = Array.isArray(value) ? value[0].name : value.name;
       console.log("Selected Ship Name:", selectedShipName);
 
       if (tt["task_ship_name"].hasOwnProperty(selectedShipName)) {
@@ -519,11 +519,14 @@ const TaskDashboard = () => {
   };
 
   const TaskNameChange = (event, value) => {
-    if (Array.isArray(value) && value.length > 0) {
-      dispatch(taskActions.updateCurrentTask({ task: value[0].name }));
+    console.log(value);
+    if (value && typeof value === 'object' && value.name) {
+      dispatch(taskActions.updateCurrentTask({ task: value.name }));
     }
   };
+  
 
+  console.log(taskOption);
   return (
     <AccessControl allowedLevels={["L1", "L2", "L3", "L4", "L5"]}>
       <MuiPickersUtilsProvider utils={MomentUtils}>
@@ -544,7 +547,7 @@ const TaskDashboard = () => {
 
               <Autocomplete
                 classes={classes}
-                multiple
+                // multiple
                 id="tags-standard"
                 options={taskShipNameOption}
                 getOptionLabel={(option) => option.name}
@@ -577,7 +580,7 @@ const TaskDashboard = () => {
 
               <Autocomplete
                 classes={classes}
-                multiple
+                // multiple
                 id="tags-standard"
                 options={taskOption}
                 getOptionLabel={(option) => option.name}

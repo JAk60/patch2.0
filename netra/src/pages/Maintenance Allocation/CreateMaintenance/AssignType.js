@@ -1,22 +1,25 @@
-import React, { useEffect, useRef, useState } from "react";
-import styles from "./CreateMaintenance.module.css";
 import {
   Button,
-  RadioGroup,
-  FormControlLabel,
-  Radio,
-  MenuItem,
-  Select,
   Dialog,
+  FormControlLabel,
+  MenuItem,
+  Radio,
+  RadioGroup,
+  Select,
   makeStyles,
 } from "@material-ui/core";
-import Table from "../../../ui/Table/Table";
 import { AgGridColumn } from "ag-grid-react";
-import { v4 as uuid } from "uuid";
-import { saveSensor } from "./SaveHandler";
-import CustomizedSnackbars from "../../../ui/CustomSnackBar";
-import { useSelector } from "react-redux";
+import React, { useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { v4 as uuid } from "uuid";
+import CustomizedSnackbars from "../../../ui/CustomSnackBar";
+import { treeDataActions } from "../../../store/TreeDataStore";
+import Table from "../../../ui/Table/Table";
+import styles from "./CreateMaintenance.module.css";
+import { saveSensor } from "./SaveHandler";
+import UserSelection from "../../../ui/userSelection/userSelection";
+import Navigation from "../../../components/navigation/Navigation";
 
 const useStyles = makeStyles({
   buttons: {
@@ -26,29 +29,29 @@ const useStyles = makeStyles({
   },
   align: {
     marginBottom: 10,
-  }
+  },
 });
 
 const headers = [
-  'name',
-  'unit',
-  'min',
-  'max',
-  'P',
-  'F',
+  "name",
+  "unit",
+  "min",
+  "max",
+  "P",
+  "F",
   // 'level',
-  'frequency',
+  "frequency",
   // 'data',
 ];
 
 function downloadBlankCSV() {
-  const csvContent = headers.join(',');
+  const csvContent = headers.join(",");
 
-  const blob = new Blob([csvContent], { type: 'text/csv' });
+  const blob = new Blob([csvContent], { type: "text/csv" });
   const url = window.URL.createObjectURL(blob);
-  const a = document.createElement('a');
+  const a = document.createElement("a");
   a.href = url;
-  a.download = 'blank_data.csv';
+  a.download = "blank_data.csv";
   document.body.appendChild(a);
   a.click();
   window.URL.revokeObjectURL(url);
@@ -58,9 +61,9 @@ function downloadBlankCSV() {
 const AssignType = (props) => {
   const [type, setType] = useState("");
   const [ageBasedUnit, setAgeBasedUnit] = useState(null);
-  const [dataRows, setDataRows] = useState([]);
+  const [Rtype, setRtype] = useState("Repairable");
   const [calendarBasedUnit, setCalendarBasedUnit] = useState(null);
-  const [condition, setCondition] = useState("visual");
+  const [condition, setCondition] = useState("sensorBased");
   const [failureMode, setFailureMode] = useState(null);
   const [visualWearLevels, setVisualWearLevels] = useState(0);
   const [visualCorrosionLevels, setVisualCorrosionLevels] = useState(0);
@@ -70,30 +73,43 @@ const AssignType = (props) => {
   const [VisualWearRows, setVisualWearRows] = useState([]);
   const [VisualCorrosionRows, setVisualCorrosionRows] = useState([]);
   const [visualActionsRows, setVisualActionRows] = useState([]);
+  const[selectedEquipment,setSelectedEquipment]=useState("")
   const fileInputRef = useRef(null);
   const hello = ["This", "is", "beauty"];
   const classes = useStyles();
+  const dispatch =useDispatch();
+
+
+const CurrentSelected=useSelector((state)=>state.userSelection.currentSelection);
+const sData = useSelector((state) => state.userSelection.componentsData);
+
+const currentNomenclature = CurrentSelected["nomenclature"];
+console.log(currentNomenclature);
+const matchingItems = sData.filter(
+  (item) => item.nomenclature === currentNomenclature
+);
   const handleFileUpload = (file) => {
     if (file) {
       const reader = new FileReader();
       reader.onload = (event) => {
         const csvData = event.target.result;
-        const rows = csvData.split('\n');
+        const rows = csvData.split("\n");
 
         // Assuming the first row contains column headers
-        const headers = rows[0].split(',').map(header => header.trim());
+        const headers = rows[0].split(",").map((header) => header.trim());
         const parsedData = [];
 
         for (let i = 1; i < rows.length; i++) {
-          const rowData = rows[i].split(',');
-          if (rowData.length === headers.length) { // Check if the number of columns matches the headers
+          const rowData = rows[i].split(",");
+          if (rowData.length === headers.length) {
+            // Check if the number of columns matches the headers
             const rowObject = {};
             for (let j = 0; j < headers.length; j++) {
               let value = rowData[j].trim();
               rowObject[headers[j]] = value;
               rowObject["id"] = uuid();
               rowObject["EquipmentId"] = eqptId;
-              rowObject["ComponentId"] = props.selectedComponent.id;
+              rowObject["ComponentId"] = matchingId;
             }
             parsedData.push(rowObject);
           }
@@ -129,71 +145,8 @@ const AssignType = (props) => {
     addVisualActionRows();
   }, [VisualWearRows, VisualCorrosionRows]);
 
-  const visualWearColumnDefs = [
-    <AgGridColumn
-      field="level"
-      headerName="Level"
-      headerTooltip="Level"
-      //minWidth={100}
-      editable={true}
-    />,
-    <AgGridColumn
-      field="wear"
-      headerName="Wear"
-      headerTooltip="Wear"
-      //minWidth={100}
-      editable={true}
-    />,
-    <AgGridColumn
-      field="image"
-      headerName="Image"
-      headerTooltip="Image"
-      //minWidth={100}
-      editable={true}
-    />,
-  ];
-  const visualActionsCols = [
-    <AgGridColumn
-      field="wear"
-      headerName="Wear"
-      headerTooltip="Wear"
-      //minWidth={100}
-      editable={true}
-    />,
-    <AgGridColumn
-      field="corrosion"
-      headerName="Corrosion"
-      headerTooltip="Corrosion"
-      //minWidth={100}
-      editable={true}
-    />,
-    <AgGridColumn
-      field="alarm"
-      headerName="Alarms"
-      headerTooltip="Alarms"
-      cellEditor="agSelectCellEditor"
-      cellEditorParams={{
-        values: ["Show on dashboard", "Alarm1", "Alarm2", "Alarm3"],
-      }}
-      //minWidth={100}
-      editable={true}
-    />,
-    <AgGridColumn
-      headerName="Invalid"
-      field="invalid"
-      //editable={true}
-      cellRenderer={(params) => {
-        var input = document.createElement("input");
-        input.type = "checkbox";
-        input.checked = params.value;
-        input.addEventListener("click", function (event) {
-          params.value = !params.value;
-          params.node.data.invalid = params.value;
-        });
-        return input;
-      }}
-    />,
-  ];
+
+ 
   const addVisualWearRows = (n) => {
     let newRows = [];
     let i = 1;
@@ -205,29 +158,7 @@ const AssignType = (props) => {
     console.log(newRows);
     setVisualWearRows(newRows);
   };
-  const visualCorrosionColumnDefs = [
-    <AgGridColumn
-      field="level"
-      headerName="Level"
-      headerTooltip="Level"
-      //minWidth={100}
-      editable={true}
-    />,
-    <AgGridColumn
-      field="corrosion"
-      headerName="Corrosion"
-      headerTooltip="Corrosion"
-      //minWidth={100}
-      editable={true}
-    />,
-    <AgGridColumn
-      field="image"
-      headerName="Image"
-      headerTooltip="Image"
-      //minWidth={100}
-      editable={true}
-    />,
-  ];
+  
   const addVisualCorrosionRows = (n) => {
     let newRows = [];
     let i = 1;
@@ -239,7 +170,8 @@ const AssignType = (props) => {
     console.log(newRows);
     setVisualCorrosionRows(newRows);
   };
-
+  
+  const matchingId = matchingItems[0]?.id;
   const addVisualActionRows = () => {
     let rows = [];
     VisualWearRows.map((wearRow) => {
@@ -302,13 +234,6 @@ const AssignType = (props) => {
   };
 
   const parameterColumnDefs = [
-    // <AgGridColumn
-    //   field="channel_name"
-    //   headerName="Channel Name"
-    //   headerTooltip="Channel Name"
-    //   // minWidth={100}
-    //   editable={true}
-    // />,
     <AgGridColumn
       field="name"
       headerName="Channel/Parameter Name"
@@ -351,13 +276,6 @@ const AssignType = (props) => {
       // minWidth={100}
       editable={true}
     />,
-    // <AgGridColumn
-    //   field="level"
-    //   headerName="Level"
-    //   headerTooltip="Level"
-    //   // minWidth={100}
-    //   editable={true}
-    // />,
     monitoringType === "intermittent" ? (
       <AgGridColumn
         field="frequency"
@@ -367,41 +285,8 @@ const AssignType = (props) => {
         editable={true}
       />
     ) : null,
-    // <AgGridColumn
-    //   field="data"
-    //   headerName="Data"
-    //   headerTooltip="Data"
-    //   // minWidth={100}
-    //   editable={true}
-    //   cellEditor="agSelectCellEditor"
-    //   cellEditorParams={{
-    //     values: ["From Excel File", "From DB"],
-    //   }}
-    // />,
   ];
-  const lvlwiseColumnDefs = [
-    <AgGridColumn
-      field="name"
-      headerName="Name"
-      headerTooltip="Name"
-      //minWidth={100}
-      editable={true}
-    />,
-    <AgGridColumn
-      field="level"
-      headerName="Level"
-      headerTooltip="Level"
-      //minWidth={100}
-      editable={true}
-    />,
-    <AgGridColumn
-      field="threshold"
-      headerName="Threshold"
-      headerTooltip="Threshold"
-      //minWidth={100}
-      editable={true}
-    />,
-  ];
+
   const updateParameterRowData = (allRows) => {
     //get object of levels and lvlwise rows
     let lvlwisearr = [];
@@ -467,8 +352,8 @@ const AssignType = (props) => {
             field={data.name}
             headerName={data.name}
             headerTooltip={data.name}
-          //minWidth={100}
-          //editable={true}
+            //minWidth={100}
+            //editable={true}
           />
         );
       }
@@ -509,7 +394,7 @@ const AssignType = (props) => {
   const [sbAlarmRows, setSbAlarmRows] = useState([]);
   const [sbAlarmAtts, setSbAlarmAtts] = useState([]);
   const handleSave = () => {
-    debugger
+    debugger;
     if (type === "conditionBased") {
       if (condition === "sensorBased") {
         let newRows = pRows.map((row) => {
@@ -557,12 +442,60 @@ const AssignType = (props) => {
   const eqptId = systemData.filter(
     (data) => data.name === currentSelection.equipmentName
   )[0]?.id;
+
+  const handleSubmit =()=>{
+    const payload = {
+      nomenclature: CurrentSelected["nomenclature"],
+      ship_name: CurrentSelected["shipName"],
+    };
+
+    if (matchingId) {
+      payload.component_id = matchingId;
+    }
+    console.log(payload);
+    fetch("/fetch_system", {
+      method: "POST",
+      body: JSON.stringify(payload),
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((d) => {
+        console.log(d);
+        let treeD = d["treeD"];
+        let failureModes = d["failureMode"];
+        console.log(treeD[0]?.repairType);
+        if(treeD){
+          setRtype(treeD[0]?.repairType)
+        }
+        dispatch(
+          treeDataActions.setTreeData({
+            treeData: treeD,
+          })
+        );
+        dispatch(treeDataActions.setFailureModes(failureModes));
+      });
+    setSelectedEquipment(currentNomenclature)
+  }
   return (
-    <>
+    <><Navigation />
+    <div className={styles.userSelection}>
+      <UserSelection />
+        <Button
+          className={styles.btn}
+          onClick={handleSubmit}
+          variant="contained"
+          color="primary"
+        >
+          Submit
+        </Button>
+    </div>
       <div className={styles.assignDiv}>
         <div className={styles.assignContent}>
           <div className={styles.flex}>
-            <h3>Selected Component:{props.selectedComponent?.name}</h3>
+            <h3>Selected Component:{selectedEquipment}</h3>
             <RadioGroup
               row
               name="maintenance-type"
@@ -571,34 +504,34 @@ const AssignType = (props) => {
               className={styles.mtypeRadio}
             >
               {/* props.selectedComponent?.repairType === "Repairable" ||  */}
-              {(
+              {
                 <FormControlLabel
                   value="runToFailure"
                   control={<Radio />}
                   label="Run to Failure"
                 />
-              )}
-              {props.selectedComponent?.repairType == "Repairable" || (
+              }
+              {Rtype == "Repairable" || (
                 <FormControlLabel
                   value="ageBased"
                   control={<Radio />}
                   label="Age Based Maintenance"
                 />
               )}
-              {props.selectedComponent?.repairType == "Repairable" || (
+              {Rtype == "Repairable" || (
                 <FormControlLabel
                   value="calendarBased"
                   control={<Radio />}
                   label="Calendar Based Maintenance"
                 />
               )}
-              {(
+              {
                 <FormControlLabel
                   value="conditionBased"
                   control={<Radio onClick={() => setModal(true)} />}
                   label="Condition Based Maintenance"
                 />
-              )}
+              }
             </RadioGroup>
           </div>
           <div className={styles.btns}>
@@ -617,7 +550,7 @@ const AssignType = (props) => {
             </Link> */}
           </div>
         </div>
-        <Dialog open={modal} onClose={() => setModal(false)}>
+        {/* <Dialog open={modal} onClose={() => setModal(false)}>
           <div className={styles.modal}>
             <h4>Select Condition</h4>
             <RadioGroup
@@ -625,7 +558,7 @@ const AssignType = (props) => {
               value={condition}
               onChange={(e) => setCondition(e.target.value)}
             >
-              {/* <FormControlLabel
+              <FormControlLabel
                 value="visual"
                 control={<Radio />}
                 label="Visual Inspection"
@@ -634,7 +567,7 @@ const AssignType = (props) => {
                 value="degradation"
                 control={<Radio />}
                 label="Degradation Measurement"
-              /> */}
+              />
               <FormControlLabel
                 value="sensorBased"
                 control={<Radio />}
@@ -642,7 +575,7 @@ const AssignType = (props) => {
               />
             </RadioGroup>
           </div>
-        </Dialog>
+        </Dialog> */}
         {type === "runToFailure" && (
           <div className={styles.MTypeContent}>Run To Failure</div>
         )}
@@ -722,7 +655,6 @@ const AssignType = (props) => {
           <div className={styles.MTypeContent}>
             <div className={styles.formField}>
               <label htmlFor="failure-mode">
-                {" "}
                 Failure Mode to be inspected
               </label>
               <Select
@@ -734,11 +666,15 @@ const AssignType = (props) => {
                 className={styles.input}
               >
                 {failureModes?.map((ele) => {
-                  return <MenuItem value={ele.failure_mode}>{ele.failure_mode}</MenuItem>;
+                  return (
+                    <MenuItem value={ele.failure_mode}>
+                      {ele.failure_mode}
+                    </MenuItem>
+                  );
                 })}
               </Select>
             </div>
-            {condition === "visual" && (
+            {/* {condition === "visual" && (
               <>
                 <div className={styles.formField}>
                   <label htmlFor="inspection-frequency">
@@ -851,7 +787,7 @@ const AssignType = (props) => {
                   <div className={styles.levelCol}></div>
                 </div>
               </>
-            )}
+            )} */}
             {condition === "sensorBased" && (
               <>
                 <RadioGroup
@@ -918,46 +854,31 @@ const AssignType = (props) => {
                         type="file"
                         accept=".csv"
                         onChange={(e) => handleFileUpload(e.target.files[0])}
-                        style={{ display: 'none' }}
+                        style={{ display: "none" }}
                         ref={fileInputRef}
                       />
                       <Button
                         className={classes.buttons}
                         variant="contained"
                         color="primary"
-                        style={{marginTop: "50px"}}
+                        style={{ marginTop: "50px" }}
                         onClick={() => fileInputRef.current.click()}
                       >
                         Import File
                       </Button>
                     </div>
                     <div className={styles.importBtnContainer}>
-                      <Button variant="contained" color="primary" onClick={downloadBlankCSV}  style={{marginTop: "50px"}}>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={downloadBlankCSV}
+                        style={{ marginTop: "50px" }}
+                      >
                         Download Blank CSV
                       </Button>
                     </div>
                   </div>
                 </div>
-                {/* <div className={styles.levelwise}>
-            <div className={styles.lwCol}>
-                Level Wise Parameters
-                <Table
-                    columnDefs={lvlwiseColumnDefs}
-                    rowData={lvlwiseRows}
-                    tableUpdate={(data)=>console.log(data)}
-                    height={200}
-                    />
-            </div>
-            <div className={styles.lwCol}>
-                Alarms
-                <Table
-                    columnDefs={sbAlarmCols}
-                    rowData={sbAlarmRows}
-                    tableUpdate={(data)=>console.log(data)}
-                    height={200}
-                    />
-            </div>
-            </div> */}
               </>
             )}
           </div>

@@ -20,9 +20,14 @@ import React, {
     const systemData = useSelector((state) => state.treeData.treeData);
     const taskData = useSelector((state) => state.taskData.taskData);
     const currentShip = useSelector((state) => state.taskData.currentShip);
+    console.log(currentShip)
     const currentTaskName = useSelector((state) => state.taskData.currentTaskName);
-    const filteredData = taskData.tasks_data.filter(x => x.ship_name === currentShip && x.task_name === currentTaskName)
-    // console.log(taskData)
+    console.log(currentTaskName)
+    const filteredData = taskData?.tasks_data.filter(
+      (x) => x.ship_name === currentShip && x.task_name === currentTaskName
+    );
+    console.log(taskData)
+    console.log(filteredData)
     // debugger;
     // const userSelection = useSelector(
     //   (state) => state.userSelection.userSelection
@@ -111,7 +116,7 @@ import React, {
       // />
       <Autocomplete
         id={selectedEquipmentId}
-        options={filteredData[0].task_data}
+        options={filteredData[0]?.task_data || []}
         //value={value}
         multiple={props.isMultiple}
         onChange={handleChange}

@@ -15,6 +15,7 @@ import UserSelection from "../../../ui/userSelection/userSelection";
 import ComponentDetails from "../ComponentDetails/ComponentDetails";
 import Flow from "../Flow/flow";
 import styles from "./layout.module.css";
+import BackToHomeFab from "../../../components/navigation/MuiFap";
 
 const drawerWidth = 320;
 
@@ -294,17 +295,7 @@ const Layout = (props) => {
 
   return (
     <div className={styles.parent}>
-      {/* <div className={styles.text_div}>
-          <Sidebar></Sidebar>
-          <div className={styles.buttonDiv}>
-          <button onClick={onSaveHandler} className={styles.savebtn}>
-            Save
-          </button>
-          <button onClick={onRestoreHandler} className={styles.restorebtn}>
-            Restore
-          </button>
-        </div>
-        </div> */}
+      <BackToHomeFab />
       <div className={styles.flow_div}>
         <Flow
           reactFlowInstance={reactFlowInstance}
@@ -322,27 +313,29 @@ const Layout = (props) => {
       >
         <Container>
           <div className={styles.buttonDiv}>
-            <button
+            {/* <button
               onClick={() => history.push("/")}
               className={styles.savebtn}
             >
               Home
-            </button>
-            <button onClick={handleClickOpen} className={styles.restorebtn}>
-              Save
-            </button>
+            </button> */}
             <button onClick={handleLoadClickOpen} className={styles.restorebtn}>
               Load
             </button>
             {showDetails ? (
+              <>
+            <button onClick={handleClickOpen} className={styles.restorebtn}>
+              Save
+            </button>
               <button
                 onClick={() => {
                   setShowDetails(false);
                 }}
                 className={styles.restorebtn}
-              >
+                >
                 Back
               </button>
+                </>
             ) : (
               <button
                 onClick={() => {
@@ -353,9 +346,6 @@ const Layout = (props) => {
                 Component Details
               </button>
             )}
-            {/* <Button variant="outlined" color="primary" onClick={handleClickOpen}>
-        Save
-      </Button> */}
             <Dialog
               maxWidth="sm"
               fullWidth

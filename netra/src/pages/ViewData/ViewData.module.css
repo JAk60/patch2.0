@@ -6,7 +6,9 @@
     align-items: center;
     grid-row: 1/13;
     grid-column: 1/5;
-    background:url(viewDatawave.svg),linear-gradient(210deg, rgba(41,41,113,0.6) 0%, rgba(91, 114, 129, 0.6) 100%), url(https://wallpaperaccess.com/full/2579311.jpg);
+    background:url(Homewave.svg),linear-gradient(100deg, rgba(12, 90, 235, 0.5) 50%, rgba(91, 114, 129, 0.6) 100%), url(https://thumbor.forbes.com/thumbor/960x0/https%3A%2F%2Fspecials-images.forbesimg.com%2Fimageserve%2F61b9f23c1b503c93a88b4273%2FFlight-deck-operations-aboard-the-USS-Gerald-R--Ford%2F960x0.jpg%3Ffit%3Dscale);
+
+    /* background:url(viewDatawave.svg),linear-gradient(210deg, rgba(41,41,113,0.6) 0%, rgba(91, 114, 129, 0.6) 100%), url(https://wallpaperaccess.com/full/2579311.jpg); */
     /* background-blend-mode: ; */
     background-size:cover;
 }
@@ -32,11 +34,12 @@
 
 .viewDataLinks{
     position: absolute;
-    left: 100px;
+    right: 100px;
     display: flex;
     flex-direction: column;
     height: 80%;
     justify-content: space-evenly;
+    font-size: 30px;
 }
 .viewDataLinks a{
     display: flex;
@@ -45,7 +48,6 @@
     text-decoration: none;
     font-weight: 500;
     letter-spacing: 0.5px;
-    font-size: 30px;
 }
 .circleIcon{
     display: inline-block;
@@ -68,7 +70,7 @@
   }
   .netra{
       position: absolute;
-      right:20%;
+      left:20%;
       font-size: 65px;
       letter-spacing: 1px;
       color: white;
