@@ -7,8 +7,12 @@ import {
   InputBase,
   Button,
   Typography,
+  IconButton,
 } from "@material-ui/core";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
+import HomeIcon from '@material-ui/icons/Home';
 const InputStyles = makeStyles({
   root: {
     margin: "15px 0px 5px 0px",
@@ -77,9 +81,18 @@ const ForgotPass = () => {
       });
   };
 
+  const handleHome=()=>{
+    history.push('/')
+  }
+
   return (
     <div className={styles.container}>
       <Paper className={styles.SignUpPaper} elevation={5}>
+      <IconButton  size='Large' onClick={handleHome}>
+          {/* <ArrowBackIcon /> */}
+          <ArrowBackIosIcon style={{fontSize:"30px"}}/>
+          <HomeIcon/>
+        </IconButton>
         <div className={styles.welcome_text}>
           <img src="/netra-logo-removebg.png" height={300} alt="Netra Logo" />
           <div className={styles.netra}>NETRA</div>

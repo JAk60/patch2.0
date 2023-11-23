@@ -13,6 +13,9 @@ import {
   Typography,
   TextField, // Import the TextField component
 } from '@material-ui/core';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
+import HomeIcon from '@material-ui/icons/Home';
 import { Link } from 'react-router-dom';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
@@ -94,10 +97,18 @@ const SignUp = () => {
         }
       })
   }
+  const handleHome=()=>{
+    history.push('/')
+  }
 
   return (
     <div className={styles.container}>
       <Paper className={styles.SignUpPaper} elevation={5}>
+        <IconButton  size='Large' onClick={handleHome}>
+          {/* <ArrowBackIcon /> */}
+          <ArrowBackIosIcon style={{fontSize:"30px"}}/>
+          <HomeIcon/>
+        </IconButton>
         <div className={styles.welcome_text}>
           <img src='/netra-logo-removebg.png' height={300} />
           <div className={styles.netra}>NETRA</div>

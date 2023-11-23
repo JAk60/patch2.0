@@ -54,9 +54,7 @@ const useStyles = makeStyles((theme) => ({
     color: "white",
   },
   logoImg: {
-    marginTop: "40px",
-    marginLeft: "70px",
-    maxWidth: "70%",
+    maxWidth: "40%",
     height: "auto",
   },
 }));

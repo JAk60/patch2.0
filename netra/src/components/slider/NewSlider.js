@@ -16,6 +16,7 @@ const useStyles = makeStyles({
   },
   sliderMarks: {
     fontWeight: "bold",
+    fontSize: "18px"
   },
 });
 

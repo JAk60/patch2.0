@@ -59,8 +59,8 @@ const RedundancyInfo = (props) => {
     />,
     <AgGridColumn
       field="ParallelComponent"
-      headerName="Parallel Component (Component - Parent Name)"
-      headerTooltip="Parallel Component (Component - Parent Name)"
+      headerName="Parallel Component"
+      headerTooltip="Parallel Component"
       // cellEditor="agSelectCellEditor"
       cellEditorFramework={RenderParallelComponent}
       cellEditorParams={{

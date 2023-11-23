@@ -166,23 +166,23 @@ const SystemConfiguration = (props) => {
   }, [locationKeys, history]);
   let [marks, setMarks] = useState([
     {
-      value: 15,
+      value: 10,
       label: "Equipment Structuring",
     },
     {
-      value: 30,
+      value: 32,
       label: "Redundancy & Parallel Information",
     },
     {
-      value: 45,
+      value: 54,
       label: "Maintenance Information",
     },
     {
-      value: 60,
+      value: 68,
       label: "Failure Mode",
     },
     {
-      value: 75,
+      value: 78,
       label: "Duty Cycle",
     },
     {

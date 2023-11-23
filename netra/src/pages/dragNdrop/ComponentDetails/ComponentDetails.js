@@ -120,6 +120,13 @@ console.log(isSaveDisabled);
         k_as: kRefAS.current.value,
         parallel_comp: parallel_comp,
         color: color,
+      }),
+      setInputValues({
+        k: "",
+        k_elh: "",
+        k_c: "",
+        k_ds: "",
+        k_as: "",
       })
     );
 

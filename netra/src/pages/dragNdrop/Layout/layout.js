@@ -33,8 +33,11 @@ const useStyles = makeStyles((theme) => ({
 const Layout = (props) => {
   const muiCss = useStyles();
 
+  const [value, setValue] = useState([]);
   const [isNodeAddedMap, setIsNodeAddedMap] = useState({});
   const [nomenclature, setNomenclature] = useState([]);
+  const [boolcanvas, setBoolCanvas] = useState(false);
+  const [clearcanvas, setClearCanvas] = useState(false);
   useEffect(() => {
     fetch("/fetch_tasks", {
       method: "GET",
@@ -72,7 +75,17 @@ const Layout = (props) => {
   const currentSelection = useSelector(
     (state) => state.userSelection.currentSelection
   );
-  // console.log(components);
+  const currDepartment = currentSelection["department"];
+  console.log("currDepartment", currDepartment);
+  useEffect(() => {
+    // Reset nomenclature and value when department changes
+    setNomenclature([]);
+    setValue([]);
+    setSelectAllNomenclature(false);
+    setSelectAllEquipments(false);
+    setBoolCanvas(false);
+  }, [currDepartment]);
+  console.log("currentSelection", currentSelection);
   const onSaveHandler = () => {
     // const stringObject = JSON.stringify(allElements);
     // localStorage.setItem("flow", stringObject);
@@ -169,7 +182,6 @@ const Layout = (props) => {
       });
     handleLoadClose();
   };
-  const [value, setValue] = useState([]);
   const systemData = useSelector((state) => state.treeData.treeData);
   const handleChange = (event, newValue) => {
     console.log(newValue);
@@ -198,6 +210,30 @@ const Layout = (props) => {
   console.log(filteredNomenclatures, "F");
 
   console.log("reactFlowInstance,", reactFlowInstance);
+
+  useEffect(() => {
+    // This useEffect will run once when the component is mounted
+    if (reactFlowInstance) {
+      const isTaskNameAdded = isNodeAddedMap["Task Name"];
+      if (!isTaskNameAdded) {
+        const newNodeTaskName = {
+          id: uuid(),
+          type: "systemNode",
+          position: { x: 500, y: 300 }, // You can set the initial position as per your requirement
+          data: { label: "Task Name" },
+          dtype: "node",
+          shipName: ship_name,
+        };
+
+        dispatch(elementActions.addElement({ ele: newNodeTaskName }));
+        setIsNodeAddedMap((prevMap) => ({ ...prevMap, "Task Name": true }));
+
+        // Fit the view to include the newly added node
+        reactFlowInstance.fitView();
+      }
+    }
+  }, [reactFlowInstance,clearcanvas]);
+
   const AddNodes = () => {
     const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
 
@@ -205,21 +241,9 @@ const Layout = (props) => {
     const isTaskNameAdded = isNodeAddedMap["Task Name"];
 
     if (!isTaskNameAdded) {
-      // Create the "Task Name" node
-      const newNodeTaskName = {
-        id: uuid(),
-        type: "systemNode",
-        position: reactFlowInstance.project({
-          x: reactFlowBounds.left + 600,
-          y: reactFlowBounds.top + 600,
-        }),
-        data: { label: "Task Name" },
-        dtype: "node",
-        shipName: ship_name,
-      };
-
-      dispatch(elementActions.addElement({ ele: newNodeTaskName }));
-      setIsNodeAddedMap((prevMap) => ({ ...prevMap, "Task Name": true }));
+      // If "Task Name" node doesn't exist, display a message or take appropriate action
+      console.warn("Task Name node does not exist. Please create it first.");
+      return;
     }
 
     let i = 50; // Initialize i for positioning equipment nodes
@@ -256,6 +280,8 @@ const Layout = (props) => {
 
       i += 50; // Increment the positioning index for the next node
     });
+
+    setBoolCanvas(true);
   };
 
   const [open, setOpen] = useState(false);
@@ -282,7 +308,6 @@ const Layout = (props) => {
 
   const [selectAllEquipments, setSelectAllEquipments] = useState(false);
 
-
   const handleChangeEquipments = (e, value) => {
     if (value.includes("Select All")) {
       setSelectAllEquipments(true);
@@ -301,6 +326,15 @@ const Layout = (props) => {
           reactFlowInstance={reactFlowInstance}
           reactFlowWrapper={reactFlowWrapper}
           setReactFlowInstance={setReactFlowInstance}
+          boolcanvas={boolcanvas}
+          setBoolCanvas={setBoolCanvas}
+          clearcanvas={clearcanvas}
+          setClearCanvas={setClearCanvas}
+          setIsNodeAddedMap={setIsNodeAddedMap}
+          setNomenclature={setNomenclature}
+          setValue={setValue}
+          setSelectAllNomenclature={setSelectAllNomenclature}
+          setSelectAllEquipments={setSelectAllEquipments}
         ></Flow>
       </div>
       <Drawer
@@ -320,22 +354,22 @@ const Layout = (props) => {
               Home
             </button> */}
             <button onClick={handleLoadClickOpen} className={styles.restorebtn}>
-              Load
+              Load Saved Tasks
             </button>
             {showDetails ? (
               <>
-            <button onClick={handleClickOpen} className={styles.restorebtn}>
-              Save
-            </button>
-              <button
-                onClick={() => {
-                  setShowDetails(false);
-                }}
-                className={styles.restorebtn}
+                <button onClick={handleClickOpen} className={styles.restorebtn}>
+                  Save
+                </button>
+                <button
+                  onClick={() => {
+                    setShowDetails(false);
+                  }}
+                  className={styles.restorebtn}
                 >
-                Back
-              </button>
-                </>
+                  Back
+                </button>
+              </>
             ) : (
               <button
                 onClick={() => {
@@ -446,6 +480,7 @@ const Layout = (props) => {
                 color="primary"
                 style={{ marginLeft: 45, marginTop: 7 }}
                 onClick={() => AddNodes()}
+                // disabled={boolcanvas}
               >
                 Load Equipments
               </Button>

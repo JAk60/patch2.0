@@ -71,14 +71,12 @@ class RUL_dB:
             self.error_return
 
     
-    def rul_code(self):
+    def rul_code(self, equipment_id, parameter, p, f):
         req_data = request.get_json()
         try:
             query = '''
                 SELECT operating_hours, value from parameter_data WHERE name = ? and component_id = ?
             '''
-            parameter = req_data["parameter"]
-            equipment_id = req_data["equipmentId"]
             cursor.execute(query, parameter, equipment_id)
             data = cursor.fetchall()
             data = [(x, float(y)) for x, y in data]
@@ -87,8 +85,7 @@ class RUL_dB:
             vc = data[-1][0]  # Sensor value
             t0 = data[-2][1] # Current time
             tp = data[-1][1]
-            p = req_data['p']
-            f = req_data['f']
+
             confidence_levels =[0.8, 0.85, 0.9, 0.95]
             threshold = f
             idx = []
@@ -160,3 +157,34 @@ class RUL_dB:
             self.error_return['message'] = str(e)
             return self.error_return
 
+    def rul_equipment_level(self):
+        req_data = request.get_json()
+        try:
+            query = '''
+                SELECT id, name, P, F from sensor_based_data WHERE component_id = ?
+            '''
+
+            sensor_data_sql = '''
+                SELECT operating_hours, value from parameter_data WHERE name = ? and component_id = ?
+            '''
+            equipment_id = req_data["equipmentId"]
+            cursor.execute(query, equipment_id)
+            remaining_life_results = {}
+            data = cursor.fetchall()
+            for id, name, p, f in data:
+                cursor.execute(sensor_data_sql, name, equipment_id)
+                sensor_data = cursor.fetchall()
+                sensor_data = [(x, float(y)) for x, y in sensor_data]
+                vc = sensor_data[-1][0]  # Sensor value
+                t0 = sensor_data[-2][1] # Current time
+                tp = sensor_data[-1][1] 
+                rul_data = self.rul_code(equipment_id, name, p, f)
+                if rul_data["code"] == 1:
+                    remaining_life_results[name] = rul_data["results"]["remaining_life"][-2]
+            self.success_return["results"] = remaining_life_results
+            print(self.success_return)
+            return self.success_return
+        
+        except Exception as e:
+            self.error_return["error"] = str(e)
+            return self.error_return

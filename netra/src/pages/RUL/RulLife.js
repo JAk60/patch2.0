@@ -12,6 +12,21 @@ import { useDropzone } from "react-dropzone";
 import CustomizedSnackbars from "../../ui/CustomSnackBar";
 import RULPredictor from "./RULPredictor";
 import AccessControl from "../Home/AccessControl";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Slide
+} from '@material-ui/core';
 
 const useStyles = makeStyles({
   buttons: {
@@ -22,7 +37,86 @@ const useStyles = makeStyles({
   align: {
     marginBottom: 10,
   },
+  blinkingRow: {
+    animation: '$blinking 1s infinite',
+  },
+  '@keyframes blinking': {
+    '0%': {
+      background: '#ef5350',
+      color: "white"
+    },
+    '50%': {
+      background: 'transparent',
+    },
+    '100%': {
+      background: '#ef5350',
+      color: "white"
+    },
+  },
 });
+
+
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+
+
+const BlinkingTableRow = ({ row, lowestValue }) => {
+  const isLowestValue = row.value === lowestValue;
+  const classes = useStyles();
+
+  return (
+    <TableRow className={isLowestValue ? classes.blinkingRow : ''}>
+      <TableCell style={{fontSize: "18px"}}>{row.key}</TableCell>
+      <TableCell style={{fontSize: "18px"}}>{row.value}</TableCell>
+    </TableRow>
+  );
+};
+
+
+const BlinkingTable = ({ data, handleClose}) => {
+  const rows = Object.entries(data.results).map(([key, value]) => ({ key, value }));
+  const lowestValue = Math.min(...rows.map(row => row.value));
+
+  return (
+    <Dialog
+      open={true}
+      TransitionComponent={Transition}
+      keepMounted
+      onClose={handleClose}
+      aria-labelledby="alert-dialog-slide-title"
+      aria-describedby="alert-dialog-slide-description"
+    >
+      <DialogTitle id="alert-dialog-slide-title">RUL OF ALL SENSORS OF EQUIPMENT</DialogTitle>
+      <DialogContent>
+        <DialogContentText id="alert-dialog-slide-description">
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell style={{ fontSize: "18px", width: "40%", fontWeight: "bold"}}>Sensor Name</TableCell>
+                  <TableCell style={{ fontSize: "18px" , fontWeight: "bold"}}>Remaining Useful Life (RUL) Confidence(90%)</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {rows.map((row, index) => (
+                  <BlinkingTableRow key={index} row={row} lowestValue={lowestValue} />
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </DialogContentText>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleClose} color="primary">
+          Close
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+};
+
 
 const RulLife = () => {
   const [paramOptions, setParamOptions] = useState([]);
@@ -35,6 +129,8 @@ const RulLife = () => {
   const [P, setP] = useState(0);
   const [F, setF] = useState(0);
   const [selectedEquipmentId, setSelectedEquipmentId] = useState("");
+  const [showTable, setShowTable] = useState(false);
+  const [jsonData, setJsonData] = useState({});
 
   // Function to handle file upload
   const handleFileUpload = (file) => {
@@ -156,24 +252,24 @@ const RulLife = () => {
         return res.json();
       })
       .then((data) => {
-        if(data.code && data.results.length == 1){
+        if (data.code && data.results.length == 1) {
           setP(data.results[0].P)
           setF(data.results[0].F)
-        }else if(data.results.length == 0){
+        } else if (data.results.length == 0) {
           setSnackBarMessage({
             severity: "error",
             message: "Please Fill The Information",
             showSnackBar: true,
           });
         }
-        else{
+        else {
           setSnackBarMessage({
             severity: "error",
             message: data.message,
             showSnackBar: true,
           });
         }
-        
+
       })
 
   };
@@ -233,63 +329,97 @@ const RulLife = () => {
 
   const classes = useStyles();
 
+
+  const handleClick = () => {
+    console.log(selectedEquipmentId)
+    fetch("/rul_equipment", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({
+        equipmentId: selectedEquipmentId
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.code) {
+          setJsonData(data);
+        } else {
+          setSnackBarMessage({
+            severity: "error",
+            message: data.message,
+            showSnackBar: true,
+          });
+        }
+        setShowTable(true); // Moved inside the promise chain
+      })
+  };
+
+  const handleClose = () => {
+    setShowTable(false);
+  };
+
+  
+
   return (
     <>
-    <AccessControl allowedLevels={['L1', 'L5']}>
-      <Navigation />
-      <div className={styles.userSelection}>
-        <UserSelection />
-        <div>
-          <Button
-            className={classes.buttons}
-            onClick={onLoadTreeStructure}
-            variant="contained"
-            color="primary"
-          >
-            Submit
-          </Button>
-        </div>
-      </div>
-
-      <div className={styles.content}>
-        <div className={styles.tree}>
-          <div className={styles.treeChild}>
-            <TreeComponent height="600px"></TreeComponent>
+      <AccessControl allowedLevels={['L1', 'L5']}>
+        <Navigation />
+        <div className={styles.userSelection}>
+          <UserSelection />
+          <div>
+            <Button
+              className={classes.buttons}
+              onClick={onLoadTreeStructure}
+              variant="contained"
+              color="primary"
+            >
+              Submit
+            </Button>
           </div>
         </div>
-        <div className={styles.rightSection}>
-          <div className={styles.userSelection}>
-            <div className={styles.selectContainer}>
-              <div className={styles.selectC}>
-                Select Component
-                <AutoSelect
-                  fields={fData}
-                  onChange={(e, value) => setEquipmentName(value)}
-                  value={selectedEqName}
-                ></AutoSelect>
-              </div>
-              <div>
-                Select Parameter
-                <Autocomplete
-                  className={styles.SelectP}
-                  id="tags-standard"
-                  options={paramOptions}
-                  // getOptionLabel={(option) => option.name}
-                  value={selectedParameterName}
-                  onChange={(e, value) => setParameterName(value)}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      InputProps={{
-                        ...params.InputProps,
-                        disableUnderline: true,
-                      }}
-                      variant="standard"
-                    />
-                  )}
-                />
-              </div>
-              {/* <div {...getRootProps()}>
+
+        <div className={styles.content}>
+          <div className={styles.tree}>
+            <div className={styles.treeChild}>
+              <TreeComponent></TreeComponent>
+            </div>
+          </div>
+          <div className={styles.rightSection}>
+            <div className={styles.userSelection}>
+              <div className={styles.selectContainer}>
+                <div className={styles.selectC}>
+                  Select Component
+                  <AutoSelect
+                    fields={fData}
+                    onChange={(e, value) => setEquipmentName(value)}
+                    value={selectedEqName}
+                  ></AutoSelect>
+                </div>
+                <div>
+                  Select Parameter
+                  <Autocomplete
+                    className={styles.SelectP}
+                    id="tags-standard"
+                    options={paramOptions}
+                    // getOptionLabel={(option) => option.name}
+                    value={selectedParameterName}
+                    onChange={(e, value) => setParameterName(value)}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        InputProps={{
+                          ...params.InputProps,
+                          disableUnderline: true,
+                        }}
+                        variant="standard"
+                      />
+                    )}
+                  />
+                </div>
+                {/* <div {...getRootProps()}>
                 <input {...getInputProps()} />
                 <Button
                   className={classes.buttons}
@@ -299,30 +429,34 @@ const RulLife = () => {
                   Upload File
                 </Button>
               </div> */}
-              <div className={styles.importBtnContainer}>
-                <Button
-                  className={classes.buttons}
-                  variant="contained"
-                  color="primary"
-                  onClick={(e) => handlePrevRul(e, selectedParameterName)}
-                >
-                  Calculate RUL
-                </Button>
+                <div className={styles.importBtnContainer}>
+                  <Button
+                    className={classes.buttons}
+                    variant="contained"
+                    color="primary"
+                    onClick={(e) => handlePrevRul(e, selectedParameterName)}
+                  >
+                    Calculate RUL
+                  </Button>
+                </div>
               </div>
             </div>
+            {/* {isRulOpen && ( */}
+            <RULPredictor equipmentId={selectedEquipmentId} parameter={selectedParameterName} P={P} F={F} />
+            {/* )} */}
+            <Button variant="contained" color="primary" onClick={handleClick} style={{marginTop: "15px"}}>
+              Show Table
+            </Button>
+            {showTable && <BlinkingTable data={jsonData} handleClose={handleClose} equipmentName={selectedEqName}/>}
           </div>
-          {/* {isRulOpen && ( */}
-            <RULPredictor  equipmentId={selectedEquipmentId} parameter={selectedParameterName} P={P} F={F} />
-          {/* )} */}
         </div>
-      </div>
 
-      {SnackBarMessage.showSnackBar && (
-        <CustomizedSnackbars
-          message={SnackBarMessage}
-          onHandleClose={onHandleSnackClose}
-        />
-      )}
+        {SnackBarMessage.showSnackBar && (
+          <CustomizedSnackbars
+            message={SnackBarMessage}
+            onHandleClose={onHandleSnackClose}
+          />
+        )}
       </AccessControl>
     </>
   );

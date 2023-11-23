@@ -553,10 +553,20 @@ def optimize():
 @app.route("/rul", methods=["POST"])
 def rul():
     if request.method == "POST":
-
-        # file_path = os.path.join(app.config['UPLOAD_FOLDER'], 'uploaded_data.csv')
+        req_data = request.get_json()
+        parameter = req_data["parameter"]
+        equipment_id = req_data["equipmentId"]
+        p = req_data['p']
+        f = req_data['f']
         inst = RUL_dB()
-        return inst.rul_code()
+        return inst.rul_code(equipment_id, parameter, p, f)
+
+
+@app.route("/rul_equipment", methods=["POST"])
+def rul_equipment():
+    if request.method == "POST":
+        inst = RUL_dB()
+        return inst.rul_equipment_level()
 
 
 # @app.route('/prev_rul', methods=['POST'])

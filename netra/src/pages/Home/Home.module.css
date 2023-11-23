@@ -6,7 +6,7 @@
     align-items: center;
     grid-row: 1/13;
     grid-column: 1/5;
-    background: url(Homewave.svg), linear-gradient(210deg, rgba(41, 41, 113, 0.6) 0%, rgba(91, 114, 129, 0.6) 100%), url(https://wallpaperaccess.com/full/2579311.jpg);
+    background: url(Homewave.svg), linear-gradient(210deg, rgba(41, 41, 113, 0.6) 0%, rgba(91, 114, 129, 0.426) 100%), url(https://wallpaperaccess.com/full/2579311.jpg);
     /* background-blend-mode: ; */
     background-size: cover;
 }
@@ -76,19 +76,19 @@
 }
 
 .netra {
-    position: sticky;
-    top: 20px;
-    left: 60%;
-    font-size: 65px;
-    letter-spacing: 1px;
-    color: white;
+    position: absolute;
+    bottom: 10%;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
 }
 
 .logotxt {
-    position: relative;
-    margin-left: 20px;
-    left: 21%;
-    bottom: 75px;
+    font-size: 30px;
+    letter-spacing: 1px;
+    color: white;
 }
 
 .linkbtn {
