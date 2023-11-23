@@ -27,6 +27,7 @@ import { taskActions } from "../../store/taskStore";
 import AccessControl from "../Home/AccessControl";
 import PaperTable from "./PaperTable";
 import RenderMultipleComponent from "./TaskRenderMultipleComponent";
+import CollapsibleTable from "./ResTable";
 
 const TaskDashboard = () => {
   const precision = 2;
@@ -56,7 +57,7 @@ const TaskDashboard = () => {
   const [recommedation, setRecommedation] = useState([]);
   const [totalReliability, setTotalReliability] = useState(null);
   const [showPaper, setShowPaper] = useState(false);
-
+  const [showInputTables, setShowInputTables] = useState(true);
   const [selectedTaskName, setselectedTaskName] = useState("");
 
   const [taskTableData, settaskTableData] = useState([]);
@@ -337,7 +338,7 @@ const TaskDashboard = () => {
 
     // You can add similar logic for other grids if needed
   };
-
+console.log(taskMissionTableData,"taskMissionTableData");
   useEffect(() => {
     fetch("/task_dash_populate", {
       method: "GET",
@@ -374,6 +375,16 @@ const TaskDashboard = () => {
     },
     inputRoot: {
       width: "100%",
+    },
+    uiContainer: {
+ 
+    },
+    closeButton: {
+      // Styles for the close button
+      display: 'block',
+      float: 'right',
+      marginTop: '10px', // Add margin or adjust as needed
+      marginRight: '10px', // Add margin or adjust as needed
     },
   });
   const classes = dropDownStyle();
@@ -475,6 +486,7 @@ const TaskDashboard = () => {
         showSnackBar: true,
       });
     }
+    setShowInputTables(false);
   };
 
   const onHandleSnackClose = () => {
@@ -491,15 +503,17 @@ const TaskDashboard = () => {
   const shipNameChange = (event, value) => {
     debugger;
     let tt = entireData;
-    console.log(tt)
-    console.log(value)
+    console.log(tt);
+    console.log(value);
     if (
       tt &&
       tt["task_ship_name"] &&
-      (Array.isArray(value) || typeof value === 'object') &&
+      (Array.isArray(value) || typeof value === "object") &&
       (Array.isArray(value) ? value.length > 0 && value[0].name : value.name)
     ) {
-      const selectedShipName = Array.isArray(value) ? value[0].name : value.name;
+      const selectedShipName = Array.isArray(value)
+        ? value[0].name
+        : value.name;
       console.log("Selected Ship Name:", selectedShipName);
 
       if (tt["task_ship_name"].hasOwnProperty(selectedShipName)) {
@@ -520,11 +534,10 @@ const TaskDashboard = () => {
 
   const TaskNameChange = (event, value) => {
     console.log(value);
-    if (value && typeof value === 'object' && value.name) {
+    if (value && typeof value === "object" && value.name) {
       dispatch(taskActions.updateCurrentTask({ task: value.name }));
     }
   };
-  
 
   console.log(taskOption);
   return (
@@ -544,10 +557,8 @@ const TaskDashboard = () => {
               >
                 <Typography variant="h5">Ship Name</Typography>
               </InputLabel>
-
               <Autocomplete
                 classes={classes}
-                // multiple
                 id="tags-standard"
                 options={taskShipNameOption}
                 getOptionLabel={(option) => option.name}
@@ -560,8 +571,6 @@ const TaskDashboard = () => {
                       disableUnderline: true,
                     }}
                     variant="standard"
-                    // label="Multiple values"
-                    // placeholder="Favorites"
                   />
                 )}
               />
@@ -577,10 +586,8 @@ const TaskDashboard = () => {
               >
                 <Typography variant="h5">Task Name</Typography>
               </InputLabel>
-
               <Autocomplete
                 classes={classes}
-                // multiple
                 id="tags-standard"
                 options={taskOption}
                 getOptionLabel={(option) => option.name}
@@ -593,13 +600,10 @@ const TaskDashboard = () => {
                       disableUnderline: true,
                     }}
                     variant="standard"
-                    // label="Multiple values"
-                    // placeholder="Favorites"
                   />
                 )}
               />
             </div>
-
             <Button
               variant="contained"
               color="primary"
@@ -611,111 +615,136 @@ const TaskDashboard = () => {
               Reset Screen
             </Button>
           </div>
+          {!showInputTables && (
+              <Button
+                variant="contained"
+                color="secondary"
+                className={classes.closeButton}
+                onClick={() => setShowInputTables(true)}
+              >
+                X
+              </Button>
+            )}
+          <div className={classes.uiContainer}>
+            {showInputTables && (
+              <>
+                <div className={styles.table}>
+                  <Table
+                    columnDefs={ImportColumns}
+                    setGrid={setGridApi}
+                    gridApi={gridApi}
+                    rowData={rowState}
+                    tableUpdate={updateFinalRowData}
+                    tableSize={250}
+                  />
+                </div>
 
-          <div>
-            <div className={styles.table}>
-              <Table
-                columnDefs={ImportColumns}
-                setGrid={setGridApi}
-                gridApi={gridApi}
-                rowData={rowState}
-                tableUpdate={updateFinalRowData}
-                tableSize={250}
-              />
-            </div>
-            <div className={styles.tableFooter}>
-              <Button
-                variant="contained"
-                startIcon={<AddIcon />}
-                color="secondary"
-                onClick={() => AddRow()}
-              >
-                Add Row
-              </Button>
-              <Button
-                variant="contained"
-                startIcon={<DeleteIcon />}
-                color="secondary"
-                onClick={() => deleteRows()}
-              >
-                Delete Rows
-              </Button>
-              <Button
-                variant="contained"
-                // startIcon={<AddIcon />}
-                color="secondary"
-                onClick={() => updateCompTable()}
-              >
-                Recommend Solution
-              </Button>
-            </div>
-            <div>
-              {showPaper && (
-                <PaperTable response={recommedation} rel={totalReliability} />
-              )}
-            </div>
-            <div className={styles.table}>
-              <Table
-                columnDefs={compColumns}
-                setGrid={setGridCompApi}
-                gridApi={gridCompApi}
-                rowData={rowCompState}
-                tableUpdate={updateFinalRowData}
-                tableSize={250}
-              />
-            </div>
-            <div className={styles.tableFooter}>
-              <Button
-                variant="contained"
-                startIcon={<AddIcon />}
-                color="secondary"
-                onClick={() => saveTaskReset()}
-              >
-                Add this Task for Comparison
-              </Button>
+                <div className={styles.tableFooter}>
+                  <Button
+                    variant="contained"
+                    startIcon={<AddIcon />}
+                    color="secondary"
+                    onClick={() => AddRow()}
+                  >
+                    Add Row
+                  </Button>
+                  <Button
+                    variant="contained"
+                    startIcon={<DeleteIcon />}
+                    color="secondary"
+                    onClick={() => deleteRows()}
+                  >
+                    Delete Rows
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={() => updateCompTable()}
+                  >
+                    Recommend Solution
+                  </Button>
+                </div>
 
-              <Button
-                variant="contained"
-                color="secondary"
-                onClick={onSubmitHandler}
-              >
-                Calculate Reliability
-              </Button>
-            </div>
-          </div>
+                <div>
+                  {showPaper && (
+                    <PaperTable
+                      response={recommedation}
+                      rel={totalReliability}
+                    />
+                  )}
+                </div>
 
-          <div className={styles.table}>
-            {taskTableData.length > 0 && (
-              <Table
-                columnDefs={taskTableColumns}
-                setGrid={setGriTaskdApi}
-                gridApi={gridTaskApi}
-                rowData={taskTableData}
-                tableUpdate={() => {}}
-                tableSize={250}
-              ></Table>
+                <div className={styles.table}>
+                  <Table
+                    columnDefs={compColumns}
+                    setGrid={setGridCompApi}
+                    gridApi={gridCompApi}
+                    rowData={rowCompState}
+                    tableUpdate={updateFinalRowData}
+                    tableSize={250}
+                  />
+                </div>
+
+                <div className={styles.tableFooter}>
+                  <Button
+                    variant="contained"
+                    startIcon={<AddIcon />}
+                    color="secondary"
+                    onClick={() => saveTaskReset()}
+                  >
+                    Add this Task for Comparison
+                  </Button>
+
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={onSubmitHandler}
+                  >
+                    Calculate Reliability
+                  </Button>
+                </div>
+              </>
+            )}
+
+            {!showInputTables && (
+              <div className={styles.table}>
+                {taskTableData.length > 0 && (
+                  <Table
+                    columnDefs={taskTableColumns}
+                    setGrid={setGriTaskdApi}
+                    gridApi={gridTaskApi}
+                    rowData={taskTableData}
+                    tableUpdate={() => {}}
+                    tableSize={250}
+                  />
+                )}
+              </div>
+            )}
+
+            {!showInputTables && (
+              <div className={styles.table}>
+                {taskTableData.length > 0 && (
+                  // <Table
+                  //   columnDefs={taskMissionTableColumns}
+                  //   setGrid={setgridMissionApi}
+                  //   gridApi={gridMissionApi}
+                  //   rowData={taskMissionTableData}
+                  //   tableUpdate={() => {}}
+                  //   tableSize={290}
+                  // />
+                  <CollapsibleTable tableData={taskMissionTableData}/>
+                )}
+              </div>
             )}
           </div>
 
-          <div className={styles.table}>
-            {taskTableData.length > 0 && (
-              <Table
-                columnDefs={taskMissionTableColumns}
-                setGrid={setgridMissionApi}
-                gridApi={gridMissionApi}
-                rowData={taskMissionTableData}
-                tableUpdate={() => {}}
-                tableSize={290}
-              ></Table>
-            )}
-          </div>
+          {SnackBarMessage.showSnackBar && (
+            <CustomizedSnackbars
+              message={SnackBarMessage}
+              onHandleClose={onHandleSnackClose}
+            />
+          )}
         </div>
-        {SnackBarMessage.showSnackBar && (
-          <CustomizedSnackbars
-            message={SnackBarMessage}
-            onHandleClose={onHandleSnackClose}
-          />
-        )}
       </MuiPickersUtilsProvider>
     </AccessControl>
   );
