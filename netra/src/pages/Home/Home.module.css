@@ -6,7 +6,7 @@
     align-items: center;
     grid-row: 1/13;
     grid-column: 1/5;
-    background: url(Homewave.svg), linear-gradient(210deg, rgba(41, 41, 113, 0.6) 0%, rgba(91, 114, 129, 0.426) 100%), url(https://wallpaperaccess.com/full/2579311.jpg);
+    background: url(Homewave.svg), linear-gradient(210deg, rgba(41, 41, 113, 0.6) 0%, rgba(91, 114, 129, 0.426) 100%), url(ship.jpg);
     /* background-blend-mode: ; */
     background-size: cover;
 }

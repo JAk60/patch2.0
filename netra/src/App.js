@@ -66,7 +66,7 @@ function App() {
   //     });
   // }
   const [settings, setSettings] = useState(null);
-  const [loggedIn, setLoggedIn] = useState(true);
+  const [loggedIn, setLoggedIn] = useState(false);
   const dispatch = useDispatch();
   console.log("login", loggedIn)
   useEffect(() => {
