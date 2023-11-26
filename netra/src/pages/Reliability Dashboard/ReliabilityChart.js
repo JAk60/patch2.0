@@ -9,20 +9,26 @@ import {
   Tooltip,
 } from "recharts";
 import styles from "./rDashboard.module.css";
-
 const CustomTooltipContent = ({ active, payload, label, family, familyE }) => {
   console.log("payload", payload, label);
   if (active && payload && payload.length) {
-    const parent = family?.shipClass[0];
-    
     // Find the corresponding equipmentName using the label (nomenclature)
-    const nomenclatureItem = familyE?.filter(item => item.nomenclature === label);
-    const equipment = nomenclatureItem ? nomenclatureItem[0]?.equipmentName : '';
+    const nomenclatureItem = familyE?.find(
+      (item) => item.nomenclature === label
+    );
+    
+    // Find the corresponding parent ship class for the equipment
+    const parentShipClass =
+      nomenclatureItem &&
+      family?.equipments.find(
+        (equipment) => equipment.equipmentName === nomenclatureItem.equipmentName
+      )?.parent;
 
-    console.log(equipment, "parent");
+    const equipment = nomenclatureItem ? nomenclatureItem?.equipmentName : "";
+
     return (
       <div className={styles.customtooltip}>
-        {parent && <p className="parent">{`${parent}`}</p>}
+        {parentShipClass && <p className="parent">{`${parentShipClass}`}</p>}
         <p>{`Equipment : ${equipment}`}</p>
         <p className={styles.label}>{`${label} : ${payload[0].value}`}</p>
       </div>
@@ -30,6 +36,8 @@ const CustomTooltipContent = ({ active, payload, label, family, familyE }) => {
   }
   return null;
 };
+
+
 
 
 

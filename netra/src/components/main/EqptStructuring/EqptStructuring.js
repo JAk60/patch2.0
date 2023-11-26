@@ -486,7 +486,7 @@ function EqptStructuring(props) {
                     type="submit"
                     disabled={!(childInputFields.length > 0)}
                   >
-                    Update All
+                    Create child Component
                   </Button>
                   <Button
                     style={{ marginLeft: "20px" }}
@@ -494,7 +494,7 @@ function EqptStructuring(props) {
                     color="primary"
                     onClick={onAddNewChildField}
                   >
-                    Add
+                    Add Row
                   </Button>
                 </div>
               </form>
@@ -531,7 +531,7 @@ function EqptStructuring(props) {
                         style={{ marginTop: "50px", width: "100px" }}
                         onClick={saveData}
                       >
-                        submit</Button>
+                        Create</Button>
                     </div>
                 </>
               ) : (

@@ -136,7 +136,7 @@ const RULPredictor = ({ parameter, equipmentId, P, F }) => {
                 fullWidth
                 style={{ marginTop: "20px" }}
               >
-                Calculate
+                Calculate RUL
               </Button>
               {prediction?.length > 0 ? (
                 <Dialog open={openRULDialog} onClose={handleCloseRULDialog}>

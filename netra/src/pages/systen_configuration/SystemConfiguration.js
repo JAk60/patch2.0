@@ -413,7 +413,7 @@ const SystemConfiguration = (props) => {
                   className={SystemClasses.buttons}
                   onClick={onLoadTreeStructure}
                 >
-                  Load System
+                  Load Equipment
                 </Button>
               </Route>
               <Route

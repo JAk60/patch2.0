@@ -436,7 +436,7 @@ const RulLife = () => {
                     color="primary"
                     onClick={(e) => handlePrevRul(e, selectedParameterName)}
                   >
-                    Calculate RUL
+                    Fetch P & F
                   </Button>
                 </div>
               </div>
@@ -445,7 +445,7 @@ const RulLife = () => {
             <RULPredictor equipmentId={selectedEquipmentId} parameter={selectedParameterName} P={P} F={F} />
             {/* )} */}
             <Button variant="contained" color="primary" onClick={handleClick} style={{marginTop: "15px"}}>
-              Show Table
+              Most Prominent Sensor
             </Button>
             {showTable && <BlinkingTable data={jsonData} handleClose={handleClose} equipmentName={selectedEqName}/>}
           </div>

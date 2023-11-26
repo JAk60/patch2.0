@@ -21,7 +21,7 @@ const DutyCycle = (props) => {
   const DCcolumnDefs = [
     <AgGridColumn
       field="Component"
-      headerName="Component"
+      headerName="Equipment Name"
       width={500}
       editable={true}
     />,

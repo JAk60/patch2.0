@@ -530,7 +530,7 @@ function DataManager(props) {
                   className={ManagerClasses.buttons}
                   onClick={() => NextStage()}
                 >
-                  Next
+                  Next Stage
                 </Button>
               </Route>
               <Route exact path="/data_manager/parameter_estimation">

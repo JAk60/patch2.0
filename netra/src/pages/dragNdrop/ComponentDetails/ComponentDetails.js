@@ -271,7 +271,7 @@ console.log(isSaveDisabled);
                 onChange={onHandleInputChange}
               ></input>
             </label>
-            <label className={customclasses.inputlabel}>
+            {/* <label className={customclasses.inputlabel}>
               <input
                 className={customclasses.input}
                 type="number"
@@ -279,7 +279,7 @@ console.log(isSaveDisabled);
                 disabled={true}
                 style={{ background: "rgb(235, 235, 228)" }}
               ></input>
-            </label>
+            </label> */}
             <button
               className={`${
                 customclasses.savebtn

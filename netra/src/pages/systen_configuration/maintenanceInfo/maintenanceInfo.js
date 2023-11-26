@@ -47,8 +47,8 @@ const MaintenanceInfo = (props) => {
     />,
     <AgGridColumn
       field="ComponentsReplaced"
-      headerName="Can be Replaced Ship Staff"
-      headerTooltip="Can be Replaced Ship Staff"
+      headerName="Can be Replaced by Ship Staff"
+      headerTooltip="Can be Replaced by Ship Staff"
       cellEditor="agSelectCellEditor"
       cellEditorParams={{ values: ["No", "Yes"] }}
       width={200}
