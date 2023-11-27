@@ -473,14 +473,7 @@ const [tData,setTdata]=useState([]);
               ></AutoSelect>
             </div>
             {/* <div className={styles.selectComponent}> */}
-            <Button
-              // className={styles.nextbtn}
-              style={{ margin: "56px 0 0 30px"}}
-              variant="contained"
-              color="primary"
-            >
-              Next
-            </Button>
+            
             {/* </div> */}
           </div>
           <div>

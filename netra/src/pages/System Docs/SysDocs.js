@@ -1,36 +1,25 @@
-import React, { useEffect, useState } from "react";
-import NewModule from "../../components/module/NewModule";
+import React, { useState } from "react";
+import { Button, makeStyles, Tab, Tabs } from "@material-ui/core";
 import Navigation from "../../components/navigation/Navigation";
-import UserSelection from "../../ui/userSelection/userSelection";
-import styles from "./SysDocs.module.css";
-import ustyles from '../systen_configuration/SystemConfiguration.module.css'
-import { AgGridColumn } from "ag-grid-react";
-import Table from "../../ui/Table/DataManagerTable";
-import { Button, makeStyles, Grid } from "@material-ui/core";
-import AddIcon from "@material-ui/icons/Add";
-import { v4 as uuidv4 } from "uuid";
-import DeleteIcon from "@material-ui/icons/Delete";
 import CustomizedSnackbars from "../../ui/CustomSnackBar";
-
-//From Add new equipment form
-import { userActions } from "../../store/ApplicationVariable";
+import UserSelection from "../../ui/userSelection/userSelection";
+import ustyles from "../systen_configuration/SystemConfiguration.module.css";
+import styles from "./SysDocs.module.css";
 import { useDispatch, useSelector } from "react-redux";
 import { treeDataActions } from "../../store/TreeDataStore";
 import classes from "./EqptStructuring.module.css";
-import LabelToolTip from "../../components/main/EqptStructuring/LabelToolTip/LabelToolTip";
-// import Tree from "./Tree";
-// import TreeComponent from "../../sortableTree/SortableTree";
-import CustomTextInput from "../../ui/Form/CustomTextInput";
-import CustomSelect from "../../ui/Form/CustomSelect";
-import AutoSelect from "../../ui/Form/AutoSelect";
 import { useFormik } from "formik";
-import { v4 as uuid } from "uuid"; 
+import CustomSelect from "../../ui/Form/CustomSelect";
+
 const useStyles = makeStyles({
-    root: {
-      margin: "0 2.5em",
-    },
-  });
-  
+  root: {
+    margin: "0 2.5em",
+  },
+  tabs: {
+    marginTop: "1rem",
+  },
+});
+
 const SystemStyles = makeStyles({
   formControl: {
     margin: "2rem",
@@ -46,42 +35,16 @@ const SystemStyles = makeStyles({
     float: "right",
   },
 });
+
 const SysDocs = (props) => {
   const SystemClasses = SystemStyles();
+  const classesButton = useStyles();
   const dispatch = useDispatch();
   const selectedInputs = useSelector(
     (state) => state.userSelection.currentSelection
   );
   const [disableButton, setDisableButton] = useState(false);
-  let fData = useSelector((state) => state.treeData.treeData);
   const [file, setFile] = useState();
-
-  const handleFileChange = (e) => {
-    // alert("fghfgh")
-    if (e.target.files) {
-      setFile(e.target.files[0]);
-    }
-  };
-  const handleUploadClick = () => {
-    const data = new FormData() 
-    data.append('file', file)
-    data.append("system", selectedInputs["equipmentName"])
-    data.append("name", selectedInputs["shipName"])
-    // if (!file) {
-    //   return;
-    // }
-
-    // // 👇 Uploading the file using the fetch API to the server
-    fetch('/upload', {
-      method: 'POST',
-      body: data,
-    }).then((response) => {
-      response.json().then((body) => {
-        console.log("fs")
-      });
-    });
-  };
-//   const [gridApi, setGridApi] = useState(null);
   const [SnackBarMessage, setSnackBarMessage] = useState({
     severity: "error",
     message: "This is awesome",
@@ -104,245 +67,192 @@ const SysDocs = (props) => {
     parentId: "",
     lmu: 1,
   });
-  const[questionsOptions,setquestionsOptions]=useState([]);
-  const[selectedFileName,setselectedFileName]=useState(null);
+  const [activeTab, setActiveTab] = useState(0);
+  const [questionsOptions, setquestionsOptions] = useState([]);
+  const [selectedFileName, setselectedFileName] = useState(null);
+
   const questionOnChange = (e) => {
-    debugger;
     let data = e.target.value;
     let name = e.target.name;
-    setselectedFileName(data)
-  }
-  const classesButton = useStyles();
+    setselectedFileName(data);
+  };
+
   const parentOnChange = (e, value) => {
-    debugger
     setParentFieldValue(value);
   };
-  const clearForm = (e) => {
-    e.preventDefault();
-    setDisableButton(false);
-    dispatch(treeDataActions.setTreeData({ treeData: [] }));
-    formik.resetForm();
+
+  const handleFileChange = (e) => {
+    if (e.target.files) {
+      setFile(e.target.files[0]);
+    }
+  };
+
+  const handleUploadClick = () => {
+    const data = new FormData();
+    data.append("file", file);
+    data.append("system", selectedInputs["equipmentName"]);
+    data.append("name", selectedInputs["shipName"]);
+
+    fetch("/upload", {
+      method: "POST",
+      body: data,
+    }).then((response) => {
+      response.json().then((body) => {
+        console.log("fs");
+      });
+    });
   };
 
   const formik = useFormik({
     initialValues: {
-        command: "",
+      command: "",
       ship_name: "",
       department: "",
       shipClass: "",
       shipC: "",
     },
-    //validationSchema: validationSchema,
-    onSubmit: (values, {resetForm}) => {
-      // alert(JSON.stringify(values, null, 2));
-      debugger;
-    //   const { platform, platformType, system, systemType } = values;
+    onSubmit: (values, { resetForm }) => {
       console.log(values);
       fetch("/addUserSelectionData", {
         method: "POST",
-        body: JSON.stringify({values}),
+        body: JSON.stringify({ values }),
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
         },
       })
-        .then((res) => {
-          return res.json();
-        })
+        .then((res) => res.json())
         .then((data) => {
-            if (data.code == 1){
-                // resetForm()
-              setSnackBarMessage({
-                severity: "success",
-                message: data.message,
-                showSnackBar: true,
-          });
-        }else{
+          if (data.code === 1) {
             setSnackBarMessage({
-                severity: "error",
-                message: data.message,
-                showSnackBar: true,
-          });
-        }
-        })
-    //   
-    //   const platformId = uuid();
-    //   const systemId = uuid();
-    //   debugger;
-    //   const treeNodes = [
-    //     {
-    //       name: system,
-    //       id: systemId,
-    //       eqType: systemType,
-    //       parentName: selectedInputs["shipName"],
-    //       parentId: null,
-    //       parent: null,
-    //       children: [],
-    //       lmu: 1,
-    //       command: selectedInputs["command"],
-    //       department: selectedInputs["department"],
-    //       shipCategory: selectedInputs["shipCategory"],
-    //       shipClass: selectedInputs["shipClass"],
-    //       shipName: selectedInputs["shipName"],
-    //     },
-    //   ];
-    //   const updateEqStore = {
-    //     equipmentName: system,
-    //     equipmentCode: systemType,
-    //   };
-    //   const filteredData = {
-    //     equipmentName: [system],
-    //     equipmentCode: [systemType],
-    //   };
-    //   dispatch(treeDataActions.addElement({ data: treeNodes }));
-    //   dispatch(
-    //     userActions.onAddingEquipmentName({
-    //       selectedData: updateEqStore,
-    //       filteredData: filteredData,
-    //     })
-    //   );
-    //   setDisableButton(true);
+              severity: "success",
+              message: data.message,
+              showSnackBar: true,
+            });
+          } else {
+            setSnackBarMessage({
+              severity: "error",
+              message: data.message,
+              showSnackBar: true,
+            });
+          }
+        });
     },
   });
 
   const loadFiles = () => {
     fetch("/fetch_system_files", {
       method: "POST",
-      body: JSON.stringify({"system": selectedInputs["equipmentName"], "ship_name": selectedInputs["shipName"]}),
+      body: JSON.stringify({
+        system: selectedInputs["equipmentName"],
+        ship_name: selectedInputs["shipName"],
+      }),
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
       },
     })
-      .then((res) => {
-        return res.json();
-      }).then((d) => {
-        // debugger;
-        setquestionsOptions(d.files)
-      })
-  }
+      .then((res) => res.json())
+      .then((d) => {
+        setquestionsOptions(d.files);
+      });
+  };
 
-  //handle download
   const downloadFile = () => {
-    let system = selectedInputs["equipmentName"].replace(/\s/g,'')
-    let ship_name = selectedInputs["shipName"].replace(/\s/g,'')
-    let nnn = selectedFileName
-    // alert(questionsOptions)
-    const link = document.createElement('a');
+    let system = selectedInputs["equipmentName"].replace(/\s/g, "");
+    let ship_name = selectedInputs["shipName"].replace(/\s/g, "");
+    let nnn = selectedFileName;
+    const link = document.createElement("a");
     link.download = `${selectedFileName}`;
-    //       // 👇️ set to relative path
     link.href = `/${ship_name}_${system}/${selectedFileName}`;
     link.click();
-  }
-  //Save Button Handler
- 
+  };
+
+  const handleTabChange = (event, newValue) => {
+    setActiveTab(newValue);
+  };
 
   return (
     <>
       <Navigation />
       <div className={styles.body}>
-        {/* <div className={styles.module}>
-          <NewModule />
-        </div> */}
-        {/* <div className={styles.user}>
-          <Button
-            variant="contained"
-            color="primary"
-            className={SystemClasses.buttons}
-            onClick={onSaveButtonClickHandler}
-          >
-            Save
-          </Button>
-        </div> */}
         <div className={ustyles.flex} style={{ marginTop: "5rem" }}>
-          <div className={ustyles.user} ><UserSelection /></div>
+          <div className={ustyles.user}>
+            <UserSelection />
+          </div>
           <div className={styles.buttons}>
-          <Button
-                variant="contained"
-                color="primary"
-                className={SystemClasses.buttons}
-                onClick={loadFiles}
-              >
-                Load System
-              </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              className={SystemClasses.buttons}
+              onClick={loadFiles}
+            >
+              Load System
+            </Button>
+          </div>
         </div>
-          </div>
-
+        <div style={{ display: "flex", justifyContent: "center" }}>
+          <Tabs
+            indicatorColor="primary"
+            value={activeTab}
+            onChange={handleTabChange}
+            textColor="primary"
+            className={classes.tabs}
+          >
+            <Tab label="UPLOAD" />
+            <Tab label="DOWNLOAD" />
+          </Tabs>
+        </div>
         <div className={styles.table}>
-          {/* <Table
-            rowData={rowState}
-            columnDefs={MProfileColumns}
-            tableUpdate={setFinalTableData}
-            setGrid={setGridApi}
-            gridApi={gridApi}
-          /> */}
-         <div className={classes.form}>
-      <div className={classes.header}>Previously Added Documents</div>
-        <form style={{ width: "100%" }} onSubmit={formik.handleSubmit}>
-          <div className={classes.formrow1}>
-            <div className={classes.field1}>
-              {/* <LabelToolTip label="Command Name" info="Info" /> */}
-              <CustomSelect
-                style={{ width: '100%'}}
-                id="q7"
-                name= ""
-                label=""
-                fields={questionsOptions}
-                onChange={questionOnChange}
-                value={''}
+          <div className={classes.root}>
+            {activeTab === 1 && ( // Check for the active tab index
+              <form style={{ width: "100%" }} onSubmit={formik.handleSubmit}>
+                <div className={classes.formrow1}>
+                  <div className={classes.field1}>
+                    <CustomSelect
+                      style={{ width: "100%" }}
+                      id="q7"
+                      name=""
+                      label=""
+                      fields={questionsOptions}
+                      onChange={questionOnChange}
+                      value={""}
+                    />
+                  </div>
+                  <div className={classes.field1}>
+                    <Button
+                      variant="contained"
+                      component="label"
+                      className={classesButton.root}
+                      onClick={downloadFile}
+                    >
+                      Download File
+                    </Button>
+                  </div>
+                </div>
+              </form>
+            )}
 
-                />
-            </div>
-            
+            {activeTab === 0 && ( // Check for the active tab index
+              <form style={{ width: "100%" }} onSubmit={formik.handleSubmit}>
+                <div className={classes.formrow1}>
+                  <div className={classes.field1}>
+                    <input type="file" onChange={handleFileChange} />
+                  </div>
+                  <div className={classes.field1}>
+                    <Button
+                      variant="contained"
+                      component="label"
+                      className={classesButton.root}
+                      onClick={handleUploadClick}
+                    >
+                      Upload File
+                    </Button>
+                  </div>
+                </div>
+              </form>
+            )}
           </div>
-          
-          <div className={classes.formrow1}>
-          <div className={classes.field1}>
-          <input type="file" onChange={handleFileChange} />
-            </div>  
-          <div className={classes.field1}>
-          <Button
-                variant="contained"
-                component="label"
-                className={classesButton.root}
-                onClick={downloadFile}
-              >
-                Download File
-              </Button>
-          </div>
-            <div className={classes.field1}>
-              <Button
-                variant="contained"
-                component="label"
-                className={classesButton.root}
-                onClick={handleUploadClick}
-              >
-                Upload File
-              </Button>
-            </div>
-          </div>
-        </form>
-       
-      </div>
-          {/* <div className={styles.tableFooter}>
-            <Button
-              variant="contained"
-              startIcon={<AddIcon />}
-              color="secondary"
-              onClick={() => AddRow()}
-            >
-              Add Row
-            </Button>
-            <Button
-              style={{ marginLeft: 10 }}
-              variant="contained"
-              startIcon={<DeleteIcon />}
-              color="secondary"
-              onClick={() => deleteRows()}
-            >
-              Delete Rows
-            </Button>
-          </div> */}
         </div>
       </div>
       {SnackBarMessage.showSnackBar && (

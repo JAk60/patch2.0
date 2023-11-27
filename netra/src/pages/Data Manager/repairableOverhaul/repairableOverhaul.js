@@ -29,7 +29,7 @@ const RepairableOverhaul = (props) => {
   };
 
   return (<>
-  <div style={{ marginTop: "5rem" }}>
+  <div >
       <RadioGroup
         row
         aria-label="option"

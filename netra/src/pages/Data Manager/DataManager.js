@@ -430,11 +430,17 @@ function DataManager(props) {
       showSnackBar: true,
     });
   }
+  const userSelectionClassName =
+  location.pathname === "/data_manager/historical_data/repairable_overhaul"
+    ? styles.flex3
+    : styles.flex;
   return (
     <React.Fragment>
       <Navigation />
       {/* <NewModule /> */}
-      <StageSlider marks={marks} default={marks[Stage]["value"]} />
+      {location.pathname !== "/data_manager/historical_data/repairable_overhaul" && (
+        <StageSlider marks={marks} default={marks[Stage]["value"]} />
+      )}
       <Route
         path={[
           "/data_manager/maintenance_data",
@@ -442,7 +448,7 @@ function DataManager(props) {
           "/data_manager/parameter_estimation",
         ]}
       >
-        <div className={styles.flex}>
+        <div className={userSelectionClassName}>
           <UserSelection />
           <div>
             <Route path="/data_manager">
@@ -456,7 +462,7 @@ function DataManager(props) {
                   Load Equipment
                 </Button>
               </Route>
-              <Route exact path={"/data_manager/parameter_estimation"}>
+              {/* <Route exact path={"/data_manager/parameter_estimation"}>
                 <Button
                   variant="contained"
                   color="primary"
@@ -465,7 +471,7 @@ function DataManager(props) {
                 >
                   Update List
                 </Button>
-              </Route>
+              </Route> */}
               <Route
                 exact
                 path={[

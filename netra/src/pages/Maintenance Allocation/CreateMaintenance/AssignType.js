@@ -73,21 +73,22 @@ const AssignType = (props) => {
   const [VisualWearRows, setVisualWearRows] = useState([]);
   const [VisualCorrosionRows, setVisualCorrosionRows] = useState([]);
   const [visualActionsRows, setVisualActionRows] = useState([]);
-  const[selectedEquipment,setSelectedEquipment]=useState("")
+  const [selectedEquipment, setSelectedEquipment] = useState("");
   const fileInputRef = useRef(null);
   const hello = ["This", "is", "beauty"];
   const classes = useStyles();
-  const dispatch =useDispatch();
+  const dispatch = useDispatch();
 
+  const CurrentSelected = useSelector(
+    (state) => state.userSelection.currentSelection
+  );
+  const sData = useSelector((state) => state.userSelection.componentsData);
 
-const CurrentSelected=useSelector((state)=>state.userSelection.currentSelection);
-const sData = useSelector((state) => state.userSelection.componentsData);
-
-const currentNomenclature = CurrentSelected["nomenclature"];
-console.log(currentNomenclature);
-const matchingItems = sData.filter(
-  (item) => item.nomenclature === currentNomenclature
-);
+  const currentNomenclature = CurrentSelected["nomenclature"];
+  console.log(currentNomenclature);
+  const matchingItems = sData.filter(
+    (item) => item.nomenclature === currentNomenclature
+  );
   const handleFileUpload = (file) => {
     if (file) {
       const reader = new FileReader();
@@ -145,8 +146,6 @@ const matchingItems = sData.filter(
     addVisualActionRows();
   }, [VisualWearRows, VisualCorrosionRows]);
 
-
- 
   const addVisualWearRows = (n) => {
     let newRows = [];
     let i = 1;
@@ -158,7 +157,7 @@ const matchingItems = sData.filter(
     console.log(newRows);
     setVisualWearRows(newRows);
   };
-  
+
   const addVisualCorrosionRows = (n) => {
     let newRows = [];
     let i = 1;
@@ -170,7 +169,7 @@ const matchingItems = sData.filter(
     console.log(newRows);
     setVisualCorrosionRows(newRows);
   };
-  
+
   const matchingId = matchingItems[0]?.id;
   const addVisualActionRows = () => {
     let rows = [];
@@ -217,7 +216,7 @@ const matchingItems = sData.filter(
         ...newRows,
         {
           EquipmentId: eqptId,
-          ComponentId: props.selectedComponent.id,
+          ComponentId: matchingId,
           id: uuid(),
           name: "",
           unit: "",
@@ -443,7 +442,7 @@ const matchingItems = sData.filter(
     (data) => data.name === currentSelection.equipmentName
   )[0]?.id;
 
-  const handleSubmit =()=>{
+  const handleSubmit = () => {
     const payload = {
       nomenclature: CurrentSelected["nomenclature"],
       ship_name: CurrentSelected["shipName"],
@@ -467,8 +466,8 @@ const matchingItems = sData.filter(
         let treeD = d["treeD"];
         let failureModes = d["failureMode"];
         console.log(treeD[0]?.repairType);
-        if(treeD){
-          setRtype(treeD[0]?.repairType)
+        if (treeD) {
+          setRtype(treeD[0]?.repairType);
         }
         dispatch(
           treeDataActions.setTreeData({
@@ -477,12 +476,13 @@ const matchingItems = sData.filter(
         );
         dispatch(treeDataActions.setFailureModes(failureModes));
       });
-    setSelectedEquipment(currentNomenclature)
-  }
+    setSelectedEquipment(currentNomenclature);
+  };
   return (
-    <><Navigation />
-    <div className={styles.userSelection}>
-      <UserSelection />
+    <>
+      <Navigation />
+      <div className={styles.userSelection}>
+        <UserSelection />
         <Button
           className={styles.btn}
           onClick={handleSubmit}
@@ -491,7 +491,7 @@ const matchingItems = sData.filter(
         >
           Submit
         </Button>
-    </div>
+      </div>
       <div className={styles.assignDiv}>
         <div className={styles.assignContent}>
           <div className={styles.flex}>
@@ -654,9 +654,7 @@ const matchingItems = sData.filter(
         {type === "conditionBased" && (
           <div className={styles.MTypeContent}>
             <div className={styles.formField}>
-              <label htmlFor="failure-mode">
-                Failure Mode to be inspected
-              </label>
+              <label htmlFor="failure-mode">Failure Mode to be inspected</label>
               <Select
                 disableUnderline
                 labelId="failure-mode-label"
@@ -829,7 +827,7 @@ const matchingItems = sData.filter(
                       color="primary"
                       style={{ marginLeft: 10 }}
                     >
-                      Submit
+                      Generate Rows
                     </Button>
                   </div>
                   <div className={styles.formField}>
