@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from "react";
-import { Button, Grid } from "@material-ui/core";
-import { components } from "./userSelectionData";
-import CustomSelect from "../Form/CustomSelect";
-import { useDispatch, useSelector } from "react-redux";
-import { userActions } from "../../store/ApplicationVariable";
-import { Route } from "react-router-dom";
+import { Grid } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Route } from "react-router-dom";
+import { userActions } from "../../store/ApplicationVariable";
+import CustomSelect from "../Form/CustomSelect";
 
 const SelectStyles = makeStyles({
   spacing: {
@@ -15,9 +14,9 @@ const SelectStyles = makeStyles({
 
 function UserSelection(props) {
   UserSelection.defaultProps = {
-    alignment:"horizontal",
-    inputWidth:"200px"
-  }
+    alignment: "horizontal",
+    inputWidth: "200px",
+  };
   const [userSelectionData, setUserSelectionData] = useState([]);
   const [userSelectionEqData, setUserSelectionEqData] = useState([]);
   const dispatch = useDispatch();
@@ -28,21 +27,30 @@ function UserSelection(props) {
     (state) => state.userSelection.currentSelection
   );
   useEffect(() => {
-    fetch("/fetch_user_selection", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-    })
-      .then((res) => {
-        return res.json();
-      })
-      .then((data) => {
+    const fetchData = async () => {
+      try {
+        console.log(props.hello, "im coming through rul");
+
+        const response = await fetch("/fetch_user_selection", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          // Handle the error here if needed
+          console.error("Error fetching user selection data");
+          return;
+        }
+
+        const data = await response.json();
         const userData = data["data"];
         const eqData = data["eqData"];
         let shipName = userData.map((x) => x.shipName);
-        shipName = [...new Set(shipName)]
+
+        shipName = [...new Set(shipName)];
         const components = data["uniq_eq_data"];
         setUserSelectionData(userData);
         setUserSelectionEqData(eqData);
@@ -52,25 +60,36 @@ function UserSelection(props) {
             componentsData: components,
           })
         );
-      });
-  }, []);
+      } catch (error) {
+        console.error("Error in fetching user selection data:", error);
+      }
+    };
+
+    fetchData(); // Call the asynchronous function
+  }, []); // Empty dependency array to run only on mount
 
   const handleShipNameChange = (e) => {
     const shipName = e.currentTarget.innerText;
-    const filteredData = userSelectionData.filter((x) => x.shipName === shipName);
-  
-    const uniqueCategories = [...new Set(filteredData.map((x) => x.shipCategory))];
+    const filteredData = userSelectionData.filter(
+      (x) => x.shipName === shipName
+    );
+
+    const uniqueCategories = [
+      ...new Set(filteredData.map((x) => x.shipCategory)),
+    ];
     const uniqueClasses = [...new Set(filteredData.map((x) => x.shipClass))];
     const uniqueCommands = [...new Set(filteredData.map((x) => x.command))];
-    const uniqueDepartments = [...new Set(filteredData.map((x) => x.department))];
-  
+    const uniqueDepartments = [
+      ...new Set(filteredData.map((x) => x.department)),
+    ];
+
     const d = {
       shipCategory: uniqueCategories,
       shipClass: uniqueClasses,
       command: uniqueCommands,
       department: uniqueDepartments,
     };
-  
+
     dispatch(
       userActions.onChangeLoad({
         filteredData: d,
@@ -78,7 +97,6 @@ function UserSelection(props) {
       })
     );
   };
-  
 
   const onShipCategoryChange = (e) => {
     let data = e.target.value;
@@ -112,7 +130,7 @@ function UserSelection(props) {
       )
       .map((x) => x.equipmentName);
 
-      let normData = userSelectionEqData
+    let normData = userSelectionEqData
       .filter(
         (x) =>
           x.command === currentSelection.command &&
@@ -147,22 +165,21 @@ function UserSelection(props) {
           x.equipmentName == data
       )
       .map((x) => x.nomenclature);
-    
-      console.log("nomenclature",normData);
-      normData = [...new Set(normData)];
-      console.log("nomenclature",normData);
+
+    console.log("nomenclature", normData);
+    normData = [...new Set(normData)];
+    console.log("nomenclature", normData);
     data = { equipmentName: data };
     normData = { nomenclature: normData };
     dispatch(userActions.onChangeCurrentSelection({ selectedData: data }));
     dispatch(userActions.populateNom({ filteredData: normData }));
   };
 
-  const onNomenclatureChange = (e) =>{
+  const onNomenclatureChange = (e) => {
     let data = e.target.value;
     data = { nomenclature: data };
     dispatch(userActions.onChangeCurrentSelection({ selectedData: data }));
-    
-  }
+  };
 
   // const onEquipmentCodeChange = (e) => {
   //   // let data = e.currentTarget.innerText;
@@ -187,9 +204,9 @@ function UserSelection(props) {
   //   dispatch(userActions.populateEqName({ filteredData: eqData }));
   // // };
   const SelectClasses = SelectStyles();
-  let colwidth=4
-  props.alignment==="vertical"?colwidth=12:colwidth=3
-  
+  let colwidth = 4;
+  props.alignment === "vertical" ? (colwidth = 12) : (colwidth = 3);
+
   return (
     <Grid container spacing={3}>
       <Grid item xs={colwidth}>
@@ -213,7 +230,6 @@ function UserSelection(props) {
             fields={customSelectData["shipCategory"]}
             onChange={onShipCategoryChange}
             value={currentSelection["shipCategory"]}
-
           />
         </div>
       </Grid>
@@ -226,7 +242,6 @@ function UserSelection(props) {
             fields={customSelectData["shipClass"]}
             onChange={onShipClassChange}
             value={currentSelection["shipClass"]}
-
           />
         </div>
       </Grid>
@@ -239,7 +254,6 @@ function UserSelection(props) {
             fields={customSelectData["command"]}
             onChange={onCommandChange}
             value={currentSelection["command"]}
-
           />
         </div>
       </Grid>
@@ -252,7 +266,6 @@ function UserSelection(props) {
             fields={customSelectData["department"]}
             onChange={onDepartmentChange}
             value={currentSelection["department"]}
-
           />
         </div>
       </Grid>
@@ -269,14 +282,13 @@ function UserSelection(props) {
           "/maintenance_allocation/",
           "/add_system_doc/",
           "/rul",
-          "/optimize"
-          
+          "/optimize",
         ]}
       >
         <Grid item xs={colwidth}>
           <div className={SelectClasses.spacing}>
             <CustomSelect
-              style={{ width: props.inputWidth}}
+              style={{ width: props.inputWidth }}
               id="equipment-name"
               label="Equipment Name"
               fields={customSelectData["equipmentName"]}
@@ -286,20 +298,22 @@ function UserSelection(props) {
           </div>
         </Grid>
       </Route>
-      <Route path={[
-        "/system_config/redundancy_info",
-        "/system_config/maintenance_info",
-        "/system_config/failure_mode",
-        "/system_config/duty_cycle",
-        "/system_config/",
-        "/data_manager/",
-        "/phase_manager/",
-        "/HEP/",
-        "/maintenance_allocation/",
-        "/add_system_doc/",
-        "/rul",
-        "/optimize",
-      ]}>
+      <Route
+        path={[
+          "/system_config/redundancy_info",
+          "/system_config/maintenance_info",
+          "/system_config/failure_mode",
+          "/system_config/duty_cycle",
+          "/system_config/",
+          "/data_manager/",
+          "/phase_manager/",
+          "/HEP/",
+          "/maintenance_allocation/",
+          "/add_system_doc/",
+          "/rul",
+          "/optimize",
+        ]}
+      >
         <Grid item xs={colwidth}>
           <div className={SelectClasses.spacing}>
             <CustomSelect
