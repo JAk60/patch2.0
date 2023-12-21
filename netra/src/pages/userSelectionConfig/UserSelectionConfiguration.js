@@ -1,29 +1,18 @@
-import React, { useEffect, useState } from "react";
-import NewModule from "../../components/module/NewModule";
+import { Button, makeStyles } from "@material-ui/core";
+import React, { useState } from "react";
 import Navigation from "../../components/navigation/Navigation";
-import UserSelection from "../../ui/userSelection/userSelection";
-import styles from "./UserSelectionConfiguration.module.css";
-import { AgGridColumn } from "ag-grid-react";
-import Table from "../../ui/Table/DataManagerTable";
-import { Button, makeStyles, Grid } from "@material-ui/core";
-import AddIcon from "@material-ui/icons/Add";
-import { v4 as uuidv4 } from "uuid";
-import DeleteIcon from "@material-ui/icons/Delete";
 import CustomizedSnackbars from "../../ui/CustomSnackBar";
+import styles from "./UserSelectionConfiguration.module.css";
 
 //From Add new equipment form
-import { userActions } from "../../store/ApplicationVariable";
 import { useDispatch, useSelector } from "react-redux";
+import LabelToolTip from "../../components/main/EqptStructuring/LabelToolTip/LabelToolTip";
 import { treeDataActions } from "../../store/TreeDataStore";
 import classes from "./EqptStructuring.module.css";
-import LabelToolTip from "../../components/main/EqptStructuring/LabelToolTip/LabelToolTip";
 // import Tree from "./Tree";
 // import TreeComponent from "../../sortableTree/SortableTree";
-import CustomTextInput from "../../ui/Form/CustomTextInput";
-import CustomSelect from "../../ui/Form/CustomSelect";
-import AutoSelect from "../../ui/Form/AutoSelect";
 import { useFormik } from "formik";
-import { v4 as uuid } from "uuid"; 
+import CustomTextInput from "../../ui/Form/CustomTextInput";
 const useStyles = makeStyles({
     root: {
       margin: "0 2.5em",
@@ -115,6 +104,7 @@ const UserSelectionConfiguration = (props) => {
           return res.json();
         })
         .then((data) => {
+          console.log(data)
             if (data.code == 1){
                 // resetForm()
           setSnackBarMessage({

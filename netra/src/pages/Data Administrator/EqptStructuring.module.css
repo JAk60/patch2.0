@@ -1,0 +1,101 @@
+.root {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  overflow-y: hidden;
+  width: 98%;
+  grid-column: 2/13;
+  grid-row: 4;
+  margin-top: 120px;
+  padding-bottom: 10px;
+}
+
+.header{
+  margin:2%;
+  font-size: 25px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  width: 60%;
+  margin-left: 22%;
+  margin-bottom: 10px;
+  margin-top: 7%;
+  /* min-height: 450px; */
+  overflow-y: auto;
+  padding-right: 30px;
+  box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+  border-radius: 10px;
+}
+.formrow1 {
+  display: flex;
+  justify-content: space-evenly;
+  column-gap: 40px;
+  width: 98%;
+  margin-left: 2%;
+  margin-right: 2%;
+  overflow-y: auto;
+  padding-right: 30px;
+  box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+  border-radius: 10px;
+}
+.formrow2 {
+  width: "600px";
+  box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+  border-radius: 10px;
+  padding: 10px 10px 10px 10px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  margin-left: 2%;
+  overflow-y: auto;
+  padding-right: 30px;
+  box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+  border-radius: 10px;
+}
+.field1 {
+  margin-top: 10px;
+  width: 400px;
+  margin-bottom: 30px;
+  margin-right: 2%;
+  display: grid;
+}
+.field2 {
+  margin-top: 10px;
+  width: 400px;
+}
+.fullWidth {
+  width: 100%;
+}
+
+.parent {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+  text-align: center;
+  margin-left: 2%;
+  margin-right: 2%;
+}
+.child {
+  display: flex;
+  align-items: center;
+  margin-left: 2%;
+  margin-top: 10px;
+}
+
+.tree {
+  display: flex;
+  flex-direction: column;
+  background-image: linear-gradient(10deg, #2a2a72, #498fe8);
+  /* margin-top: 50px; */
+  margin-left: 20px;
+  width: 400px;
+  border-radius: 20px;
+  min-height: 95%;
+  /* overflow: auto; */
+}
+.treeChild {
+  margin-top: 40px;
+  margin-left: 40px;
+}

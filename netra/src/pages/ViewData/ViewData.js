@@ -1,23 +1,22 @@
-import React from "react";
-import styles from "./ViewData.module.css";
-import { Link } from "react-router-dom";
-import { userActions } from "../../store/ApplicationVariable";
-import { useDispatch } from "react-redux";
-import AccessControl from "../Home/AccessControl";
-import StorageIcon from '@material-ui/icons/Storage';
-import HourglassEmptyIcon from '@material-ui/icons/HourglassEmpty';
-import CreateIcon from '@material-ui/icons/Create';
-import SaveAltIcon from '@material-ui/icons/SaveAlt';
-import WifiTetheringIcon from '@material-ui/icons/WifiTethering';
 import { Button, Typography, makeStyles } from "@material-ui/core";
+import CreateIcon from '@material-ui/icons/Create';
+import HourglassEmptyIcon from '@material-ui/icons/HourglassEmpty';
+import SaveAltIcon from '@material-ui/icons/SaveAlt';
+import StorageIcon from '@material-ui/icons/Storage';
+import WifiTetheringIcon from '@material-ui/icons/WifiTethering';
+import React from "react";
+import { useDispatch } from "react-redux";
+import { Link } from "react-router-dom";
 import BackToHomeFab from "../../components/navigation/MuiFap";
+import { userActions } from "../../store/ApplicationVariable";
+import AccessControl from "../Home/AccessControl";
+import styles from "./ViewData.module.css";
 
 const ViewData = (props) => {
   const useStyles = makeStyles((theme) => ({
     linkbtn: {
       backgroundColor: "white",
       padding: "10px",
-      display: "flex",
       marginRight: "40px",
       borderRadius: "50%",
       width: "50px",
@@ -43,15 +42,12 @@ const ViewData = (props) => {
     { name: "Add New Ship", path: "/user_selection_config", icon: <CreateIcon /> },
     { name: "Add System Doc", path: "/add_system_doc", icon: <SaveAltIcon /> },
     { name: "Add Sensor Data", path: "/maintenance_allocation/add_data", icon: <WifiTetheringIcon /> },
+    { name: "Data Administrator", path: "/administrator", icon: <WifiTetheringIcon /> },
   ];
 
 
   const userLevel = JSON.parse(localStorage.getItem("userData"))
   console.log(userLevel);
-  const Logout = () => {
-    props.setLoggedIn(false);
-    props.history.push("/sign_in");
-  };
 
   const dispatch = useDispatch();
   const resetUserSelection = () => {

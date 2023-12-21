@@ -33,9 +33,19 @@ from dB.RCM.rcmDB import RCMDB
 from dB.PM.optimize import optimizer
 from dB.Authentication.signin import Authentication
 from dB.Oem_Upload.oem import OEMData
+from dB.ETL.sourceData import ETL
+from flask_apscheduler import APScheduler
+import requests
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 app = Flask(__name__)
+
+scheduler = APScheduler()
+
+# Configuring the Flask app to use the scheduler
+app.config['SCHEDULER_API_ENABLED'] = True
+scheduler.init_app(app)
+
 # Configure Flask-Mail
 app.config['MAIL_SERVER'] = 'smtp.ethereal.email'
 app.config['MAIL_PORT'] = 587
@@ -53,6 +63,15 @@ app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
 res = SystemConfigurationdBTable()
 
+def hit_srcetl_endpoint():
+    endpoint_url = "http://127.0.0.1:5000/srcetl"  # Update with your actual URL
+    response = requests.get(endpoint_url)
+    print(f"Response from /srcetl endpoint: {response.text}")
+
+# Schedule the task to run every 5 seconds
+@scheduler.task('interval', id='hit_srcetl', seconds=5, misfire_grace_time=10)
+def scheduled_task():
+    hit_srcetl_endpoint()
 
 @app.route("/home")
 def home():
@@ -425,14 +444,11 @@ def task_dash_populate():
     return jsonify(data)
 
 
-@app.route("/addUserSelectionData", methods=["POST", "GET"])
+@app.route("/addUserSelectionData", methods=["POST","GET"])
 def addUserSelectionData():
     data = request.get_json(force=True)
-    try:
-        add_user_selection_data(data)
-    except Exception as e:
-        return jsonify({"message": str(e), "code": 0})
-    return jsonify({"message": "Data Saved Sucessfully!!", "code": 1})
+    response = add_user_selection_data(data)
+    return response
 
 
 @app.route("/fetch_condition_monitoring", methods=["POST"])
@@ -730,6 +746,17 @@ def card_counts():
     inst = DashBoard()
     return inst.card_counts()
 
+@app.route('/srcetl', methods=['GET'])
+def srcetl():
+    inst = ETL()
+    return inst.etl_src_target()
+
+@app.route('/data_adminstrator', methods=['GET'])
+def srcetl():
+    inst = ETL()
+    return inst.etl_src_target()
+
+
 @app.route("/upload_oem_data", methods=["POST"])
 def oem_data():
     data = request.json["data"]
@@ -742,4 +769,5 @@ def oem_data():
 if __name__ == "__main__":
     app.secret_key = os.urandom(32)
     app.wsgi_app = middleware.TaskMiddleWare(app.wsgi_app, APP_ROOT)
+    # scheduler.start()
     app.run(debug=False)

@@ -29,7 +29,6 @@ function UserSelection(props) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        console.log(props.hello, "im coming through rul");
 
         const response = await fetch("/fetch_user_selection", {
           method: "GET",

@@ -213,13 +213,12 @@ console.log(selectedEqName,
         <Navigation />
         <div className={styles.body}>
           <div className={styles.mprofile}>
-            <div style={{ width: "300px" }}>
+            <div >
               <InputLabel
                 style={{
                   fontWeight: "bold",
                   color: "black",
                   fontSize: "16px",
-                  marginBottom: "10px",
                 }}
               >
                 <Typography variant="h5">Ship Name</Typography>
@@ -230,13 +229,12 @@ console.log(selectedEqName,
                 value={selectedShipName}
               />
             </div>
-            <div style={{ width: "300px" }}>
+            <div >
               <InputLabel
                 style={{
                   fontWeight: "bold",
                   color: "black",
                   fontSize: "16px",
-                  marginBottom: "10px",
                 }}
               >
                 <Typography variant="h5">Equipment Name</Typography>

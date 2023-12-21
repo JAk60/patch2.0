@@ -30,6 +30,7 @@ import DragNDrop from "./pages/dragNdrop/DragNdrop";
 import SystemConfiguration from "./pages/systen_configuration/SystemConfiguration";
 import UserSelectionConfiguration from "./pages/userSelectionConfig/UserSelectionConfiguration";
 import { setLevel } from "./store/Levels";
+import Administrator from "./pages/Data Administrator/Administrator";
 
 const theme = createMuiTheme({
   palette: {
@@ -241,6 +242,10 @@ function App() {
             <Route
               path="/rul"
               render={()=><RulLife />}
+            />
+            <Route
+              path="/administrator"
+              render={()=><Administrator />}
             />
           </Switch>
         </Router>

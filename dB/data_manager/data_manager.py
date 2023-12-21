@@ -615,18 +615,26 @@ class Data_Manager:
                 id = d["oid"]
                 component_id = d["id"]
                 operation_date = d["Date"]
-                date_ = datetime.strptime(str(operation_date), "%B/%Y")
+                date_ = datetime.strptime(str(operation_date), "%Y-%m-%d")
                 average_running = d["AverageRunning"]
-                insert_opdata = """insert into operational_data (id,
-                                        component_id, operation_date,average_running)
-                                        VALUES (?, ?, ?, ?);"""
+                merge_opdata = """
+                    MERGE INTO operational_data AS target
+                    USING (VALUES (?, ?, ?, ?)) AS source (id,component_id, operation_date, average_running)
+                    ON target.component_id = source.component_id AND target.operation_date = source.operation_date
+                    WHEN MATCHED THEN
+                        UPDATE SET average_running = ?
+                    WHEN NOT MATCHED THEN
+                        INSERT (id,component_id, operation_date, average_running)
+                        VALUES (?, ?, ?, ?);
+                """
 
-                cursor.execute(insert_opdata, id, component_id, date_, average_running)
+                cursor.execute(merge_opdata, (id, component_id, date_, average_running, average_running, id, component_id, date_, average_running))
             cnxn.commit()
             return self.success_return
         except Exception as e:
             self.error_return["message"] = str(e)
             return self.error_return
+
 
     def insert_maintenance_data(self, data):
         insert_sql = """insert into data_manager_maintenance_data (id, component_id, event_type, maint_date, maintenance_type,
