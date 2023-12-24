@@ -41,7 +41,7 @@ def get_parentId(id):
 
 
 def add_user_selection_data(data):
-    print(data)
+    print(data["values"])
     data = data["values"]
     command = data["command"]
     ship_name = data["ship_name"]

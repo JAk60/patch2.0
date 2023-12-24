@@ -678,11 +678,11 @@ class Data_Manager:
     def maintenance_save_logic(self, d):
         latest_failure_date = """select Top (1) maint_date from data_manager_maintenance_data where component_id = ? order by maint_date desc"""
         installation_date_sql = """select installation_date from system_config_additional_info where component_id =?"""
-        parent_system_id = """select component_id from system_configuration where system_configuration.system in
-                (select system from system_configuration where component_id = ?)
+        parent_system_id = """select component_id from system_configuration where system_configuration.component_name in
+                (select component_name from system_configuration where component_id = ?)
                     and system_configuration.ship_name in
                         (select ship_name from system_configuration where component_id = ?)
-                and system_configuration.component_name in ((select system from system_configuration where component_id = ?))"""
+                and system_configuration.component_name in ((select component_name from system_configuration where component_id = ?))"""
 
         opr_date = """select SUM(average_running) from operational_data where component_id = ?
          and (operation_date between ? and ?)"""

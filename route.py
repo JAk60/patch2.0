@@ -28,6 +28,7 @@ from classes.custom_settings import Custom_Settings
 from dB.task_configuration.task_configuration import taskConfiguration_dB
 from dB.RUL.rul import RUL_dB
 from classes.taskReliability import TaskReliability
+from dB.Data_Adminstrator.data_adminstrator import Data_Administrator
 from dB.dB_utility import add_user_selection_data
 from dB.RCM.rcmDB import RCMDB
 from dB.PM.optimize import optimizer
@@ -751,10 +752,46 @@ def srcetl():
     inst = ETL()
     return inst.etl_src_target()
 
-@app.route('/data_adminstrator', methods=['GET'])
-def srcetl():
+@app.route('/set_equip_etl', methods=['POST'])
+def set_equip_etl():
+    data = request.json
+    print(data)
+
     inst = ETL()
-    return inst.etl_src_target()
+    inst.set_for_etl(data)
+
+    # Assuming set_for_etl does not return anything, you can respond with a success message
+    return jsonify({'message': 'ETL flag set successfully'})
+
+@app.route('/unregister_equipment', methods=['POST'])
+def unregister_equipment():
+    data = request.get_json(force=True)
+    inst = Data_Administrator()
+    return inst.delete_data_for_component(data)
+
+@app.route('/equipment_onship', methods=['POST'])
+def equipment_onship():
+    data = request.get_json(force=True)
+    inst = Data_Administrator()
+    return inst.get_equipments_onship(data)
+
+@app.route('/delspecific', methods=['POST'])
+def delspecific():
+    try:
+        data = request.get_json(force=True)
+        print(data)
+        inst = Data_Administrator()
+        result = inst.del_specific_data(data)
+        return jsonify(result)  # Assuming del_specific_data returns a valid response
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/getspecific_data', methods=['POST'])
+def getspecific_data():
+    data = request.get_json(force=True)
+    print(data)
+    inst = Data_Administrator()
+    return inst.specific_data(data)
 
 
 @app.route("/upload_oem_data", methods=["POST"])
@@ -770,4 +807,4 @@ if __name__ == "__main__":
     app.secret_key = os.urandom(32)
     app.wsgi_app = middleware.TaskMiddleWare(app.wsgi_app, APP_ROOT)
     # scheduler.start()
-    app.run(debug=False)
+    app.run(debug=True)

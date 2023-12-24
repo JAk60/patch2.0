@@ -80,20 +80,29 @@ export default function AdminInputs() {
     ).map((equipmentName) =>
       filteredEqData.find((equipment) => equipment.equipmentName === equipmentName)
     );
-  
+    const data={shipName: value}
+    dispatch(userActions.onChangeCurrentSelection({ selectedData: data }));
     setEquipmentOptions(uniqueFilteredEqData);
     console.log("f", uniqueFilteredEqData);
   };
   
-
+  
   const EquipmentChange = (e, value) => {
     const selectedEquipment = value?.equipmentName;
     const filteredNomenclature = allEquipmentData.filter((equipment) => {
       return equipment.equipmentName === selectedEquipment && equipment.shipName===selectedShip;
     });
+    const data={equipmentName: selectedEquipment}
+    dispatch(userActions.onChangeCurrentSelection({ selectedData: data }));
     setNomenclatureOptions(filteredNomenclature);
     console.log("filteredNomenclature",filteredNomenclature);
   };
+  
+  const NomenclatureChange =(e, value)=>{
+    const selectedNomenclature=value?.nomenclature
+    const data={nomenclature: selectedNomenclature}
+    dispatch(userActions.onChangeCurrentSelection({ selectedData: data }));
+  }
 
   return (
     <>
@@ -119,6 +128,7 @@ export default function AdminInputs() {
         className={classes.autocomplete}
         options={nomenclatureOptions}
         getOptionLabel={(option) => option.nomenclature}
+        onChange={NomenclatureChange}
         renderInput={(params) => (
           <TextField {...params} label="Nomenclature" variant="outlined" />
         )}

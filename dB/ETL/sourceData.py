@@ -1,19 +1,22 @@
 from datetime import datetime
 import logging
-from dB.dB_connection import pointer, cnxn ,cursor
+from dB.dB_connection import pointer, cnxn, cursor
 from flask import Flask, jsonify
 from dB.data_manager.data_manager import Data_Manager
+import uuid
+
 
 class ETL():
     def etl_src_target(self):
         try:
-            SysConfigQuery = '''select * from operational_data'''
+            OpQuery = '''select * from operational_data'''
             # Execute a SELECT query on the target database
-            pointer.execute(SysConfigQuery)
+            pointer.execute(OpQuery)
             rows = pointer.fetchall()
 
             # Convert rows to a list of dictionaries for JSON serialization
-            result = [{'oid': row[0], 'id': row[1], 'Date': row[2], 'AverageRunning': row[3]} for row in rows]
+            result = [{'oid': row[0], 'id': row[1], 'Date': row[2],
+                       'AverageRunning': row[3]} for row in rows]
 
             response_data = {'data': result}
             for d in response_data["data"]:
@@ -34,7 +37,8 @@ class ETL():
                         VALUES (?, ?, ?, ?);
                 """
 
-                cursor.execute(merge_opdata, (id_, component_id, date_, average_running, average_running, id_, component_id, date_, average_running))
+                cursor.execute(merge_opdata, (id_, component_id, date_, average_running,
+                               average_running, id_, component_id, date_, average_running))
 
             cnxn.commit()
             print(response_data)
@@ -49,3 +53,24 @@ class ETL():
             logging.error(f'Error in ETL process: {str(e)}')
             cnxn.rollback()  # Rollback changes in case of an error
             return jsonify({'status': 'error', 'message': f'Error fetching or updating data: {str(e)}'})
+
+    def set_for_etl(self, data):
+        etl_flag_query = '''
+            UPDATE system_configuration
+            SET etl = ?
+            WHERE ship_name = ? AND nomenclature = ?
+        '''
+
+        # Extract data
+        ship_name = data['shipName']
+        nomenclature = data['nomenclature']
+        enabled = 1 if data.get('enabled', False) else 0  # Convert True to 1, False to 0
+        print(ship_name, nomenclature, enabled)
+
+        # Execute the UPDATE query
+        cursor.execute(etl_flag_query, (enabled, ship_name, nomenclature))
+
+        # Commit the changes to the database
+        cursor.commit()
+        return {"code":1,"message": f"ETL was Successfully enabled for {nomenclature}"}
+

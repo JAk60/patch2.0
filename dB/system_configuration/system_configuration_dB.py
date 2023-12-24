@@ -18,8 +18,7 @@ class System_Configuration_dB():
 
     def insert_system_config(self, data):
         try:
-            system_head = list(filter(lambda x: x['parent'] == None, data))[
-                0]['name']
+            system_head = list(filter(lambda x: x['parent'] == None, data))[0]['name']
             for system in data:
                 component_id = system['id']
                 is_exist = self.check_component_exists(component_id)
@@ -37,18 +36,53 @@ class System_Configuration_dB():
                     shipClass = system['shipClass']
                     shipName = system['shipName']
                     nomenclature = system['nomenclature']
-                    insert_system_config = '''insert into system_configuration (component_id, component_name, parent_id, CMMS_EquipmentCode, is_lmu, parent_name, ship_name,
-                                  ship_category, ship_class, command, department, nomenclature)
-                                                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
-                                                '''
-                    cursor.execute(insert_system_config, component_id, component_name,
-                                   parent_id, cmms_eq_code, is_lmu, parent_name, shipName,
-                                   shipCategory, shipClass, command, department, nomenclature)
+                    
+                    insert_system_config = '''
+                        IF NOT EXISTS (
+                            SELECT 1
+                            FROM system_configuration
+                            WHERE nomenclature = ? 
+                                AND ship_name = ? 
+                                AND department = ?
+                        )
+                        BEGIN
+                            INSERT INTO system_configuration (
+                                component_id, 
+                                component_name, 
+                                parent_id, 
+                                CMMS_EquipmentCode, 
+                                is_lmu, 
+                                parent_name, 
+                                ship_name,
+                                ship_category, 
+                                ship_class, 
+                                command, 
+                                department, 
+                                nomenclature
+                            )
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+                            SELECT 'Insert successful.' AS message;
+                        END
+                        ELSE
+                        BEGIN
+                            SELECT 'Record with the same nomenclature, ship_name, and department already exists.' AS message;
+                        END
+                    '''
+
+                    cursor.execute(insert_system_config, (nomenclature, shipName, department, component_id, component_name,
+                                                        parent_id, cmms_eq_code, is_lmu, parent_name, shipName,
+                                                        shipCategory, shipClass, command, department, nomenclature))
+                    
+                    # Fetch the result after executing the SQL statement
+                    result = cursor.fetchone()
+                    print(result[0])  # Assuming the message is in the first column of the result
+
             cursor.commit()
             return self.success_return
         except Exception as e:
             self.error_return['message'] = str(e)
             return self.error_return
+
 
     def insert_redundancy(self, system_data):
         insert_redundancy = '''insert into redundancy_data (redundancy_id, 
