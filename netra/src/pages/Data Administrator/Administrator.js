@@ -8,6 +8,7 @@ import AdminInputs from "./AdminInputs";
 import DelSpecific from "./DelSpecific";
 import EtlEquipment from "./EtlEquipment";
 import UnregisterStepper from "./UnregisterStepper";
+import RegisterEquipment from "./RegisterEquipment";
 
 const useStyles = makeStyles({
   root: {
@@ -93,14 +94,16 @@ const Administrator = (props) => {
             textColor="primary"
             className={classes.tabs}
           >
+            <Tab label="Register Equipment" />
             <Tab label="Unregister Equipment" />
             <Tab label="Delete Specific Information" />
             <Tab label="Register Equipment For ETL" />
           </Tabs>
         </div>
         <div>
-          {activeTab === 2 && <EtlEquipment classes={classes} />}
-          {activeTab === 0 && (
+          {activeTab === 0 && <RegisterEquipment classes={classes} />}
+          {activeTab === 3 && <EtlEquipment classes={classes} />}
+          {activeTab === 1 && (
             <>
               <div style={{ display: "flex", justifyContent: "center" }}>
                 <AdminInputs />
@@ -116,7 +119,7 @@ const Administrator = (props) => {
               <UnregisterStepper time={3000} start={start} msg={msg} setSnackBarMessage={setSnackBarMessage}/>
             </>
           )}
-          {activeTab === 1 && <DelSpecific />}
+          {activeTab === 2 && <DelSpecific />}
         </div>
       </div>
       {SnackBarMessage.showSnackBar && (

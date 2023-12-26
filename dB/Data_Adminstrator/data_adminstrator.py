@@ -1,4 +1,4 @@
-from dB.dB_connection import cnxn, cursor
+from dB.dB_connection import pointer,cnxn, cursor
 from flask import Flask, jsonify
 
 
@@ -141,3 +141,32 @@ class Data_Administrator:
             except Exception as e:
                 return {"code":0, "message": f"Error fetching equipments on {shipName}: {str(e)}"}
 
+    def register_equipment(self, data):
+        try:
+            ship_name = data['values']['shipName']
+            nomenclature = data['values']['nomenclature']
+            register_all = data['values']['registerAll']
+
+            if register_all:
+                # Run a query for registerAll being True
+                query = '''
+                    SELECT * FROM system_configuration WHERE ship_name= ?
+                '''
+                # Execute the query using the pointer object
+                pointer.execute(query, (ship_name,))
+            else:
+                # Run a query for registerAll being False
+                query = '''
+                    SELECT * FROM system_configuration WHERE ship_name= ? AND nomenclature= ?
+                '''
+                # Execute the query using the pointer object
+                pointer.execute(query, (ship_name, nomenclature))
+
+            # Commit the changes to the database
+            cnxn.commit()
+
+            return jsonify({'status': 'success', 'message': 'Query executed successfully and changes committed.'})
+
+        except Exception as e:
+            cnxn.rollback()  # Rollback changes in case of an error
+            return jsonify({'status': 'error', 'message': f'Error executing the query: {str(e)}'})

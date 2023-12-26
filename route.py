@@ -769,6 +769,12 @@ def unregister_equipment():
     inst = Data_Administrator()
     return inst.delete_data_for_component(data)
 
+@app.route('/sysmetl', methods=['POST'])
+def sysmetl():
+    data = request.get_json(force=True)
+    inst = Data_Administrator()
+    return inst.register_equipment(data)
+
 @app.route('/equipment_onship', methods=['POST'])
 def equipment_onship():
     data = request.get_json(force=True)
@@ -782,7 +788,7 @@ def delspecific():
         print(data)
         inst = Data_Administrator()
         result = inst.del_specific_data(data)
-        return jsonify(result)  # Assuming del_specific_data returns a valid response
+        return jsonify(result) 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
