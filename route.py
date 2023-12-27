@@ -750,7 +750,9 @@ def card_counts():
 @app.route('/srcetl', methods=['GET'])
 def srcetl():
     inst = ETL()
-    return inst.etl_src_target()
+    inst.operational_data_etl()
+    inst.overhaul_data_etl()
+    return jsonify({'message': 'Data Transfer From CMMS Successful'})
 
 @app.route('/set_equip_etl', methods=['POST'])
 def set_equip_etl():

@@ -1,5 +1,6 @@
 from dB.dB_connection import pointer,cnxn, cursor
 from flask import Flask, jsonify
+import uuid
 
 
 class Data_Administrator:
@@ -150,23 +151,92 @@ class Data_Administrator:
             if register_all:
                 # Run a query for registerAll being True
                 query = '''
-                    SELECT * FROM system_configuration WHERE ship_name= ?
+                    SELECT 
+                    EquipmentName as component_name,
+                    M_Equipment.EquipmentCode as CMMS_EquipmentCode,
+                    ShipName as ship_name,
+                    M_ShipCategory.ShipCategoryName as ship_category,
+                    M_ShipClass.Description as ship_class,
+                    CommandName as command,
+                    M_Department.Description as department,
+                    Nomenclature as nomenclature
+                FROM 
+                    T_EquipmentShipDetail WITH(NOLOCK) 
+                    INNER JOIN M_Equipment WITH(NOLOCK) ON T_EquipmentShipDetail.Universal_ID_M_Equipment = M_Equipment.Universal_ID_M_Equipment
+                    INNER JOIN M_Ship WITH(NOLOCK) ON T_EquipmentShipDetail.Universal_ID_M_Ship = M_Ship.Universal_ID_M_Ship
+                    INNER JOIN M_ShipClass WITH(NOLOCK) ON M_Ship.Universal_ID_M_ShipClass = M_ShipClass.Universal_ID_M_ShipClass
+                    INNER JOIN M_ShipCategory WITH(NOLOCK) ON M_Ship.Universal_ID_M_ShipCategory = M_ShipCategory.Universal_ID_M_ShipCategory
+                    INNER JOIN M_Command WITH(NOLOCK)  ON M_Ship.Universal_ID_M_Command = M_Command.Universal_ID_M_Command 
+                    INNER JOIN M_Department WITH(NOLOCK) ON T_EquipmentShipDetail.Universal_ID_M_Department = M_Department.Universal_ID_M_Department
+                WHERE 
+                    AND T_EquipmentShipDetail.Active = 1 
+                    AND RemovalDate IS NULL 
+                    AND M_Ship.Active = 1
+                    AND M_Ship.DecommissionDate IS NULL 
+                    AND M_ShipClass.Active = 1 
+                    AND ShipName= ?;
                 '''
                 # Execute the query using the pointer object
                 pointer.execute(query, (ship_name,))
             else:
                 # Run a query for registerAll being False
                 query = '''
-                    SELECT * FROM system_configuration WHERE ship_name= ? AND nomenclature= ?
+                    SELECT 
+                    EquipmentName as component_name,
+                    M_Equipment.EquipmentCode as CMMS_EquipmentCode,
+                    ShipName as ship_name,
+                    M_ShipCategory.ShipCategoryName as ship_category,
+                    M_ShipClass.Description as ship_class,
+                    CommandName as command,
+                    M_Department.Description as department,
+                    Nomenclature as nomenclature
+                FROM 
+                    T_EquipmentShipDetail WITH(NOLOCK) 
+                    INNER JOIN M_Equipment WITH(NOLOCK) ON T_EquipmentShipDetail.Universal_ID_M_Equipment = M_Equipment.Universal_ID_M_Equipment
+                    INNER JOIN M_Ship WITH(NOLOCK) ON T_EquipmentShipDetail.Universal_ID_M_Ship = M_Ship.Universal_ID_M_Ship
+                    INNER JOIN M_ShipClass WITH(NOLOCK) ON M_Ship.Universal_ID_M_ShipClass = M_ShipClass.Universal_ID_M_ShipClass
+                    INNER JOIN M_ShipCategory WITH(NOLOCK) ON M_Ship.Universal_ID_M_ShipCategory = M_ShipCategory.Universal_ID_M_ShipCategory
+                    INNER JOIN M_Command WITH(NOLOCK)  ON M_Ship.Universal_ID_M_Command = M_Command.Universal_ID_M_Command 
+                    INNER JOIN M_Department WITH(NOLOCK) ON T_EquipmentShipDetail.Universal_ID_M_Department = M_Department.Universal_ID_M_Department
+                WHERE 
+                    AND T_EquipmentShipDetail.Active = 1 
+                    AND RemovalDate IS NULL 
+                    AND M_Ship.Active = 1
+                    AND M_Ship.DecommissionDate IS NULL 
+                    AND M_ShipClass.Active = 1 
+                    AND ShipName= ? AND Nomenclature= ?
                 '''
                 # Execute the query using the pointer object
                 pointer.execute(query, (ship_name, nomenclature))
 
             # Commit the changes to the database
-            cnxn.commit()
+            fetched_data = pointer.fetchall()
+            for data_point in fetched_data:
+                    # Extract data from the second query result
+                    component_id, operation_date, average_running = data_point
+                    
+                    # Generate a new UUID for each iteration
+                    generated_id = uuid.uuid4()
 
-            return jsonify({'status': 'success', 'message': 'Query executed successfully and changes committed.'})
+                    # Third Query: Insert or update data using the merge statements
+                    merge_query = """
+                        MERGE INTO operational_data AS target
+                        USING (VALUES (?, ?, ?, ?)) AS source (id, component_id, operation_date, average_running)
+                        ON target.component_id = source.component_id AND target.operation_date = source.operation_date
+                        WHEN MATCHED THEN
+                            UPDATE SET average_running = ?
+                        WHEN NOT MATCHED THEN
+                            INSERT (id, component_id, operation_date, average_running)
+                            VALUES (?, ?, ?, ?);
+                    """
 
+                    cursor.execute(merge_query, (generated_id, component_id, operation_date, average_running,
+                                                average_running, generated_id, component_id, operation_date, average_running))
+            # Commit changes to the database
+            cursor.commit()
+
+            # Return a message if the process is completed
+            return "ETL process completed successfully"
         except Exception as e:
             cnxn.rollback()  # Rollback changes in case of an error
             return jsonify({'status': 'error', 'message': f'Error executing the query: {str(e)}'})

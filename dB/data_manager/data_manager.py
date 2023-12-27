@@ -768,9 +768,13 @@ class Data_Manager:
         insert_sub_sql = """insert into data_manager_overhauls_info (id, 
         component_id, overhaul_num, running_age, num_maintenance_event)
         values (?,?,?,?,?);"""
-        insert_main_sql = """insert into data_manager_overhaul_maint_data (id, 
-        component_id, overhaul_id, date, maintenance_type, cmms_running_age,
-        associated_sub_system) values (?,?,?,?,?,?,?);"""
+        insert_main_sql = """MERGE INTO data_manager_overhaul_maint_data AS target
+                    USING (VALUES (?, ?, ?, ?, ?, ?, ?)) AS source (id, component_id, overhaul_id, date, maintenance_type, associated_sub_system, cmms_running_age)
+                    ON target.component_id = source.component_id
+                    AND target.date = source.date
+                    WHEN NOT MATCHED THEN
+                    INSERT (id, component_id, overhaul_id, date, maintenance_type, associated_sub_system, cmms_running_age)
+                    VALUES (?, ?, ?, ?, ?, ? , ?);"""
         last_age_entry_sql = (
             """select max(cmms_running_age) from data_manager_overhaul_maint_data"""
         )
