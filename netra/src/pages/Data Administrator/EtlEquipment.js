@@ -149,7 +149,7 @@ export default function EtlEquipment({ classes }) {
           color="secondary"
           onClick={fetchData}
         >
-          Fetch Equipment Data
+          Fetch Equipment
         </Button>
       </div>
       <TextField
@@ -166,7 +166,7 @@ export default function EtlEquipment({ classes }) {
               {/* Add your table headers here */}
               <TableCell>Equipment Name</TableCell>
               <TableCell>Nomenclature</TableCell>
-              <TableCell>ETL</TableCell>
+              <TableCell>Transfer Status</TableCell>
               <TableCell>Action</TableCell>
             </TableRow>
           </TableHead>
@@ -183,7 +183,7 @@ export default function EtlEquipment({ classes }) {
                     row.etl === false  && <ClearIcon style={{ color: "red" }} />
                   )}
                 </TableCell>
-                <TableCell>
+                <TableCell style={{display: "flex"}}>
                   <Button
                     variant="contained"
                     color="primary"
@@ -191,7 +191,7 @@ export default function EtlEquipment({ classes }) {
                     style={{marginRight: "10px"}}
                     disabled={row.etl}
                   >
-                    Enable ETL
+                    Enable Transfer
                   </Button>
                   <Button
                     variant="contained"
@@ -199,7 +199,7 @@ export default function EtlEquipment({ classes }) {
                     onClick={() => handleEtlAction(row,false)}
                     disabled={!row.etl}
                   >
-                    Disable ETL
+                    Disable Transfer
                   </Button>
                 </TableCell>
               </TableRow>

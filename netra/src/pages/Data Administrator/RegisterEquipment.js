@@ -19,22 +19,12 @@ const RegisterEquipment = () => {
 
   const InputFields = [
     { name: "shipName", label: "Ship Name" },
-    { name: "shipCategory", label: "Ship Category" },
-    { name: "shipClass", label: "Ship Class" },
-    { name: "command", label: "Command" },
-    { name: "department", label: "Department" },
-    { name: "equipmentName", label: "Equipment Name" },
     { name: "nomenclature", label: "Nomenclature" },
   ];
 
   const formik = useFormik({
     initialValues: {
       shipName: "",
-      shipCategory: "",
-      shipClass: "",
-      command: "",
-      department: "",
-      equipmentName: "",
       nomenclature: "",
       registerAll: false,
     },
@@ -77,7 +67,14 @@ const RegisterEquipment = () => {
   };
 
   return (
-    <Container style={{ paddingLeft: "100px" }}>
+    <Container
+      style={{
+       marginTop: "7rem",
+        padding: "7rem",
+        borderRadius: "10px",
+        boxShadow: "0 3px 10px rgb(0 0 0 / 0.2)",
+      }}
+    >
       <form onSubmit={formik.handleSubmit}>
         <Grid container spacing={1}>
           {formik.values.registerAll ? (
@@ -114,6 +111,16 @@ const RegisterEquipment = () => {
             ))
           )}
           <Grid item lg={6}>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              style={{ height: "4em", marginTop: "20px" }}
+            >
+              Submit
+            </Button>
+          </Grid>
+          <Grid item lg={6}>
             <FormControlLabel
               control={
                 <Switch
@@ -124,16 +131,6 @@ const RegisterEquipment = () => {
               }
               label="Register All Equipments at Once"
             />
-          </Grid>
-          <Grid item lg={6}>
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              style={{ height: "4em", marginTop: "20px" }}
-            >
-              Submit
-            </Button>
           </Grid>
         </Grid>
       </form>

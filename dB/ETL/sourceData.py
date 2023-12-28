@@ -28,7 +28,7 @@ class ETL():
         cursor.commit()
         return {"code": 1, "message": f"ETL was Successfully enabled for {nomenclature}"}
 
-    def operational_data_etl(cursor):
+    def operational_data_etl(self):
         try:
             # First Query: Fetch all equipments where etl is 1
             select_query = '''SELECT * FROM system_configuration WHERE etl=1'''
@@ -99,7 +99,7 @@ class ETL():
             # Return an error message if something went wrong
             return f"Error during ETL process: {str(e)}"
 
-    def overhaul_data_etl():
+    def overhaul_data_etl(self):
         try:
             # First Query: Fetch all equipments where etl is 1
             select_query = '''SELECT * FROM system_configuration WHERE etl=1'''

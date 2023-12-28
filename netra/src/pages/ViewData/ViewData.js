@@ -11,6 +11,7 @@ import BackToHomeFab from "../../components/navigation/MuiFap";
 import { userActions } from "../../store/ApplicationVariable";
 import AccessControl from "../Home/AccessControl";
 import styles from "./ViewData.module.css";
+import SystemUpdateAltIcon from '@material-ui/icons/SystemUpdateAlt';
 
 const ViewData = (props) => {
   const useStyles = makeStyles((theme) => ({
@@ -42,7 +43,7 @@ const ViewData = (props) => {
     { name: "Add New Ship", path: "/user_selection_config", icon: <CreateIcon /> },
     { name: "Add System Doc", path: "/add_system_doc", icon: <SaveAltIcon /> },
     { name: "Add Sensor Data", path: "/maintenance_allocation/add_data", icon: <WifiTetheringIcon /> },
-    { name: "Data Administrator", path: "/administrator", icon: <WifiTetheringIcon /> },
+    { name: "CMMS To NETRA", path: "/administrator", icon: <SystemUpdateAltIcon /> },
   ];
 
 
