@@ -12,11 +12,11 @@ const SelectStyles = makeStyles({
   },
 });
 
+UserSelection.defaultProps = {
+  alignment: "horizontal",
+  inputWidth: "200px",
+};
 function UserSelection(props) {
-  UserSelection.defaultProps = {
-    alignment: "horizontal",
-    inputWidth: "200px",
-  };
   const [userSelectionData, setUserSelectionData] = useState([]);
   const [userSelectionEqData, setUserSelectionEqData] = useState([]);
   const dispatch = useDispatch();
@@ -29,7 +29,6 @@ function UserSelection(props) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-
         const response = await fetch("/fetch_user_selection", {
           method: "GET",
           headers: {
@@ -45,6 +44,7 @@ function UserSelection(props) {
         }
 
         const data = await response.json();
+        console.log("userSelectionData", data);
         const userData = data["data"];
         const eqData = data["eqData"];
         let shipName = userData.map((x) => x.shipName);
@@ -122,7 +122,6 @@ function UserSelection(props) {
         (x) =>
           x.command === currentSelection.command &&
           x.department === data &&
-          x.shipName === currentSelection.shipName &&
           x.shipCategory === currentSelection.shipCategory &&
           x.shipName === currentSelection.shipName &&
           x.shipClass === currentSelection.shipClass
@@ -134,7 +133,6 @@ function UserSelection(props) {
         (x) =>
           x.command === currentSelection.command &&
           x.department === data &&
-          x.shipName === currentSelection.shipName &&
           x.shipCategory === currentSelection.shipCategory &&
           x.shipName === currentSelection.shipName &&
           x.shipClass === currentSelection.shipClass
@@ -157,7 +155,6 @@ function UserSelection(props) {
         (x) =>
           x.command === currentSelection.command &&
           x.department === currentSelection.department &&
-          x.shipName === currentSelection.shipName &&
           x.shipCategory === currentSelection.shipCategory &&
           x.shipName === currentSelection.shipName &&
           x.shipClass === currentSelection.shipClass &&
@@ -180,28 +177,6 @@ function UserSelection(props) {
     dispatch(userActions.onChangeCurrentSelection({ selectedData: data }));
   };
 
-  // const onEquipmentCodeChange = (e) => {
-  //   // let data = e.currentTarget.innerText;
-  //   // data = { equipmentCode: data };
-  //   // dispatch(userActions.onChangeCurrentSelection({ selectedData: data }));
-  //   let data = e.currentTarget.innerText;
-  //   let eqData = userSelectionEqData
-  //     .filter(
-  //       (x) =>
-  //         x.command === currentSelection.command &&
-  //         x.department === data &&
-  //         x.shipName === currentSelection.shipName &&
-  //         x.shipCategory === currentSelection.shipCategory &&
-  //         x.shipName === currentSelection.shipName &&
-  //         x.shipClass === currentSelection.shipClass &&
-  //         x.equipmentName === currentSelection.equipmentName
-  //     )
-  //     .map((x) => x.equipmentName);
-  //   data = { department: data };
-  //   eqData = { equipmentName: eqData };
-  //   dispatch(userActions.onChangeCurrentSelection({ selectedData: data }));
-  //   dispatch(userActions.populateEqName({ filteredData: eqData }));
-  // // };
   const SelectClasses = SelectStyles();
   let colwidth = 4;
   props.alignment === "vertical" ? (colwidth = 12) : (colwidth = 3);

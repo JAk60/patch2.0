@@ -38,9 +38,9 @@ const CustomSelect = (props) => {
 
   return (
     <FormControl className={props.className}>
-      <InputLabel id={props.id}  classes={Labelclasses} shrink>
-        <Typography variant="h5" sx={{fontSize: "700"}}>
-        {props.label}
+      <InputLabel id={props.id} classes={Labelclasses} shrink>
+        <Typography variant="h5" sx={{ fontSize: "700" }}>
+          {props.label}
         </Typography>
       </InputLabel>
       {props.value ? (
@@ -53,8 +53,10 @@ const CustomSelect = (props) => {
           input={<StyledInput />}
           value={props.value}
         >
-          {props.fields.map((data) => (
-            <MenuItem value={data}>{data}</MenuItem>
+          {props.fields?.map((data, index) => (
+            <MenuItem key={index} value={data}>
+              {data}
+            </MenuItem>
           ))}
         </Select>
       ) : (

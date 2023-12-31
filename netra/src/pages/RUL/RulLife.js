@@ -1,32 +1,25 @@
-import React, { useState, useCallback, useEffect } from "react";
-import Navigation from "../../components/navigation/Navigation";
-import styles from "./rul.module.css";
-import UserSelection from "../../ui/userSelection/userSelection";
-import { Button, makeStyles, TextField } from "@material-ui/core";
-import { Autocomplete } from "@material-ui/lab";
-import TreeComponent from "../../components/sortableTree/SortableTree";
-import { useSelector, useDispatch } from "react-redux";
-import { treeDataActions } from "../../store/TreeDataStore";
-import AutoSelect from "../../ui/Form/AutoSelect";
-import { useDropzone } from "react-dropzone";
-import CustomizedSnackbars from "../../ui/CustomSnackBar";
-import RULPredictor from "./RULPredictor";
-import AccessControl from "../Home/AccessControl";
 import {
-  Table,
+  Button, Dialog, DialogActions, DialogContent,
+  DialogContentText, DialogTitle, Paper, Slide, Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
-  TableRow,
-  Paper,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
-  Slide
-} from '@material-ui/core';
+  TableRow, TextField, makeStyles
+} from "@material-ui/core";
+import { Autocomplete } from "@material-ui/lab";
+import React, { useEffect, useState } from "react";
+import { useDropzone } from "react-dropzone";
+import { useDispatch, useSelector } from "react-redux";
+import Navigation from "../../components/navigation/Navigation";
+import TreeComponent from "../../components/sortableTree/SortableTree";
+import { treeDataActions } from "../../store/TreeDataStore";
+import CustomizedSnackbars from "../../ui/CustomSnackBar";
+import AutoSelect from "../../ui/Form/AutoSelect";
+import UserSelection from "../../ui/userSelection/userSelection";
+import AccessControl from "../Home/AccessControl";
+import RULPredictor from "./RULPredictor";
+import styles from "./rul.module.css";
 
 const useStyles = makeStyles({
   buttons: {

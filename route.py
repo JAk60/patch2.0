@@ -724,10 +724,11 @@ def reset_password():
     inst = EmailSender(mail)
     return inst.send_notification_email(username,logo_data)
 
-@app.route('/get_users', methods=['GET'])
+@app.route('/get_users', methods=['POST'])
 def get_users():
+    data = request.json
     inst = DashBoard()
-    return inst.fetch_users()
+    return inst.fetch_users(data)
 
 @app.route('/update_user', methods=['PUT'])
 def update_user_endpoint():

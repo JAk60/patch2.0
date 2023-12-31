@@ -59,12 +59,13 @@ const useStyles = makeStyles((theme) => ({
 const SAdmin = ({ logout }) => {
   const classes = useStyles();
   const [selectedMenu, setSelectedMenu] = useState("Welcome");
+  const [setUsers,setUsersData]=useState([])
 
   const handleMenuClick = (menu) => {
     setSelectedMenu(menu);
   };
   const [cardData, setCardData] = useState([]);
-
+ 
   useEffect(() => {
     fetch("/card_counts") // Assuming this is the Flask endpoint
       .then((response) => response.json())
@@ -140,7 +141,7 @@ const SAdmin = ({ logout }) => {
       <div className={classes.content}>
         {selectedMenu === "Welcome" && <WelcomePage cardData={cardData} />}
         {selectedMenu === "Create Account" && <AccCreate />}
-        {selectedMenu === "Manage User" && <ManageUsers usselect={selectedMenu} />}
+        {selectedMenu === "Manage User" && <ManageUsers/>}
       </div>
     </div>
   );
