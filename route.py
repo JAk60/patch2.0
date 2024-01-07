@@ -214,6 +214,13 @@ def rel_dashboard():
         return jsonify(f_data)
 
 
+@app.route("/fetch_sensors", methods=["POST"])
+def fetch_sensors():
+        data=request.get_json()
+        inst=RUL_dB()
+        response =inst.fetch_specific_sensors(data)
+        return response
+    
 @app.route("/cm_dashboard", methods=["GET", "POST"])
 def cm_dashboard():
     if request.method == "GET":
@@ -573,10 +580,8 @@ def rul():
         req_data = request.get_json()
         parameter = req_data["parameter"]
         equipment_id = req_data["equipmentId"]
-        p = req_data['p']
-        f = req_data['f']
         inst = RUL_dB()
-        return inst.rul_code(equipment_id, parameter, p, f)
+        return inst.rul_code(equipment_id, parameter)
 
 
 @app.route("/rul_equipment", methods=["POST"])

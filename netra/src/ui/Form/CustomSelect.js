@@ -1,16 +1,15 @@
 //Custom Select- Props{id,label,value,onchange,classname,fields}
-import React from "react";
 import {
-  withStyles,
-  makeStyles,
   FormControl,
   InputBase,
   InputLabel,
-  Select,
   MenuItem,
-  TextField,
+  Select,
   Typography,
+  makeStyles,
+  withStyles,
 } from "@material-ui/core";
+import React from "react";
 
 const LabelStyles = makeStyles({
   root: {
@@ -68,8 +67,10 @@ const CustomSelect = (props) => {
           onChange={props.onChange}
           input={<StyledInput />}
         >
-          {props.fields?.map((data) => (
-            <MenuItem value={data}>{data}</MenuItem>
+          {props.fields?.map((data, index) => (
+            <MenuItem value={data} key={index}>
+              {data}
+            </MenuItem>
           ))}
         </Select>
       )}

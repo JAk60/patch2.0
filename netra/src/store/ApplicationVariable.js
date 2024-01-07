@@ -10,6 +10,7 @@ const initialState = {
     equipmentName: [],
     equipmentCode: [],
     nomenclature: [],
+    Sensor: [],
     params: []
   },
   currentSelection: {
@@ -20,7 +21,8 @@ const initialState = {
     department: "",
     equipmentName: "",
     equipmentCode: "",
-    nomenclature: ""
+    nomenclature: "",
+    Sensor: []
   },
   overhaulSecond: [],
   overhaulMain: [],

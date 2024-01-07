@@ -25,7 +25,7 @@ const InputStyles = makeStyles({
 
 export default function AutoSelect(props) {
   debugger;
-  const options = props.fields.map((option) => {
+  const options = props.fields?.map((option) => {
     //const firstLetter = option.parentName.toUpperCase();
     // firstLetter: /[0-9]/.test(firstLetter) ? "0-9" : firstLetter,
     return {

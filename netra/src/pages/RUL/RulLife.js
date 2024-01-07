@@ -1,458 +1,363 @@
+import React, { useEffect, useState } from "react";
 import {
-  Button, Dialog, DialogActions, DialogContent,
-  DialogContentText, DialogTitle, Paper, Slide, Table,
+  Button,
+  Card,
+  Checkbox,
+  Chip,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  FormControlLabel,
+  Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
-  TableRow, TextField, makeStyles
+  TableRow,
+  Typography,
+  makeStyles,
 } from "@material-ui/core";
-import { Autocomplete } from "@material-ui/lab";
-import React, { useEffect, useState } from "react";
-import { useDropzone } from "react-dropzone";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import Navigation from "../../components/navigation/Navigation";
-import TreeComponent from "../../components/sortableTree/SortableTree";
-import { treeDataActions } from "../../store/TreeDataStore";
-import CustomizedSnackbars from "../../ui/CustomSnackBar";
-import AutoSelect from "../../ui/Form/AutoSelect";
-import UserSelection from "../../ui/userSelection/userSelection";
 import AccessControl from "../Home/AccessControl";
-import RULPredictor from "./RULPredictor";
+import RULInputs from "./RULInputs";
 import styles from "./rul.module.css";
+import InfoIcon from "@material-ui/icons/Info";
 
 const useStyles = makeStyles({
-  buttons: {
-    margin: 5,
-    minWidth: 170,
-    float: "right",
+  autocomplete: {
+    margin: "1rem",
+    minWidth: 250,
   },
-  align: {
-    marginBottom: 10,
+  btn: {
+    margin: "1rem",
+    padding: "1rem",
   },
-  blinkingRow: {
-    animation: '$blinking 1s infinite',
+  chip: {
+    margin: "0.5rem",
+    cursor: "pointer",
   },
-  '@keyframes blinking': {
-    '0%': {
-      background: '#ef5350',
-      color: "white"
+  blink: {
+    animation: "$blink-animation 1s infinite",
+    backgroundColor: "red",
+    color: "white",
+  },
+  "@keyframes blink-animation": {
+    "0%, 100%": {
+      opacity: 1,
     },
-    '50%': {
-      background: 'transparent',
-    },
-    '100%': {
-      background: '#ef5350',
-      color: "white"
+    "50%": {
+      opacity: 0,
+
     },
   },
 });
 
-
-
-const Transition = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
-
-
-const BlinkingTableRow = ({ row, lowestValue }) => {
-  const isLowestValue = row.value === lowestValue;
-  const classes = useStyles();
-
-  return (
-    <TableRow className={isLowestValue ? classes.blinkingRow : ''}>
-      <TableCell style={{fontSize: "18px"}}>{row.key}</TableCell>
-      <TableCell style={{fontSize: "18px"}}>{row.value}</TableCell>
-    </TableRow>
-  );
-};
-
-
-const BlinkingTable = ({ data, handleClose}) => {
-  const rows = Object.entries(data.results).map(([key, value]) => ({ key, value }));
-  const lowestValue = Math.min(...rows.map(row => row.value));
-
-  return (
-    <Dialog
-      open={true}
-      TransitionComponent={Transition}
-      keepMounted
-      onClose={handleClose}
-      aria-labelledby="alert-dialog-slide-title"
-      aria-describedby="alert-dialog-slide-description"
-    >
-      <DialogTitle id="alert-dialog-slide-title">RUL OF ALL SENSORS OF EQUIPMENT</DialogTitle>
-      <DialogContent>
-        <DialogContentText id="alert-dialog-slide-description">
-          <TableContainer component={Paper}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell style={{ fontSize: "18px", width: "40%", fontWeight: "bold"}}>Sensor Name</TableCell>
-                  <TableCell style={{ fontSize: "18px" , fontWeight: "bold"}}>Remaining Useful Life (RUL) Confidence(90%)</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {rows.map((row, index) => (
-                  <BlinkingTableRow key={index} row={row} lowestValue={lowestValue} />
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </DialogContentText>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={handleClose} color="primary">
-          Close
-        </Button>
-      </DialogActions>
-    </Dialog>
-  );
-};
-
-
-const RulLife = () => {
-  const [paramOptions, setParamOptions] = useState([]);
-  const [selectedParameterName, setParameterName] = useState("");
-  const [selectedEqName, setEquipmentName] = useState([]);
-  const [para, setPara] = useState([]);
-  const [prevrul, setPrevrul] = useState();
-  const [isRulOpen, setRulOpen] = useState(false);
-  const [uploadedFile, setUploadedFile] = useState(null);
-  const [P, setP] = useState(0);
-  const [F, setF] = useState(0);
-  const [selectedEquipmentId, setSelectedEquipmentId] = useState("");
-  const [showTable, setShowTable] = useState(false);
-  const [jsonData, setJsonData] = useState({});
-
-  // Function to handle file upload
-  const handleFileUpload = (file) => {
-    setUploadedFile(file);
-    console.log(uploadedFile);
-    const formData = new FormData();
-    formData.append("file", file);
-
-    fetch("/csv_upload", {
-      method: "POST",
-      body: formData,
-    })
-      .then((response) => response.text())
-      .then((data) => {
-        console.log(data); // Response from the server
-      })
-      .catch((error) => {
-        console.error("Fetch Error:", error);
-      });
-  };
-
-  // Dropzone configuration
-  const { getRootProps, getInputProps } = useDropzone({
-    onDrop: (acceptedFiles) => handleFileUpload(acceptedFiles[0]),
-    accept: ".csv", // Accept only CSV files, you can modify this to accept other file types
-    multiple: false, // Allow only one file to be uploaded at a time
-  });
-
-  const dispatch = useDispatch();
-  const currentSelection = useSelector(
-    (state) => state.userSelection.currentSelection
-  );
-  let fData = useSelector((state) => state.treeData.treeData);
-  console.log(selectedParameterName);
-  const sData = useSelector((state) => state.userSelection.componentsData);
-
-  const currentNomenclature = currentSelection["nomenclature"];
-  const matchingItems = sData.filter(item => item.nomenclature === currentNomenclature);
-
-  const matchingId = matchingItems[0]?.id;
-  const onLoadTreeStructure = () => {
-    const payload = {
-      nomenclature: currentSelection["nomenclature"],
-      ship_name: currentSelection["shipName"],
-    };
-
-    if (matchingId) {
-      payload.component_id = matchingId;
-    }
-    console.log(payload)
-    fetch("/fetch_system", {
-      method: "POST",
-      body: JSON.stringify(payload),
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-    })
-      .then((res) => res.json())
-      .then((d) => {
-        console.log(d);
-        let treeD = d["treeD"];
-        let failureModes = d["failureMode"];
-        console.log(failureModes)
-        dispatch(
-          treeDataActions.setTreeData({
-            treeData: treeD,
-          }),
-        );
-        dispatch(
-          treeDataActions.setFailureModes(failureModes)
-        )
-      });
-  };
-
-  const handlePrevRul = (e, p) => {
-    e.preventDefault();
-    console.log(para)
-    const filteredObjects = para.filter(obj => obj.name === p);
-    let equipmentId = null;
-    if (filteredObjects.length > 0) {
-      equipmentId = filteredObjects[0].equipment_id;
-    }
-    console.log(matchingItems, "matching items")
-    // fetch("/prev_rul", {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify({
-    //     parameter: p,
-    //     equipment_id: equipmentId
-    //   }),
-    // })
-    //   .then((res) => res.json())
-    //   .then((data) => {
-    //     setPrevrul(data);
-    //     setRulOpen(true);
-    //     console.log("RUL DATA",data);
-    //   })
-    //   .catch((error) => {
-    //     console.error("Fetch Error:", error);
-    //     throw error;
-    //   });
-    setSelectedEquipmentId(equipmentId);
-
-    fetch("/get_pf", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      body: JSON.stringify({
-        name: selectedParameterName,
-        equipment_id: equipmentId
-      }),
-    })
-      .then((res) => {
-        return res.json();
-      })
-      .then((data) => {
-        if (data.code && data.results.length == 1) {
-          setP(data.results[0].P)
-          setF(data.results[0].F)
-        } else if (data.results.length == 0) {
-          setSnackBarMessage({
-            severity: "error",
-            message: "Please Fill The Information",
-            showSnackBar: true,
-          });
-        }
-        else {
-          setSnackBarMessage({
-            severity: "error",
-            message: data.message,
-            showSnackBar: true,
-          });
-        }
-
-      })
-
-  };
-
-  useEffect(() => {
-    fetch("/cm_dashboard", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-    })
-      .then((res) => {
-        return res.json();
-      })
-      .then((data) => {
-        const params = data["parameters"];
-        console.log("luck", params);
-        setPara(params);
-      })
-      .catch((error) => {
-        // Handle fetch error
-      });
-  }, [selectedEqName]);
-
-  useEffect(() => {
-    console.log("s");
-    const selectedEqNameArray = Object.values(selectedEqName).map(
-      (equipment) => equipment
-    );
-    console.log(selectedEqNameArray);
-
-    const filteredArray = para.filter((item) =>
-      selectedEqNameArray.includes(item.equipment_id)
-    );
-
-    console.log(filteredArray, "nafkja");
-
-    const filteredNames = filteredArray.map((item) => item.name);
-    setParamOptions(filteredNames);
-  }, [selectedEqName, para]);
-
-  // Snackbar
+export default function () {
+  const [submitted, setSubmitted] = useState(false);
   const [SnackBarMessage, setSnackBarMessage] = useState({
     severity: "error",
     message: "This is awesome",
     showSnackBar: false,
   });
-
-  const onHandleSnackClose = () => {
-    setSnackBarMessage({
-      severity: "error",
-      message: "Please Add Systemss",
-      showSnackBar: false,
-    });
-  };
-
+  const [mps, setMps] = useState([]);
+  const [ssrul, setSSRul] = useState([]);
+  const [dtable, setDtable] = useState([]);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [openNoteDialog, setOpenNoteDialog] = useState(true);
+  const [dontShowAgain, setDontShowAgain] = useState(false);
+  const [sensor, setSensor] = useState({ name: "", P: 0, F: 0 });
+  const [hoveredChip, setHoveredChip] = useState(null); // New state variable
   const classes = useStyles();
+  const allEquipmentData = useSelector(
+    (state) => state.userSelection.componentsData
+  );
+  const currentNomenclature = useSelector(
+    (state) => state.userSelection.currentSelection.nomenclature
+  );
+  const currEquipment = useSelector(
+    (state) => state.userSelection.currentSelection.equipmentName
+  );
+  const Sensors = useSelector(
+    (state) => state.userSelection.currentSelection.Sensor
+  );
+  const Eid = useSelector(
+    (state) => state.userSelection.currentSelection.equipmentCode
+  );
 
+  const lowestSensorValue = Math.min(...Object.values(mps));
 
-  const handleClick = () => {
-    console.log(selectedEquipmentId)
-    fetch("/rul_equipment", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      body: JSON.stringify({
-        equipmentId: selectedEquipmentId
-      }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.code) {
-          setJsonData(data);
-        } else {
-          setSnackBarMessage({
-            severity: "error",
-            message: data.message,
-            showSnackBar: true,
-          });
-        }
-        setShowTable(true); // Moved inside the promise chain
-      })
+  const handleCloseNoteDialog = () => {
+    setOpenNoteDialog(false);
+    if (dontShowAgain) {
+      localStorage.setItem("dontShowDialogAgain", "true");
+    }
   };
 
-  const handleClose = () => {
-    setShowTable(false);
+  const handleCheckboxChange = () => {
+    setDontShowAgain(!dontShowAgain);
   };
 
-  
+  useEffect(() => {
+    const dontShowAgain = localStorage.getItem("dontShowDialogAgain");
+    if (dontShowAgain === "true") {
+      setOpenNoteDialog(false);
+    }
+  }, []);
+
+  const handleChipClick = async (sensor) => {
+    const req = {
+      equipmentId: Eid,
+      parameter: sensor,
+    };
+    try {
+      const response = await fetch("/rul", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(req),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Request failed with status ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      if (data.code) {
+        setSSRul(data.results);
+        setDtable(data.results.Table);
+        setOpenDialog(true);
+        setSensor({
+          name: sensor,
+          P: data.results.P,
+          F: data.results.F,
+        });
+      } else {
+        setSnackBarMessage({
+          severity: "error",
+          message: data.message,
+          showSnackBar: true,
+        });
+      }
+    } catch (error) {
+      console.error("Error in handleClick:", error);
+
+      setSnackBarMessage({
+        severity: "error",
+        message: "An error occurred while processing the request.",
+        showSnackBar: true,
+      });
+    }
+  };
+
+  const handleSubmit = async () => {
+    try {
+      setSubmitted(true);
+      const response = await fetch("/rul_equipment", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({
+          equipmentId: Eid,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Request failed with status ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      if (data.code) {
+        setMps(data.results);
+      } else {
+        setSnackBarMessage({
+          severity: "error",
+          message: data.message,
+          showSnackBar: true,
+        });
+      }
+    } catch (error) {
+      console.error("Error in handleClick:", error);
+
+      setSnackBarMessage({
+        severity: "error",
+        message: "An error occurred while processing the request.",
+        showSnackBar: true,
+      });
+    }
+  };
+
+  const handleInfo = () => {
+    setOpenNoteDialog(true);
+  };
 
   return (
     <>
-      <AccessControl allowedLevels={['L1', 'L5']}>
+      <AccessControl allowedLevels={["L1", "L5"]}>
         <Navigation />
-        <div className={styles.userSelection}>
-          <UserSelection />
-          <div>
-            <Button
-              className={classes.buttons}
-              onClick={onLoadTreeStructure}
-              variant="contained"
-              color="primary"
-            >
-              Submit
-            </Button>
-          </div>
-        </div>
-
-        <div className={styles.content}>
-          <div className={styles.tree}>
-            <div className={styles.treeChild}>
-              <TreeComponent></TreeComponent>
+        <div className={styles.body}>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              marginTop: "4rem",
+            }}
+          >
+            <div style={{ display: "flex", flex: "1" }}>
+              <RULInputs CData={allEquipmentData} />
+              <Button
+                variant="contained"
+                color="primary"
+                className={classes.btn}
+                onClick={handleSubmit}
+              >
+                Submit
+              </Button>
             </div>
-          </div>
-          <div className={styles.rightSection}>
-            <div className={styles.userSelection}>
-              <div className={styles.selectContainer}>
-                <div className={styles.selectC}>
-                  Select Component
-                  <AutoSelect
-                    fields={fData}
-                    onChange={(e, value) => setEquipmentName(value)}
-                    value={selectedEqName}
-                  ></AutoSelect>
-                </div>
-                <div>
-                  Select Parameter
-                  <Autocomplete
-                    className={styles.SelectP}
-                    id="tags-standard"
-                    options={paramOptions}
-                    // getOptionLabel={(option) => option.name}
-                    value={selectedParameterName}
-                    onChange={(e, value) => setParameterName(value)}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        InputProps={{
-                          ...params.InputProps,
-                          disableUnderline: true,
-                        }}
-                        variant="standard"
-                      />
-                    )}
-                  />
-                </div>
-                {/* <div {...getRootProps()}>
-                <input {...getInputProps()} />
-                <Button
-                  className={classes.buttons}
-                  variant="contained"
-                  color="primary"
+
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              {submitted ? (
+                <Card
+                  style={{
+                    width: "1240px",
+                    height: "400px",
+                    boxShadow: "0 3px 10px rgb(0 0 0 / 0.2)",
+                    marginTop: "4rem",
+                  }}
                 >
-                  Upload File
-                </Button>
-              </div> */}
-                <div className={styles.importBtnContainer}>
-                  <Button
-                    className={classes.buttons}
-                    variant="contained"
-                    color="primary"
-                    onClick={(e) => handlePrevRul(e, selectedParameterName)}
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      margin: "4rem",
+                    }}
                   >
-                    Fetch P & F
+                    <Chip
+                      label={currentNomenclature || "Equipment"}
+                      className={classes.chip}
+                      onClick={() =>
+                        handleChipClick(currentNomenclature || "Equipment")
+                      }
+                    />
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      flexWrap: "wrap",
+                      maxHeight: "250px",
+                      overflowY: "auto",
+                    }}
+                  >
+                    {Sensors?.map((sensor, index) => (
+                      <Chip
+                        key={index}
+                        label={sensor}
+                        className={`${classes.chip} ${
+                          mps[sensor] === lowestSensorValue ? classes.blink : ""
+                        }`}
+                        color="secondary"
+                        variant="outlined"
+                        onMouseEnter={() => setHoveredChip(sensor)}
+                        onMouseLeave={() => setHoveredChip(null)}
+                        onClick={() => handleChipClick(sensor)}
+                      />
+                    ))}
+                  </div>
+                </Card>
+              ) : (
+                <Card
+                  style={{
+                    position: "relative", // Set position to relative
+                    width: "1240px",
+                    height: "400px",
+                    boxShadow: "0 3px 10px rgb(0 0 0 / 0.2)",
+                    marginTop: "4rem",
+                  }}
+                >
+                  <Button
+                    style={{ position: "absolute", top: 10, right: 10 }} // Set absolute position
+                    onClick={handleInfo}
+                  >
+                    <InfoIcon />
                   </Button>
-                </div>
-              </div>
+                  <Typography variant="h3" style={{ padding: "8rem" }}>
+                    Fill the above information and click "Submit" to see the
+                    RUL.
+                  </Typography>
+                </Card>
+              )}
             </div>
-            {/* {isRulOpen && ( */}
-            <RULPredictor equipmentId={selectedEquipmentId} parameter={selectedParameterName} P={P} F={F} />
-            {/* )} */}
-            <Button variant="contained" color="primary" onClick={handleClick} style={{marginTop: "15px"}}>
-              Most Prominent Sensor
-            </Button>
-            {showTable && <BlinkingTable data={jsonData} handleClose={handleClose} equipmentName={selectedEqName}/>}
           </div>
         </div>
-
-        {SnackBarMessage.showSnackBar && (
-          <CustomizedSnackbars
-            message={SnackBarMessage}
-            onHandleClose={onHandleSnackClose}
-          />
-        )}
       </AccessControl>
+      <Dialog
+        open={openDialog}
+        onClose={() => setOpenDialog(false)}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle>
+          Remaining Useful Life:- {currEquipment} (
+          {currentNomenclature || "Equipment"})
+        </DialogTitle>
+        <DialogTitle>
+          <Typography variant="h5">Sensor:-{sensor.name}</Typography>
+          <Typography variant="h6">P:-{sensor.P}</Typography>
+          <Typography variant="h6">F:-{sensor.F}</Typography>
+        </DialogTitle>
+        <DialogContent>
+          <TableContainer>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Confidence</TableCell>
+                  <TableCell>Remaining Life</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {dtable &&
+                  Object.entries(dtable).map(
+                    ([confidence, remainingLife], index) => (
+                      <TableRow key={index}>
+                        <TableCell>{confidence}</TableCell>
+                        <TableCell>{remainingLife}</TableCell>
+                      </TableRow>
+                    )
+                  )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </DialogContent>
+      </Dialog>
+      <Dialog open={openNoteDialog} onClose={handleCloseNoteDialog}>
+        <DialogTitle>Important Note</DialogTitle>
+        <DialogContent>
+          <Typography variant="h5">
+            For accurate prediction of RUL, at least 15 datasets are required.
+          </Typography>
+          <Typography variant="h5">
+            For fair predictions, at least 10 datasets are required.
+          </Typography>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={dontShowAgain}
+                onChange={handleCheckboxChange}
+                color="primary"
+              />
+            }
+            label="Don't show me this again"
+          />
+        </DialogContent>
+      </Dialog>
     </>
   );
-};
-
-export default RulLife;
+}
