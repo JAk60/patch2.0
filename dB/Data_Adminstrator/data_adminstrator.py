@@ -1,4 +1,4 @@
-from dB.dB_connection import pointer,cnxn, cursor
+from dB.dB_connection import pointer, cnxn, cursor
 from flask import Flask, jsonify
 import uuid
 
@@ -125,22 +125,23 @@ class Data_Administrator:
             print(f"Error: {e}")
 
     def get_equipments_onship(self, data):
-            try:
-                shipName = data["shipName"]
-                print(shipName)
-                equpQ = '''SELECT component_name, nomenclature, etl 
+        try:
+            shipName = data["shipName"]
+            print(shipName)
+            equpQ = '''SELECT component_name, nomenclature, etl 
                         FROM system_configuration 
                         WHERE ship_name = ?'''
-                cursor.execute(equpQ, (shipName,))
-                result = cursor.fetchall()
-                equipments = [{"component_name": row[0], "nomenclature": row[1], "etl": row[2]} for row in result]
-                return {"code": 1, "equipments": equipments}
+            cursor.execute(equpQ, (shipName,))
+            result = cursor.fetchall()
+            equipments = [{"component_name": row[0],
+                           "nomenclature": row[1], "etl": row[2]} for row in result]
+            return {"code": 1, "equipments": equipments}
 
-            except KeyError:
-                return {"status": "error", "message": "Missing 'shipName' in request data"}
+        except KeyError:
+            return {"status": "error", "message": "Missing 'shipName' in request data"}
 
-            except Exception as e:
-                return {"code":0, "message": f"Error fetching equipments on {shipName}: {str(e)}"}
+        except Exception as e:
+            return {"code": 0, "message": f"Error fetching equipments on {shipName}: {str(e)}"}
 
     def register_equipment(self, data):
         try:
@@ -152,91 +153,140 @@ class Data_Administrator:
                 # Run a query for registerAll being True
                 query = '''
                     SELECT 
-                    EquipmentName as component_name,
-                    M_Equipment.EquipmentCode as CMMS_EquipmentCode,
-                    ShipName as ship_name,
-                    M_ShipCategory.ShipCategoryName as ship_category,
-                    M_ShipClass.Description as ship_class,
-                    CommandName as command,
-                    M_Department.Description as department,
-                    Nomenclature as nomenclature
-                FROM 
-                    T_EquipmentShipDetail WITH(NOLOCK) 
-                    INNER JOIN M_Equipment WITH(NOLOCK) ON T_EquipmentShipDetail.Universal_ID_M_Equipment = M_Equipment.Universal_ID_M_Equipment
-                    INNER JOIN M_Ship WITH(NOLOCK) ON T_EquipmentShipDetail.Universal_ID_M_Ship = M_Ship.Universal_ID_M_Ship
-                    INNER JOIN M_ShipClass WITH(NOLOCK) ON M_Ship.Universal_ID_M_ShipClass = M_ShipClass.Universal_ID_M_ShipClass
-                    INNER JOIN M_ShipCategory WITH(NOLOCK) ON M_Ship.Universal_ID_M_ShipCategory = M_ShipCategory.Universal_ID_M_ShipCategory
-                    INNER JOIN M_Command WITH(NOLOCK)  ON M_Ship.Universal_ID_M_Command = M_Command.Universal_ID_M_Command 
-                    INNER JOIN M_Department WITH(NOLOCK) ON T_EquipmentShipDetail.Universal_ID_M_Department = M_Department.Universal_ID_M_Department
-                WHERE 
-                    AND T_EquipmentShipDetail.Active = 1 
-                    AND RemovalDate IS NULL 
-                    AND M_Ship.Active = 1
-                    AND M_Ship.DecommissionDate IS NULL 
-                    AND M_ShipClass.Active = 1 
-                    AND ShipName= ?;
-                '''
+                        EquipmentName as component_name,
+                        M_Equipment.EquipmentCode as CMMS_EquipmentCode,
+                        ShipName as ship_name,
+                        M_ShipCategory.ShipCategoryName as ship_category,
+                        M_ShipClass.Description as ship_class,
+                        CommandName as command,
+                        M_Department.Description as department,
+                        Nomenclature as nomenclature
+                    FROM 
+                        T_EquipmentShipDetail WITH(NOLOCK) 
+                        INNER JOIN M_Equipment WITH(NOLOCK) ON T_EquipmentShipDetail.Universal_ID_M_Equipment = M_Equipment.Universal_ID_M_Equipment
+                        INNER JOIN M_Ship WITH(NOLOCK) ON T_EquipmentShipDetail.Universal_ID_M_Ship = M_Ship.Universal_ID_M_Ship
+                        INNER JOIN M_ShipClass WITH(NOLOCK) ON M_Ship.Universal_ID_M_ShipClass = M_ShipClass.Universal_ID_M_ShipClass
+                        INNER JOIN M_ShipCategory WITH(NOLOCK) ON M_Ship.Universal_ID_M_ShipCategory = M_ShipCategory.Universal_ID_M_ShipCategory
+                        INNER JOIN M_Command WITH(NOLOCK)  ON M_Ship.Universal_ID_M_Command = M_Command.Universal_ID_M_Command 
+                        INNER JOIN M_Department WITH(NOLOCK) ON T_EquipmentShipDetail.Universal_ID_M_Department = M_Department.Universal_ID_M_Department
+                    WHERE 
+                        T_EquipmentShipDetail.Active = 1 
+                        AND RemovalDate IS NULL 
+                        AND M_Ship.Active = 1
+                        AND M_Ship.DecommissionDate IS NULL 
+                        AND M_ShipClass.Active = 1 
+                        AND ShipName= ?;
+                    '''
                 # Execute the query using the pointer object
                 pointer.execute(query, (ship_name,))
             else:
                 # Run a query for registerAll being False
                 query = '''
                     SELECT 
-                    EquipmentName as component_name,
-                    M_Equipment.EquipmentCode as CMMS_EquipmentCode,
-                    ShipName as ship_name,
-                    M_ShipCategory.ShipCategoryName as ship_category,
-                    M_ShipClass.Description as ship_class,
-                    CommandName as command,
-                    M_Department.Description as department,
-                    Nomenclature as nomenclature
-                FROM 
-                    T_EquipmentShipDetail WITH(NOLOCK) 
-                    INNER JOIN M_Equipment WITH(NOLOCK) ON T_EquipmentShipDetail.Universal_ID_M_Equipment = M_Equipment.Universal_ID_M_Equipment
-                    INNER JOIN M_Ship WITH(NOLOCK) ON T_EquipmentShipDetail.Universal_ID_M_Ship = M_Ship.Universal_ID_M_Ship
-                    INNER JOIN M_ShipClass WITH(NOLOCK) ON M_Ship.Universal_ID_M_ShipClass = M_ShipClass.Universal_ID_M_ShipClass
-                    INNER JOIN M_ShipCategory WITH(NOLOCK) ON M_Ship.Universal_ID_M_ShipCategory = M_ShipCategory.Universal_ID_M_ShipCategory
-                    INNER JOIN M_Command WITH(NOLOCK)  ON M_Ship.Universal_ID_M_Command = M_Command.Universal_ID_M_Command 
-                    INNER JOIN M_Department WITH(NOLOCK) ON T_EquipmentShipDetail.Universal_ID_M_Department = M_Department.Universal_ID_M_Department
-                WHERE 
-                    AND T_EquipmentShipDetail.Active = 1 
-                    AND RemovalDate IS NULL 
-                    AND M_Ship.Active = 1
-                    AND M_Ship.DecommissionDate IS NULL 
-                    AND M_ShipClass.Active = 1 
-                    AND ShipName= ? AND Nomenclature= ?
-                '''
+                        EquipmentName as component_name,
+                        M_Equipment.EquipmentCode as CMMS_EquipmentCode,
+                        ShipName as ship_name,
+                        M_ShipCategory.ShipCategoryName as ship_category,
+                        M_ShipClass.Description as ship_class,
+                        CommandName as command,
+                        M_Department.Description as department,
+                        Nomenclature as nomenclature
+                    FROM 
+                        T_EquipmentShipDetail WITH(NOLOCK) 
+                        INNER JOIN M_Equipment WITH(NOLOCK) ON T_EquipmentShipDetail.Universal_ID_M_Equipment = M_Equipment.Universal_ID_M_Equipment
+                        INNER JOIN M_Ship WITH(NOLOCK) ON T_EquipmentShipDetail.Universal_ID_M_Ship = M_Ship.Universal_ID_M_Ship
+                        INNER JOIN M_ShipClass WITH(NOLOCK) ON M_Ship.Universal_ID_M_ShipClass = M_ShipClass.Universal_ID_M_ShipClass
+                        INNER JOIN M_ShipCategory WITH(NOLOCK) ON M_Ship.Universal_ID_M_ShipCategory = M_ShipCategory.Universal_ID_M_ShipCategory
+                        INNER JOIN M_Command WITH(NOLOCK)  ON M_Ship.Universal_ID_M_Command = M_Command.Universal_ID_M_Command 
+                        INNER JOIN M_Department WITH(NOLOCK) ON T_EquipmentShipDetail.Universal_ID_M_Department = M_Department.Universal_ID_M_Department
+                    WHERE 
+                        T_EquipmentShipDetail.Active = 1 
+                        AND RemovalDate IS NULL 
+                        AND M_Ship.Active = 1
+                        AND M_Ship.DecommissionDate IS NULL 
+                        AND M_ShipClass.Active = 1 
+                        AND ShipName= ? AND Nomenclature= ?;
+                    '''
                 # Execute the query using the pointer object
                 pointer.execute(query, (ship_name, nomenclature))
 
-            # Commit the changes to the database
+            # Fetch the data
             fetched_data = pointer.fetchall()
-            for data_point in fetched_data:
-                    # Extract data from the second query result
-                    component_id, operation_date, average_running = data_point
-                    
-                    # Generate a new UUID for each iteration
-                    generated_id = uuid.uuid4()
+            print(fetched_data)
 
-                    # Third Query: Insert or update data using the merge statements
-                    merge_query = """
-                        MERGE INTO operational_data AS target
-                        USING (VALUES (?, ?, ?, ?)) AS source (id, component_id, operation_date, average_running)
-                        ON target.component_id = source.component_id AND target.operation_date = source.operation_date
-                        WHEN MATCHED THEN
-                            UPDATE SET average_running = ?
-                        WHEN NOT MATCHED THEN
-                            INSERT (id, component_id, operation_date, average_running)
-                            VALUES (?, ?, ?, ?);
+            for data_point in fetched_data:
+                # Extract data from the result
+                component_name, CMMS_EquipmentCode, ship_name, ship_category, ship_class, command, department, nomenclature = data_point
+
+                # Generate new UUIDs for each iteration
+                component_id = uuid.uuid4()
+
+                # Third Query: Insert or update data using the merge statements
+                merge_query = """
+                    MERGE INTO system_configuration AS target
+                    USING (VALUES (?, ?)) AS source (
+                        nomenclature,
+                        ship_name
+                    )
+                    ON target.nomenclature = source.nomenclature AND target.ship_name = source.ship_name
+                    WHEN NOT MATCHED THEN
+                        INSERT (
+                            component_id,
+                            component_name,
+                            CMMS_EquipmentCode,
+                            ship_name,
+                            ship_category,
+                            ship_class,
+                            command,
+                            department,
+                            nomenclature,
+                            etl
+                        )
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0);
                     """
 
-                    cursor.execute(merge_query, (generated_id, component_id, operation_date, average_running,
-                                                average_running, generated_id, component_id, operation_date, average_running))
+                # Execute the merge query using the cursor object
+              # Execute the merge query using the cursor object
+                cursor.execute(merge_query, (
+                    nomenclature,
+                    component_id, component_name, CMMS_EquipmentCode,
+                    ship_name, ship_category, ship_class,
+                    command, department, nomenclature))
+
+            # Commit changes to the database
+            cursor.commit()
+
+            additional_query = """
+            INSERT INTO user_selection (ship_name, ship_category, ship_class, command, department) 
+            SELECT DISTINCT 
+                sc.ship_name COLLATE SQL_Latin1_General_CP1_CI_AS,
+                sc.ship_category COLLATE SQL_Latin1_General_CP1_CI_AS,
+                sc.ship_class COLLATE SQL_Latin1_General_CP1_CI_AS,
+                sc.command COLLATE SQL_Latin1_General_CP1_CI_AS,
+                sc.department COLLATE SQL_Latin1_General_CP1_CI_AS
+            FROM system_configuration sc
+            WHERE NOT EXISTS (
+                SELECT 1
+                FROM user_selection us
+                WHERE 
+                    us.ship_name COLLATE SQL_Latin1_General_CP1_CI_AS = sc.ship_name COLLATE SQL_Latin1_General_CP1_CI_AS AND
+                    us.ship_category COLLATE SQL_Latin1_General_CP1_CI_AS = sc.ship_category COLLATE SQL_Latin1_General_CP1_CI_AS AND
+                    us.ship_class COLLATE SQL_Latin1_General_CP1_CI_AS = sc.ship_class COLLATE SQL_Latin1_General_CP1_CI_AS AND
+                    us.command COLLATE SQL_Latin1_General_CP1_CI_AS = sc.command COLLATE SQL_Latin1_General_CP1_CI_AS AND
+                    us.department COLLATE SQL_Latin1_General_CP1_CI_AS = sc.department COLLATE SQL_Latin1_General_CP1_CI_AS
+            );
+            """
+
+            # Execute the additional query using the cursor object
+            cursor.execute(additional_query)
+
             # Commit changes to the database
             cursor.commit()
 
             # Return a message if the process is completed
             return "ETL process completed successfully"
+
         except Exception as e:
-            cnxn.rollback()  # Rollback changes in case of an error
+            # Rollback changes in case of an error
+            cnxn.rollback()
             return jsonify({'status': 'error', 'message': f'Error executing the query: {str(e)}'})

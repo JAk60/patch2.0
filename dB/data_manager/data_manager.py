@@ -393,8 +393,8 @@ class Data_Manager:
                     (i_endDate - i_startDate).days / 2
                 )
 
-                r_startDate = datetime.strptime(str(remove_start_date), "%d/%m/%Y")
-                r_endDate = datetime.strptime(str(remove_end_date), "%d/%m/%Y")
+                r_startDate = str(datetime.strptime(str(remove_start_date), "%d/%m/%Y"))
+                r_endDate = str(datetime.strptime(str(remove_end_date), "%d/%m/%Y"))
                 meanDate_end_date = r_startDate + timedelta(
                     (r_endDate - r_startDate).days / 2
                 )
@@ -614,8 +614,10 @@ class Data_Manager:
             for d in data:
                 id = d["oid"]
                 component_id = d["id"]
-                operation_date = d["Date"]
-                date_ = datetime.strptime(str(operation_date), "%Y-%m-%d")
+                operation_date = str(d["Date"])
+                print(operation_date)
+                date_ = datetime.strptime(str(operation_date), "%B/%Y")
+
                 average_running = d["AverageRunning"]
                 merge_opdata = """
                     MERGE INTO operational_data AS target
@@ -646,7 +648,7 @@ class Data_Manager:
                 id = d["id"]
                 component_id = d["component_id"]
                 event_type = d["EventType"]
-                date_ = d["Date"]
+                date_ = str(d["Date"])
                 date_ = datetime.strptime(str(date_), "%d/%m/%Y")
                 mType = d["MaintainanceType"]
                 replaceType = d["ReplaceType"]
@@ -688,7 +690,7 @@ class Data_Manager:
          and (operation_date between ? and ?)"""
 
         component_id = d["component_id"]
-        date_ = d["Date"]
+        date_ = str(d["Date"])
         date_ = datetime.strptime(str(date_), "%d/%m/%Y")
 
         cursor.execute(parent_system_id, component_id, component_id, component_id)
@@ -826,7 +828,7 @@ class Data_Manager:
                         overhaulId = d["overhaulId"]
                     except KeyError:
                         overhaulId = None
-                    date = d["date"]
+                    date = str(d["date"])
                     date = datetime.strptime(date, "%d/%m/%Y")
                     maintenanceType = d["maintenanceType"]
                     cmmsRunAge = d["totalRunAge"]

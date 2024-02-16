@@ -10,7 +10,8 @@ from classes.overhaulsAlgos import OverhaulsAlgos
 
 class Reliability:
     def __init__(self):
-        self.success_return = {"message": "Data Saved Successfully.", "code": 1}
+        self.success_return = {
+            "message": "Data Saved Successfully.", "code": 1}
         self.error_return = {
             "message": "Some Error Occured, Please try agian.",
             "code": 0,
@@ -92,7 +93,8 @@ class Reliability:
         return sys_lmus, sys_data
 
     def system_rel(self, mission_name, system, platform, total_dur):
-        sys_lmus, sys_data = self.lmu_rel(mission_name, system, platform, total_dur)
+        sys_lmus, sys_data = self.lmu_rel(
+            mission_name, system, platform, total_dur)
         final_data = [] + sys_lmus[0][system + "_" + platform]
         # all_component_ids = len(sys_data)
 
@@ -121,7 +123,8 @@ class Reliability:
                     )
                     # check wheter final data has that element or not
                     ele_exist = list(
-                        filter(lambda e: e[1]["id"] == key, enumerate(final_data))
+                        filter(lambda e: e[1]["id"] ==
+                               key, enumerate(final_data))
                     )
                     if len(ele_exist) > 0:
                         ele_index = ele_exist[0][0]
@@ -178,7 +181,8 @@ class Reliability:
 
     def mission_wise_rel(self, missions, eqData, temp_missions):
         final_data = []
-        temp_mission_names = list(map(lambda x: x["missionName"], temp_missions))
+        temp_mission_names = list(
+            map(lambda x: x["missionName"], temp_missions))
         for m in missions:
             data = {}
             run_simulation = False
@@ -201,7 +205,8 @@ class Reliability:
                 if min_total_durr != max_total_durr:
                     run_simulation = True
             else:
-                t_m = list(filter(lambda x: x["missionName"] == m, temp_missions))[0]
+                t_m = list(
+                    filter(lambda x: x["missionName"] == m, temp_missions))[0]
                 stages = t_m["stages"]
                 target_rel = float(t_m["tar_rel"])
                 for stage in range(0, len(stages)):
@@ -227,7 +232,8 @@ class Reliability:
                 if run_simulation:
                     count = 0
                     for index in range(0, 100):
-                        random_durr = np.random.uniform(min_total_durr, max_total_durr)
+                        random_durr = np.random.uniform(
+                            min_total_durr, max_total_durr)
                         rel = self.system_rel(m, system, platform, random_durr)
                         if rel["rel"] * 100 >= target_rel:
                             count = count + 1
@@ -253,7 +259,8 @@ class Reliability:
             return None, "No data found for the first query."
 
         last_overhaul_date_str = result1[0]
-        last_overhaul_date = datetime.strptime(last_overhaul_date_str, "%Y-%m-%d")
+        last_overhaul_date = datetime.strptime(
+            last_overhaul_date_str, "%Y-%m-%d")
         formatted_date = f"{last_overhaul_date.year}-{last_overhaul_date.month:02d}-01"
 
         query2 = "SELECT SUM(average_running) AS sum_of_average_running FROM operational_data WHERE operation_date >= ? and component_id=?"
@@ -266,15 +273,17 @@ class Reliability:
         sum_of_average_running = result2[0]
         return sum_of_average_running, None
 
-
     def estimate_alpha_beta(self, component_id):
         '''CODE TO RE-ESTIMATE ALPHA BETA'''
+        subData = []
         try:
             instance = OverhaulsAlgos()
             sub_query = "select * from data_manager_overhauls_info where component_id = ?"
             cursor.execute(sub_query, (component_id,))
             data = cursor.fetchall()
-            subData = []
+            if not data:
+                raise ValueError(
+                    f"No Defect data available for Equipment: {self.__component_name}")
             for item in data:
                 formatted_item = {
                     "id": item[0],
@@ -284,6 +293,8 @@ class Reliability:
                     "component_id": item[1],
                 }
                 subData.append(formatted_item)
+            if not subData:
+                return {"message": f"No Defect data available for Equipment: {self.__component_name}", "code": 0}
             run_age_value = list(map(lambda item: item["runAge"], subData))[0]
             instance.insert_overhauls_data(
                 equipment_id=component_id,
@@ -312,6 +323,8 @@ class Reliability:
             instance.alpha_beta_calculation(mainData, subData, component_id)
         except Exception as e:
             print(e)
+            if not subData:
+                raise
             pass
 
     def get_default_current_age(self):
@@ -323,9 +336,6 @@ class Reliability:
         cursor.execute(query, self.__component_id)
         result = cursor.fetchone()
         return result[0]
-
-        
-
 
     def calculate_rel_by_power_law(self, alpha, beta, duration):
         query = """
@@ -429,12 +439,15 @@ class Reliability:
                                     WHERE ship_name = ? COLLATE SQL_Latin1_General_CP1_CS_AS
                                     AND nomenclature = ? COLLATE SQL_Latin1_General_CP1_CS_AS;
                             """
-                        cursor.execute(query, self.__ship_name, self.__component_name)
+                        cursor.execute(query, self.__ship_name,
+                                       self.__component_name)
                         result = cursor.fetchone()
                         self.__component_id = result[0]
-                        self.estimate_alpha_beta(component_id=self.__component_id)
+                        self.estimate_alpha_beta(
+                            component_id=self.__component_id)
                         single_rel_duration = int(tm)
-                        rel = self.system_rel(m, system, platform, single_rel_duration)
+                        rel = self.system_rel(
+                            m, system, platform, single_rel_duration)
                         estimation_ach = 1
                         if rel["rel"] > target_rel:
                             estimation_ach = 1

@@ -246,7 +246,8 @@ const ReliabilityDashboard = () => {
     })
       .then((res) => res.json())
       .then((res) => {
-        debugger;
+        console.log("res",res)
+        // debugger;
         if (res.code) {
           const d = res.results
           const reliabilityDataArray = [];

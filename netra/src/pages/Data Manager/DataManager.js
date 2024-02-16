@@ -186,6 +186,7 @@ function DataManager(props) {
 
 
   const handleSaveSupport = (data) => {
+    console.log(data)
     fetch("/save_historical_data", {
       method: "POST",
       body: JSON.stringify({

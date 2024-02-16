@@ -49,7 +49,7 @@ class OverhaulsAlgos:
                 cmms_running_age = float(cmms_running_age)
                 if date is None:
                     if prev_date:
-                        date = datetime.strptime(prev_date, "%Y-%m-%d") + timedelta(
+                        date = datetime.strptime(str(prev_date), "%Y-%m-%d") + timedelta(
                             days=days
                         )
                         date = date.strftime("%Y-%m-%d")

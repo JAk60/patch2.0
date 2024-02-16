@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from "react";
 import {
   Button,
   Table,
@@ -6,9 +7,9 @@ import {
   TableHead,
   TableRow,
   TextField,
+  CircularProgress, // Import CircularProgress for the loader
 } from "@material-ui/core";
 import { Autocomplete } from "@material-ui/lab";
-import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { userActions } from "../../store/ApplicationVariable";
 import ThumbUpIcon from "@material-ui/icons/ThumbUp";
@@ -35,6 +36,7 @@ export default function EtlEquipment({ classes }) {
     message: "This is awesome",
     showSnackBar: false,
   });
+  const [loading, setLoading] = useState(false); // New state for the loader
 
   const fetchData = async () => {
     // Implement your fetch logic here, replace the URL with your actual API endpoint
@@ -109,6 +111,49 @@ export default function EtlEquipment({ classes }) {
     fetchData();
   };
 
+  const handleUpdate = async () => {
+    try {
+      setLoading(true); // Set loading to true before making the request
+
+      const response = await fetch("/srcetl", {  //srcetl
+        method: "GET",
+        // body: JSON.stringify({
+        //   shipName: currentSelection["shipName"],
+        // }),
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      });
+
+      const data = await response.json();
+      console.log(data)
+
+      if (data.code === 1) {
+        setSnackBarMessage({
+          severity: "success",
+          message: "Update successful",
+          showSnackBar: true,
+        });
+      } else {
+        setSnackBarMessage({
+          severity: "error",
+          message: data.message,
+          showSnackBar: true,
+        });
+      }
+    } catch (error) {
+      console.error("Error updating data:", error);
+      setSnackBarMessage({
+        severity: "error",
+        message: "Error updating data",
+        showSnackBar: true,
+      });
+    } finally {
+      setLoading(false); // Set loading to false after the request completes
+    }
+  };
+
   const handleSearchChange = (event) => {
     setSearchKeyword(event.target.value);
   };
@@ -151,6 +196,16 @@ export default function EtlEquipment({ classes }) {
         >
           Fetch Equipment
         </Button>
+        <Button
+          className={classes.deleteButton}
+          variant="contained"
+          color="secondary"
+          onClick={handleUpdate}
+          disabled={loading} // Disable the button when loading
+        >
+        {loading ? <CircularProgress size={24} style={{ marginLeft: "10px" }} />: "Update now"}
+        </Button>
+        {/* Show the loader while loading */}
       </div>
       <TextField
         label="Search"
@@ -163,7 +218,6 @@ export default function EtlEquipment({ classes }) {
         <Table>
           <TableHead>
             <TableRow>
-              {/* Add your table headers here */}
               <TableCell>Equipment Name</TableCell>
               <TableCell>Nomenclature</TableCell>
               <TableCell>Transfer Status</TableCell>
@@ -173,22 +227,21 @@ export default function EtlEquipment({ classes }) {
           <TableBody>
             {filteredTableData.map((row) => (
               <TableRow key={row.component_name}>
-                {/* Add your table cells here */}
                 <TableCell>{row.component_name}</TableCell>
                 <TableCell>{row.nomenclature}</TableCell>
                 <TableCell>
                   {row.etl === true ? (
                     <CheckIcon style={{ color: "green" }} />
                   ) : (
-                    row.etl === false  && <ClearIcon style={{ color: "red" }} />
+                    row.etl === false && <ClearIcon style={{ color: "red" }} />
                   )}
                 </TableCell>
-                <TableCell style={{display: "flex"}}>
+                <TableCell style={{ display: "flex" }}>
                   <Button
                     variant="contained"
                     color="primary"
-                    onClick={() => handleEtlAction(row,true)}
-                    style={{marginRight: "10px"}}
+                    onClick={() => handleEtlAction(row, true)}
+                    style={{ marginRight: "10px" }}
                     disabled={row.etl}
                   >
                     Enable Transfer
@@ -196,7 +249,7 @@ export default function EtlEquipment({ classes }) {
                   <Button
                     variant="contained"
                     color="primary"
-                    onClick={() => handleEtlAction(row,false)}
+                    onClick={() => handleEtlAction(row, false)}
                     disabled={!row.etl}
                   >
                     Disable Transfer

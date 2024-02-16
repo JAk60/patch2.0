@@ -31,17 +31,17 @@ class ETL():
     def operational_data_etl(self):
         try:
             # First Query: Fetch all equipments where etl is 1
-            select_query = '''SELECT * FROM system_configuration WHERE etl=1'''
+            select_query = '''SELECT component_id,ship_name, nomenclature FROM system_configuration WHERE etl=1'''
             cursor.execute(select_query)
             equipments_data = cursor.fetchall()
 
             for equipment_data in equipments_data:
                 # Extract data from the first query result
-                ship_name, nomenclature = equipment_data
+                component_id,ship_name, nomenclature = equipment_data
                 # Second Query: Fetch data from pointer object using the data points from the first query
                 fetch_query = '''
                     SELECT DISTINCT
-                        @component_id as component_id,
+                        ? as component_id,
                         CONCAT(
                             T_SRARMthlyHeader.SrarYear,
                             '-',
@@ -65,9 +65,11 @@ class ETL():
                         AND M_Ship.ShipName = ?
                         AND T_EquipmentShipDetail.Nomenclature = ?;
                         '''
-                pointer.execute(fetch_query, (ship_name, nomenclature))
+                pointer.execute(fetch_query, (component_id, ship_name, nomenclature))
                 fetched_data = pointer.fetchall()
-
+                print(fetched_data)
+                # fetched_data_dict_list=[{"component_id":row.component_id,"date":row.date}for row in fetched_data]
+                # return fetched_data_dict_list
                 for data_point in fetched_data:
                     # Extract data from the second query result
                     component_id, operation_date, average_running = data_point
@@ -102,17 +104,17 @@ class ETL():
     def overhaul_data_etl(self):
         try:
             # First Query: Fetch all equipments where etl is 1
-            select_query = '''SELECT * FROM system_configuration WHERE etl=1'''
+            select_query = '''SELECT component_id,ship_name, nomenclature FROM system_configuration WHERE etl=1'''
             cursor.execute(select_query)
             equipments_data = cursor.fetchall()
 
             for equipment_data in equipments_data:
                 # Extract data from the first query result
-                ship_name, nomenclature = equipment_data
+                component_id,ship_name, nomenclature = equipment_data
                 # Second Query: Fetch data from pointer object using the data points from the first query
                 fetch_query = '''
                     SELECT
-                        @component_id AS component_id,
+                        ? AS component_id,
                         CONVERT(VARCHAR, T_Dart.DefectDate, 23) AS date
                     FROM
                         t_DART WITH (NOLOCK)
@@ -126,14 +128,17 @@ class ETL():
                         AND T_Dart.Is_Defect = 1
                         AND T_Dart.RoutineDefect = 2;
                         '''
-                pointer.execute(fetch_query, (nomenclature,ship_name))
+                pointer.execute(fetch_query, (component_id,nomenclature,ship_name))
                 fetched_data = pointer.fetchall()
+                print(fetched_data)
+                # fetched_data_dict_list=[{"component_id":row.component_id,"date":row.date}for row in fetched_data]
+                # return fetched_data_dict_list
                 overhaul_id=uuid.uuid4()
                 maintenance_type='Corrective Maintainance'
                 for data_point in fetched_data:
                     # Extract data from the second query result
                     component_id, date = data_point
-                    
+                    # print(f"Committing data: ID={generated_id}, Component ID={component_id}, Overhaul ID={overhaul_id}, Date={date}")
                     # Generate a new UUID for each iteration
                     generated_id = uuid.uuid4()
 
@@ -141,12 +146,12 @@ class ETL():
                     # Third Query: Insert or update data using the merge statements
                     merge_query = """
                     MERGE INTO data_manager_overhaul_maint_data AS target
-                    USING (VALUES (?, ?, ?, ?, ?,NULL, NULL, ?)) AS source (id, component_id, overhaul_id, date, maintenance_type, running_age, associated_sub_system, cmms_running_age)
+                    USING (VALUES (?, ?, ?, ?, ?,NULL, ?, NULL)) AS source (id, component_id, overhaul_id, date, maintenance_type, running_age, associated_sub_system, cmms_running_age)
                     ON target.component_id = source.component_id
                     AND target.date = source.date
                     WHEN NOT MATCHED THEN
                     INSERT (id, component_id, overhaul_id, date, maintenance_type, running_age, associated_sub_system, cmms_running_age)
-                    VALUES (?, ?, ?, ?, ?,NULL, NULL, ?);
+                    VALUES (?, ?, ?, ?, ?,NULL, ?, NULL);
                     """
 
                     cursor.execute(merge_query, (generated_id, component_id, overhaul_id,date,maintenance_type,

@@ -38,9 +38,6 @@ const CustomTooltipContent = ({ active, payload, label, family, familyE }) => {
 };
 
 
-
-
-
 const ReliabilityChart = ({ data ,family}) => {
   console.log(family, "family");
   let xKey = "name";

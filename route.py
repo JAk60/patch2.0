@@ -70,7 +70,7 @@ def hit_srcetl_endpoint():
     print(f"Response from /srcetl endpoint: {response.text}")
 
 # Schedule the task to run every 5 seconds
-@scheduler.task('interval', id='hit_srcetl', seconds=5, misfire_grace_time=10)
+@scheduler.task('interval', id='hit_srcetl', days=5, misfire_grace_time=10)
 def scheduled_task():
     hit_srcetl_endpoint()
 
@@ -756,9 +756,9 @@ def card_counts():
 @app.route('/srcetl', methods=['GET'])
 def srcetl():
     inst = ETL()
-    inst.operational_data_etl()
-    inst.overhaul_data_etl()
-    return jsonify({'message': 'Data Transfer From CMMS Successful'})
+    value=inst.operational_data_etl()
+    val=inst.overhaul_data_etl()
+    return jsonify({"1": value,"2":val})
 
 @app.route('/set_equip_etl', methods=['POST'])
 def set_equip_etl():
@@ -820,5 +820,5 @@ def oem_data():
 if __name__ == "__main__":
     app.secret_key = os.urandom(32)
     app.wsgi_app = middleware.TaskMiddleWare(app.wsgi_app, APP_ROOT)
-    # scheduler.start()
+    scheduler.start()
     app.run(debug=True)
