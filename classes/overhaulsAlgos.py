@@ -19,18 +19,20 @@ class OverhaulsAlgos:
         return days
 
     def insert_overhauls_data(self, equipment_id, run_age_component):
-        try:
-            new_data = []
-            clk_reset = 0
-            index = 0
-            empty_age_query = "UPDATE data_manager_overhaul_maint_data SET running_age=NULL, cmms_running_age=NULL"
-            cursor.execute(empty_age_query)
-            cnxn.commit()
+        new_data = []
+        clk_reset = 0
+        index = 0
+        empty_age_query = "UPDATE data_manager_overhaul_maint_data SET running_age=NULL, cmms_running_age=NULL"
+        cursor.execute(empty_age_query)
+        cnxn.commit()
 
-            query = "SELECT * FROM data_manager_overhaul_maint_data where component_id = ? AND running_age is NULL ORDER BY date"
-            cursor.execute(query, equipment_id)
-            data = cursor.fetchall()
-            data = self.historic_data_interpolation(data=data, component_id=equipment_id)
+        query = "SELECT * FROM data_manager_overhaul_maint_data where component_id = ? AND running_age is NULL ORDER BY date"
+        cursor.execute(query, equipment_id)
+        odata = cursor.fetchall()
+        if not odata:
+            return False
+        try:
+            data = self.historic_data_interpolation(data=odata, component_id=equipment_id)
             days = self.days_addition_logic(equipment_id)
             prev_date = None
             multiplication_factor = 1

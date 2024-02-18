@@ -283,7 +283,7 @@ class Reliability:
             data = cursor.fetchall()
             if not data:
                 raise ValueError(
-                    f"No Defect data available for Equipment: {self.__component_name}")
+                    f"Time between two overhaul is not defined forgit : {self.__component_name}")
             for item in data:
                 formatted_item = {
                     "id": item[0],
@@ -294,13 +294,15 @@ class Reliability:
                 }
                 subData.append(formatted_item)
             if not subData:
-                return {"message": f"No Defect data available for Equipment: {self.__component_name}", "code": 0}
+                return {"message": f"Time between two overhaul is not defined for: {self.__component_name}", "code": 0}
             run_age_value = list(map(lambda item: item["runAge"], subData))[0]
-            instance.insert_overhauls_data(
+            success = instance.insert_overhauls_data(
                 equipment_id=component_id,
                 run_age_component=float(run_age_value),
             )
-
+            if success is False:
+                raise ValueError(f"corrective maintenance dates are missing for: {self.__component_name}")
+            
             main_query = """SELECT * FROM data_manager_overhaul_maint_data 
                         WHERE component_id = ? ORDER BY cmms_running_age
                 """
@@ -323,7 +325,7 @@ class Reliability:
             instance.alpha_beta_calculation(mainData, subData, component_id)
         except Exception as e:
             print(e)
-            if not subData:
+            if not subData or success is False:
                 raise
             pass
 
