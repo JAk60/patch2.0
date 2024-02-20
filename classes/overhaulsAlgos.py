@@ -2,6 +2,7 @@ from dB.dB_connection import cursor, cnxn
 from datetime import datetime, timedelta
 import uuid
 import math
+from decimal import Decimal, getcontext
 
 
 class OverhaulsAlgos:
@@ -274,18 +275,25 @@ class OverhaulsAlgos:
 
     def alpha_beta_calculation(self, mainData, subData, id):
         failure_times = self.equipment_failure_times(mainData)
-        N = [len(subarray) for subarray in failure_times]
         T = self. extract_running_ages(sub_data=subData, failure_times=failure_times)
+        for sublist in failure_times:
+            # Check if the sublist matches T
+            if sublist == T:
+                # If matched, remove the sublist from failure_times
+                failure_times.pop(failure_times.index(sublist))
+        N = [len(subarray) for subarray in failure_times]
         print(f"FALIURE TIMES: {failure_times}")
         print(f"N: {N}")
         print(f"T: {T}")
         def para(N, x, T, k):
-            beta = (sum(n for n in N)) / (sum(sum(math.log(t /
-                                                        x[T.index(t)][i]) for i in range(N[T.index(t)])) for t in T))
-            alpha = (sum(n for n in N)) / (sum(t**beta for t in T))
+            # Set precision for Decimal calculations
+            getcontext().prec = 28  # Adjust precision as needed
+            # Calculate beta
+            beta = Decimal(sum(N)) / Decimal(sum(sum(Decimal(math.log(Decimal(t) / Decimal(x[T.index(t)][i]))) for i in range(N[T.index(t)])) for t in T))
+            # Calculate alpha
+            alpha = Decimal(sum(N)) / Decimal(sum(Decimal(t) ** beta for t in T))
             return alpha, beta
-        alpha, beta = para(N, failure_times, T, k=len(failure_times))
-        
+        alpha, beta = para(N, failure_times, T, k=len(failure_times))    
         a_b_id = uuid.uuid4()
         merge_query = '''
             MERGE INTO alpha_beta AS target
