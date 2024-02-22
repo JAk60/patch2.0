@@ -19,6 +19,7 @@ class Reliability:
         self.__ship_name = None
         self.__component_name = None
         self.__component_id = None
+        self.__rel_F =None
 
     def lmu_rel(self, mission_name, system, platform, total_dur):
         sys_lmus = []
@@ -97,6 +98,9 @@ class Reliability:
             mission_name, system, platform, total_dur)
         final_data = [] + sys_lmus[0][system + "_" + platform]
         # all_component_ids = len(sys_data)
+        print(final_data)
+        self.__rel_F=final_data[0]['rel']
+        print(self.__rel_F)
 
         def inside_func(lmus, system, platform, is_lmu=False):
             current_batch = []
@@ -300,8 +304,8 @@ class Reliability:
                 equipment_id=component_id,
                 run_age_component=float(run_age_value),
             )
-            if success is False:
-                raise ValueError(f"corrective maintenance dates are missing for: {self.__component_name}")
+            # if success is False:
+            #     raise ValueError(f"corrective maintenance dates are missing for: {self.__component_name}")
             
             main_query = """SELECT * FROM data_manager_overhaul_maint_data 
                         WHERE component_id = ? ORDER BY cmms_running_age
@@ -450,6 +454,8 @@ class Reliability:
                         single_rel_duration = int(tm)
                         rel = self.system_rel(
                             m, system, platform, single_rel_duration)
+                        if rel['rel'] == 1:
+                            rel['rel'] = self.__rel_F
                         estimation_ach = 1
                         if rel["rel"] > target_rel:
                             estimation_ach = 1

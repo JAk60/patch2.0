@@ -68,11 +68,11 @@ function UserSelection(props) {
   }, []); // Empty dependency array to run only on mount
 
   const handleShipNameChange = (e) => {
-    const shipName = e.currentTarget.innerText;
+    const shipName = e.target.value;
     const filteredData = userSelectionData.filter(
       (x) => x.shipName === shipName
     );
-
+    console.log(filteredData);
     const uniqueCategories = [
       ...new Set(filteredData.map((x) => x.shipCategory)),
     ];
