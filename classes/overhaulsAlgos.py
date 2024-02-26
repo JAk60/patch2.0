@@ -292,13 +292,24 @@ class OverhaulsAlgos:
         print(f"FALIURE TIMES: {failure_times}")
         print(f"N: {N}")
         print(f"T: {T}")
+        if not failure_times:
+            query = "select alpha,beta from alpha_beta where component_id=?"
+            cursor.execute(query, id)
+            AB = cursor.fetchall() ##alpha and beta
+            print("--------------------------->>>>>>>",AB)
+            for i in AB:
+                alpha,beta=i
+            return alpha,beta
         def para(N, x, T, k):
-            # Set precision for Decimal calculations
-            getcontext().prec = 28  # Adjust precision as needed
-            # Calculate beta
-            beta = Decimal(sum(N)) / Decimal(sum(sum(Decimal(math.log(Decimal(t) / Decimal(x[T.index(t)][i]))) for i in range(N[T.index(t)])) for t in T))
-            # Calculate alpha
-            alpha = Decimal(sum(N)) / Decimal(sum(Decimal(t) ** beta for t in T))
+            getcontext().prec = 28
+            # Calculate beta using Decimal
+            beta = (sum(Decimal(n) for n in N)) /sum(Decimal(math.log(t / value)) for sublist in x for value in sublist for t in T)
+
+            # Calculate denomA using Decimal
+            denomA = Decimal(k) * (sum(Decimal(t) ** beta for t in T))
+
+            # Calculate alpha using Decimal
+            alpha = (sum(Decimal(n) for n in N)) / denomA
             return alpha, beta
         alpha, beta = para(N, failure_times, T, k=len(failure_times))    
         a_b_id = uuid.uuid4()
