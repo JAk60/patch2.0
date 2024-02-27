@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 import uuid
 import math
 from decimal import Decimal, getcontext
-# from dB.ETL.sourceData import ETL
+from dB.Data_Adminstrator.data_adminstrator import Data_Administrator
 
 
 class OverhaulsAlgos:
@@ -21,12 +21,12 @@ class OverhaulsAlgos:
         return days
 
     def insert_overhauls_data(self, equipment_id, run_age_component):
-        # query = "SELECT ship_name,nomenclature FROM system_configuration where component_id = ?"
-        # cursor.execute(query, equipment_id)
-        # odata = cursor.fetchall()
-        # ship_name, nomenclature = odata[0]
-        # inst= ETL()
-        # inst.overhaul_data_reset(component_id=equipment_id, nomenclature=nomenclature, ship_name=ship_name)
+        query = "SELECT ship_name,nomenclature FROM system_configuration where component_id = ?"
+        cursor.execute(query, equipment_id)
+        odata = cursor.fetchall()
+        ship_name, nomenclature = odata[0]
+        inst= Data_Administrator()
+        inst.overhaul_data_reset(component_id=equipment_id, nomenclature=nomenclature, ship_name=ship_name)
         new_data = []
         clk_reset = 0
         index = 0
