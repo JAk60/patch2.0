@@ -300,18 +300,16 @@ class OverhaulsAlgos:
             for i in AB:
                 alpha,beta=i
             return alpha,beta
-        def para(N, x, T, k):
-            getcontext().prec = 28
-            # Calculate beta using Decimal
-            beta = (sum(Decimal(n) for n in N)) /sum(Decimal(math.log(t / value)) for sublist in x for value in sublist for t in T)
+        def para(system_failures_list):
+            getcontext().prec = 28  # Set precision to desired value
+            T = [Decimal(max(failures)) * Decimal('1.05') for failures in system_failures_list]
+            sum_ln_T_Xiq = [sum(Decimal(math.log(ti / Decimal(x))) for x in failures) for ti, failures in zip(T, system_failures_list)]
 
-            # Calculate denomA using Decimal
-            denomA = Decimal(k) * (sum(Decimal(t) ** beta for t in T))
+            BETA = sum(Decimal(len(failures)) for failures in system_failures_list) / sum(sum_ln_T_Xiq)
+            ALPHA = sum(Decimal(len(failures)) for failures in system_failures_list) / sum(ti ** BETA for ti in T)
 
-            # Calculate alpha using Decimal
-            alpha = (sum(Decimal(n) for n in N)) / denomA
-            return alpha, beta
-        alpha, beta = para(N, failure_times, T, k=len(failure_times))    
+            return ALPHA, BETA
+        alpha, beta = para(failure_times)    
         a_b_id = uuid.uuid4()
         merge_query = '''
             MERGE INTO alpha_beta AS target
