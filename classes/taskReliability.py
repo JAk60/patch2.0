@@ -291,7 +291,7 @@ class TaskReliability:
             return None, "No data found for the first query."
 
         last_overhaul_date_str = result1[0]
-        last_overhaul_date = datetime.strptime(last_overhaul_date_str, '%Y-%m-%d')
+        last_overhaul_date = datetime.strptime(str(last_overhaul_date_str), '%Y-%m-%d')
         formatted_date = f"{last_overhaul_date.year}-{last_overhaul_date.month:02d}-01"
 
         query2 = "SELECT SUM(average_running) AS sum_of_average_running FROM operational_data WHERE operation_date >= ? and component_id=?"
@@ -676,7 +676,7 @@ class TaskReliability:
         if result1 is None or result1[0] is None:
             return 0
         last_overhaul_date_str = result1[0]
-        last_overhaul_date = datetime.strptime(last_overhaul_date_str, '%Y-%m-%d')
+        last_overhaul_date = datetime.strptime(str(last_overhaul_date_str), '%Y-%m-%d')
         formatted_date = f"{last_overhaul_date.year}-{last_overhaul_date.month:02d}-01"
 
         query2 = "SELECT SUM(average_running) AS sum_of_average_running FROM operational_data WHERE operation_date >= ? and component_id=?"
@@ -725,6 +725,7 @@ class TaskReliability:
                     "type": item.get("type")
                 }
                 objects_array.append(obj)
+                # print("objects_array",objects_array)
                 data = []
                 unique_combinations = set()
 
@@ -766,7 +767,7 @@ class TaskReliability:
 
                 # Create a DataFrame from the collected data
                 df = pd.DataFrame(data)
-
+                print("df",df)
                 # Print the DataFrame
             data_list_dict = df.to_dict()
             data_list = []
@@ -787,12 +788,13 @@ class TaskReliability:
                         equipment_id = item['equipementId']
                         equipment_ids[label] = self.fetch_alpha_beta(equipment_id)
                         running_ages[label] = self.get_curr_age(equipment_id)
-
+            
             response_data = {
                 "data": data_list,
                 "eqipments": equipment_ids,
                 "running_ages": running_ages
             }
+            print("response_data",response_data)
 
             label_groups = list(set(entry['Label_Group'] for entry in response_data['data']))
 
@@ -883,28 +885,13 @@ class TaskReliability:
                     phase_name = phase_array[j]
                     if (groups[i][j][5] == 0 ):
                         pass
-                        # print("for phase", j + 1, " and group", i + 1,
-                        #       "no equipment required (0 out of N case)")
                     else:
-                        # print("DURATION", groups[i][j][4])
                         phase_id = phases[idx]["id"]
                         group_equi_rel, max_rel_equip, group_equip, Rel, max_rel_equip_index = taskrelcode.group_rel(groups[i][j][1],groups[i][j][2], groups[i][j][3], groups[i][j][4],phase_duration[idx], groups[i][j][5],groups[i][j][6])
-                        # print ("for phase", j, " and group", i,"Reliability of all equipments is", group_equi_rel, "Reliability of the preferred equipments are",
-                        #         max_rel_equip, "preferred equipments are", group_equip,"Group Reliability is", Rel)
-                        # final_results.append(f"For {phase_name} and group {i+1}, "  # Use phase_name instead of phase number
-                        #                     f"preferred equipments are {group_equip}")
                         if phase_id not in results:
-                            results[phase_id] = group_equip
+                            results[phase_id] = list(set(group_equip))
                         else:
-                            for e in group_equip:
-                                results[phase_id].append(e)
-                        # print(f"For {phase_name} and group {i+1}, "  # Use phase_name instead of phase number
-                        #                     f"preferred equipments are {group_equip} ")
-                        # print ("for phase", phase_name,"  and group", i+1,
-                        #         "preferred equipments are", group_equip,"Group Reliability is", Rel)
-                        
-                        # results.append(f"For {phase_name} and group {i+1}, "  # Use phase_name instead of phase number
-                        #                     f"preferred equipments are {group_equip} DURATION {phase_duration[idx]}")
+                            results[phase_id].extend(set(group_equip))
                         rel = rel * Rel
                         try:
                             for k in max_rel_equip_index:
@@ -915,39 +902,12 @@ class TaskReliability:
             print(results)
             print("*"*100)
 
-            # for i in range(len(groups)):
-            #     for j in phase_seq:
-            #         # print("j value",j+1)
-            #         phase_name = phase_array[j]
-            #         # print("phase_name", phase_name)  # Get the phase name from phaseInfo dictionary
-            #         if(groups[i][j][5] == 0):
-            #             pass
-            #         else:
-            #             group_equi_rel, max_rel_equip, group_equip, Rel, max_rel_equip_index = taskrelcode.group_rel(groups[i][j][1],groups[i][j][2], groups[i][j][3], groups[i][j][4],phase_duration[j], groups[i][j][5],groups[i][j][6])
-            #         #     print ("for phase", j+1,"  and group", i+1,
-            #         # "preferred equipments are", group_equip,"Group Reliability is", Rel)
-            #             final_results.append(f"For {phase_name} and group {i+1}, "  # Use phase_name instead of phase number
-            #                                 f"preferred equipments are {group_equip}")
-            #             print(f"For {phase_name} and group {i+1}, "  # Use phase_name instead of phase number
-            #                                 f"preferred equipments are {group_equip}")
-            #             total_reliblity *= Rel
-            #             try:
-            #                 for k in max_rel_equip_index:
-            #                     for l in range(total_phase):
-            #                         groups[i][l][4][k] += phase_duration[j]
-            #             except:
-            #                 pass
-
-            # final_results.append(f"Total Reliability: {rel}")
-            # print(final_results)
-            # print(f"Total Reliability: {rel}")
-
-
             # print(final_results)
             self.success_return["recommedation"] = {
-                "results": results,
-                "rel": rel
-            }
+                    "results": {phase_id: sorted(group_equip) for phase_id, group_equip in results.items()},
+                    "rel": rel
+                }
+            print(self.success_return)
             return self.success_return
         else:
             self.error_return

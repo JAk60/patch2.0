@@ -21,12 +21,12 @@ class OverhaulsAlgos:
         return days
 
     def insert_overhauls_data(self, equipment_id, run_age_component):
-        query = "SELECT ship_name,nomenclature FROM system_configuration where component_id = ?"
-        cursor.execute(query, equipment_id)
-        odata = cursor.fetchall()
-        ship_name, nomenclature = odata[0]
-        inst= Data_Administrator()
-        inst.overhaul_data_reset(component_id=equipment_id, nomenclature=nomenclature, ship_name=ship_name)
+        # query = "SELECT ship_name,nomenclature FROM system_configuration where component_id = ?"
+        # cursor.execute(query, equipment_id)
+        # odata = cursor.fetchall()
+        # ship_name, nomenclature = odata[0]
+        # inst= Data_Administrator()
+        # inst.overhaul_data_reset(component_id=equipment_id, nomenclature=nomenclature, ship_name=ship_name)
         new_data = []
         clk_reset = 0
         index = 0
@@ -208,6 +208,7 @@ class OverhaulsAlgos:
                 query = "DELETE FROM data_manager_overhaul_maint_data WHERE component_id = ?"
                 cursor.execute(query, equipment_id)
                 cnxn.commit()
+                # new_sorted_data = sorted(new_data, key=lambda x: x[3])
                 insert_query = """
                     INSERT INTO data_manager_overhaul_maint_data (id, 
                     component_id, overhaul_id, date, maintenance_type, running_age,

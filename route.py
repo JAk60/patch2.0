@@ -419,6 +419,7 @@ def task_rel():
     trel_inst = TaskReliability()
     final_return_data = []
     for d in data:
+        print(d)
         if type(d) is not bool:
             if len(d) != 0:
                 shipname = d["shipName"]
@@ -821,4 +822,4 @@ if __name__ == "__main__":
     app.secret_key = os.urandom(32)
     app.wsgi_app = middleware.TaskMiddleWare(app.wsgi_app, APP_ROOT)
     scheduler.start()
-    app.run(debug=True)
+    app.run(debug=False)

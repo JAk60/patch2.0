@@ -275,43 +275,53 @@ const TaskDashboard = () => {
     gridApi.forEachNode((node) => allRowData.push(node.data));
     let allRowCData = [];
     gridCompApi.forEachNode((node) => allRowCData.push(node.data));
+    
     //logic for saving it to local data
     let mainData = [];
     allRowData.forEach((d, index) => {
-      mainData.push({
-        id: allRowData[index]["id"],
-        missionType: allRowData[index]["missionType"],
-        duration: allRowData[index]["duration"],
-        components: allRowCData[index]["components"],
-      });
+        mainData.push({
+            id: allRowData[index]["id"],
+            missionType: allRowData[index]["missionType"],
+            duration: allRowData[index]["duration"],
+            components: allRowCData[index]["components"],
+        });
     });
+
+    // Add a suffix to the task key
+    const suffixedTaskName = currentTaskName + "_Netra";
+
+    
     let localData = {
-      shipName: currentShip,
-      taskName: currentTaskName,
-      data: mainData,
-      cal_rel: totalReliability,
+        shipName: currentShip,
+        taskName: suffixedTaskName,
+        data: mainData,
+        cal_rel: totalReliability,
     };
+
     console.log(localData, "local Data");
     setPhaseData(mainData);
+
+    // Use suffixed task name when storing in local storage
     localStorage.setItem(
-      `${currentShip}_${currentTaskName}`,
-      JSON.stringify(localData)
+        `${currentShip}_${suffixedTaskName}`,
+        JSON.stringify(localData)
     );
+
     gridApi.selectAll();
     const selectedRows = gridApi.getSelectedRows();
     gridApi.applyTransaction({ remove: selectedRows });
 
-    // let allCompRows = []
     gridCompApi.selectAll();
     const selectedCompRows = gridCompApi.getSelectedRows();
     gridCompApi.applyTransaction({ remove: selectedCompRows });
+    
     allRowData = [];
-    // gridApi.forEachNode((node) => allRowData.push(node.data));
     setMissionData(allRowData);
     setRecommedation([]);
     settaskTableData([]);
     settaskMissionTableData([]);
-  };
+};
+
   console.log("missiondata", missionProfileData);
   const deleteRows = () => {
     debugger;
@@ -411,83 +421,83 @@ console.log(taskMissionTableData,"taskMissionTableData");
   };
 
   const onSubmitHandler = () => {
-    // setMission(0);
     let storedData = Object.entries(localStorage);
     console.log("Localy data", storedData);
-    // storedData.pop()
+
     let fData = [];
     storedData.forEach((ele) => {
-      debugger;
-      console.log(ele);
-      let name = ele[0];
-      if (name !== "settings" && name !== "login" && name !== "userData") {
-        let elemData = JSON.parse(ele[1]);
-        fData.push(JSON.parse(ele[1]));
-      }
+        let name = ele[0];
+
+        // Check if the key has the specified suffix
+        if (name.includes("_Netra")) {
+            let elemData = JSON.parse(ele[1]);
+            fData.push(JSON.parse(ele[1]));
+        }
     });
+
     console.log(fData);
+
     if (fData.length > 0) {
-      // const data = {
-      //   "taskName": currentTaskName, "shipName": currentShip,
-      //   "selectedMission": missionName.current.value, "missionProfileData": missionProfileData
-      // }
-      fetch("/task_rel", {
-        method: "POST",
-        body: JSON.stringify(fData),
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-      })
+        fetch("/task_rel", {
+            method: "POST",
+            body: JSON.stringify(fData),
+            headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+            },
+        })
         .then((res) => res.json())
         .then((d) => {
-          debugger;
-          let taskData = [];
-          let taskMissionData = [];
-          d.forEach((tData) => {
-            let perMData = tData["data"];
-            perMData.forEach((pTD) => {
-              taskMissionData.push({
-                shipName: tData["shipName"],
-                taskName: tData["taskName"],
-                rel: parseFloat(pTD["rel"]).toFixed(precision),
-                missionType: pTD["missionName"],
-                ComponentMission: pTD["missionName"],
-              });
-              let componentRelData = pTD["comp_rel"];
-              console.log(componentRelData);
-              componentRelData.forEach((cTD) => {
-                taskMissionData.push({
-                  shipName: tData["shipName"],
-                  taskName: tData["taskName"],
-                  rel: parseFloat(cTD["rel"]).toFixed(precision),
-                  missionType: pTD["missionName"],
-                  ComponentMission: cTD["compName"],
+            let taskData = [];
+            let taskMissionData = [];
+
+            d.forEach((tData) => {
+                let perMData = tData["data"];
+
+                perMData.forEach((pTD) => {
+                    taskMissionData.push({
+                        shipName: tData["shipName"],
+                        taskName: tData["taskName"],
+                        rel: parseFloat(pTD["rel"]).toFixed(precision),
+                        missionType: pTD["missionName"],
+                        ComponentMission: pTD["missionName"],
+                    });
+
+                    let componentRelData = pTD["comp_rel"];
+
+                    componentRelData.forEach((cTD) => {
+                        taskMissionData.push({
+                            shipName: tData["shipName"],
+                            taskName: tData["taskName"],
+                            rel: parseFloat(cTD["rel"]).toFixed(precision),
+                            missionType: pTD["missionName"],
+                            ComponentMission: cTD["compName"],
+                        });
+                    });
                 });
-              });
+
+                taskData.push({
+                    shipName: tData["shipName"],
+                    taskName: tData["taskName"],
+                    rel: parseFloat(tData["rel"]).toFixed(precision),
+                    cal_rel: parseFloat(tData["cal_rel"]).toFixed(precision),
+                });
             });
-            console.log("This is tdata", tData);
-            taskData.push({
-              shipName: tData["shipName"],
-              taskName: tData["taskName"],
-              rel: parseFloat(tData["rel"]).toFixed(precision),
-              cal_rel: parseFloat(tData["cal_rel"]).toFixed(precision),
-            });
-          });
-          console.log(taskData, "Taks data");
-          settaskTableData(taskData);
-          settaskMissionTableData(taskMissionData);
+
+            settaskTableData(taskData);
+            settaskMissionTableData(taskMissionData);
         });
     } else {
-      // alert("Please add Mission Definition!!")
-      setSnackBarMessage({
-        severity: "error",
-        message: "Please Select data and Enter Mission Phase Data!!",
-        showSnackBar: true,
-      });
+        setSnackBarMessage({
+            severity: "error",
+            message: "Please Select data and Enter Mission Phase Data!!",
+            showSnackBar: true,
+        });
     }
+
     setShowInputTables(false);
-  };
+};
+
 
   const onHandleSnackClose = () => {
     setSnackBarMessage({
@@ -509,7 +519,7 @@ console.log(taskMissionTableData,"taskMissionTableData");
       tt &&
       tt["task_ship_name"] &&
       (Array.isArray(value) || typeof value === "object") &&
-      (Array.isArray(value) ? value.length > 0 && value[0].name : value.name)
+      (Array.isArray(value) ? value.length > 0 && value[0]?.name : value?.name)
     ) {
       const selectedShipName = Array.isArray(value)
         ? value[0].name

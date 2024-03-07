@@ -248,7 +248,7 @@ class Data_Administrator:
                 # Execute the merge query using the cursor object
               # Execute the merge query using the cursor object
                 cursor.execute(merge_query, (
-                    nomenclature,
+                    nomenclature,ship_name,
                     component_id, component_name, CMMS_EquipmentCode,
                     ship_name, ship_category, ship_class,
                     command, department, nomenclature))

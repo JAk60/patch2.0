@@ -60,12 +60,12 @@ function CollapsibleTable({ tableData }) {
         <TableHead>
           <TableRow className={classes.header}>
             <TableCell />
-            <TableCell className={classes.childHeader}>Ship Name</TableCell>
-            <TableCell className={classes.childHeader}>Task Name</TableCell>
+            {/* <TableCell className={classes.childHeader}>Ship Name</TableCell> */}
+            {/* <TableCell className={classes.childHeader}>Task Name</TableCell> */}
             <TableCell className={classes.childHeader}>Mission Type</TableCell>
-            <TableCell className={classes.childHeader}>
+            {/* <TableCell className={classes.childHeader}>
               Component/Mission Type
-            </TableCell>
+            </TableCell> */}
             <TableCell className={classes.childHeader}>Reliability</TableCell>
           </TableRow>
         </TableHead>
@@ -90,12 +90,12 @@ function CollapsibleTable({ tableData }) {
                       )}
                     </IconButton>
                   </TableCell>
-                  <TableCell component="th" scope="row">
+                  {/* <TableCell component="th" scope="row">
                     {parent.shipName}
-                  </TableCell>
-                  <TableCell>{parent.taskName}</TableCell>
+                  </TableCell> */}
+                  {/* <TableCell>{parent.taskName.replace(/_Netra$/, '')}</TableCell> */}
                   <TableCell>{parent.missionType}</TableCell>
-                  <TableCell>{parent.ComponentMission}</TableCell>
+                  {/* <TableCell>{parent.ComponentMission}</TableCell> */}
                   <TableCell>{parent.rel}</TableCell>
                 </TableRow>
                 {isParentRow && openRow === groupKey && (
@@ -137,7 +137,7 @@ function CollapsibleTable({ tableData }) {
                               {details.map((detail, detailIndex) => (
                                 <TableRow key={detailIndex}>
                                   <TableCell>{detail.shipName}</TableCell>
-                                  <TableCell>{detail.taskName}</TableCell>
+                                  <TableCell>{detail.taskName.replace(/_Netra$/, '')}</TableCell>
                                   <TableCell>{detail.missionType}</TableCell>
                                   <TableCell>
                                     {detail.ComponentMission}
