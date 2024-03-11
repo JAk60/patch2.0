@@ -304,8 +304,8 @@ class Reliability:
                 equipment_id=component_id,
                 run_age_component=float(run_age_value),
             )
-            # if success is False:
-            #     raise ValueError(f"corrective maintenance dates are missing for: {self.__component_name}")
+            if success is False:
+                raise ValueError(f"corrective maintenance dates are missing for: {self.__component_name}")
             
             main_query = """SELECT * FROM data_manager_overhaul_maint_data 
                         WHERE component_id = ? ORDER BY cmms_running_age

@@ -304,14 +304,17 @@ class TaskReliability:
         sum_of_average_running = result2[0]
         return sum_of_average_running, None    
 
-    def estimate_alpha_beta(self, component_id):
+    def estimate_alpha_beta(self, component_id,component_name):
         '''CODE TO RE-ESTIMATE ALPHA BETA'''
+        subData = []
         try:
             instance = OverhaulsAlgos()
             sub_query = "select * from data_manager_overhauls_info where component_id = ?"
             cursor.execute(sub_query, (component_id,))
             data = cursor.fetchall()
-            subData = []
+            if not data:
+                raise ValueError(
+                    f"Time between two overhaul is not defined for : {component_name}")
             for item in data:
                 formatted_item = {
                     "id": item[0],
@@ -321,14 +324,18 @@ class TaskReliability:
                     "component_id": item[1],
                 }
                 subData.append(formatted_item)
+            if not subData:
+                return {"message": f"Time between two overhaul is not defined for: {self.__component_name}", "code": 0}
             run_age_value = list(map(lambda item: item["runAge"], subData))[0]
-            instance.insert_overhauls_data(
+            success = instance.insert_overhauls_data(
                 equipment_id=component_id,
                 run_age_component=float(run_age_value),
             )
-
+            if success is False:
+                raise ValueError(f"corrective maintenance dates are missing for: {component_name}")
+            
             main_query = """SELECT * FROM data_manager_overhaul_maint_data 
-                        WHERE component_id = ?
+                        WHERE component_id = ? ORDER BY cmms_running_age
                 """
             cursor.execute(main_query, (component_id,))
             data = cursor.fetchall()
@@ -348,6 +355,10 @@ class TaskReliability:
 
             instance.alpha_beta_calculation(mainData, subData, component_id)
         except Exception as e:
+            self.error_return = {"message": str(e), "code": 0}
+            print(e)
+            if not subData or success is False:
+                raise
             pass
 
     def get_default_current_age(self):
@@ -661,10 +672,22 @@ class TaskReliability:
     
 
     def fetch_alpha_beta(self, component_id):
+        q = '''select nomenclature from system_configuration where component_id= ?'''
+        cursor.execute(q, str(component_id))
+        component_name_tuple = cursor.fetchone()
+        component_name = None
+        # Check if a result is fetched before assigning
+        if component_name_tuple:
+            component_name = component_name_tuple[0]
+        print("----------------------------->",component_name,component_name_tuple)
+        # Call another function with the component_id
+        self.estimate_alpha_beta(component_id,component_name)
+
         query = '''select alpha, beta from alpha_beta where component_id= ?'''
         cursor.execute(query, component_id)
         result = cursor.fetchone()
         return result[0], result[1]
+
     
 
     def get_curr_age(self, component_id):
@@ -703,212 +726,216 @@ class TaskReliability:
         json_data = json.load(open(target))
 
         # print(TaskReliability.mission_json)
-        if json_data != None:
-            data = json_data
-            objects_array = []
-            for item in data:
-                obj = {
-                    "id": item.get("id"),
-                    "dtype": item.get("dtype"),
-                    "label": item.get("data", {}).get("label"),
-                    "parallel_comp": item.get("data", {}).get("parallel_comp"),
-                    "k": item.get("data", {}).get("k"),
-                    "k_as": item.get("data", {}).get("k_as"),
-                    "k_c": item.get("data", {}).get("k_c"),
-                    "k_ds": item.get("data", {}).get("k_ds"),
-                    "k_elh": item.get("data", {}).get("k_elh"),
-                    "equipementId": item.get("equipementId"),
-                    "metaData": item.get("metaData", {}),
-                    "position": item.get("position", {}),
-                    "shipName": item.get("shipName"),
-                    "style": item.get("style", {}),
-                    "type": item.get("type")
-                }
-                objects_array.append(obj)
-                # print("objects_array",objects_array)
-                data = []
-                unique_combinations = set()
-
-                for single_object in objects_array:
-                    # Extract k values
-                    k_values = {
-                        'Harbour': single_object.get('k'),
-                        'Action Station': single_object.get('k_as'),
-                        'Cruise': single_object.get('k_c'),
-                        'Defense Station': single_object.get('k_ds'),
-                        'Entry Leaving Harbour': single_object.get('k_elh')
+        try:
+            if json_data != None:
+                data = json_data
+                objects_array = []
+                for item in data:
+                    obj = {
+                        "id": item.get("id"),
+                        "dtype": item.get("dtype"),
+                        "label": item.get("data", {}).get("label"),
+                        "parallel_comp": item.get("data", {}).get("parallel_comp"),
+                        "k": item.get("data", {}).get("k"),
+                        "k_as": item.get("data", {}).get("k_as"),
+                        "k_c": item.get("data", {}).get("k_c"),
+                        "k_ds": item.get("data", {}).get("k_ds"),
+                        "k_elh": item.get("data", {}).get("k_elh"),
+                        "equipementId": item.get("equipementId"),
+                        "metaData": item.get("metaData", {}),
+                        "position": item.get("position", {}),
+                        "shipName": item.get("shipName"),
+                        "style": item.get("style", {}),
+                        "type": item.get("type")
                     }
+                    objects_array.append(obj)
+                    # print("objects_array",objects_array)
+                    data = []
+                    unique_combinations = set()
 
-                    # Extract labels from Label and parallel_comp
-                    label = single_object.get('label')
-                    label_group = [label] if label else []
-                    parallel_comp = single_object.get('parallel_comp')
-                    if parallel_comp:
-                        for comp in parallel_comp:
-                            comp_label = comp.get('label')
-                            if comp_label:
-                                label_group.append(comp_label)
+                    for single_object in objects_array:
+                        # Extract k values
+                        k_values = {
+                            'Harbour': single_object.get('k'),
+                            'Action Station': single_object.get('k_as'),
+                            'Cruise': single_object.get('k_c'),
+                            'Defense Station': single_object.get('k_ds'),
+                            'Entry Leaving Harbour': single_object.get('k_elh')
+                        }
 
-                    # Sort the labels within the label group
-                    sorted_label_group = ', '.join(sorted(label_group))
+                        # Extract labels from Label and parallel_comp
+                        label = single_object.get('label')
+                        label_group = [label] if label else []
+                        parallel_comp = single_object.get('parallel_comp')
+                        if parallel_comp:
+                            for comp in parallel_comp:
+                                comp_label = comp.get('label')
+                                if comp_label:
+                                    label_group.append(comp_label)
 
-                    # Append rows to the data list only if the combination is unique
-                    for k_name, k_value in k_values.items():
-                        if k_value is not None:
-                            current_combination = (sorted_label_group, k_name)
-                            if current_combination not in unique_combinations:
-                                unique_combinations.add(current_combination)
-                                data.append({
-                                    'Label_Group': sorted_label_group,
-                                    'Phase': k_name,
-                                    'K_Value': k_value,
-                                    'N': len(label_group)
-                                })
+                        # Sort the labels within the label group
+                        sorted_label_group = ', '.join(sorted(label_group))
 
-                # Create a DataFrame from the collected data
-                df = pd.DataFrame(data)
-                print("df",df)
-                # Print the DataFrame
-            data_list_dict = df.to_dict()
-            data_list = []
-            for index in range(len(data_list_dict['Label_Group'])):
-                row_dict = {
-                    'Label_Group': data_list_dict['Label_Group'][index],
-                    'Phase': data_list_dict['Phase'][index],
-                    'K_Value': data_list_dict['K_Value'][index],
-                    'N': data_list_dict['N'][index]
-                }
-                data_list.append(row_dict)
-            equipment_ids = {}
-            running_ages = {}
-            for item in json_data:
-                if 'data' in item and 'label' in item['data']:
-                    label = item['data']['label']
-                    if 'equipementId' in item:  # Check if 'equipementId' key exists
-                        equipment_id = item['equipementId']
-                        equipment_ids[label] = self.fetch_alpha_beta(equipment_id)
-                        running_ages[label] = self.get_curr_age(equipment_id)
-            
-            response_data = {
-                "data": data_list,
-                "eqipments": equipment_ids,
-                "running_ages": running_ages
-            }
-            print("response_data",response_data)
+                        # Append rows to the data list only if the combination is unique
+                        for k_name, k_value in k_values.items():
+                            if k_value is not None:
+                                current_combination = (sorted_label_group, k_name)
+                                if current_combination not in unique_combinations:
+                                    unique_combinations.add(current_combination)
+                                    data.append({
+                                        'Label_Group': sorted_label_group,
+                                        'Phase': k_name,
+                                        'K_Value': k_value,
+                                        'N': len(label_group)
+                                    })
 
-            label_groups = list(set(entry['Label_Group'] for entry in response_data['data']))
-
-            result = []
-
-            for phase in set(entry['Phase'] for entry in response_data['data']):
-                phase_data = [entry for entry in response_data['data'] if entry['Phase'] == phase]
+                    # Create a DataFrame from the collected data
+                    df = pd.DataFrame(data)
+                    # print("df",df)
+                    # Print the DataFrame
+                data_list_dict = df.to_dict()
+                data_list = []
+                for index in range(len(data_list_dict['Label_Group'])):
+                    row_dict = {
+                        'Label_Group': data_list_dict['Label_Group'][index],
+                        'Phase': data_list_dict['Phase'][index],
+                        'K_Value': data_list_dict['K_Value'][index],
+                        'N': data_list_dict['N'][index]
+                    }
+                    data_list.append(row_dict)
+                equipment_ids = {}
+                running_ages = {}
+                for item in json_data:
+                    if 'data' in item and 'label' in item['data']:
+                        label = item['data']['label']
+                        if 'equipementId' in item:  # Check if 'equipementId' key exists
+                            equipment_id = item['equipementId']
+                            print("sjdkhaidhiadijasdja",equipment_id)
+                            equipment_ids[label] = self.fetch_alpha_beta(equipment_id)
+                            running_ages[label] = self.get_curr_age(equipment_id)
                 
-                for label_group in label_groups:
-                    labels = label_group.split(', ')
+                response_data = {
+                    "data": data_list,
+                    "eqipments": equipment_ids,
+                    "running_ages": running_ages
+                }
+                # print("response_data",response_data)
+
+                label_groups = list(set(entry['Label_Group'] for entry in response_data['data']))
+
+                result = []
+
+                for phase in set(entry['Phase'] for entry in response_data['data']):
+                    phase_data = [entry for entry in response_data['data'] if entry['Phase'] == phase]
                     
-                    alpha_data = [response_data['eqipments'][label][0] for label in labels]
-                    beta_data = [response_data['eqipments'][label][1] for label in labels]
-                    running_age_data = [response_data['running_ages'][label] for label in labels]
-                    
-                    label_group_data = [entry for entry in phase_data if entry['Label_Group'] == label_group]
-                    if label_group_data:
-                        k_value = label_group_data[0]['K_Value']
-                        n_value = label_group_data[0]['N']
+                    for label_group in label_groups:
+                        labels = label_group.split(', ')
                         
-                        result.append([
-                            phase,
-                            labels,
-                            alpha_data,
-                            beta_data,
-                            running_age_data,
-                            k_value,
-                            n_value
-                        ])
+                        alpha_data = [response_data['eqipments'][label][0] for label in labels]
+                        beta_data = [response_data['eqipments'][label][1] for label in labels]
+                        running_age_data = [response_data['running_ages'][label] for label in labels]
+                        
+                        label_group_data = [entry for entry in phase_data if entry['Label_Group'] == label_group]
+                        if label_group_data:
+                            k_value = label_group_data[0]['K_Value']
+                            n_value = label_group_data[0]['N']
+                            
+                            result.append([
+                                phase,
+                                labels,
+                                alpha_data,
+                                beta_data,
+                                running_age_data,
+                                k_value,
+                                n_value
+                            ])
 
-            grouped_result = {}
-            for sublist in result:
-                label_group = tuple(sublist[1])  # Convert the list to a tuple
-                
-                # If the label group is already in the dictionary, append the sublist
-                if label_group in grouped_result:
-                    grouped_result[label_group].append(sublist)
-                # If the label group is not in the dictionary, create a new list with the sublist
-                else:
-                    grouped_result[label_group] = [sublist]
-
-            # Convert the grouped dictionary back to a list of lists
-            final_result = list(grouped_result.values())
-
-            sorted_data = []
-            phase_array = [
-                "Harbour",
-                "Entry Leaving Harbour",
-                "Cruise",
-                "Defense Station",
-                "Action Station"
-            ]
-
-            for sublist in final_result:
-                sorted_sublist = sorted(sublist, key=lambda x: phase_array.index(x[0]))
-                sorted_data.append(sorted_sublist)
-
-
-            groups = sorted_data
-
-            phase_duration = [duration["duration"] for duration in phases]
-
-            phase_seq  = []
-            index = 0
-            for phase in phases:
-                for idx, j in enumerate(phase_array):
-                    if j == phase["missionType"]:
-                        phase_seq.append(idx)
-            total_phase = len(phases)
-            print(phase_seq)
-
-            taskrelcode = TaskRelCode()
-
-            final_results = []
-            total_reliblity = 1
-
-            rel = 1
-            # print("*"*50)
-            # print(groups)
-            # print("*"*50)
-            # print(phase_duration)
-            # print("phase seq", phase_seq)
-            # phases
-            results = {}
-
-            for i in range(len(groups)):
-                for idx, j in enumerate(phase_seq):
-                    phase_name = phase_array[j]
-                    if (groups[i][j][5] == 0 ):
-                        pass
+                grouped_result = {}
+                for sublist in result:
+                    label_group = tuple(sublist[1])  # Convert the list to a tuple
+                    
+                    # If the label group is already in the dictionary, append the sublist
+                    if label_group in grouped_result:
+                        grouped_result[label_group].append(sublist)
+                    # If the label group is not in the dictionary, create a new list with the sublist
                     else:
-                        phase_id = phases[idx]["id"]
-                        group_equi_rel, max_rel_equip, group_equip, Rel, max_rel_equip_index = taskrelcode.group_rel(groups[i][j][1],groups[i][j][2], groups[i][j][3], groups[i][j][4],phase_duration[idx], groups[i][j][5],groups[i][j][6])
-                        if phase_id not in results:
-                            results[phase_id] = list(set(group_equip))
-                        else:
-                            results[phase_id].extend(set(group_equip))
-                        rel = rel * Rel
-                        try:
-                            for k in max_rel_equip_index:
-                                for l in range(total_phase):
-                                    groups[i][l][4][k] += phase_duration[j]
-                        except:
-                            pass
-            print(results)
-            print("*"*100)
+                        grouped_result[label_group] = [sublist]
 
-            # print(final_results)
-            self.success_return["recommedation"] = {
-                    "results": {phase_id: sorted(group_equip) for phase_id, group_equip in results.items()},
-                    "rel": rel
-                }
-            print(self.success_return)
-            return self.success_return
-        else:
-            self.error_return
+                # Convert the grouped dictionary back to a list of lists
+                final_result = list(grouped_result.values())
+
+                sorted_data = []
+                phase_array = [
+                    "Harbour",
+                    "Entry Leaving Harbour",
+                    "Cruise",
+                    "Defense Station",
+                    "Action Station"
+                ]
+
+                for sublist in final_result:
+                    sorted_sublist = sorted(sublist, key=lambda x: phase_array.index(x[0]))
+                    sorted_data.append(sorted_sublist)
+
+
+                groups = sorted_data
+                # print(groups)
+
+                phase_duration = [duration["duration"] for duration in phases]
+
+                phase_seq  = []
+                index = 0
+                for phase in phases:
+                    for idx, j in enumerate(phase_array):
+                        if j == phase["missionType"]:
+                            phase_seq.append(idx)
+                total_phase = len(phases)
+                # print("phase_seq",phase_seq)
+
+                taskrelcode = TaskRelCode()
+
+                final_results = []
+                total_reliblity = 1
+
+                rel = 1
+                # print("*"*50)
+                # print(groups)
+                # print("*"*50)
+                # print(phase_duration)
+                # print("phase seq", phase_seq)
+                # phases
+                results = {}
+
+                for i in range(len(groups)):
+                    for idx, j in enumerate(phase_seq):
+                        phase_name = phase_array[j]
+                        if (groups[i][j][5] == 0 ):
+                            pass
+                        else:
+                            phase_id = phases[idx]["id"]
+                            group_equi_rel, max_rel_equip, group_equip, Rel, max_rel_equip_index = taskrelcode.group_rel(groups[i][j][1],groups[i][j][2], groups[i][j][3], groups[i][j][4],phase_duration[idx], groups[i][j][5],groups[i][j][6])
+                            if phase_id not in results:
+                                results[phase_id] = list(set(group_equip))
+                            else:
+                                results[phase_id].extend(set(group_equip))
+                            rel = rel * Rel
+                            try:
+                                for k in max_rel_equip_index:
+                                    for l in range(total_phase):
+                                        groups[i][l][4][k] += phase_duration[j]
+                            except:
+                                pass
+                # print(results)
+                print("*"*100)
+
+                # print(final_results)
+                self.success_return["recommedation"] = {
+                        "results": {phase_id: sorted(group_equip) for phase_id, group_equip in results.items()},
+                        "rel": rel
+                    }
+                # print(self.success_return)
+                return self.success_return
+        except Exception as e:
+            self.error_return["message"] = str(e)
+            return self.error_return
            
