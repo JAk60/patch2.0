@@ -1,4 +1,4 @@
-import { Button, Container, Drawer, TextField } from "@material-ui/core";
+import { Button, Container, DialogContentText, Drawer, TextField } from "@material-ui/core";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
@@ -290,6 +290,49 @@ const Layout = (props) => {
 
   const [loadopen, setLoadOpen] = useState(false);
   const handleLoadClickOpen = () => setLoadOpen(true);
+  const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
+
+  // Modify the onDeleteHandler function to open the confirmation dialog
+  const onDeleteHandler = async () => {
+    setDeleteConfirmationOpen(true);
+  };
+
+  // Handle the confirmation and perform deletion
+  const handleDeleteConfirmation = async () => {
+    try {
+      const response = await fetch('/del_task', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ filename: loadname + '.json' }),
+      });
+
+      if (response.ok) {
+        // File deleted successfully
+        console.log(`File ${loadname} deleted successfully`);
+        setTaskNames((prevTaskNames) =>
+          prevTaskNames.filter((task) => task !== loadname)
+        );
+        setLoadName("");
+      } else {
+        // Handle error cases
+        const data = await response.json();
+        console.error(`Error: ${data.error}`);
+      }
+    } catch (error) {
+      console.error('Error:', error.message);
+    }
+
+    // Close the confirmation dialog
+    setDeleteConfirmationOpen(false);
+  };
+
+  // Close the confirmation dialog without performing deletion
+  const handleDeleteConfirmationCancel = () => {
+    setDeleteConfirmationOpen(false);
+  };
+
   const handleLoadClose = () => setLoadOpen(false);
   const [loadname, setLoadName] = useState("");
   const [showDetails, setShowDetails] = useState(false);
@@ -435,8 +478,32 @@ const Layout = (props) => {
                 <Button onClick={onLoadHandler} color="primary">
                   Load
                 </Button>
+                <Button onClick={onDeleteHandler} color="primary">
+                  Delete
+                </Button>
               </DialogActions>
             </Dialog>
+            <Dialog
+        open={deleteConfirmationOpen}
+        onClose={handleDeleteConfirmationCancel}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">Confirm Deletion</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Are you sure you want to delete {loadname} task?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDeleteConfirmationCancel} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleDeleteConfirmation} color="primary" autoFocus>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
           </div>
           {/* <p>Here the details of each component goes!!</p> */}
           {showDetails ? (
