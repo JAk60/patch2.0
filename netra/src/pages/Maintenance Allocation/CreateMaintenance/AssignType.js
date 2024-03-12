@@ -535,9 +535,9 @@ const AssignType = (props) => {
             </RadioGroup>
           </div>
           <div className={styles.btns}>
-            <Button variant="contained" color="primary" onClick={handleSave}>
+            {/* <Button variant="contained" color="primary" onClick={handleSave}>
               Save
-            </Button>
+            </Button> */}
             {/* <Link to="/rul">
               <Button variant="contained" color="primary">
                 RUL
@@ -577,7 +577,20 @@ const AssignType = (props) => {
           </div>
         </Dialog> */}
         {type === "runToFailure" && (
-          <div className={styles.MTypeContent}>Run To Failure</div>
+          <div className={styles.MTypeContent}>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
+              <span>Run To Failure</span>
+              <Button variant="contained" color="primary" onClick={handleSave}>
+                Save
+              </Button>
+            </div>
+          </div>
         )}
         {type === "ageBased" && (
           <div className={styles.MTypeContent}>
@@ -612,6 +625,14 @@ const AssignType = (props) => {
                 id="age-based-replacement-age"
                 name="age-based-replacement-age"
               />
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleSave}
+                style={{ marginLeft: "10px" }}
+              >
+                Save
+              </Button>
             </div>
           </div>
         )}
@@ -648,6 +669,14 @@ const AssignType = (props) => {
                 id="calendar-based-replacement-age"
                 name="calendar-based-replacement-age"
               />
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleSave}
+                style={{ marginLeft: "10px" }}
+              >
+                Save
+              </Button>
             </div>
           </div>
         )}
@@ -873,6 +902,14 @@ const AssignType = (props) => {
                         style={{ marginTop: "50px" }}
                       >
                         Download Blank CSV
+                      </Button>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={handleSave}
+                        style={{ margin: "50px 0 0 10px" }}
+                      >
+                        Save
                       </Button>
                     </div>
                   </div>
