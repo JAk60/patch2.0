@@ -8,14 +8,15 @@ const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
 function SelectEquipment(props) {
   const [selectedOptions, setSelectedOptions] = useState([]);
-  const list = props.list;
+  let list = props.list;
+  // list=[new Set(...list)]
   console.log(props.list);
 
   const handleClearOptions = () => setSelectedOptions([]);
   return (
     <MultiSelect
       items={list}
-      getOptionLabel={(option) => `${option.nomenclature}`}
+      getOptionLabel={(option) => option.nomenclature}
       // getOptionDisabled={option => option.name === "foo"}
       selectedValues={selectedOptions}
       label="Select Equipment"

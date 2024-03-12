@@ -71,16 +71,16 @@ const MultiSelect = ({
       style={{ width: 500 }}
       options={items}
       value={selectedValues}
-      groupBy={(option) => option.parentName}
+      // groupBy={(option) => option.parentName}
       disableCloseOnSelect
-      limitTags={2}
+      limitTags={1}
       getOptionLabel={getOptionLabel}
       getOptionSelected={getOptionSelected}
       noOptionsText={noOptionsText}
-      filterOptions={(options, params) => {
-        const filtered = filter(options, params);
-        return [{ label: selectAllLabel, name: "Select All" }, ...filtered];
-      }}
+      // filterOptions={(options, params) => {
+      //   const filtered = filter(options, params);
+      //   return [{ label: selectAllLabel, name: "Select All" }, ...filtered];
+      // }}
       onChange={handleChange}
       renderOption={optionRenderer}
       renderInput={inputRenderer}
