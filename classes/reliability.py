@@ -304,8 +304,8 @@ class Reliability:
                 equipment_id=component_id,
                 run_age_component=float(run_age_value),
             )
-            if success is False:
-                raise ValueError(f"corrective maintenance dates are missing for: {self.__component_name}")
+            # if success is False:
+            #     raise ValueError(f"corrective maintenance dates are missing for: {self.__component_name}")
             
             main_query = """SELECT * FROM data_manager_overhaul_maint_data 
                         WHERE component_id = ? ORDER BY cmms_running_age
@@ -428,7 +428,7 @@ class Reliability:
                     instances = [
                         item
                         for item in nomenclatures
-                        if item["equipmentName"] == component
+                        if item["equipmentName"] == component and item["parent"] == platform
                     ]
                     for e in instances:
                         system = e["nomenclature"]
@@ -462,7 +462,10 @@ class Reliability:
                         rel["prob_ac"] = estimation_ach
                         if platform not in data:
                             data[platform] = []
-                        data[platform].append({system: rel})
+                        rel["equipment"] = component
+                        print(rel,"askdkanskdakska")
+                        if system not in [list(d.keys())[0] for d in data.get(platform, [])]:
+                            data.setdefault(platform, []).append({system: rel})
                 final_data.append({m: data})
             self.success_return[
                 "message"
