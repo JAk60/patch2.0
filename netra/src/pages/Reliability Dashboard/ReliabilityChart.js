@@ -1,85 +1,65 @@
 import React from "react";
 import {
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Cell,
-  Tooltip,
+	ResponsiveContainer,
+	BarChart,
+	Bar,
+	XAxis,
+	YAxis,
+	Cell,
+	Tooltip,
 } from "recharts";
 import styles from "./rDashboard.module.css";
-const CustomTooltipContent = ({ active, payload, label, family, familyE }) => {
-  console.log("payload", payload, label);
-  if (active && payload && payload.length) {
-    // Find the corresponding equipmentName using the label (nomenclature)
-    const nomenclatureItem = familyE?.find(
-      (item) => item.nomenclature === label
-    );
-    
-    // Find the corresponding parent ship class for the equipment
-    const parentShipClass =
-      nomenclatureItem &&
-      family?.equipments.find(
-        (equipment) => equipment.equipmentName === nomenclatureItem.equipmentName
-      )?.parent;
 
-    const equipment = nomenclatureItem ? nomenclatureItem?.equipmentName : "";
-
-    return (
-      <div className={styles.customtooltip}>
-        {parentShipClass && <p className="parent">{`${parentShipClass}`}</p>}
-        <p>{`Equipment : ${equipment}`}</p>
-        <p className={styles.label}>{`${label} : ${payload[0].value}`}</p>
-      </div>
-    );
-  }
-  return null;
+const CustomTooltipContent = ({ active, payload, label }) => {
+	if (active && payload && payload.length) {
+		const data = payload[0].payload;
+		return (
+			<div className={styles.customtooltip}>
+				<p>{`Ship: ${data.ship}`}</p>
+				<p>{`Equipment: ${data.equipment}`}</p>
+				<p>{`${data.name}: ${data.reliability}`}</p>
+			</div>
+		);
+	}
+	return null;
 };
 
-
-const ReliabilityChart = ({ data ,family}) => {
-  console.log(family, "family");
-  let xKey = "name";
-  let yKeys = ["Reliability"];
-  if (data[0]) {
-    xKey = "name";
-    yKeys = Object.keys(data[0]);
-    yKeys = yKeys.filter((item) => item !== "name");
-  }
-  let colors=['#86a0ff','#364d9d','#e4ebfe','#374c93']
-  return (
-    <ResponsiveContainer height="90%" width={"100%"} debounce={50}>
-      <BarChart data={[...data]} layout="horizontal" >
-        <Tooltip content={<CustomTooltipContent  family={family} familyE={family.nomenclature} />} />
-        <YAxis type="number" domain={[0, 100]} tick={{ fontSize: 10 }} />
-        <XAxis
-          xAxisId={0}
-          dataKey={xKey}
-          type="category"
-          tickLine={false}
-          tick={{ fontSize: 10 }}
-          interval={0}
-        />
-        {yKeys &&
-          yKeys.map((yKey, idx) => {
-            return (
-              <Bar
-                dataKey={yKey}
-                minPointSize={3}
-                barSize={15}
-                radius={[3, 3, 0, 0]}
-                fill={colors[idx]}
-              >
-                {data.map((d, idx) => {
-                  return <Cell key={d[xKey]} />;
-                })}
-              </Bar>
-            );
-          })}
-      </BarChart>
-    </ResponsiveContainer>
-  );
+const ReliabilityChart = ({ data, family }) => {
+	let colors = ["#86a0ff", "#364d9d", "#e4ebfe", "#374c93"];
+	console.log(family);
+	console.log(data);
+	return (
+		<ResponsiveContainer height="90%" width={"100%"} debounce={50}>
+			<BarChart data={data} layout="horizontal">
+				<XAxis dataKey="name" type="category" />
+				<YAxis type="number" domain={[0, 100]} />
+				<Tooltip content={<CustomTooltipContent />} />
+				<Bar
+					dataKey="reliability"
+					barSize={15}
+					minPointSize={3}
+					shape={({ payload, x, y, width, height }) => (
+						<rect
+							width={width}
+							height={height}
+							x={x}
+							y={y}
+							fill={colors[3]}
+							// Customize the color based on reliability
+							stroke={
+								payload.reliability > 90 ? "#86a0ff" : "#364d9d"
+							} // Optional: Set the border color
+						/>
+					)}
+					radius={[3, 3, 0, 0]}
+				>
+					{data.map((entry, index) => (
+						<Cell key={`cell-${index}`} />
+					))}
+				</Bar>
+			</BarChart>
+		</ResponsiveContainer>
+	);
 };
 
 export default ReliabilityChart;
