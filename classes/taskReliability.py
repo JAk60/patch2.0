@@ -28,6 +28,7 @@ class TaskReliability:
         self.__ship_name = None
         self.__component_name = None
         self.__component_id = None
+        self.__rel_F =None
         self.__phase_used_components = {}
 
     mission_json = None
@@ -94,6 +95,8 @@ class TaskReliability:
         sys_lmus, sys_data = self.lmu_rel(
             mission_name, system, platform, total_dur, c_age)
         final_data = [] + sys_lmus[0][system + '_' + platform]
+        self.__rel_F=final_data[0]['rel']
+        print("----------------------------------->>>>>>>>",final_data)
         # all_component_ids = len(sys_data)
 
         def inside_func(lmus, system, platform, is_lmu=False):
@@ -244,6 +247,9 @@ class TaskReliability:
             missionTypeNmae = mission_phase["missionType"]
             duration = float(mission_phase["duration"])    
             rel = self.system_rel(missionName, system, platform, duration, curr_age)
+            if rel['rel'] == 1:
+                rel['rel'] = self.__rel_F
+            print(rel)
             total_rel *= rel["rel"]
             final_data.append({"system": system, "missionTypeName": missionTypeNmae, "platform": platform, "rel": rel["rel"]*100})
             curr_age += duration
@@ -283,7 +289,7 @@ class TaskReliability:
     
     def get_curr_ages(self):
         
-        query1 = "SELECT MAX(date) AS last_overhaul_date FROM data_manager_overhaul_maint_data WHERE maintenance_type = 'Overhaul' and component_id= ?"
+        query1 = "SELECT MAX(date) AS last_overhaul_date FROM data_manager_overhaul_maint_data WHERE maintenance_type = 'Corrective Maintenance' and component_id= ?"
         cursor.execute(query1, self.__component_id)
         result1 = cursor.fetchone()
         
@@ -294,7 +300,7 @@ class TaskReliability:
         last_overhaul_date = datetime.strptime(str(last_overhaul_date_str), '%Y-%m-%d')
         formatted_date = f"{last_overhaul_date.year}-{last_overhaul_date.month:02d}-01"
 
-        query2 = "SELECT SUM(average_running) AS sum_of_average_running FROM operational_data WHERE operation_date >= ? and component_id=?"
+        query2 = "SELECT SUM(average_running) AS sum_of_average_running FROM operational_data WHERE operation_date <= ? and component_id=?"
         cursor.execute(query2, formatted_date, self.__component_id)
         result2 = cursor.fetchone()
 
@@ -692,7 +698,7 @@ class TaskReliability:
 
     def get_curr_age(self, component_id):
         
-        query1 = "SELECT MAX(date) AS last_overhaul_date FROM data_manager_overhaul_maint_data WHERE maintenance_type = 'Overhaul' and component_id= ?"
+        query1 = "SELECT MAX(date) AS last_overhaul_date FROM data_manager_overhaul_maint_data WHERE maintenance_type = 'Corrective Maintenance' and component_id= ?"
         cursor.execute(query1, component_id)
         result1 = cursor.fetchone()
         
@@ -702,7 +708,7 @@ class TaskReliability:
         last_overhaul_date = datetime.strptime(str(last_overhaul_date_str), '%Y-%m-%d')
         formatted_date = f"{last_overhaul_date.year}-{last_overhaul_date.month:02d}-01"
 
-        query2 = "SELECT SUM(average_running) AS sum_of_average_running FROM operational_data WHERE operation_date >= ? and component_id=?"
+        query2 = "SELECT SUM(average_running) AS sum_of_average_running FROM operational_data WHERE operation_date <= ? and component_id=?"
         cursor.execute(query2, formatted_date, component_id)
         result2 = cursor.fetchone()
 
@@ -913,6 +919,7 @@ class TaskReliability:
                             pass
                         else:
                             phase_id = phases[idx]["id"]
+                            print("----->>>>>something group t",groups[i][j][4])
                             group_equi_rel, max_rel_equip, group_equip, Rel, max_rel_equip_index = taskrelcode.group_rel(groups[i][j][1],groups[i][j][2], groups[i][j][3], groups[i][j][4],phase_duration[idx], groups[i][j][5],groups[i][j][6])
                             if phase_id not in results:
                                 results[phase_id] = list(set(group_equip))
