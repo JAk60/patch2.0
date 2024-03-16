@@ -34,7 +34,7 @@ class OverhaulsAlgos:
         cursor.execute(empty_age_query)
         cnxn.commit()
 
-        query = "SELECT * FROM data_manager_overhaul_maint_data where component_id = ? AND running_age is NULL"
+        query = "SELECT * FROM data_manager_overhaul_maint_data where component_id = ? AND running_age is NULL ORDER BY date"
         cursor.execute(query, equipment_id)
         odata = cursor.fetchall()
         if not odata:
@@ -314,7 +314,7 @@ class OverhaulsAlgos:
         a_b_id = uuid.uuid4()
         merge_query = '''
             MERGE INTO alpha_beta AS target
-            USING (VALUES (?, ?, ?, ?)) AS source (id, component_id, alpha, beta)
+            USING (VALUES (?, ?, ?, ?)) AS source (id, component_id, alpha, beta)   
             ON target.component_id = source.component_id
             WHEN MATCHED THEN
                 UPDATE SET alpha = source.alpha, beta = source.beta
@@ -324,7 +324,7 @@ class OverhaulsAlgos:
         '''
 
         # Assuming you have appropriate values for 'component_id', 'alpha', and 'beta'
-        cursor.execute(merge_query, (a_b_id, id, alpha, beta))
+        cursor.execute(merge_query, (a_b_id, id, float(alpha), float(beta)))
         cnxn.commit()
 
     def _get_interpolated_age(self, date, component_id):

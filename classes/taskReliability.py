@@ -337,8 +337,8 @@ class TaskReliability:
                 equipment_id=component_id,
                 run_age_component=float(run_age_value),
             )
-            if success is False:
-                raise ValueError(f"corrective maintenance dates are missing for: {component_name}")
+            # if success is False:
+            #     raise ValueError(f"corrective maintenance dates are missing for: {component_name}")
             
             main_query = """SELECT * FROM data_manager_overhaul_maint_data 
                         WHERE component_id = ? ORDER BY cmms_running_age
@@ -388,7 +388,7 @@ class TaskReliability:
 
         result = cursor.fetchone()
         self.__component_id = result[0]
-        self.estimate_alpha_beta(component_id=self.__component_id)
+        self.estimate_alpha_beta(component_id=self.__component_id,component_name= self.__component_name)
         sum_of_average_running, error_message = self.get_curr_ages()
         if error_message:
             # print(error_message)
@@ -684,10 +684,10 @@ class TaskReliability:
         component_name = None
         # Check if a result is fetched before assigning
         if component_name_tuple:
-            component_name = component_name_tuple[0]
+            self.__component_name = component_name_tuple[0]
         print("----------------------------->",component_name,component_name_tuple)
         # Call another function with the component_id
-        self.estimate_alpha_beta(component_id,component_name)
+        self.estimate_alpha_beta(component_id, self.__component_name)
 
         query = '''select alpha, beta from alpha_beta where component_id= ?'''
         cursor.execute(query, component_id)
