@@ -255,7 +255,7 @@ class Reliability:
 
     def get_curr_age(self):
 
-        query1 = "SELECT MAX(date) AS last_overhaul_date FROM data_manager_overhaul_maint_data WHERE maintenance_type = 'Overhaul' and component_id= ?"
+        query1 = "SELECT MAX(date) AS last_overhaul_date FROM data_manager_overhaul_maint_data WHERE maintenance_type = 'Corrective Maintenance' and component_id= ?"
         cursor.execute(query1, self.__component_id)
         result1 = cursor.fetchone()
 
@@ -267,7 +267,7 @@ class Reliability:
             last_overhaul_date_str, "%Y-%m-%d")
         formatted_date = f"{last_overhaul_date.year}-{last_overhaul_date.month:02d}-01"
 
-        query2 = "SELECT SUM(average_running) AS sum_of_average_running FROM operational_data WHERE operation_date >= ? and component_id=?"
+        query2 = "SELECT SUM(average_running) AS sum_of_average_running FROM operational_data WHERE operation_date <= ? and component_id=?"
         cursor.execute(query2, formatted_date, self.__component_id)
         result2 = cursor.fetchone()
 
