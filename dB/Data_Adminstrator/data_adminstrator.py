@@ -127,11 +127,12 @@ class Data_Administrator:
     def get_equipments_onship(self, data):
         try:
             shipName = data["shipName"]
+            department= data["department"]
             print(shipName)
-            equpQ = '''SELECT component_name, nomenclature, etl 
+            equpQ = '''SELECT component_name, nomenclature,etl
                         FROM system_configuration 
-                        WHERE ship_name = ?'''
-            cursor.execute(equpQ, (shipName,))
+                        WHERE ship_name = ? and department= ?'''
+            cursor.execute(equpQ, (shipName,department))
             result = cursor.fetchall()
             equipments = [{"component_name": row[0],
                            "nomenclature": row[1], "etl": row[2]} for row in result]

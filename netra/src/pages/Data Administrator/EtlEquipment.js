@@ -21,15 +21,14 @@ export default function EtlEquipment({ classes }) {
   const currentSelection = useSelector(
     (state) => state.userSelection.currentSelection
   );
-  const ships = useSelector(
-    (state) => state.userSelection.userSelection.shipName
-  );
-  console.log(ships);
+
   const componentsData = useSelector(
     (state) => state.userSelection.componentsData
   );
   const dispatch = useDispatch();
   const [searchKeyword, setSearchKeyword] = useState("");
+  const [shipsOptions, setShipOptions] = useState([]);
+  const [departmentOptions, setDepartmentOptions] = useState([]);
   const [tableData, setTableData] = useState([]);
   const [SnackBarMessage, setSnackBarMessage] = useState({
     severity: "error",
@@ -37,14 +36,55 @@ export default function EtlEquipment({ classes }) {
     showSnackBar: false,
   });
   const [loading, setLoading] = useState(false); // New state for the loader
+  useEffect(() => {
+    const fetchD = async () => {
+      try {
+        const response = await fetch("/fetch_user_selection", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          console.error("Error fetching user selection data");
+          return;
+        }
+        const data = await response.json();
+        const userData = data["data"];
+        const eqData = data["eqData"];
+        const uniqueDepartmentsSet = new Set(
+          eqData.map((item) => item.department)
+        );
+        const uniqueDepartments = Array.from(uniqueDepartmentsSet);
+        setDepartmentOptions(uniqueDepartments);
+        let shipName = userData.map((x) => x.shipName);
+        console.log(uniqueDepartments);
+        shipName = [...new Set(shipName)];
+        setShipOptions(shipName);
+        const components = data["uniq_eq_data"];
+        dispatch(
+          userActions.onFirstLoad({
+            filteredData: { shipName: shipName },
+            componentsData: components,
+          })
+        );
+      } catch (error) {
+        console.error("Error in fetching user selection data:", error);
+      }
+    };
+
+    fetchD();
+  }, []);
 
   const fetchData = async () => {
-    // Implement your fetch logic here, replace the URL with your actual API endpoint
     try {
       const response = await fetch("/equipment_onship", {
         method: "POST",
         body: JSON.stringify({
           shipName: currentSelection["shipName"],
+          department: currentSelection["department"],
         }),
         headers: {
           "Content-Type": "application/json",
@@ -81,14 +121,14 @@ export default function EtlEquipment({ classes }) {
         body: JSON.stringify({
           shipName: currentSelection["shipName"],
           nomenclature: row?.nomenclature,
-          enabled: enable, // true for enable, false for disable
+          enabled: enable,
         }),
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
         },
       });
-  
+
       const data = await response.json();
       console.log(data);
       if (data.code === 1) {
@@ -113,13 +153,10 @@ export default function EtlEquipment({ classes }) {
 
   const handleUpdate = async () => {
     try {
-      setLoading(true); // Set loading to true before making the request
+      setLoading(true);
 
-      const response = await fetch("/srcetl", {  //srcetl
+      const response = await fetch("/srcetl", {
         method: "GET",
-        // body: JSON.stringify({
-        //   shipName: currentSelection["shipName"],
-        // }),
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
@@ -127,7 +164,7 @@ export default function EtlEquipment({ classes }) {
       });
 
       const data = await response.json();
-      console.log(data)
+      console.log(data);
 
       if (data.code === 1) {
         setSnackBarMessage({
@@ -150,25 +187,48 @@ export default function EtlEquipment({ classes }) {
         showSnackBar: true,
       });
     } finally {
-      setLoading(false); // Set loading to false after the request completes
+      setLoading(false);
     }
   };
 
   const handleSearchChange = (event) => {
     setSearchKeyword(event.target.value);
   };
+  
+  const filteredTableData = tableData
+  // Remove duplicate entries
+  .filter((row, index, self) => 
+    index === self.findIndex((r) => (
+      r.component_name === row.component_name && r.nomenclature === row.nomenclature
+    ))
+  )
+  // Apply search filter
+  .filter((row) => {
+    const searchString = searchKeyword.toLowerCase();
+    const matchesComponentName = row.component_name.toLowerCase().includes(searchString);
+    const matchesNomenclature = row.nomenclature.toLowerCase().includes(searchString);
+    
+    // Filter based on component name, then only apply nomenclature filter if necessary
+    return matchesComponentName || (!matchesComponentName && matchesNomenclature);
+  });
 
-  const filteredTableData = tableData.filter((row) =>
-    Object.values(row).some(
-      (value) =>
-        typeof value === "string" &&
-        value.toLowerCase().includes(searchKeyword.toLowerCase())
-    )
-  );
+  
   const ShipChange = (e, value) => {
     const data = { shipName: value };
     dispatch(userActions.onChangeCurrentSelection({ selectedData: data }));
   };
+
+  const departmentChange = (e, value) => {
+    const data = { department: value };
+    dispatch(userActions.onChangeCurrentSelection({ selectedData: data }));
+    setTableData([]);
+  };
+
+  useEffect(() => {
+    setTableData([]);
+    setSearchKeyword("");
+  }, [currentSelection.department, currentSelection.shipName]);
+
   return (
     <div
       style={{
@@ -181,11 +241,20 @@ export default function EtlEquipment({ classes }) {
       <div style={{ display: "flex", justifyContent: "center" }}>
         <Autocomplete
           className={classes.autocomplete}
-          options={ships}
+          options={shipsOptions}
           getOptionLabel={(option) => option}
           onChange={ShipChange}
           renderInput={(params) => (
             <TextField {...params} label="Ship Name" variant="outlined" />
+          )}
+        />
+        <Autocomplete
+          className={classes.autocomplete}
+          options={departmentOptions}
+          getOptionLabel={(option) => option}
+          onChange={departmentChange}
+          renderInput={(params) => (
+            <TextField {...params} label="Department" variant="outlined" />
           )}
         />
         <Button
@@ -201,11 +270,14 @@ export default function EtlEquipment({ classes }) {
           variant="contained"
           color="secondary"
           onClick={handleUpdate}
-          disabled={loading} // Disable the button when loading
+          disabled={loading}
         >
-        {loading ? <CircularProgress size={24} style={{ marginLeft: "10px" }} />: "Update now"}
+          {loading ? (
+            <CircularProgress size={24} style={{ marginLeft: "10px" }} />
+          ) : (
+            "Update now"
+          )}
         </Button>
-        {/* Show the loader while loading */}
       </div>
       <TextField
         label="Search"
@@ -233,7 +305,9 @@ export default function EtlEquipment({ classes }) {
                   {row.etl === true ? (
                     <CheckIcon style={{ color: "green" }} />
                   ) : (
-                    row.etl === false && <ClearIcon style={{ color: "red" }} />
+                    row.etl === false && (
+                      <ClearIcon style={{ color: "red" }} />
+                    )
                   )}
                 </TableCell>
                 <TableCell style={{ display: "flex" }}>

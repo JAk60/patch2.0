@@ -16,7 +16,7 @@ import PM from "./pages/PM OPTIM/pm";
 import Phasemanager from "./pages/Phase_Manager/Phasemanager";
 import RulLife from './pages/RUL/RulLife';
 import ReliabilityDashboard from "./pages/Reliability Dashboard/ReliabilityDashboard";
-import New from "./pages/Reliability Dashboard/new";
+// import New from "./pages/Reliability Dashboard/new";
 import ForgotPass from "./pages/Settings/ForgotPassword/Forgot_Password";
 import SignIn from "./pages/Settings/SignIn";
 import SignUp from "./pages/Settings/SignUp";
@@ -227,10 +227,7 @@ function App() {
                 <TaskDashboard {...props} settings={settings} />
               )}
             />
-            <Route
-              path="/new"
-              render={(props) => <New {...props} settings={settings} />}
-            />
+            
             <Route
               path="/dnd"
               render={(props) => <DragNDrop {...props} settings={settings} />}
