@@ -9,20 +9,38 @@ class Data_Administrator:
         data = data["values"]
         component_id = data["component_id"]
         table_names = [
-            "maintenance_configuration_data",
-            "system_config_additional_info",
-            "failure_modes",
-            "duty_cycle",
-            "operational_data",
-            "data_manager_overhauls_info",
-            "data_manager_overhaul_maint_data",
             "alpha_beta",
-            "parameter_data",
-            "sensor_based_data",
+            "data_manager_actual_data",
+            "data_manager_expert",
+            "data_manager_interval_data",
+            "data_manager_maintenance_data",
+            "data_manager_nprd",
+            "data_manager_oem",
+            "data_manager_oem_expert",
+            "data_manager_overhaul_maint_data",
+            "data_manager_overhauls_info",
+            "data_manager_prob_failure",
+            "data_manager_repairable_import",
+            "data_manager_replacable_import",
+            "duty_cycle",
+            "eta_beta",
+            "failure_modes",
+            "maintenance_configuration_data",
+            "operational_data",
             "parallel_configuration",
+            "parameter_data",
+            "phase_duty_cycle",
+            "phase_life_multiplier",
             "redundancy_data",
+            "sensor_based_data",
+            "system_config_additional_info",
+            "system_config_additional_info_parallel",
+            "system_duty_cycle",
+            "TTF_data",
+            "phase_definition",
             "system_configuration"
         ]
+
 
         for table_name in table_names:
             try:
@@ -127,12 +145,12 @@ class Data_Administrator:
     def get_equipments_onship(self, data):
         try:
             shipName = data["shipName"]
-            department= data["department"]
+            department = data["department"]
             print(shipName)
             equpQ = '''SELECT component_name, nomenclature,etl
                         FROM system_configuration 
                         WHERE ship_name = ? and department= ?'''
-            cursor.execute(equpQ, (shipName,department))
+            cursor.execute(equpQ, (shipName, department))
             result = cursor.fetchall()
             equipments = [{"component_name": row[0],
                            "nomenclature": row[1], "etl": row[2]} for row in result]
@@ -249,7 +267,7 @@ class Data_Administrator:
                 # Execute the merge query using the cursor object
               # Execute the merge query using the cursor object
                 cursor.execute(merge_query, (
-                    nomenclature,ship_name,
+                    nomenclature, ship_name,
                     component_id, component_name, CMMS_EquipmentCode,
                     ship_name, ship_category, ship_class,
                     command, department, nomenclature))
@@ -291,7 +309,7 @@ class Data_Administrator:
             # Rollback changes in case of an error
             cnxn.rollback()
             return jsonify({'status': 'error', 'message': f'Error executing the query: {str(e)}'})
-        
+
     def overhaul_data_reset(self, component_id, nomenclature, ship_name):
         # First, delete existing data for the specified component_id
         delete_query = '''
@@ -317,7 +335,8 @@ class Data_Administrator:
                     AND T_Dart.Is_Defect = 1
                     AND T_Dart.RoutineDefect = 2;
             '''
-            cursor.execute(fetch_query, (component_id, nomenclature, ship_name))
+            cursor.execute(
+                fetch_query, (component_id, nomenclature, ship_name))
             fetched_data = cursor.fetchall()
 
             overhaul_id = uuid.uuid4()
@@ -337,10 +356,10 @@ class Data_Administrator:
                 """
 
                 cursor.execute(merge_query, (uuid.uuid4(), component_id, overhaul_id, date, maintenance_type,
-                                            uuid.uuid4(), component_id, overhaul_id, date, maintenance_type, component_id))
+                                             uuid.uuid4(), component_id, overhaul_id, date, maintenance_type, component_id))
 
             cursor.commit()
-            
+
             # Return a message if the process is completed
             return "ETL process completed successfully"
 
