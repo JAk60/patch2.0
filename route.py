@@ -818,6 +818,34 @@ def oem_data():
         "messege": "JSON DATA"
     })
 
+@app.route('/del_task', methods=['POST'])
+def delete_file():
+    # Get the filename from the request
+    filename = request.json.get('filename')
+
+    if not filename:
+        return jsonify({'error': 'Filename not provided'}), 400
+
+    try:
+        # Get the directory of the current file
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+
+        # Construct the path to the folder
+        folder_path = './tasks'
+
+        # Construct the full path to the file
+        file_path = os.path.join(folder_path, filename)
+
+        # Check if the file exists
+        if os.path.exists(file_path):
+            # Delete the file
+            os.remove(file_path)
+            return jsonify({'message': f'File {filename} deleted successfully'}), 200
+        else:
+            return jsonify({'error': f'File {filename} does not exist'}), 404
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 if __name__ == "__main__":
     app.secret_key = os.urandom(32)
     app.wsgi_app = middleware.TaskMiddleWare(app.wsgi_app, APP_ROOT)
