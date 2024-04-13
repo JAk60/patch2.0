@@ -338,6 +338,7 @@ class Data_Administrator:
             cursor.execute(
                 fetch_query, (component_id, nomenclature, ship_name))
             fetched_data = cursor.fetchall()
+            print()
 
             overhaul_id = uuid.uuid4()
             maintenance_type = 'Corrective Maintenance'

@@ -264,7 +264,7 @@ class Reliability:
 
         last_overhaul_date_str = result1[0]
         last_overhaul_date = datetime.strptime(
-            last_overhaul_date_str, "%Y-%m-%d")
+            str(last_overhaul_date_str), "%Y-%m-%d")
         formatted_date = f"{last_overhaul_date.year}-{last_overhaul_date.month:02d}-01"
 
         query2 = "SELECT SUM(average_running) AS sum_of_average_running FROM operational_data WHERE operation_date <= ? and component_id=?"
@@ -304,6 +304,7 @@ class Reliability:
                 equipment_id=component_id,
                 run_age_component=float(run_age_value),
             )
+            print(success)
             # if success is False:
             #     raise ValueError(f"corrective maintenance dates are missing for: {self.__component_name}")
             
@@ -459,7 +460,7 @@ class Reliability:
                         estimation_ach = 1
                         if rel["rel"] > target_rel:
                             estimation_ach = 1
-                        rel["prob_ac"] = estimation_ach
+                        rel["prob_ac"] = estimation_ach 
                         if platform not in data:
                             data[platform] = []
                         rel["equipment"] = component

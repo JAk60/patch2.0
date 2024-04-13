@@ -20,7 +20,7 @@ const styles = {
     marginBottom: "20px",
   },
   logoImage: {
-    width: "350px",
+    width: "100%",
     height: "400px",
   },
   heading: {
@@ -56,7 +56,7 @@ const WelcomePage = ({cardData}) => {
   return (
     <div style={styles.container}>
       <div style={styles.logo}>
-        <img src="/NavyMan.png" alt="Logo" style={styles.logoImage} />
+        <img src="./20240312_110939.jpg" alt="Logo" style={styles.logoImage} />
       </div>
       {/* <h1 style={styles.heading}>Welcome to Dashboard</h1> */}
       <Typography variant="h3" style={{ color: "#344B99" }}>

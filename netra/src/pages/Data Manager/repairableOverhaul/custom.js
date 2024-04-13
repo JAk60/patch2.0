@@ -204,7 +204,7 @@ const Custom = () => {
                 console.log("Backend response:", data);
                 setSnackBarMessage({
                     severity: "success",
-                    message: data.messege,
+                    message: data.message,
                     showSnackBar: true,
                 })
             })

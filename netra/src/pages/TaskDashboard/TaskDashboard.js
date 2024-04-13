@@ -30,7 +30,7 @@ import RenderMultipleComponent from "./TaskRenderMultipleComponent";
 import CollapsibleTable from "./ResTable";
 
 const TaskDashboard = () => {
-  const precision = 2;
+  const precision = 10;
   const [gridApi, setGridApi] = useState(null);
   const [gridCompApi, setGridCompApi] = useState(null);
   const [gridTaskApi, setGriTaskdApi] = useState(null);

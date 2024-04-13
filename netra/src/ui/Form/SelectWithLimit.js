@@ -69,7 +69,7 @@ export const SelectWithLimit = ({
         disabled={disabled || disableInput}
         multiple
         options={options}
-        groupBy={(option) => option.equipmentName}
+        groupBy={(option) => option.parent}
         getOptionLabel={(option) => option?.nomenclature}
         renderTags={(tagValue, getTagProps) =>
           tagValue.map((option, index) => (

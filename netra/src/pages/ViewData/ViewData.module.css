@@ -6,7 +6,7 @@
     align-items: center;
     grid-row: 1/13;
     grid-column: 1/5;
-    background:url(Homewave.svg),linear-gradient(100deg, rgba(12, 90, 235, 0.5) 50%, rgba(91, 114, 129, 0.6) 100%), url(https://thumbor.forbes.com/thumbor/960x0/https%3A%2F%2Fspecials-images.forbesimg.com%2Fimageserve%2F61b9f23c1b503c93a88b4273%2FFlight-deck-operations-aboard-the-USS-Gerald-R--Ford%2F960x0.jpg%3Ffit%3Dscale);
+    background:url(Homewave.svg),linear-gradient(100deg, rgba(12, 90, 235, 0.5) 50%, rgba(91, 114, 129, 0.6) 100%), url('./20240312_110932.jpg');
 
     /* background:url(viewDatawave.svg),linear-gradient(210deg, rgba(41,41,113,0.6) 0%, rgba(91, 114, 129, 0.6) 100%), url(https://wallpaperaccess.com/full/2579311.jpg); */
     /* background-blend-mode: ; */

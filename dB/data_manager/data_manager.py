@@ -876,12 +876,14 @@ class Data_Manager:
         except Exception as e:
             return jsonify({"error": str(e)})
 
+
+
     def update_alpha_beta(self, ship_name, component_name, alpha, beta):
         try:
             # Assuming you have a valid connection and cursor setup
             cursor = cnxn.cursor()
 
-            # Query to fetch component_id
+            # Query to fetch or insert component_id
             query = "SELECT component_id FROM system_configuration WHERE ship_name=? AND component_name=?"
             cursor.execute(query, (ship_name, component_name))
             data = cursor.fetchone()
@@ -890,31 +892,38 @@ class Data_Manager:
                 component_id = data[0]
                 print("component_id", component_id)
             else:
-                # If component_id doesn't exist, insert a new record
-                insert_query = "INSERT INTO alpha_beta (component_id, alpha, beta) VALUES (?, ?, ?)"
-                cursor.execute(insert_query, (component_id, alpha, beta))
+                # If component_id doesn't exist, insert a new record into system_configuration
+                insert_query = "INSERT INTO system_configuration (ship_name, component_name) VALUES (?, ?)"
+                cursor.execute(insert_query, (ship_name, component_name))
                 cnxn.commit()
-                return jsonify(
-                    {
-                        "message": f"Alpha beta for component {component_name} is inserted"
-                    }
-                )
 
-            # Update the existing record
-            update_query = """
-                UPDATE alpha_beta
-                SET alpha = ?,
-                    beta = ?
-                WHERE component_id = ?
-            """
-            cursor.execute(update_query, (alpha, beta, component_id))
-            cnxn.commit()
+                # Fetch the newly inserted component_id
+                cursor.execute(query, (ship_name, component_name))
+                component_id = cursor.fetchone()[0]
 
-            return jsonify(
-                {"message": f"Alpha beta for component {component_name} is updated"}
-            )
+            # Check if the record already exists in alpha_beta table
+            cursor.execute("SELECT * FROM alpha_beta WHERE component_id=?", (component_id,))
+            existing_record = cursor.fetchone()
+
+            if existing_record:
+                # Update existing record
+                update_query = "UPDATE alpha_beta SET alpha=?, beta=? WHERE component_id=?"
+                cursor.execute(update_query, (alpha, beta, component_id))
+                cnxn.commit()
+                return jsonify({"message": f"Alpha beta for component {component_name} is updated"})
+            else:
+                # Generate a new UUID for id
+                record_id = uuid.uuid4()
+
+                # Insert new record into alpha_beta table
+                insert_query = "INSERT INTO alpha_beta (id, component_id, alpha, beta) VALUES (?, ?, ?, ?)"
+                cursor.execute(insert_query, (record_id, component_id, alpha, beta))
+                cnxn.commit()
+                return jsonify({"message": f"Alpha beta for component {component_name} is inserted"})
+
         except Exception as e:
             return jsonify({"error": str(e)})
+
 
     def set_component_overhaul_age(self, ship_name, component_name, age):
         age = int(age)

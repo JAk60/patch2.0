@@ -1,0 +1,529 @@
+[
+    {
+        "data": {
+            "label": "TASK 1"
+        },
+        "dtype": "node",
+        "id": "6e7f12a5-5c93-45e6-8051-36f0366ecd2b",
+        "position": {
+            "x": 86,
+            "y": 319
+        },
+        "shipName": "",
+        "sourcePosition": "right",
+        "targetPosition": "left",
+        "type": "systemNode"
+    },
+    {
+        "animated": false,
+        "dtype": "edge",
+        "id": "0a037551-2780-4023-b871-1b8dc772b532",
+        "source": "6e7f12a5-5c93-45e6-8051-36f0366ecd2b",
+        "style": {
+            "stroke": "rgb(27, 148, 247)"
+        },
+        "target": "f546a8ae-eaa6-49da-bcea-43c052bf24a4",
+        "type": "smoothstep"
+    },
+    {
+        "animated": false,
+        "dtype": "edge",
+        "id": "2f2e456f-853b-40de-acd9-f8393d67839b",
+        "source": "6e7f12a5-5c93-45e6-8051-36f0366ecd2b",
+        "style": {
+            "stroke": "rgb(27, 148, 247)"
+        },
+        "target": "4ffb44aa-2a4e-4929-8c80-5f7e72406ed8",
+        "type": "smoothstep"
+    },
+    {
+        "animated": false,
+        "dtype": "edge",
+        "id": "b95abe74-3308-4015-864c-0f81ab95ed9e",
+        "source": "6e7f12a5-5c93-45e6-8051-36f0366ecd2b",
+        "style": {
+            "stroke": "rgb(27, 148, 247)"
+        },
+        "target": "271f78df-6802-4ae1-84f9-fb3cce6e85e6",
+        "type": "smoothstep"
+    },
+    {
+        "animated": false,
+        "dtype": "edge",
+        "id": "cb6e8901-762f-4b83-abe9-dce684032a1d",
+        "source": "6e7f12a5-5c93-45e6-8051-36f0366ecd2b",
+        "style": {
+            "stroke": "rgb(27, 148, 247)"
+        },
+        "target": "8d5219bd-3307-40d3-840f-1c57cba8181c",
+        "type": "smoothstep"
+    },
+    {
+        "animated": false,
+        "dtype": "edge",
+        "id": "93f8f073-5c83-468a-b0fa-27aa0f2f32e1",
+        "source": "6e7f12a5-5c93-45e6-8051-36f0366ecd2b",
+        "style": {
+            "stroke": "rgb(156, 226, 81)"
+        },
+        "target": "ca1b742f-87a2-4767-8816-6ac73bf6d109",
+        "type": "smoothstep"
+    },
+    {
+        "animated": false,
+        "dtype": "edge",
+        "id": "a3371f20-4856-4796-b3c7-dce716dee4d2",
+        "source": "6e7f12a5-5c93-45e6-8051-36f0366ecd2b",
+        "style": {
+            "stroke": "rgb(156, 226, 81)"
+        },
+        "target": "3a5f7629-b7a3-4457-a686-fb097574dd64",
+        "type": "smoothstep"
+    },
+    {
+        "animated": false,
+        "dtype": "edge",
+        "id": "f67514e0-5b8c-42c8-bf54-8510e148910a",
+        "source": "6e7f12a5-5c93-45e6-8051-36f0366ecd2b",
+        "style": {
+            "stroke": "rgb(156, 226, 81)"
+        },
+        "target": "dd8437ee-d894-460c-bed6-689ab51c5171",
+        "type": "smoothstep"
+    },
+    {
+        "animated": false,
+        "dtype": "edge",
+        "id": "92bde1f5-fc17-42c8-94a2-5539d1ae5557",
+        "source": "6e7f12a5-5c93-45e6-8051-36f0366ecd2b",
+        "style": {
+            "stroke": "rgb(156, 226, 81)"
+        },
+        "target": "1d13c48e-fad7-49e8-8b8e-b7e7e230fa68",
+        "type": "smoothstep"
+    },
+    {
+        "data": {
+            "k": 2,
+            "k_as": 4,
+            "k_c": 2,
+            "k_ds": 4,
+            "k_elh": 2,
+            "label": "GT 1",
+            "n": 4,
+            "parallel_comp": [
+                {
+                    "label": "GT 2",
+                    "value": "4ffb44aa-2a4e-4929-8c80-5f7e72406ed8"
+                },
+                {
+                    "label": "GT 3",
+                    "value": "271f78df-6802-4ae1-84f9-fb3cce6e85e6"
+                },
+                {
+                    "label": "GT 4",
+                    "value": "8d5219bd-3307-40d3-840f-1c57cba8181c"
+                }
+            ]
+        },
+        "dtype": "node",
+        "equipementId": "2C93C834-ADA7-4875-894D-B5D9EF7DDDF6",
+        "id": "f546a8ae-eaa6-49da-bcea-43c052bf24a4",
+        "metaData": {
+            "command": "Western Naval Command",
+            "department": "Engineering",
+            "equipmentCode": "",
+            "equipmentName": "",
+            "nomenclature": "",
+            "shipCategory": "DESTROYER AND FRIGATES",
+            "shipClass": "KOLKATA (P-15A)",
+            "shipName": "INS THREE"
+        },
+        "position": {
+            "x": 308,
+            "y": 18
+        },
+        "shipName": "INS THREE",
+        "sourcePosition": "right",
+        "style": {
+            "background": "rgb(27, 148, 247)",
+            "border": "1px solid black",
+            "borderColor": "black",
+            "borderRadius": "5px",
+            "padding": "20px"
+        },
+        "targetPosition": "left",
+        "type": "component"
+    },
+    {
+        "data": {
+            "k": 2,
+            "k_as": 4,
+            "k_c": 2,
+            "k_ds": 4,
+            "k_elh": 2,
+            "label": "GT 2",
+            "n": 4,
+            "parallel_comp": [
+                {
+                    "label": "GT 3",
+                    "value": "271f78df-6802-4ae1-84f9-fb3cce6e85e6"
+                },
+                {
+                    "label": "GT 4",
+                    "value": "8d5219bd-3307-40d3-840f-1c57cba8181c"
+                },
+                {
+                    "label": "GT 1",
+                    "value": "f546a8ae-eaa6-49da-bcea-43c052bf24a4"
+                }
+            ]
+        },
+        "dtype": "node",
+        "equipementId": "7AB66DAB-0582-44AC-9557-917EAC6D230B",
+        "id": "4ffb44aa-2a4e-4929-8c80-5f7e72406ed8",
+        "metaData": {
+            "command": "Western Naval Command",
+            "department": "Engineering",
+            "equipmentCode": "",
+            "equipmentName": "",
+            "nomenclature": "",
+            "shipCategory": "DESTROYER AND FRIGATES",
+            "shipClass": "KOLKATA (P-15A)",
+            "shipName": "INS THREE"
+        },
+        "position": {
+            "x": 308,
+            "y": 104
+        },
+        "shipName": "INS THREE",
+        "sourcePosition": "right",
+        "style": {
+            "background": "rgb(27, 148, 247)",
+            "border": "1px solid black",
+            "borderColor": "black",
+            "borderRadius": "5px",
+            "padding": "20px"
+        },
+        "targetPosition": "left",
+        "type": "component"
+    },
+    {
+        "data": {
+            "k": 2,
+            "k_as": 4,
+            "k_c": 2,
+            "k_ds": 4,
+            "k_elh": 2,
+            "label": "GT 3",
+            "n": 4,
+            "parallel_comp": [
+                {
+                    "label": "GT 2",
+                    "value": "4ffb44aa-2a4e-4929-8c80-5f7e72406ed8"
+                },
+                {
+                    "label": "GT 4",
+                    "value": "8d5219bd-3307-40d3-840f-1c57cba8181c"
+                },
+                {
+                    "label": "GT 1",
+                    "value": "f546a8ae-eaa6-49da-bcea-43c052bf24a4"
+                }
+            ]
+        },
+        "dtype": "node",
+        "equipementId": "F8C58C2F-EC51-4942-898A-0912A5B9DD5F",
+        "id": "271f78df-6802-4ae1-84f9-fb3cce6e85e6",
+        "metaData": {
+            "command": "Western Naval Command",
+            "department": "Engineering",
+            "equipmentCode": "",
+            "equipmentName": "",
+            "nomenclature": "",
+            "shipCategory": "DESTROYER AND FRIGATES",
+            "shipClass": "KOLKATA (P-15A)",
+            "shipName": "INS THREE"
+        },
+        "position": {
+            "x": 308,
+            "y": 190
+        },
+        "shipName": "INS THREE",
+        "sourcePosition": "right",
+        "style": {
+            "background": "rgb(27, 148, 247)",
+            "border": "1px solid black",
+            "borderColor": "black",
+            "borderRadius": "5px",
+            "padding": "20px"
+        },
+        "targetPosition": "left",
+        "type": "component"
+    },
+    {
+        "data": {
+            "k": 2,
+            "k_as": 4,
+            "k_c": 2,
+            "k_ds": 4,
+            "k_elh": 2,
+            "label": "GT 4",
+            "n": 4,
+            "parallel_comp": [
+                {
+                    "label": "GT 2",
+                    "value": "4ffb44aa-2a4e-4929-8c80-5f7e72406ed8"
+                },
+                {
+                    "label": "GT 3",
+                    "value": "271f78df-6802-4ae1-84f9-fb3cce6e85e6"
+                },
+                {
+                    "label": "GT 1",
+                    "value": "f546a8ae-eaa6-49da-bcea-43c052bf24a4"
+                }
+            ]
+        },
+        "dtype": "node",
+        "equipementId": "AAD219F3-69A9-4E30-B5FD-4167B75F0F7C",
+        "id": "8d5219bd-3307-40d3-840f-1c57cba8181c",
+        "metaData": {
+            "command": "Western Naval Command",
+            "department": "Engineering",
+            "equipmentCode": "",
+            "equipmentName": "",
+            "nomenclature": "",
+            "shipCategory": "DESTROYER AND FRIGATES",
+            "shipClass": "KOLKATA (P-15A)",
+            "shipName": "INS THREE"
+        },
+        "position": {
+            "x": 308,
+            "y": 276
+        },
+        "shipName": "INS THREE",
+        "sourcePosition": "right",
+        "style": {
+            "background": "rgb(27, 148, 247)",
+            "border": "1px solid black",
+            "borderColor": "black",
+            "borderRadius": "5px",
+            "padding": "20px"
+        },
+        "targetPosition": "left",
+        "type": "component"
+    },
+    {
+        "data": {
+            "k": 2,
+            "k_as": 4,
+            "k_c": 2,
+            "k_ds": 4,
+            "k_elh": 2,
+            "label": "GTG 1",
+            "n": 4,
+            "parallel_comp": [
+                {
+                    "label": "GTG 2",
+                    "value": "3a5f7629-b7a3-4457-a686-fb097574dd64"
+                },
+                {
+                    "label": "GTG 3",
+                    "value": "dd8437ee-d894-460c-bed6-689ab51c5171"
+                },
+                {
+                    "label": "GTG 4",
+                    "value": "1d13c48e-fad7-49e8-8b8e-b7e7e230fa68"
+                }
+            ]
+        },
+        "dtype": "node",
+        "equipementId": "6C208047-163A-4DD2-8C27-9B3AFE85193A",
+        "id": "ca1b742f-87a2-4767-8816-6ac73bf6d109",
+        "metaData": {
+            "command": "Western Naval Command",
+            "department": "Engineering",
+            "equipmentCode": "",
+            "equipmentName": "",
+            "nomenclature": "",
+            "shipCategory": "DESTROYER AND FRIGATES",
+            "shipClass": "KOLKATA (P-15A)",
+            "shipName": "INS THREE"
+        },
+        "position": {
+            "x": 308,
+            "y": 362
+        },
+        "shipName": "INS THREE",
+        "sourcePosition": "right",
+        "style": {
+            "background": "rgb(156, 226, 81)",
+            "border": "1px solid black",
+            "borderColor": "black",
+            "borderRadius": "5px",
+            "padding": "20px"
+        },
+        "targetPosition": "left",
+        "type": "component"
+    },
+    {
+        "data": {
+            "k": 2,
+            "k_as": 4,
+            "k_c": 2,
+            "k_ds": 4,
+            "k_elh": 2,
+            "label": "GTG 2",
+            "n": 4,
+            "parallel_comp": [
+                {
+                    "label": "GTG 3",
+                    "value": "dd8437ee-d894-460c-bed6-689ab51c5171"
+                },
+                {
+                    "label": "GTG 4",
+                    "value": "1d13c48e-fad7-49e8-8b8e-b7e7e230fa68"
+                },
+                {
+                    "label": "GTG 1",
+                    "value": "ca1b742f-87a2-4767-8816-6ac73bf6d109"
+                }
+            ]
+        },
+        "dtype": "node",
+        "equipementId": "E6D24AC5-4C91-4DCB-9DBB-11098954FAF1",
+        "id": "3a5f7629-b7a3-4457-a686-fb097574dd64",
+        "metaData": {
+            "command": "Western Naval Command",
+            "department": "Engineering",
+            "equipmentCode": "",
+            "equipmentName": "",
+            "nomenclature": "",
+            "shipCategory": "DESTROYER AND FRIGATES",
+            "shipClass": "KOLKATA (P-15A)",
+            "shipName": "INS THREE"
+        },
+        "position": {
+            "x": 308,
+            "y": 448
+        },
+        "shipName": "INS THREE",
+        "sourcePosition": "right",
+        "style": {
+            "background": "rgb(156, 226, 81)",
+            "border": "1px solid black",
+            "borderColor": "black",
+            "borderRadius": "5px",
+            "padding": "20px"
+        },
+        "targetPosition": "left",
+        "type": "component"
+    },
+    {
+        "data": {
+            "k": 2,
+            "k_as": 4,
+            "k_c": 2,
+            "k_ds": 4,
+            "k_elh": 2,
+            "label": "GTG 3",
+            "n": 4,
+            "parallel_comp": [
+                {
+                    "label": "GTG 2",
+                    "value": "3a5f7629-b7a3-4457-a686-fb097574dd64"
+                },
+                {
+                    "label": "GTG 4",
+                    "value": "1d13c48e-fad7-49e8-8b8e-b7e7e230fa68"
+                },
+                {
+                    "label": "GTG 1",
+                    "value": "ca1b742f-87a2-4767-8816-6ac73bf6d109"
+                }
+            ]
+        },
+        "dtype": "node",
+        "equipementId": "2E97D772-C12E-48D7-B950-99DC31411839",
+        "id": "dd8437ee-d894-460c-bed6-689ab51c5171",
+        "metaData": {
+            "command": "Western Naval Command",
+            "department": "Engineering",
+            "equipmentCode": "",
+            "equipmentName": "",
+            "nomenclature": "",
+            "shipCategory": "DESTROYER AND FRIGATES",
+            "shipClass": "KOLKATA (P-15A)",
+            "shipName": "INS THREE"
+        },
+        "position": {
+            "x": 308,
+            "y": 534
+        },
+        "shipName": "INS THREE",
+        "sourcePosition": "right",
+        "style": {
+            "background": "rgb(156, 226, 81)",
+            "border": "1px solid black",
+            "borderColor": "black",
+            "borderRadius": "5px",
+            "padding": "20px"
+        },
+        "targetPosition": "left",
+        "type": "component"
+    },
+    {
+        "data": {
+            "k": 2,
+            "k_as": 4,
+            "k_c": 2,
+            "k_ds": 4,
+            "k_elh": 2,
+            "label": "GTG 4",
+            "n": 4,
+            "parallel_comp": [
+                {
+                    "label": "GTG 2",
+                    "value": "3a5f7629-b7a3-4457-a686-fb097574dd64"
+                },
+                {
+                    "label": "GTG 3",
+                    "value": "dd8437ee-d894-460c-bed6-689ab51c5171"
+                },
+                {
+                    "label": "GTG 1",
+                    "value": "ca1b742f-87a2-4767-8816-6ac73bf6d109"
+                }
+            ]
+        },
+        "dtype": "node",
+        "equipementId": "4C5F2B39-B4C2-43F7-9B88-5E3F1CC05A24",
+        "id": "1d13c48e-fad7-49e8-8b8e-b7e7e230fa68",
+        "metaData": {
+            "command": "Western Naval Command",
+            "department": "Engineering",
+            "equipmentCode": "",
+            "equipmentName": "",
+            "nomenclature": "",
+            "shipCategory": "DESTROYER AND FRIGATES",
+            "shipClass": "KOLKATA (P-15A)",
+            "shipName": "INS THREE"
+        },
+        "position": {
+            "x": 308,
+            "y": 620
+        },
+        "shipName": "INS THREE",
+        "sourcePosition": "right",
+        "style": {
+            "background": "rgb(156, 226, 81)",
+            "border": "1px solid black",
+            "borderColor": "black",
+            "borderRadius": "5px",
+            "padding": "20px"
+        },
+        "targetPosition": "left",
+        "type": "component"
+    }
+]
