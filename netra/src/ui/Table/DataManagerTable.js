@@ -372,13 +372,12 @@ const DataManagerTable = (props) => {
         }}
         rowData={props.rowData}
         tooltipShowDelay="0"
-        // columnDefs={props.columnDefs}
         onGridReady={onGridReady}
         onFirstDataRendered={onFirstDataRendered}
         onGridSizeChanged={onGridSizeChanged}
         onCellValueChanged={saveModifiedRows}
         rowSelection={"multiple"}
-        rowMultiSelectWithClick={true}
+        // rowMultiSelectWithClick={true}
         {...(props.rowHeight ? { rowHeight: props.rowHeight } : {})}
         frameworkComponents={{
           updateButton: updateButton,
