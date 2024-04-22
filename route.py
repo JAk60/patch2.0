@@ -846,6 +846,12 @@ def delete_file():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@app.route("/fetch_cmms_selection", methods=["GET"])
+def fetch_cmms_selection():
+    custom = Custom_Settings()
+    data = custom.fetch_cmms_selection()
+    return data
+
 if __name__ == "__main__":
     app.secret_key = os.urandom(32)
     app.wsgi_app = middleware.TaskMiddleWare(app.wsgi_app, APP_ROOT)

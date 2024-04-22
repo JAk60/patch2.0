@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import CmmsSysConfig from "./CmmsSysConfig";
 import { useFormik } from "formik";
 import {
   TextField,
@@ -9,6 +10,7 @@ import {
   FormControlLabel,
 } from "@material-ui/core";
 import CustomizedSnackbars from "../../ui/CustomSnackBar";
+import { useSelector } from "react-redux";
 
 const RegisterEquipment = () => {
   const [SnackBarMessage, setSnackBarMessage] = useState({
@@ -21,11 +23,15 @@ const RegisterEquipment = () => {
     { name: "shipName", label: "Ship Name" },
     { name: "nomenclature", label: "Nomenclature" },
   ];
-
+  const currentlySelected=useSelector((state)=>state.userSelection.currentSelection);
+  console.log(currentlySelected);
   const formik = useFormik({
     initialValues: {
-      shipName: "",
-      nomenclature: "",
+      shipName: '',
+      department: '',
+      equipmentName: '',
+      equipmentCode: '',
+      nomenclature: '',
       registerAll: false,
     },
     onSubmit: async (values) => {
@@ -69,58 +75,49 @@ const RegisterEquipment = () => {
   return (
     <Container
       style={{
-       marginTop: "7rem",
-        padding: "7rem",
+        marginTop: "7rem",
+        padding: "2rem", // Adjusted padding
         borderRadius: "10px",
         boxShadow: "0 3px 10px rgb(0 0 0 / 0.2)",
       }}
     >
       <form onSubmit={formik.handleSubmit}>
-        <Grid container spacing={1}>
+        <Grid container spacing={2}> {/* Adjusted spacing */}
           {formik.values.registerAll ? (
-            <Grid item lg={6} key={InputFields[0].name}>
-              <TextField
-                id={InputFields[0].name}
-                name={InputFields[0].name}
-                label={InputFields[0].label}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                value={formik.values[InputFields[0].name]}
-                variant="outlined"
-                fullWidth
-                margin="normal"
-                style={{ width: "450px", textAlign: "center" }}
-              />
-            </Grid>
-          ) : (
-            InputFields.map((field) => (
-              <Grid item lg={6} key={field.name}>
+            <>
+              <Grid item xs={12} sm={6}> {/* Full width on small screens, half on larger screens */}
                 <TextField
-                  id={field.name}
-                  name={field.name}
-                  label={field.label}
+                  id={InputFields[0].name}
+                  name={InputFields[0].name}
+                  label={InputFields[0].label}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  value={formik.values[field.name]}
+                  value={formik.values[InputFields[0].name]}
                   variant="outlined"
                   fullWidth
-                  margin="normal"
-                  style={{ width: "450px", textAlign: "center" }}
+                  style={{ textAlign: "center" }}
                 />
               </Grid>
-            ))
+              <Grid item xs={12} sm={6}> {/* Full width on small screens, half on larger screens */}
+                <TextField
+                  id={InputFields[1].name}
+                  name={InputFields[1].name}
+                  label={InputFields[1].label}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  value={formik.values[InputFields[1].name]}
+                  variant="outlined"
+                  fullWidth
+                  style={{ textAlign: "center" }}
+                />
+              </Grid>
+            </>
+          ) : (
+            <Grid item xs={12}>
+              <CmmsSysConfig />
+            </Grid>
           )}
-          <Grid item lg={6}>
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              style={{ height: "4em", marginTop: "20px" }}
-            >
-              Submit
-            </Button>
-          </Grid>
-          <Grid item lg={6}>
+          <Grid item xs={12}>
             <FormControlLabel
               control={
                 <Switch
@@ -131,6 +128,16 @@ const RegisterEquipment = () => {
               }
               label="Register All Equipments at Once"
             />
+          </Grid>
+          <Grid item xs={12}>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              style={{ height: "3em", marginTop: "20px", width: "100%" }}
+            >
+              Submit
+            </Button>
           </Grid>
         </Grid>
       </form>

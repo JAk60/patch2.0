@@ -86,7 +86,7 @@ export default function () {
   );
 
   const lowestSensorValue = Math.min(...Object.values(mps));
-
+console.log(lowestSensorValue);
   const handleCloseNoteDialog = () => {
     setOpenNoteDialog(false);
     if (dontShowAgain) {

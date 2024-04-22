@@ -1,4 +1,4 @@
-from dB.dB_connection import cursor, cnxn
+from dB.dB_connection import pointer, cnxn, cursor
 from flask import jsonify
 import pyodbc
 
@@ -57,3 +57,45 @@ class Custom_Settings():
             print(f"Error: {ex}")
             # Optionally, re-raise the exception to propagate it further
             raise
+    
+    def fetch_cmms_selection(self):
+        query = '''
+                    SELECT 
+                        ShipName as ship_name,
+                        M_Department.Description as department,
+                        EquipmentName as component_name,
+                        M_Equipment.EquipmentCode as CMMS_EquipmentCode,
+                        Nomenclature as nomenclature
+                    FROM 
+                        T_EquipmentShipDetail WITH(NOLOCK) 
+                        INNER JOIN M_Equipment WITH(NOLOCK) ON T_EquipmentShipDetail.Universal_ID_M_Equipment = M_Equipment.Universal_ID_M_Equipment
+                        INNER JOIN M_Ship WITH(NOLOCK) ON T_EquipmentShipDetail.Universal_ID_M_Ship = M_Ship.Universal_ID_M_Ship
+                        INNER JOIN M_ShipClass WITH(NOLOCK) ON M_Ship.Universal_ID_M_ShipClass = M_ShipClass.Universal_ID_M_ShipClass
+                        INNER JOIN M_ShipCategory WITH(NOLOCK) ON M_Ship.Universal_ID_M_ShipCategory = M_ShipCategory.Universal_ID_M_ShipCategory
+                        INNER JOIN M_Command WITH(NOLOCK)  ON M_Ship.Universal_ID_M_Command = M_Command.Universal_ID_M_Command 
+                        INNER JOIN M_Department WITH(NOLOCK) ON T_EquipmentShipDetail.Universal_ID_M_Department = M_Department.Universal_ID_M_Department
+                    WHERE 
+                        T_EquipmentShipDetail.Active = 1 
+                        AND RemovalDate IS NULL 
+                        AND M_Ship.Active = 1
+                        AND M_Ship.DecommissionDate IS NULL 
+                        AND M_ShipClass.Active = 1 
+                        '''
+        q='''select * from ShipComponents'''
+        pointer.execute(q)
+        fetched_data = pointer.fetchall()
+        print(fetched_data)
+        results = []
+    
+    # Iterate through the fetched data and create dictionaries
+        for row in fetched_data:
+            result_dict = {
+                'ship_name': row[0],
+                'equipment': row[1],
+                'CMMSCode': row[2],
+                'department': row[3],
+                'nomenclature': row[4]
+            }
+            results.append(result_dict)
+        return results
+        pass
