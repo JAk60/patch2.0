@@ -26,6 +26,7 @@ import styles from "./Home.module.css";
 
 const iconMappings = {
   SystemConfiguration: SettingsIcon,
+  SystemConfig: SettingsIcon,
   MissionConfiguration: DirectionsBoatOutlinedIcon,
   MaintenanceAllocation: BuildOutlinedIcon,
   ViewOrUpdateData: RateReviewOutlinedIcon,
@@ -69,6 +70,7 @@ const Home = (props) => {
   const trueLevels = Object.keys(level).filter((key) => level[key] === true);
   const featureAccess = [
     { feature: "SystemConfiguration", levels: ["L1", "L5", "L6"] },
+    { feature: "SystemConfig", levels: ["L1", "L5", "L6"] },
     { feature: "MissionConfiguration", levels: ["L1", "L5"] },
     { feature: "MaintenanceAllocation", levels: ["L1", "L5", "L6"] },
     { feature: "ViewOrUpdateData", levels: ["L1", "L5", "L6"] },
@@ -106,6 +108,7 @@ const Home = (props) => {
 
   const featurePaths = {
     SystemConfiguration: "/system_config",
+    SystemConfig: "/system_con",
     ReliabilityDashboard: "/rDashboard",
     MonitoringDashboard: "/CDashboard",
     MissionReliabilityDashboard: "/TaskDashboard",

@@ -31,6 +31,7 @@ import SystemConfiguration from "./pages/systen_configuration/SystemConfiguratio
 import UserSelectionConfiguration from "./pages/userSelectionConfig/UserSelectionConfiguration";
 import { setLevel } from "./store/Levels";
 import Administrator from "./pages/Data Administrator/Administrator";
+import SysConfig from "./pages/SysConfig/SysConfig";
 
 const theme = createMuiTheme({
   palette: {
@@ -170,6 +171,12 @@ function App() {
               path="/system_config"
               render={(props) => (
                 <SystemConfiguration {...props} settings={settings} />
+              )}
+            />
+            <Route
+              path="/system_con"
+              render={(props) => (
+                <SysConfig {...props} settings={settings} />
               )}
             />
             <Route
