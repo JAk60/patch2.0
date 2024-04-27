@@ -3,19 +3,83 @@
 }
 
 .navigation {
+  position: fixed;
+  top: 0;
+  bottom: 0;
   background-image: linear-gradient(10deg, #2a2a72, #498fe8);
-  grid-row: 1/5;
-  height: 100%;
-  white-space: nowrap;
-  overflow-x: hidden;
   width: 7rem;
-  -webkit-transition: all 0.5s ease-out;
-  -moz-transition: all 0.5s ease-out;
-  -o-transition: all 0.5s ease-out;
-  transition: all 0.5s ease-out;
-  height: 100vh;
+  overflow-x: hidden;
   z-index: 11;
+  transition: width 0.5s ease-out;
 }
+
+.navigation:hover {
+  width: 17rem;
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  align-items: center;
+  justify-content: flex-start;
+  height: 100%;
+}
+
+.nav_link {
+  margin: 1rem 0;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  height: 5.5rem;
+  width: 100%;
+}
+
+.nav_link a {
+  text-decoration: none;
+  color: white;
+  font-size: 22px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.nav_link a:hover {
+  background-color: white;
+  color: black;
+}
+
+.div {
+  display: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.5s ease-out;
+}
+
+.div.active {
+  display: block;
+  font-size: 1.2rem;
+  font-weight: 500;
+  visibility: visible;
+  opacity: 1;
+  animation: fade 2s;
+}
+
+@keyframes fade {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
 
 .navigation:hover {
   width: 17rem;

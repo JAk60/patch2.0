@@ -22,12 +22,12 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.common.white,
   },
   content: {
-    paddingTop: theme.spacing(8),
-    width: "88vw",
-    display: "flex",
-    flexDirection: "column",
-    alignItems:"center",
-     justifyContent: "center"  // Adjust the padding value as needed
+    // paddingTop: theme.spacing(8),
+    // width: "100%",
+    // display: "flex",
+    // // flexDirection: "column",
+    // alignItems:"center",
+    // justifyContent: "center"  // Adjust the padding value as needed
     // Assuming you have a fixed AppBar, adjust the paddingTop to match its height
   },
 }));
@@ -50,10 +50,8 @@ export default function SysConfig() {
           style={{
             zIndex: "1",
             marginLeft: "20px",
-            position: "fixed",
             gridColumn: "2/13",
             gridRow: "1/2",
-            zIndex: 0,
           }}
         >
           <Tabs value={selectedTab} onChange={handleChange} variant="fullWidth">
@@ -73,10 +71,10 @@ export default function SysConfig() {
         </AppBar>
       </div>
       <Container
-        style={{ width: "100vw"}}
+        className={classes.content}
       >
         {selectedTab === 0 && (
-          <div className={classes.content}>
+          <div >
             <SystemConfiguration />
           </div>
         )}

@@ -3,21 +3,13 @@ import { makeStyles } from "@material-ui/styles";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router";
-import { Link, Route, Switch, useHistory } from "react-router-dom";
-// import EqptStructuring from "../../components/main/EqptStructuring/EqptStructuring";
-// import Navigation from "../../components/navigation/Navigation";
-import StageSlider from "../../components/slider/NewSlider";
+import { Route, Switch, useHistory } from "react-router-dom";
+import EqptStructuring from "../../components/main/EqptStructuring/EqptStructuring";
 import { treeDataActions } from "../../store/TreeDataStore";
 import CustomizedSnackbars from "../../ui/CustomSnackBar";
 import UserSelection from "../../ui/userSelection/userSelection";
 import AccessControl from "../Home/AccessControl";
 import styles from "./SystemConfiguration.module.css";
-import EqptStructuring from "../../components/main/EqptStructuring/EqptStructuring";
-// import AdditionalInfo from "./additionalInfo/additionalInfo";
-// import DutyCycle from "./dutyCycle/dutyCycle";
-// import FailureMode from "./failureMode/failureMode";
-// import MaintenanceInfo from "./maintenanceInfo/maintenanceInfo";
-// import RedundancyInfo from "./redundancy/redundancy";
 const SystemStyles = makeStyles({
   formControl: {
     margin: "2rem",
@@ -179,7 +171,7 @@ const SystemConfiguration = (props) => {
 
   const onSaveButtonClickHandler = () => {
     const currentLocation = location.pathname;
-    if (currentLocation === "/system_config") {
+    if (currentLocation === "/system_con") {
       if (systemConfigurationTreeData.length > 0) {
         fetch("/save_system", {
           method: "POST",
@@ -367,7 +359,7 @@ const SystemConfiguration = (props) => {
   };
 
   return (
-    <React.Fragment>
+    <>
       <AccessControl allowedLevels={['L1', 'L5', 'L6']}>
         {/* <Navigation /> */}
         {/* <NewModule /> */}
@@ -375,7 +367,6 @@ const SystemConfiguration = (props) => {
         <div className={styles.flex}>
           <div className={styles.user}>
             <UserSelection />
-          </div>
           <div className={styles.buttons}>
             
                 <Button
@@ -386,25 +377,7 @@ const SystemConfiguration = (props) => {
                 >
                   Load Equipment
                 </Button>
-        
-       
-                {/* <Button
-                  variant="contained"
-                  color="primary"
-                  className={SystemClasses.buttons}
-                  onClick={() => PreviousStage()}
-                >
-                  Back
-                </Button> */}
-       
-              {/* <Button
-              variant="contained"
-              color="primary"
-              className={SystemClasses.buttons}
-            >
-              Replicate
-            </Button> */}
-
+      
               <Button
                 variant="contained"
                 color="primary"
@@ -412,29 +385,8 @@ const SystemConfiguration = (props) => {
                 onClick={onSaveButtonClickHandler}
               >
                 Save
-              </Button>
-        
-                {/* <Button
-                  variant="contained"
-                  color="primary"
-                  className={SystemClasses.buttons}
-                  onClick={() => NextStage()}
-                >
-                  Next Stage
-                </Button> */}
-        
-
-{/*             
-                <Button
-                  onClick={() => history.push("/data_manager")}
-                  component={Link}
-                  variant="contained"
-                  color="primary"
-                  className={SystemClasses.buttons}
-                >
-                  Next Module
-                </Button> */}
-             
+              </Button>             
+          </div>
           </div>
         </div>
         <Switch>
@@ -467,7 +419,7 @@ const SystemConfiguration = (props) => {
           />
         )}
       </AccessControl>
-    </React.Fragment>
+    </>
   );
 };
 

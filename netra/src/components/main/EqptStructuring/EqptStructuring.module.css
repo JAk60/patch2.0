@@ -3,10 +3,11 @@
   flex-direction: row;
   justify-content: space-evenly;
   overflow-y: hidden;
-  width: 98%;
+  width: 88vw;
+  margin-left: 7%;
   grid-column: 2/13;
   grid-row: 4;
-  margin-top: 120px;
+  margin-top: 1rem;
   padding-bottom: 10px;
   font-weight: bold;
 }

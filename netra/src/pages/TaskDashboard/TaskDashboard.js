@@ -262,6 +262,7 @@ const TaskDashboard = () => {
 				id: d["id"],
 			});
 		});
+		console.log(newData);
 		setCompRows(newData);
 		// debugger;
 	};
@@ -506,6 +507,7 @@ const TaskDashboard = () => {
 		});
 	};
 	const updateFinalRowData = (d) => {
+		console.log(d);
 		setMissionData(d);
 	};
 

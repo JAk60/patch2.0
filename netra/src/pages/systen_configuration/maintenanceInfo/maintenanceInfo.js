@@ -1,12 +1,8 @@
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Button } from "@material-ui/core";
-import CustomSelect from "../../../ui/Form/CustomSelect";
+import { AgGridColumn } from "ag-grid-react";
+import { useSelector } from "react-redux";
+import { v4 as uuid } from "uuid";
 import Table from "../../../ui/Table/Table";
 import styles from "../SystemConfiguration.module.css";
-import { MIrowData } from "../SystemConfigurationTable.js";
-import { AgGridColumn } from "ag-grid-react";
-import { v4 as uuid } from "uuid";
 const MaintenanceInfo = (props) => {
   const systemData = useSelector((state) => state.treeData.treeData);
   const MaintColumns = [
@@ -63,26 +59,6 @@ const MaintenanceInfo = (props) => {
       cellEditorParams={{ values: ["No", "Yes"] }}
       editable={true}
     />,
-    // <AgGridColumn
-    //   field="ComponentCriticality"
-    //   headerName="Criticality"
-    //   width={350}
-    //   cellEditor="agSelectCellEditor"
-    //   cellEditorParams={{
-    //     values: [
-    //       "",
-    //       "Failure leads to hazard or complete loss of functionality.",
-    //       "Failure does not lead to hazard but causes partial loss of functionality.",
-    //       "Failure does not lead hazard or loss of functionality but significant loss in efficiency.",
-    //       "Failure does not lead to hazard or loss of functionality or loss of efficiency but causes rapid deterioration of some other critical component.",
-    //       "Failure does not lead to hazard or loss of functionality but minor loss in efficiency.",
-    //       "Failure does not lead to hazard or loss of functionality but causes rapid deterioration of some other non-critical component.",
-    //       "Failure does not lead to hazard or loss of functionality or loss of efficiency but leads to significant inconvenience.",
-    //       "Failure does not lead to hazard or loss of functionality or loss of efficiency but leads to minor inconvenience.",
-    //     ],
-    //   }}
-    //   editable={true}
-    // />,
   ];
 
   const rowData = systemData

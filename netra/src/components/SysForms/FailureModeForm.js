@@ -2,22 +2,50 @@ import React from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { Button, TextField } from "@material-ui/core";
 import { Autocomplete } from "@material-ui/lab";
-
+import { useSelector } from "react-redux";
+import { v4 as uuid } from "uuid";
 const initialValues = {
   EquipmentNomenclature: "",
   FailureMode: "",
 };
 
-const failureModeOptions = [
-  { label: "Option 1", value: "option1" },
-  { label: "Option 2", value: "option2" },
-  { label: "Option 3", value: "option3" },
-];
-
 const FMFormikForm = () => {
-  const handleSubmit = (values) => {
+  const EquipmentNomenclatures = useSelector(
+		(state) => state.userSelection.componentsData
+	);
+  const handleSubmit = async (values) => {
     console.log(values);
-    // Handle form submission here
+    try {
+			const response = await fetch("/save_system", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					flatData: [
+            {
+              EquipmentName: values.EquipmentNomenclature.name,
+              eqId: values.EquipmentNomenclature.id,
+              id: uuid(), // Assuming you have a function or library to generate unique IDs like uuid()
+              fixFailureMode: values.FailureMode,
+            }
+          ],
+					dtype: "failure_mode", 
+				}),
+			});
+
+			if (response.ok) {
+				const data = await response.json();
+				console.log("Data saved successfully:", data);
+				// Handle success if needed
+			} else {
+				console.error("Failed to save data:", response.statusText);
+				// Handle error if needed
+			}
+		} catch (error) {
+			console.error("Error occurred while saving data:", error);
+			// Handle error if needed
+		}
   };
 
   return (
@@ -28,20 +56,29 @@ const FMFormikForm = () => {
       {({ errors, touched, setFieldValue, setFieldTouched }) => (
         <Form>
           <Autocomplete
-            options={failureModeOptions}
-            getOptionLabel={(option) => option.label}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label="Equipment Nomenclature"
-                variant="outlined"
-              />
-            )}
-            onChange={(event, newValue) => {
-              setFieldValue("EquipmentNomenclature", newValue ? newValue.label : "");
-              setFieldTouched("EquipmentNomenclature", true);
-            }}
-          />
+						options={EquipmentNomenclatures}
+						getOptionLabel={(option) => option.nomenclature}
+						groupBy={(option) => option.ship_name}
+						renderInput={(params) => (
+							<TextField
+								{...params}
+								label="Equipment Nomenclature"
+								variant="outlined"
+							/>
+						)}
+						onChange={(event, newValue) => {
+							// Ensure newValue is logged correctly
+							console.log(
+								"Selected Equipment Nomenclature:",
+								newValue
+							);
+							setFieldValue(
+								"EquipmentNomenclature",
+								newValue ? newValue : ""
+							);
+							setFieldTouched("EquipmentNomenclature", true);
+						}}
+					/>
 
           <TextField
             label="Failure Mode"
