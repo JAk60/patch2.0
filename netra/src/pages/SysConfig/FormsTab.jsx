@@ -20,11 +20,10 @@ const useStyles = makeStyles((theme) => ({
 		marginTop: "80px",
 	},
 	accordion: {
-    display: "flex",
-    flexDirection: "column",
+		display: "flex",
+		flexDirection: "column",
 		alignItems: "center",
-    marginLeft: "19%",
-		width: "80vw",
+		width: "80%", 
 		marginBottom: theme.spacing(2),
 	},
 	formContainer: {
@@ -32,9 +31,10 @@ const useStyles = makeStyles((theme) => ({
 		flexDirection: "column",
 		justifyContent: "center",
 		width: "100vw",
-		maxWidth: "800px", // Adjust maximum width as needed
+		maxWidth: "900px", 
 	},
 }));
+
 
 const options = [
 	"Redundancy & Parallel Information",

@@ -11,6 +11,8 @@ import Navigation from "../../components/navigation/Navigation";
 import EqptStructuring from "../../components/main/EqptStructuring/EqptStructuring";
 import SystemConfiguration from "./SystemConfiguration";
 import FormsTab from "./FormsTab";
+import TreeView from "./TreeView";
+import TreeVisualization from "./TreeView";
 
 const useStyles = makeStyles((theme) => ({
   transparentTab: {
@@ -67,6 +69,12 @@ export default function SysConfig() {
                 selectedTab === 1 ? classes.coloredTab : classes.transparentTab
               }
             />
+            <Tab
+              label="See System"
+              className={
+                selectedTab === 2 ? classes.coloredTab : classes.transparentTab
+              }
+            />
           </Tabs>
         </AppBar>
       </div>
@@ -81,6 +89,11 @@ export default function SysConfig() {
         {selectedTab === 1 && (
           <div>
             <FormsTab />
+          </div>
+        )}
+        {selectedTab === 2 && (
+          <div>
+            <TreeVisualization />
           </div>
         )}
       </Container>

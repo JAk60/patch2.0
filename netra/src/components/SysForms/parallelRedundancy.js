@@ -6,6 +6,7 @@ import { AgGridColumn } from "ag-grid-react";
 // import Table from "../../ui/Table/DataManagerTable";
 import Table from "../../ui/Table/Table";
 import { v4 as uuid } from "uuid";
+import { useSelector } from "react-redux";
 // import {
 //   Table,
 //   TableBody,
@@ -72,6 +73,12 @@ const FormikForm = () => {
   const [submittedData, setSubmittedData] = useState([]);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [rowCompState, setCompRows] = useState([]);
+  const EquipmentNomenclatures = useSelector(
+		(state) => state.userSelection.componentsData
+	);
+  const assemblies = useSelector(
+		(state) => state.treeData.sortTreeData
+	);
   const [assemblyData,setAssemblyData]= useState([]);
 
   const handleSubmit = (values) => {
@@ -144,8 +151,9 @@ const FormikForm = () => {
         {({ errors, touched, setFieldValue, setFieldTouched }) => (
           <Form>
             <Autocomplete
-              options={equipmentOptions}
-              getOptionLabel={(option) => option.label}
+              options={EquipmentNomenclatures}
+              getOptionLabel={(option) => option.nomenclature}
+						  groupBy={(option) => option.ship_name}
               renderInput={(params) => (
                 <TextField
                   {...params}
