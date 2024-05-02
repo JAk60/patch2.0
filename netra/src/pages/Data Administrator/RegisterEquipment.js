@@ -21,7 +21,6 @@ const RegisterEquipment = () => {
 
   const InputFields = [
     { name: "shipName", label: "Ship Name" },
-    { name: "nomenclature", label: "Nomenclature" },
   ];
   const currentlySelected=useSelector((state)=>state.userSelection.currentSelection);
   console.log(currentlySelected);
@@ -93,19 +92,6 @@ const RegisterEquipment = () => {
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   value={formik.values[InputFields[0].name]}
-                  variant="outlined"
-                  fullWidth
-                  style={{ textAlign: "center" }}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}> {/* Full width on small screens, half on larger screens */}
-                <TextField
-                  id={InputFields[1].name}
-                  name={InputFields[1].name}
-                  label={InputFields[1].label}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  value={formik.values[InputFields[1].name]}
                   variant="outlined"
                   fullWidth
                   style={{ textAlign: "center" }}

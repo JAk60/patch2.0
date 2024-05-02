@@ -110,44 +110,41 @@ export default function CmmsSysConfig() {
   };
 
   const NomenclatureChange = (e, values) => {
-    const selectedNomenclatures = values || []; // Ensure it's an array
+    const selectedNomenclatures = values || [];
   
-    if (selectedNomenclatures.includes("Select All")) {
-      // If "Select All" is selected, set all nomenclatures except "Select All"
-      const allNomenclatures = nomenclatureOptions.filter(option => option !== "Select All");
-      const data = { nomenclature: allNomenclatures };
-      dispatch(userActions.onChangeCurrentSelection({ selectedData: data }));
+    // Get all unique nomenclatures from allEquipmentData
+    const allNomenclatures = Array.from(new Set(allEquipmentData.map(item => item.nomenclature)));
+    const hasSelectAll = selectedNomenclatures.includes("Select All");
+  
+    let updatedNomenclatures;
+  
+    if (hasSelectAll) {
+      // If "Select All" is selected, set updatedNomenclatures to all nomenclatures
+      updatedNomenclatures = allNomenclatures;
     } else {
-      let updatedNomenclatures = [...selectedNomenclatures];
+      // Remove "Select All" from the selectedNomenclatures array
+      updatedNomenclatures = selectedNomenclatures.filter(item => item !== "Select All");
   
-      // Check if "Select All" is already selected
-      const selectAllIndex = updatedNomenclatures.indexOf("Select All");
-      if (selectAllIndex !== -1) {
-        updatedNomenclatures.splice(selectAllIndex, 1); // Remove "Select All"
+      // If all nomenclatures except "Select All" are selected, deselect all
+      const hasAllSelected = updatedNomenclatures.length === allNomenclatures.length;
+      if (hasAllSelected) {
+        updatedNomenclatures = [];
       }
-  
-      // If "Select All" was selected or all other options are selected, select all
-      if (selectAllIndex !== -1 || updatedNomenclatures.length === nomenclatureOptions.length - 1) {
-        updatedNomenclatures = nomenclatureOptions.filter(option => option !== "Select All");
-      }
-  
-      const equipmentCodes = updatedNomenclatures.map((selectedNomenclature) => {
-        // Filter the equipment data based on each selected nomenclature
-        const filteredCmmsCode = allEquipmentData.find(
-          (equipment) => equipment.nomenclature === selectedNomenclature
-        );
-  
-        return filteredCmmsCode ? filteredCmmsCode.CMMSCode : null;
-      });
-  
-      const data = { nomenclature: updatedNomenclatures };
-      dispatch(userActions.onChangeCurrentSelection({ selectedData: data }));
-  
-      const datac = { equipmentCode: equipmentCodes };
-      dispatch(userActions.onChangeCurrentSelection({ selectedData: datac }));
     }
-  };
   
+    const data = { nomenclature: updatedNomenclatures };
+    dispatch(userActions.onChangeCurrentSelection({ selectedData: data }));
+  
+    const equipmentCodes = updatedNomenclatures.map(selectedNomenclature => {
+      const filteredCmmsCode = allEquipmentData.find(
+        equipment => equipment.nomenclature === selectedNomenclature
+      );
+      return filteredCmmsCode ? filteredCmmsCode.CMMSCode : null;
+    });
+  
+    const datac = { equipmentCode: equipmentCodes };
+    dispatch(userActions.onChangeCurrentSelection({ selectedData: datac }));
+  };
   return (
     <>
       <Autocomplete
@@ -180,7 +177,7 @@ export default function CmmsSysConfig() {
       <Autocomplete
         multiple
         className={classes.autocomplete}
-        options={["Select All", ...nomenclatureOptions]}
+        options={nomenclatureOptions}
         getOptionLabel={(option) => option}
         onChange={NomenclatureChange}
         renderInput={(params) => (

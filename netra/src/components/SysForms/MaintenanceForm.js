@@ -61,9 +61,10 @@ const MaintenanceFormikForm = () => {
 	};
 
 	return (
+		<div style={{ display: "flex",justifyContent: "center", flexDirection: "column",alignItems: "center" }}>
 		<Formik initialValues={initialValues} onSubmit={handleSubmit}>
 			{({ errors, touched, setFieldValue, setFieldTouched }) => (
-				<Form>
+				<Form >
 					<Autocomplete
 						options={EquipmentNomenclatures}
 						getOptionLabel={(option) => option.nomenclature}
@@ -75,6 +76,7 @@ const MaintenanceFormikForm = () => {
 								variant="outlined"
 							/>
 						)}
+						style={{width:"400px"}}
 						onChange={(event, newValue) => {
 							// Ensure newValue is logged correctly
 							console.log(
@@ -98,6 +100,7 @@ const MaintenanceFormikForm = () => {
 								variant="outlined"
 							/>
 						)}
+						style={{width:"400px"}}
 						onChange={(event, newValue) => {
 							setFieldValue(
 								"RepairType",
@@ -116,6 +119,7 @@ const MaintenanceFormikForm = () => {
 								variant="outlined"
 							/>
 						)}
+						style={{width:"400px"}}
 						onChange={(event, newValue) => {
 							setFieldValue(
 								"PreventiveMaintenaceApplicable",
@@ -134,6 +138,7 @@ const MaintenanceFormikForm = () => {
 						type="number"
 						fullWidth
 						variant="outlined"
+						style={{width:"400px"}}
 						onChange={(event) => {
 							setFieldValue(
 								"PreventiveMaintenaceInterval",
@@ -155,6 +160,7 @@ const MaintenanceFormikForm = () => {
 								variant="outlined"
 							/>
 						)}
+						style={{width:"400px"}}
 						onChange={(event, newValue) => {
 							setFieldValue(
 								"ComponentsReplaced",
@@ -170,6 +176,7 @@ const MaintenanceFormikForm = () => {
 				</Form>
 			)}
 		</Formik>
+		</div>
 	);
 };
 

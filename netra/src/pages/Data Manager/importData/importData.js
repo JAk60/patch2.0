@@ -15,6 +15,7 @@ const ImportData = (props) => {
       ShapeParameter: "",
     };
   });
+  console.log(rows,"rowsssss");
   const ImportColumns = [
     <AgGridColumn
       field="ComponentName"

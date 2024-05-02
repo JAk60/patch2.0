@@ -28,24 +28,25 @@ const AddInfoFormikForm = () => {
         },
         body: JSON.stringify({
           flatData: [
-          {
-            id: uuid(),
-            component_id: values.EquipmentNomenclature.id,
-            EquipmentName: values.EquipmentNomenclature.nomenclature,
-            AverageRunning: values.AverageRunning,
-            Unit: values.Unit,
-            installation_date: values.installation_date,
-            maintDataAvail: "Component Level",
-            hK: 1,
-            elhK: 1,
-            cK: 1,
-            dsK: 1,
-            asK: 1,
-            parallelComponentIds: [],
-            N: 1,
-          }
-        ],dtype: "additionalInfo"
-      }) 
+            {
+              id: uuid(),
+              component_id: values.EquipmentNomenclature.id,
+              EquipmentName: values.EquipmentNomenclature.nomenclature,
+              AverageRunning: values.AverageRunning,
+              Unit: values.Unit,
+              installation_date: values.installation_date,
+              maintDataAvail: "Component Level",
+              hK: 1,
+              elhK: 1,
+              cK: 1,
+              dsK: 1,
+              asK: 1,
+              parallelComponentIds: [],
+              N: 1,
+            },
+          ],
+          dtype: "additionalInfo",
+        }),
       });
 
       if (response.ok) {
@@ -63,69 +64,85 @@ const AddInfoFormikForm = () => {
   };
 
   return (
-    <Formik initialValues={initialValues} onSubmit={handleSubmit}>
-      {({ errors, touched, setFieldValue, setFieldTouched }) => (
-        <Form>
-          <Autocomplete
-            options={EquipmentNomenclatures}
-            getOptionLabel={(option) => option.nomenclature}
-            groupBy={(option) => option.ship_name}
-            renderInput={(params) => (
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        flexDirection: "column",
+        alignItems: "center",
+      }}
+    >
+      <Formik initialValues={initialValues} onSubmit={handleSubmit}>
+        {({ errors, touched, setFieldValue, setFieldTouched }) => (
+          <Form>
+            <Autocomplete
+              options={EquipmentNomenclatures}
+              getOptionLabel={(option) => option.nomenclature}
+              groupBy={(option) => option.ship_name}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Equipment Nomenclature"
+                  variant="outlined"
+                />
+              )}
+              style={{ width: "400px" }}
+              onChange={(event, newValue) => {
+                setFieldValue(
+                  "EquipmentNomenclature",
+                  newValue ? newValue : ""
+                );
+                setFieldTouched("EquipmentNomenclature", true);
+              }}
+            />
+            <TextField
+              label="Installation Date"
+              name="installation_date"
+              type="date"
+              InputLabelProps={{
+                shrink: true,
+              }}
+              fullWidth
+              variant="outlined"
+              style={{ width: "400px" }}
+              onChange={(event) => {
+                setFieldValue("installation_date", event.target.value);
+                setFieldTouched("installation_date", true);
+              }}
+            />
+            <div>
               <TextField
-                {...params}
-                label="Equipment Nomenclature"
+                label="Default Avg. Monthly Utilization"
+                name="AverageRunning"
+                type="number"
+                // fullWidth
                 variant="outlined"
+                style={{ width: "400px" }}
+                onChange={(event) => {
+                  setFieldValue("AverageRunning", event.target.value);
+                  setFieldTouched("AverageRunning", true);
+                }}
               />
-            )}
-            onChange={(event, newValue) => {
-              setFieldValue("EquipmentNomenclature", newValue ? newValue : "");
-              setFieldTouched("EquipmentNomenclature", true);
-            }}
-          />
-          <TextField
-            label="Installation Date"
-            name="installation_date"
-            type="date"
-            InputLabelProps={{
-              shrink: true,
-            }}
-            fullWidth
-            variant="outlined"
-            onChange={(event) => {
-              setFieldValue("installation_date", event.target.value);
-              setFieldTouched("installation_date", true);
-            }}
-          />
+            </div>
+            <Autocomplete
+              options={unitOptions}
+              renderInput={(params) => (
+                <TextField {...params} label="Unit" variant="outlined" />
+              )}
+              style={{ width: "400px" }}
+              onChange={(event, newValue) => {
+                setFieldValue("Unit", newValue ? newValue : "");
+                setFieldTouched("Unit", true);
+              }}
+            />
 
-          <TextField
-            label="Default Avg. Monthly Utilization"
-            name="AverageRunning"
-            type="number"
-            fullWidth
-            variant="outlined"
-            onChange={(event) => {
-              setFieldValue("AverageRunning", event.target.value);
-              setFieldTouched("AverageRunning", true);
-            }}
-          />
-
-          <Autocomplete
-            options={unitOptions}
-            renderInput={(params) => (
-              <TextField {...params} label="Unit" variant="outlined" />
-            )}
-            onChange={(event, newValue) => {
-              setFieldValue("Unit", newValue ? newValue : "");
-              setFieldTouched("Unit", true);
-            }}
-          />
-
-          <Button type="submit" variant="contained" color="primary">
-            Submit
-          </Button>
-        </Form>
-      )}
-    </Formik>
+            <Button type="submit" variant="contained" color="primary">
+              Submit
+            </Button>
+          </Form>
+        )}
+      </Formik>
+    </div>
   );
 };
 

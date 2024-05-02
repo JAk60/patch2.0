@@ -92,7 +92,7 @@ function HistoricalData(props) {
     EquipRtype === "Replaceable" ? true : false;
       console.log(systemRepairTypeBool);
       if(!systemRepairTypeBool){ 
-        <Redirect to="/data_manager/historical_data/repairable_overhaul"></Redirect>
+        <Redirect to="/data_manager/historical_data"></Redirect>
        }
     
     if (EquipRtype === "Replaceable") {
@@ -175,6 +175,7 @@ function HistoricalData(props) {
     const filteredChild = systemConfigurationTreeData.filter(
       (x) => x.id === selectedoption.id
     );
+    console.log(filteredChild,"filteredChild");
     setHistoricalChildData(filteredChild);
   };
 

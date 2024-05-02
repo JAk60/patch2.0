@@ -46,7 +46,23 @@ const TreeVisualization = () => {
       </div>
     );
   };
-
+  if (!data || data.length === 0) {
+    return (
+      <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "90vh",
+        width: "90vw",
+      }}>
+        <Typography variant="h5">
+          No parent-child relationship found.
+        </Typography>
+      </div>
+    );
+  }
   return (
     <div
       style={{

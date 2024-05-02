@@ -146,10 +146,10 @@ const FormikForm = () => {
   // tableUpdate(d);
 	};
   return (
-    <div style={{ display: "flex", flexDirection: "column" }}>
+    <div style={{ display: "flex",justifyContent: "center", flexDirection: "column",alignItems: "center" }}>
       <Formik initialValues={initialValues} onSubmit={handleSubmit}>
         {({ errors, touched, setFieldValue, setFieldTouched }) => (
-          <Form>
+          <Form >
             <Autocomplete
               options={EquipmentNomenclatures}
               getOptionLabel={(option) => option.nomenclature}
@@ -161,6 +161,7 @@ const FormikForm = () => {
                   variant="outlined"
                 />
               )}
+              style={{width: "400px"}}
               onChange={(event, newValue) => {
                 setFieldValue(
                   "equipmentNomenclature",
@@ -180,6 +181,7 @@ const FormikForm = () => {
                   variant="outlined"
                 />
               )}
+              style={{width: "400px"}}
               onChange={(event, newValue) => {
                 setFieldValue(
                   "assemblyNomenclature",
@@ -193,6 +195,7 @@ const FormikForm = () => {
               multiple
               options={parallelOptions}
               getOptionLabel={(option) => option.label}
+             
               renderInput={(params) => (
                 <TextField
                   {...params}
@@ -200,6 +203,7 @@ const FormikForm = () => {
                   variant="outlined"
                 />
               )}
+              style={{width: "400px"}}
               onChange={(event, newValue) => {
                 setFieldValue(
                   "parallelComponents",
@@ -217,14 +221,14 @@ const FormikForm = () => {
       </Formik>
       <div>
         {isSubmitted && submittedData.length > 0 && (
-          <div>
+          <div style={{width:"450px"}}>
             	<Table
 										columnDefs={AssemblyDutyColumns}
 										setGrid={setGridCompApi}
 										gridApi={gridCompApi}
 										rowData={rowCompState}
 										tableUpdate={updateFinalRowData}
-										tableSize={250}
+										tableSize={150}
 									/>
             <Button
               variant="contained"

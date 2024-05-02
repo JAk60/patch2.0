@@ -62,7 +62,7 @@ class System_Configuration_N():
                     'shipCategory': r[7],
                     'shipClass': r[8],
                     'shipName': r[6],
-                    'repairType': r[14],
+                    'repairType': r[15],
                     'canBeReplacedByShipStaff': r[17],
                     'isSystemParamRecorded': r[18],
                     'pmApplicable': r[15],
