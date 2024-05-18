@@ -55,7 +55,7 @@ class System_Configuration_N():
                     'eqType': r[3],
                     'parentName': r[5],
                     'parentId': r[2],
-                    'parent': r[2],
+                    'parent': r[5],
                     'lmu': r[4],
                     'command': r[9],
                     'department': r[10],
@@ -65,8 +65,8 @@ class System_Configuration_N():
                     'repairType': r[15],
                     'canBeReplacedByShipStaff': r[17],
                     'isSystemParamRecorded': r[18],
-                    'pmApplicable': r[15],
-                    'pmInterval': r[16],
+                    'pmApplicable': r[16],
+                    'pmInterval': r[17],
                     'nomenclature': r[11]
                 })
         else:

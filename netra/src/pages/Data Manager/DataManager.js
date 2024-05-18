@@ -127,8 +127,9 @@ function DataManager(props) {
   const sData = useSelector((state) => state.userSelection.componentsData);
 
   const currentNomenclature = currentSelection["nomenclature"];
-  const matchingItems = sData.filter(item => item.nomenclature === currentNomenclature);
-
+  const currentShip = currentSelection["shipName"];
+  const matchingItems = sData.filter(item => item.nomenclature === currentNomenclature && item.ship_name === currentShip);
+  console.log(matchingItems);
   const matchingId = matchingItems[0]?.id;
   const handleOnLoadSystem = () => {
     const payload = {

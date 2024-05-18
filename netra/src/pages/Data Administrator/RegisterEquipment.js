@@ -34,10 +34,22 @@ const RegisterEquipment = () => {
       registerAll: false,
     },
     onSubmit: async (values) => {
-      console.log(values);
+      let requestData = {};
+    
+      if (values.registerAll) {
+        // If registerAll is true, send formik values
+        requestData = values;
+      } else if (currentlySelected) {
+        // If registerAll is false and currentlySelected exists
+        requestData = {
+          ...currentlySelected,
+          registerAll: false,
+        };
+      }
+    
       fetch("/sysmetl", {
         method: "POST",
-        body: JSON.stringify({ values }),
+        body: JSON.stringify(requestData),
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
@@ -60,7 +72,7 @@ const RegisterEquipment = () => {
             });
           }
         });
-    },
+    }    
   });
 
   const onHandleSnackClose = () => {

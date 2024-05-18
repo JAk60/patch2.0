@@ -10,7 +10,7 @@ const ImportData = (props) => {
   const rows = props.childList.map((x) => {
     return {
       id: x.id,
-      ComponentName: x.name,
+      ComponentName: x.nomenclature,
       ScaleParameter: "",
       ShapeParameter: "",
     };
