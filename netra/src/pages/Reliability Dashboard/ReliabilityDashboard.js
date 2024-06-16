@@ -3,7 +3,6 @@ import { Button, InputLabel, TextField, Typography } from "@material-ui/core";
 import { MuiPickersUtilsProvider } from "@material-ui/pickers";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import Navigation from "../../components/navigation/Navigation";
 import { userActions } from "../../store/ApplicationVariable";
 import CustomizedSnackbars from "../../ui/CustomSnackBar";
 import { SelectWithLimit } from "../../ui/Form/SelectWithLimit";
@@ -248,8 +247,8 @@ const ReliabilityDashboard = () => {
 	return (
 		<AccessControl allowedLevels={["L1", "L2", "L3", "L4", "L5"]}>
 			<MuiPickersUtilsProvider utils={MomentUtils}>
-				<Navigation />
-				<div className={styles.body}>
+				{/* <Navigation /> */}
+				<div>
 					<div className={styles.mprofile}>
 						<div style={{ width: "300px" }}>
 							<InputLabel
@@ -309,11 +308,7 @@ const ReliabilityDashboard = () => {
 								selectType={"nomenclature"}
 							/>
 						</div>
-						{/* <CustomSelect
-            label="Mission Selection"
-            fields={['Mission A','Mission B','Mission C']}
-            /> */}
-						<div style={{ width: "300px" }}>
+						<div style={{ width: "250px" }}>
 							<InputLabel
 								style={{
 									fontWeight: "bold",
@@ -323,7 +318,7 @@ const ReliabilityDashboard = () => {
 								}}
 							>
 								<Typography variant="h5">
-									Enter Mission Duration
+									Mission Duration(Hours)
 								</Typography>
 							</InputLabel>
 							<TextField
@@ -348,16 +343,10 @@ const ReliabilityDashboard = () => {
 					</div>
 					{graphData.length ? (
 						<>
-							<div className={styles.midSection}>
-								<div className={styles.rchart}>
-									<div className={styles.content}>
-										{graphData && (
-											<ReliabilityChart
-												data={graphData}
-											/>
-										)}
-									</div>
-								</div>
+							<div className={styles.content}>
+								{graphData && (
+									<ReliabilityChart data={graphData} />
+								)}
 							</div>
 						</>
 					) : null}

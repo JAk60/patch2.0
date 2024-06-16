@@ -28,6 +28,7 @@ import AccessControl from "../Home/AccessControl";
 import PaperTable from "./PaperTable";
 import RenderMultipleComponent from "./TaskRenderMultipleComponent";
 import CollapsibleTable from "./ResTable";
+import MultiSelect from "./MultiSelect";
 
 const TaskDashboard = () => {
 	const precision = 10;

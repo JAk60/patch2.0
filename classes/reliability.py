@@ -46,9 +46,9 @@ class Reliability:
               component_id = ? order by CAST(maint_date as date) desc"""
             cursor.execute(prev_main_data, lmu[5])
             first_data = cursor.fetchone()
-            ship_id = """select component_id from system_configuration where ship_name=? and system=? and parent_id is NULL"""
+            ship_id = """select component_id from system_configuration where ship_name=? and nomenclature=? and parent_id is NULL"""
             cursor.execute(ship_id, platform, system)
-            ship_id = cursor.fetchone()[0]
+            ship_id = lmu[3]
             if first_data is None:
                 opr_sql = """select avg(average_running) from operational_data where component_id = ?"""
                 cursor.execute(opr_sql, ship_id)
@@ -58,14 +58,14 @@ class Reliability:
                   where component_id = ? and CAST(operation_date as date) > ?"""
                 cursor.execute(opr_sql, ship_id, first_data[0])
                 c_age = cursor.fetchone()[0]
-                if c_age is None:
-                    c_age = 0
+            if c_age is None:
+                c_age = 0
             eta = lmu[1]
             beta = lmu[2]
             print(f"eta {eta}, beta {beta}")
             print(f"lmu {lmu}")
-            rel_num = np.exp(-(((0 + float(total_dur)) / eta) ** beta))
-            rel_deno = np.exp(-((0 / eta) ** beta))
+            rel_num = np.exp(-(((c_age + float(total_dur)) / eta) ** beta))
+            rel_deno = np.exp(-((c_age / eta) ** beta))
             rel = rel_num / rel_deno
             lmus_rel.append(
                 {
@@ -83,7 +83,7 @@ class Reliability:
                 rel = self.calculate_rel_by_power_law(alpha, beta, total_dur)
                 lmus_rel.append(
                     {
-                        "name": lmu[-1],
+                        "name": lmu[-2],
                         "id": lmu[4],
                         "rel": rel,
                         "parent_name": lmu[9],
@@ -115,7 +115,7 @@ class Reliability:
                 for r in grp:
                     rel = rel * r["rel"]
                 if key is not None:
-                    parent = list(filter(lambda x: x[0] == key, sys_data))[0]
+                    parent = list(filter(lambda x: x[2] == key, sys_data))[0]
                     current_batch.append(
                         {
                             "name": parent[1],
@@ -148,9 +148,9 @@ class Reliability:
             return current_batch
 
         current_b = inside_func(sys_lmus, system, platform, True)
-        while len(current_b) > 0:
-            current_b = inside_func(current_b, system, platform)
-            final_data = final_data + current_b
+        # while len(current_b) > 0:
+        #     current_b = inside_func(current_b, system, platform)
+        #     final_data = final_data + current_b
 
         # Group by on final data.
         # final_grps = groupby(final_data, lambda b: b['id'])
@@ -450,8 +450,8 @@ class Reliability:
                                        self.__component_name)
                         result = cursor.fetchone()
                         self.__component_id = result[0]
-                        self.estimate_alpha_beta(
-                            component_id=self.__component_id)
+                        # self.estimate_alpha_beta(
+                        #     component_id=self.__component_id)
                         single_rel_duration = int(tm)
                         rel = self.system_rel(
                             m, system, platform, single_rel_duration)

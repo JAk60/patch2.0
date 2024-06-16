@@ -27,9 +27,11 @@ class System_Configuration_N():
         return data[0]
 
     def fetch_system(self, data,component_id):
-        failure_data = self.fmodesData(component_id)
         nomenclature = data['nomenclature']
         ship_name = data['ship_name']
+        if component_id is None:
+            component_id=self.fetch_component_id(ship_name,nomenclature)
+        failure_data = self.fmodesData(component_id)
         sql = '''WITH ComponentHierarchy AS (
                             SELECT s.*
                             FROM system_configuration AS s

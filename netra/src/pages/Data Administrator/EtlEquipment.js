@@ -165,7 +165,6 @@ export default function EtlEquipment({ classes }) {
 
       const data = await response.json();
       console.log(data);
-
       if (data.code === 1) {
         setSnackBarMessage({
           severity: "success",
@@ -333,6 +332,12 @@ export default function EtlEquipment({ classes }) {
             ))}
           </TableBody>
         </Table>
+        {SnackBarMessage.showSnackBar && (
+        <CustomizedSnackbars
+          message={SnackBarMessage}
+          onHandleClose={onHandleSnackClose}
+        />
+      )}
       </container>
     </div>
   );

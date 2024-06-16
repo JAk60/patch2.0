@@ -759,7 +759,10 @@ def srcetl():
     inst = ETL()
     value=inst.operational_data_etl()
     val=inst.overhaul_data_etl()
-    return jsonify({"1": value,"2":val})
+    return jsonify({
+                "code": 1,
+                "message": "ETL processes completed successfully"
+            })
 
 @app.route('/set_equip_etl', methods=['POST'])
 def set_equip_etl():

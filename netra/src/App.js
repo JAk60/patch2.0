@@ -32,6 +32,7 @@ import UserSelectionConfiguration from "./pages/userSelectionConfig/UserSelectio
 import { setLevel } from "./store/Levels";
 import Administrator from "./pages/Data Administrator/Administrator";
 import SysConfig from "./pages/SysConfig/SysConfig";
+import MainRel from "./pages/Reliability Dashboard/MainRel";
 
 const theme = createMuiTheme({
   palette: {
@@ -219,7 +220,7 @@ function App() {
             <Route
               path="/rDashboard"
               render={(props) => (
-                <ReliabilityDashboard {...props} settings={settings} />
+                <MainRel {...props} settings={settings} />
               )}
             />
 

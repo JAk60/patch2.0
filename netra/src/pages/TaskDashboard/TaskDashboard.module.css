@@ -3,7 +3,7 @@
 }
 .body{
    grid-row: 1/5;
-   grid-column: 2/13;
+   grid-column: 3/13;
    overflow-y: scroll;
 }
 /* .module{
@@ -14,7 +14,7 @@
 .mprofile{
    display: flex;
    width: 96%;
-   margin-left: 1%;
+   margin-left: 8%;
    margin-top: 10px;
    justify-content: space-between;
    align-items:center;
@@ -24,7 +24,7 @@
    flex-wrap: wrap;
    width: 98%;
    height: 100%;
-   margin-left: 1%;
+   margin-left: 8%;
  
    justify-content: center;
 }
