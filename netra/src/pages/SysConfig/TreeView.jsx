@@ -1,104 +1,135 @@
-import React, { useState } from "react";
-import { Modal, Typography } from "@material-ui/core";
+import { transformData } from "./transformData";
+import ReactFlow, {
+	ReactFlowProvider,
+	Controls,
+	Background,
+} from "react-flow-renderer";
 import { useSelector } from "react-redux";
+import {
+	Dialog,
+	DialogTitle,
+	DialogContent,
+	DialogActions,
+	Button,
+} from "@material-ui/core";
+import React, { useState, useCallback, useEffect } from "react";
 
-const TreeVisualization = () => {
-  const [selectedNode, setSelectedNode] = useState(null);
-  const data = useSelector((state) => state.treeData.sortTreeData);
+const HierarchyTree = ({ nodes, edges, elements, data }) => {
+	const [open, setOpen] = useState(false);
+	const [selectedNode, setSelectedNode] = useState(null);
 
-  const handleNodeClick = (node) => {
-    setSelectedNode(node);
-  };
+	const onNodeClick = useCallback(
+		(event, node) => {
+			const selectedNodeData = data.find(
+				(item) => item.name === node.data.label
+			);
+			if (selectedNodeData) {
+				setSelectedNode(selectedNodeData);
+				setOpen(true);
+			} else {
+				console.error(
+					"Node data not found or node label does not match."
+				);
+			}
+		},
+		[data]
+	);
 
-  const handleCloseModal = () => {
-    setSelectedNode(null);
-  };
+	const handleClose = () => {
+		setOpen(false);
+		setSelectedNode(null);
+	};
 
-  const renderNode = (node, level = 0) => {
-    return (
-      <div
-        key={node.id}
-        style={{
-          marginLeft: `${level * 20}px`,
-          cursor: "pointer",
-          display: "flex",
-          alignItems: "center",
-        }}
-        onClick={() => handleNodeClick(node)}
-      >
-        <div
-          style={{
-            width: "10px",
-            height: "10px",
-            backgroundColor: "gray",
-            borderRadius: "50%",
-            marginRight: "5px",
-          }}
-        />
-        <span>{node.title}</span>
-        {node.children && (
-          <div style={{ marginLeft: "10px" }}>
-            {Array.isArray(node.children)
-              ? node.children.map((child) => renderNode(child, level + 1))
-              : renderNode(node.children, level + 1)}
-          </div>
-        )}
-      </div>
-    );
-  };
-  if (!data || data.length === 0) {
-    return (
-      <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        height: "90vh",
-        width: "90vw",
-      }}>
-        <Typography variant="h5">
-          No parent-child relationship found.
-        </Typography>
-      </div>
-    );
-  }
-  return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        height: "90vh",
-        width: "90vw",
-      }}
-    >
-      {renderNode(data["0"])}
-      {/* Modal to display when a node is clicked */}
-      <Modal open={Boolean(selectedNode)} onClose={handleCloseModal}>
-        <div
-          style={{
-            margin: "auto",
-            backgroundColor: "white",
-            padding: "20px",
-            borderRadius: "8px",
-          }}
-        >
-          <Typography variant="h6">
-            {selectedNode ? `###### **${selectedNode.name}**` : ""}
-          </Typography>
-          {selectedNode && (
-            <>
-              <p>ID: {selectedNode.id}</p>
-              <p>Name: {selectedNode.name}</p>
-              <p>Nomenclature: {selectedNode.nomenclature}</p>
-            </>
-          )}
-        </div>
-      </Modal>
-    </div>
-  );
+	const onLoad = (_reactFlowInstance) => {
+		if (_reactFlowInstance && elements.length > 0) {
+			_reactFlowInstance.fitView();
+		}
+	};
+
+	return (
+		<div style={{ height: "100vh", width: "100%" }}>
+			<ReactFlowProvider>
+				<ReactFlow
+					elements={elements}
+					onElementClick={onNodeClick}
+					onlyRenderVisibleElements={true}
+					onLoad={onLoad}
+				>
+					<Controls
+						style={{ marginLeft: "20px", marginBottom: "20px" }}
+					/>
+					<Background variant="lines" color={"#000000"} />
+				</ReactFlow>
+			</ReactFlowProvider>
+			<Dialog open={open} onClose={handleClose}>
+				<DialogTitle>Node Information</DialogTitle>
+				<DialogContent>
+					{selectedNode && (
+						<div>
+							<p>Name: {selectedNode.name}</p>
+							<p>Nomenclature: {selectedNode.nomenclature}</p>
+							<p>Department: {selectedNode.department}</p>
+							<p>Command: {selectedNode.command}</p>
+							<p>Ship Name: {selectedNode.shipName}</p>
+							<p>Ship Class: {selectedNode.shipClass}</p>
+							<p>Ship Category: {selectedNode.shipCategory}</p>
+							<p>Repair Type: {selectedNode.repairType}</p>
+							<p>
+								Can Be Replaced By Ship Staff:{" "}
+								{selectedNode.canBeReplacedByShipStaff
+									? "Yes"
+									: "No"}
+							</p>
+							<p>
+								Is System Param Recorded:{" "}
+								{selectedNode.isSystemParamRecorded}
+							</p>
+							<p>PM Applicable: {selectedNode.pmApplicable}</p>
+							<p>PM Interval: {selectedNode.pmInterval}</p>
+							<p>LMU: {selectedNode.lmu}</p>
+						</div>
+					)}
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={handleClose} color="primary">
+						Close
+					</Button>
+				</DialogActions>
+			</Dialog>
+		</div>
+	);
 };
+
+function TreeVisualization() {
+	const data = useSelector((state) => state.treeData.treeData);
+
+	if (data.length === 0) {
+		return (
+			<div
+				className="App"
+				style={{
+					display: "flex",
+					justifyContent: "center",
+					alignItems: "center",
+					height: "100vh",
+				}}
+			>
+				<h2>No equipment loaded</h2>
+			</div>
+		);
+	}
+
+	const { nodes, edges } = transformData(data);
+	const elements = [...nodes, ...edges];
+
+	return (
+		<HierarchyTree
+			nodes={nodes}
+			edges={edges}
+			elements={elements}
+			data={data}
+		/>
+	);
+}
 
 export default TreeVisualization;

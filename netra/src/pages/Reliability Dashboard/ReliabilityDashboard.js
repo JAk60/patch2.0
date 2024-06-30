@@ -250,7 +250,7 @@ const ReliabilityDashboard = () => {
 				{/* <Navigation /> */}
 				<div>
 					<div className={styles.mprofile}>
-						<div style={{ width: "300px" }}>
+						<div style={{ width: "300px", padding: "20px" }}>
 							<InputLabel
 								style={{
 									fontWeight: "bold",
@@ -318,11 +318,10 @@ const ReliabilityDashboard = () => {
 								}}
 							>
 								<Typography variant="h5">
-									Mission Duration(Hours)
+									Duration(Hours)
 								</Typography>
 							</InputLabel>
 							<TextField
-								id="outlined-basic"
 								variant="outlined"
 								type="number"
 								selectType="missionDuration"
@@ -335,6 +334,7 @@ const ReliabilityDashboard = () => {
 							color="primary"
 							style={{
 								marginTop: "2rem",
+								marginRight: "1rem",
 							}}
 							onClick={onSubmitHandler}
 						>
@@ -349,7 +349,19 @@ const ReliabilityDashboard = () => {
 								)}
 							</div>
 						</>
-					) : null}
+					) : (
+						<Typography
+							variant="h4"
+							style={{
+								marginTop: "14rem",
+								display: "flex",
+								justifyContent: "center",
+								alignItems: "center",
+							}}
+						>
+							Enter the above details to see the graph...
+						</Typography>
+					)}
 				</div>
 				{SnackBarMessage.showSnackBar && (
 					<CustomizedSnackbars

@@ -16,7 +16,8 @@ const useStyles = makeStyles((theme) => ({
 		display: "flex",
 		flexDirection: "column",
 		alignItems: "center",
-		marginLeft: "29rem",
+		justifyItems: "center",
+		// marginLeft: "25rem",
 		marginTop: "80px",
 	},
 	accordion: {

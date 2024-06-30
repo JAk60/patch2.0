@@ -1,12 +1,8 @@
 .flex {
-  /* position: absolute; */
-	grid-row: 3/4;
-	grid-column: 2/13;
 	height: fit-content;
 	width: 88vw;
-	margin-left: 7%;
-  margin-top: 80px;
-	/* height: 100vh; */
+	margin-left: 5%;
+  	/* margin-top: 80px; */
 	box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
 }
 
@@ -14,16 +10,14 @@
 	grid-row: 4/5;
 	grid-column: 3/13;
 	height: 100%;
-  width: 80vw;
+  	width: 80vw;
 	margin-left: 8%;
 	justify-self: center;
-	/* align-self: center; */
-	/* margin-top: 100px; */
 	overflow-y: scroll;
 	margin-top: 150px;
 }
 
-.selectComponent {
+/* .selectComponent {
 	display: flex;
 	align-items: center;
 	flex-direction: row;
@@ -31,10 +25,10 @@
 	width: 1300px;
 	margin-left: 10px;
 	margin-bottom: 50px;
-}
+} */
 
 .user {
-	margin: auto;
+	/* margin: auto; */
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
