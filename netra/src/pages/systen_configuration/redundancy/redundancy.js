@@ -1,152 +1,183 @@
-import {
-  useEffect,
-  useState,
-  useImperativeHandle,
-  useRef,
-  forwardRef,
-} from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { Button } from "@material-ui/core";
-import CustomSelect from "../../../ui/Form/CustomSelect";
-import Table from "../../../ui/Table/Table";
-import styles from "../SystemConfiguration.module.css";
 import { AgGridColumn } from "ag-grid-react";
+import { useState } from "react";
+import { useSelector } from "react-redux";
 import { v4 as uuid } from "uuid";
+import CustomizedSnackbars from "../../../ui/CustomSnackBar";
+import Table from "../../../ui/Table/Table";
 import RenderParallelComponent from "./RenderParallelComponent";
+
 const RedundancyInfo = (props) => {
-  // const [rows, setRows] = useState([]);
-  // useEffect(() => {
-  //   fetch("/home", {
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //       Accept: "application/json",
-  //     },
-  //   })
-  //     .then((res) => {
-  //       console.log(res);
-  //       return res.json();
-  //     })
-  //     .then((data) => {
-  //       setRows(data);
-  //     });
-  // }, [setRows]);
-  const [gridApi, setGridApi] = useState(null);
-  let ParallelIds = [];
+	const [gridApi, setGridApi] = useState(null);
+	let ParallelIds = [];
+	const [SnackBarMessage, setSnackBarMessage] = useState({
+		severity: "error",
+		message: "This is awesome",
+		showSnackBar: false,
+	  });
 
-  const setParallelIds = (d) => {
-    ParallelIds = d;
-  };
+	const setParallelIds = (d) => {
+		ParallelIds = d;
+	};
 
-  const systemData = useSelector((state) => state.treeData.treeData);
+	const systemData = useSelector((state) => state.treeData.treeData);
 
-  const currentSelectedSystem = useSelector(
-    (state) => state.userSelection.currentSelection.equipmentName
-  );
+	const currentSelectedSystem = useSelector(
+		(state) => state.userSelection.currentSelection.equipmentName
+	);
 
-  const RIDemo = [
-    <AgGridColumn field="eqId" hide={true} />,
-    <AgGridColumn
-      field="EquipmentName"
-      headerName="Equipment name"
-      headerTooltip="Equipment name"
-      width="220"
-    />,
-    <AgGridColumn
-      field="EquipmentParentName"
-      headerName="Equipment Parent Name"
-      headerTooltip="Equipment Parent Name"
-      width={300}
-    />,
-    <AgGridColumn
-      field="ParallelComponent"
-      headerName="Parallel Component"
-      headerTooltip="Parallel Component"
-      // cellEditor="agSelectCellEditor"
-      cellEditorFramework={RenderParallelComponent}
-      cellEditorParams={{
-        setParallelIds: setParallelIds,
-        label: "Select Parallel Equipments!",
-        isMultiple: true,
-      }}
-      //onCellClicked={onCellChanged}
-      width="220"
-      editable={true}
-    />,
-    // <AgGridColumn
-    //   field="ParallelComponent"
-    //   headerName="Parallel Component (Component - Parent Name)"
-    //   cellEditor="agSelectCellEditor"
-    //   // cellEditorParams={renderParallelComponent}
-    //   // onCellValueChanged={onCellChanged}
-    //   cellRendererFramework={MultipleSelect}
-    //   width="220"
-    //   editable={true}
-    // />,
-    <AgGridColumn
-      field="RedundancyType"
-      headerName="Redundancy Type"
-      headerTooltip="Redundancy Type"
-      cellEditor="agSelectCellEditor"
-      cellEditorParams={{
-        values: [
-          "",
-          "K out-of N - Active Redundancy",
-          "K out-of N - Inactive Redundancy",
-        ],
-      }}
-      width="220"
-      editable={true}
-    />,
-    <AgGridColumn
-      field="K"
-      headerName="K"
-      headerTooltip="K"
-      type="number"
-      width={100}
-      editable={true}
-    />,
-  ];
+	const onCellClicked = (params) => {
+		console.log("Row clicked:", params.data);
+	};
 
-  const rData = systemData.map((element, index) => {
-    return {
-      eqId: element.id,
-      EquipmentName: element.nomenclature,
-      componentId: element.id,
-      systemName: currentSelectedSystem,
-      id: uuid(),
-      EquipmentParentName: element.parentName,
-      ParallelComponent: "",
-      RedundancyType: "K out-of N - Active Redundancy",
-      K: 1,
-      // hK: 1,
-      // elhK: 0,
-      // cK: 0,
-      // dsK: 0,
-      // asK: 0,
-      parallelComponentIds: [],
-      N: 0,
-    };
-  });
+	const RIDemo = [
+		<AgGridColumn field="eqId" hide={true} />,
+		<AgGridColumn
+			field="EquipmentName"
+			headerName="Equipment"
+			headerTooltip="Equipment"
+			width="220"
+			onCellClicked={onCellClicked}
+		/>,
+		<AgGridColumn
+			field="EquipmentParentName"
+			headerName="Parent Name"
+			headerTooltip="Parent Name"
+			width={300}
+			onCellClicked={onCellClicked}
+		/>,
+		<AgGridColumn
+			field="ParallelComponent"
+			headerName="Parallel Component"
+			headerTooltip="Parallel Component"
+			cellEditorFramework={RenderParallelComponent}
+			cellEditorParams={{
+				setParallelIds: setParallelIds,
+				label: "Select Parallel Equipments!",
+				isMultiple: true,
+			}}
+			width="220"
+			editable={true}
+			onCellClicked={onCellClicked}
+		/>,
+		<AgGridColumn
+			field="RedundancyType"
+			headerName="Redundancy Type"
+			headerTooltip="Redundancy Type"
+			cellEditor="agSelectCellEditor"
+			cellEditorParams={{
+				values: ["Active Redundancy", "Inactive Redundancy"],
+			}}
+			width="220"
+			editable={true}
+			onCellClicked={onCellClicked}
+		/>,
+		<AgGridColumn
+			field="K"
+			headerName="K"
+			headerTooltip="K"
+			type="numericColumn"
+			valueParser={(params) => Number(params.newValue)}
+			valueFormatter={(params) =>
+				params.value !== null ? params.value : ""
+			}
+			width={100}
+			editable={true}
+			onCellClicked={onCellClicked}
+		/>,
+	];
 
-  const updateFinalRowData = (allRows, id) => {
-    if (id) {
-      allRows.filter((x) => x.id === id)[0].parallelComponentIds = ParallelIds;
-      allRows.filter((x) => x.id === id)[0].N = ParallelIds.length + 1;
-    }
-    debugger;
-    props.tableUpdate(allRows);
-  };
-  return (
-    <div className={styles.systemTable}>
-      <Table
-        columnDefs={RIDemo}
-        rowData={rData}
-        tableUpdate={updateFinalRowData}
-        setGrid={setGridApi}
-        gridApi={gridApi}
-      />
-    </div>
-  );
+	const initialData = systemData
+		.filter((element) => element.parentId !== null)
+		.map((element) => {
+			return {
+				eqId: element.id,
+				EquipmentName: element.nomenclature,
+				componentId: element.id,
+				systemName: currentSelectedSystem,
+				id: uuid(),
+				EquipmentParentName: element.parentName,
+				ParallelComponent: "",
+				RedundancyType: "Active Redundancy",
+				K: 1, // Ensure this is a number
+				parallelComponentIds: [],
+				N: 0,
+			};
+		});
+
+	const [tableData, setTableData] = useState(initialData);
+
+	const updateTableData = (newData) => {
+		const updatedData = newData.map((row) => ({
+			...row,
+			K: Number(row.K), // Ensure K is always a number
+		}));
+		console.log("Updating table data:", updatedData);
+		setTableData(updatedData);
+	};
+
+	const SaveParallelInfo = () => {
+		console.log("Saving parallel information:", tableData);
+		fetch("/save_system", {
+            method: "POST",
+            body: JSON.stringify({
+              flatData: tableData,
+              dtype: 'insertRedundancy',
+            }),
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+            },
+          })
+            .then((res) => {
+              return res.json();
+            })
+            .then((data) => {
+              setSnackBarMessage({
+                severity: "success",
+                message: data.message,
+                showSnackBar: true,
+              });
+            })
+            .catch((error) => {
+              setSnackBarMessage({
+                severity: "error",
+                message: "Error Occured in System Configuration, Please Try again" + error,
+                showSnackBar: true,
+              });
+            });
+	};
+	const onHandleSnackClose = () => {
+		setSnackBarMessage({
+		  severity: "error",
+		  message: "Please Add Systems",
+		  showSnackBar: false,
+		});
+	  };
+	return (
+		<div>
+			<Table
+				columnDefs={RIDemo}
+				rowData={tableData}
+				tableUpdate={updateTableData}
+				setGrid={setGridApi}
+				gridApi={gridApi}
+			/>
+			<Button
+				style={{ background: "#1c1c4f", color: "white" }}
+				variant="contained"
+				onClick={SaveParallelInfo}
+			>
+				Save Parallel Information
+			</Button>
+			{SnackBarMessage.showSnackBar && (
+          <CustomizedSnackbars
+            message={SnackBarMessage}
+            onHandleClose={onHandleSnackClose}
+          />
+        )}
+		</div>
+	);
 };
 
 export default RedundancyInfo;

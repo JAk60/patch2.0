@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { Button, TextField } from "@material-ui/core";
 import { Autocomplete } from "@material-ui/lab";
 import { useSelector } from "react-redux";
 import { v4 as uuid } from "uuid";
+import CustomizedSnackbars from "../../ui/CustomSnackBar";
 
 const initialValues = {
 	EquipmentNomenclature: "",
@@ -18,12 +19,51 @@ const preventiveMaintenanceApplicableOptions = ["No", "Yes"];
 const componentsReplacedOptions = ["No", "Yes"];
 
 const MaintenanceFormikForm = () => {
+	const [SnackBarMessage, setSnackBarMessage] = useState({
+		severity: "error",
+		message: "This is awesome",
+		showSnackBar: false,
+	});
+
 	const EquipmentNomenclatures = useSelector(
 		(state) => state.userSelection.componentsData
 	);
-	console.log(EquipmentNomenclatures);
+	const CurrentEquipment = useSelector(
+		(state) => state.userSelection.currentSelection
+	);
+
 	const handleSubmit = async (values) => {
+		let component = EquipmentNomenclatures.find(
+			(item) =>
+				item.ship_name === CurrentEquipment.shipName &&
+				item.nomenclature === CurrentEquipment.nomenclature
+		);
+
+		if (!component) {
+			setSnackBarMessage({
+				severity: "error",
+				message: "Component not found",
+				showSnackBar: true,
+			});
+			return;
+		}
+
+		const dataToSend = {
+			id: uuid(),
+			component_id: component.id,
+			EquipmentName: CurrentEquipment?.equipmentName,
+			RepairType: values.RepairType,
+			PreventiveMaintenanceApplicable:
+				values.PreventiveMaintenanceApplicable, // Fixed typo
+			PreventiveMaintenanceInterval: parseInt(
+				values.PreventiveMaintenanceInterval
+			) || 0,
+			ComponentsReplaced: values.ComponentsReplaced,
+		};
+
 		console.log(values);
+		console.log(dataToSend);
+
 		try {
 			const response = await fetch("/save_system", {
 				method: "POST",
@@ -31,151 +71,149 @@ const MaintenanceFormikForm = () => {
 					"Content-Type": "application/json",
 				},
 				body: JSON.stringify({
-					flatData: [{
-						id: uuid(),
-						component_id: values.EquipmentNomenclature.id,
-						EquipmentName: values.EquipmentNomenclature.name,
-						RepairType: values.RepairType,
-						PreventiveMaintenaceApplicable:values.PreventiveMaintenaceApplicable,
-						PreventiveMaintenaceInterval: parseInt(
-							values.PreventiveMaintenaceInterval
-						),
-						ComponentsReplaced: values.ComponentsReplaced,
-					}],
-					dtype: "insertMaintenanceInfo", // Assuming dtype is always "system_configuration"
+					flatData: [dataToSend],
+					dtype: "insertMaintenanceInfo", // Ensure dtype is correct
 				}),
 			});
 
+			const data = await response.json();
+			console.log(data);
 			if (response.ok) {
-				const data = await response.json();
-				console.log("Data saved successfully:", data);
-				// Handle success if needed
+				setSnackBarMessage({
+					severity: "success",
+					message: data.message,
+					showSnackBar: true,
+				});
 			} else {
-				console.error("Failed to save data:", response.statusText);
-				// Handle error if needed
+				throw new Error(data.message || "An unknown error occurred");
 			}
 		} catch (error) {
-			console.error("Error occurred while saving data:", error);
-			// Handle error if needed
+			setSnackBarMessage({
+				severity: "error",
+				message:
+					"Error occurred in System Configuration, Please try again: " +
+					error.message,
+				showSnackBar: true,
+			});
 		}
 	};
 
+	const onHandleSnackClose = () => {
+		setSnackBarMessage({
+			severity: "error",
+			message: "Please Add Systems",
+			showSnackBar: false,
+		});
+	};
 	return (
-		<div style={{ display: "flex",justifyContent: "center", flexDirection: "column",alignItems: "center" }}>
-		<Formik initialValues={initialValues} onSubmit={handleSubmit}>
-			{({ errors, touched, setFieldValue, setFieldTouched }) => (
-				<Form >
-					<Autocomplete
-						options={EquipmentNomenclatures}
-						getOptionLabel={(option) => option.nomenclature}
-						groupBy={(option) => option.ship_name}
-						renderInput={(params) => (
+		<div
+			style={{
+				display: "flex",
+				gap: "20px",
+				flexDirection: "column",
+				alignItems: "center",
+			}}
+		>
+			<Formik initialValues={initialValues} onSubmit={handleSubmit}>
+				{({ values, setFieldValue, setFieldTouched }) => (
+					<Form>
+						<Autocomplete
+							options={repairTypeOptions}
+							renderInput={(params) => (
+								<TextField
+									{...params}
+									label="Repair Type"
+									variant="outlined"
+								/>
+							)}
+							style={{ width: "400px", marginBottom: "8px" }}
+							onChange={(event, newValue) => {
+								setFieldValue(
+									"RepairType",
+									newValue ? newValue : ""
+								);
+								setFieldTouched("RepairType", true);
+							}}
+						/>
+
+						<Autocomplete
+							options={preventiveMaintenanceApplicableOptions}
+							renderInput={(params) => (
+								<TextField
+									{...params}
+									label="Preventive Maintenance Applicable"
+									variant="outlined"
+								/>
+							)}
+							style={{ width: "400px", marginBottom: "8px" }}
+							onChange={(event, newValue) => {
+								setFieldValue(
+									"PreventiveMaintenaceApplicable",
+									newValue ? newValue : ""
+								);
+								setFieldTouched(
+									"PreventiveMaintenaceApplicable",
+									true
+								);
+							}}
+						/>
+
+						{values.PreventiveMaintenaceApplicable === "Yes" && (
 							<TextField
-								{...params}
-								label="Equipment Nomenclature"
+								label="Preventive Maintenance Interval (hrs)"
+								name="PreventiveMaintenaceInterval"
+								type="number"
+								fullWidth
 								variant="outlined"
+								style={{ width: "400px", marginBottom: "8px" }}
+								onChange={(event) => {
+									setFieldValue(
+										"PreventiveMaintenaceInterval",
+										event.target.value
+									);
+									setFieldTouched(
+										"PreventiveMaintenaceInterval",
+										true
+									);
+								}}
 							/>
 						)}
-						style={{width:"400px"}}
-						onChange={(event, newValue) => {
-							// Ensure newValue is logged correctly
-							console.log(
-								"Selected Equipment Nomenclature:",
-								newValue
-							);
-							setFieldValue(
-								"EquipmentNomenclature",
-								newValue ? newValue : ""
-							);
-							setFieldTouched("EquipmentNomenclature", true);
-						}}
-					/>
 
-					<Autocomplete
-						options={repairTypeOptions}
-						renderInput={(params) => (
-							<TextField
-								{...params}
-								label="Repair Type"
-								variant="outlined"
-							/>
-						)}
-						style={{width:"400px"}}
-						onChange={(event, newValue) => {
-							setFieldValue(
-								"RepairType",
-								newValue ? newValue : ""
-							);
-							setFieldTouched("RepairType", true);
-						}}
-					/>
+						<Autocomplete
+							options={componentsReplacedOptions}
+							renderInput={(params) => (
+								<TextField
+									{...params}
+									label="Can it be replaced by ship staff ?"
+									variant="outlined"
+								/>
+							)}
+							style={{ width: "400px", marginBottom: "8px" }}
+							onChange={(event, newValue) => {
+								setFieldValue(
+									"ComponentsReplaced",
+									newValue ? newValue : ""
+								);
+								setFieldTouched("ComponentsReplaced", true);
+							}}
+						/>
 
-					<Autocomplete
-						options={preventiveMaintenanceApplicableOptions}
-						renderInput={(params) => (
-							<TextField
-								{...params}
-								label="Preventive Maintenance Applicable"
-								variant="outlined"
-							/>
-						)}
-						style={{width:"400px"}}
-						onChange={(event, newValue) => {
-							setFieldValue(
-								"PreventiveMaintenaceApplicable",
-								newValue ? newValue : ""
-							);
-							setFieldTouched(
-								"PreventiveMaintenaceApplicable",
-								true
-							);
-						}}
-					/>
-
-					<TextField
-						label="Preventive Maintenance Interval (hrs)"
-						name="PreventiveMaintenaceInterval"
-						type="number"
-						fullWidth
-						variant="outlined"
-						style={{width:"400px"}}
-						onChange={(event) => {
-							setFieldValue(
-								"PreventiveMaintenaceInterval",
-								event.target.value
-							);
-							setFieldTouched(
-								"PreventiveMaintenaceInterval",
-								true
-							);
-						}}
-					/>
-
-					<Autocomplete
-						options={componentsReplacedOptions}
-						renderInput={(params) => (
-							<TextField
-								{...params}
-								label="Can it be replaced by ship staff ?"
-								variant="outlined"
-							/>
-						)}
-						style={{width:"400px"}}
-						onChange={(event, newValue) => {
-							setFieldValue(
-								"ComponentsReplaced",
-								newValue ? newValue : ""
-							);
-							setFieldTouched("ComponentsReplaced", true);
-						}}
-					/>
-
-					<Button type="submit" variant="contained" color="primary">
-						Submit
-					</Button>
-				</Form>
+						<Button
+							type="submit"
+							variant="contained"
+							color="primary"
+						>
+							Submit
+						</Button>
+					</Form>
+				)}
+			</Formik>
+			{SnackBarMessage.showSnackBar && (
+				<CustomizedSnackbars
+					message={SnackBarMessage}
+					onHandleClose={onHandleSnackClose}
+				/>
 			)}
-		</Formik>
 		</div>
 	);
 };

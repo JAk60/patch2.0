@@ -1,122 +1,86 @@
-import React, {
-  useEffect,
-  useState,
-  useImperativeHandle,
-  useRef,
-  forwardRef,
-} from "react";
-import Autocomplete from "@material-ui/lab/Autocomplete";
 import TextField from "@material-ui/core/TextField";
-import { useDispatch, useSelector } from "react-redux";
+import Autocomplete from "@material-ui/lab/Autocomplete";
+import React, { forwardRef, useImperativeHandle, useRef, useState } from "react";
+import { useSelector } from "react-redux";
 import { useLocation } from "react-router";
 
-const RenderParallelComponent = forwardRef((props, ref, isMultiple = true) => {
+const RenderParallelComponent = forwardRef((props, ref) => {
   const [value, setValue] = useState([]);
   const refInput = useRef(null);
   const location = useLocation();
-  //   alert(location.pathname);
-  let potentialParallelComponents = [];
+
   const systemData = useSelector((state) => state.treeData.treeData);
-  const userSelection = useSelector(
-    (state) => state.userSelection.userSelection
-  );
-  const currentSelection = useSelector(
-    (state) => state.userSelection.currentSelection
-  );
-  const componentsData = useSelector(
-    (state) => state.userSelection.componentsData
-  );
+  const userSelection = useSelector((state) => state.userSelection.userSelection);
+  const componentsData = useSelector((state) => state.userSelection.componentsData);
+
   const selectedEquipment = props.data.EquipmentName;
   const selectedEquipmentId = props.data.eqId;
+  const selectedEquipmentParent = props.data.EquipmentParentName;
+  console.log(selectedEquipment, selectedEquipmentId, selectedEquipmentParent);
 
+  let potentialParallelComponents = [];
+  
   if (location.pathname === "/system_config/additional_info") {
-    debugger;
-    const currentSelectedPlatform = currentSelection["shipName"];
-
-    potentialParallelComponents = userSelection["equipmentName"].map((x) => {
-      let id = componentsData.filter((c) => c.name === x)[0]["id"];
-      return {
-        name: x,
-        parentName: currentSelectedPlatform,
-        id: id,
-      };
-    });
+    potentialParallelComponents = userSelection["equipmentName"]
+      .map((x) => {
+        let component = componentsData?.find((c) => c.name === x);
+        return {
+          name: x,
+          parentName: component.parentName,
+          id: component.id,
+        };
+      })
+      .filter((component) => component.parentName === selectedEquipmentParent && component.name !== selectedEquipment);
   } else {
-    potentialParallelComponents = systemData.filter(
-      (x) => x.name !== selectedEquipment
-    );
+    potentialParallelComponents = systemData
+      .filter((x) => x.parentName === selectedEquipmentParent && x.nomenclature !== selectedEquipment)
+      .map((component) => ({
+        name: component.nomenclature,
+        parentName: component.parentName,
+        id: component.id,
+      }));
   }
+  
+  console.log(potentialParallelComponents);
 
   const handleChange = (event, newValue) => {
-    debugger;
     setValue(newValue);
   };
 
-  // useEffect(() => {
-  //   // focus on the input
-  //   //setTimeout(() => refInput.current.focus());
-  //   console.log(potentialParallelComponents);
-  // }, []);
+  useImperativeHandle(ref, () => ({
+    getValue() {
+      let valueStr = [];
+      let ids = [];
 
-  /* Component Editor Lifecycle methods */
-  useImperativeHandle(ref, () => {
-    return {
-      // the final value to send to the grid, on completion of editing
-      getValue() {
-        debugger;
-        //console.log(value);
-        let valueStr = [];
-        let ids = [];
-        // if (location.pathname === "/system_config/additional_info") {
-        //   value.forEach((element) => {
-        //     valueStr = [...valueStr, element.name];
-        //   });
-        // } else
-        if (location.pathname === "/system_config/failure_mode") {
-          ids = [value.id];
-          valueStr = [value.name];
-          props.data["rEquipmentId"] = ids[0];
-        } else {
-          value.forEach((element) => {
-            ids = [...ids, element.id];
-            valueStr = [...valueStr, element.name];
-          });
-          props.setParallelIds(ids);
-        }
-        return valueStr.toString();
-      },
-      isPopup() {
-        return true;
-      },
-      // Gets called once before editing starts, to give editor a chance to
-      // cancel the editing before it even starts.
-      isCancelBeforeStart() {
-        return false;
-      },
+      if (location.pathname === "/system_config/failure_mode") {
+        ids = [value.id];
+        valueStr = [value.name];
+        props.data["rEquipmentId"] = ids[0];
+      } else {
+        value.forEach((element) => {
+          ids = [...ids, element.id];
+          valueStr = [...valueStr, element.name];
+        });
+        props.setParallelIds(ids);
+      }
 
-      // Gets called once when editing is finished (eg if Enter is pressed).
-      // If you return true, then the result of the edit will be ignored.
-      // isCancelAfterEnd() {
-      //     // our editor will reject any value greater than 1000
-      //     return value > 1000;
-      // }
-    };
-  });
+      return valueStr.toString();
+    },
+    isPopup() {
+      return true;
+    },
+    isCancelBeforeStart() {
+      return false;
+    },
+  }));
 
   return (
-    // <input type="number"
-    //        ref={refInput}
-    //        value={value}
-    //        onChange={event => setValue(event.target.value)}
-    //        style={{width: "100%"}}
-    // />
     <Autocomplete
       id={selectedEquipmentId}
       options={potentialParallelComponents}
-      //value={value}
+      value={value}
       multiple={props.isMultiple}
       onChange={handleChange}
-      groupBy={(option) => option.parentName}
       getOptionLabel={(option) => option.name}
       style={{ width: 300 }}
       renderInput={(params) => (
@@ -127,7 +91,14 @@ const RenderParallelComponent = forwardRef((props, ref, isMultiple = true) => {
           variant="outlined"
         />
       )}
+      filterOptions={(options, params) => {
+        const filtered = options.filter(option => 
+          !value.some(item => item.id === option.id)
+        );
+        return filtered;
+      }}
     />
   );
 });
+
 export default RenderParallelComponent;

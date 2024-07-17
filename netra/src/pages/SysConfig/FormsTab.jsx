@@ -9,7 +9,8 @@ import AddInfoFormikForm from "../../components/SysForms/AdditionalInfoForm";
 import FMFormikForm from "../../components/SysForms/FailureModeForm";
 import MaintenanceDataFormik from "../../components/SysForms/MaintDataForm";
 import MaintenanceFormikForm from "../../components/SysForms/MaintenanceForm";
-import FormikForm from "../../components/SysForms/parallelRedundancy";
+import RedundancyInfo from "../systen_configuration/redundancy/redundancy";
+import { useSelector } from "react-redux";
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -17,14 +18,13 @@ const useStyles = makeStyles((theme) => ({
 		flexDirection: "column",
 		alignItems: "center",
 		justifyItems: "center",
-		// marginLeft: "25rem",
 		marginTop: "80px",
 	},
 	accordion: {
 		display: "flex",
 		flexDirection: "column",
 		alignItems: "center",
-		width: "80%", 
+		width: "90%",
 		marginBottom: theme.spacing(2),
 	},
 	formContainer: {
@@ -32,10 +32,9 @@ const useStyles = makeStyles((theme) => ({
 		flexDirection: "column",
 		justifyContent: "center",
 		width: "100vw",
-		maxWidth: "900px", 
+		maxWidth: "1000px",
 	},
 }));
-
 
 const options = [
 	"Redundancy & Parallel Information",
@@ -46,6 +45,10 @@ const options = [
 ]; // Replace with your options
 
 export default function FormsTab() {
+	const CurrentEquipment = useSelector(
+		(state) => state.userSelection.currentSelection
+	);
+	console.log(CurrentEquipment);
 	const classes = useStyles();
 	const [selectedOption, setSelectedOption] = useState(null);
 	const [formVisible, setFormVisible] = useState(false);
@@ -65,7 +68,7 @@ export default function FormsTab() {
 		if (selectedOption && formVisible) {
 			switch (selectedOption) {
 				case "Redundancy & Parallel Information":
-					return <FormikForm />;
+					return <RedundancyInfo />;
 				case "Maintenance Information":
 					return <MaintenanceFormikForm />;
 				case "Failure Modes":
@@ -75,29 +78,42 @@ export default function FormsTab() {
 				case "Maintenance Data":
 					return <MaintenanceDataFormik />;
 				default:
-					return null;
+					return <Typography>Hello, nothing here</Typography>;
 			}
 		}
-		return null;
+		return <Typography>Hello, nothing here</Typography>;
 	};
 
 	return (
 		<div className={classes.root}>
-			{options.map((option) => (
-				<Accordion
-					key={option}
-					className={classes.accordion}
-					expanded={selectedOption === option}
-					onChange={() => handleOptionChange(option)}
-				>
-					<AccordionSummary expandIcon={<ExpandMoreIcon />}>
-						<Typography>{option}</Typography>
-					</AccordionSummary>
-					<AccordionDetails className={classes.formContainer}>
-						<div>{selectedOption === option && renderForm()}</div>
-					</AccordionDetails>
-				</Accordion>
-			))}
+			{!CurrentEquipment.equipmentName ? (
+				<Typography variant="h6" color="error">
+					Please load the equipment in the previous tab.
+				</Typography>
+			) : (
+				<>
+					<Typography variant="h4" style={{ marginBottom: "24px" }}>
+						Equipment Under Consideration:{" "}
+						{CurrentEquipment.equipmentName} (
+						{CurrentEquipment.nomenclature})
+					</Typography>
+					{options.map((option) => (
+						<Accordion
+							key={option}
+							className={classes.accordion}
+							expanded={selectedOption === option}
+							onChange={() => handleOptionChange(option)}
+						>
+							<AccordionSummary expandIcon={<ExpandMoreIcon />}>
+								<Typography>{option}</Typography>
+							</AccordionSummary>
+							<AccordionDetails className={classes.formContainer}>
+								<div>{selectedOption === option && renderForm()}</div>
+							</AccordionDetails>
+						</Accordion>
+					))}
+				</>
+			)}
 		</div>
 	);
 }

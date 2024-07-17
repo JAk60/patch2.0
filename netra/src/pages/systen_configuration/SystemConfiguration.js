@@ -17,6 +17,7 @@ import DutyCycle from "./dutyCycle/dutyCycle";
 import FailureMode from "./failureMode/failureMode";
 import MaintenanceInfo from "./maintenanceInfo/maintenanceInfo";
 import RedundancyInfo from "./redundancy/redundancy";
+import { dark } from "@material-ui/core/styles/createPalette";
 const SystemStyles = makeStyles({
   formControl: {
     margin: "2rem",
@@ -39,6 +40,7 @@ const SystemConfiguration = (props) => {
   const dispatch = useDispatch();
   let finalTableData = [];
   const setFinalTableData = (d) => {
+    console.log(d);
     finalTableData = d;
   };
 

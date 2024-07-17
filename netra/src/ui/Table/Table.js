@@ -9,7 +9,7 @@ const Table = ({
 	tableUpdate,
 	rowData,
 	columnDefs,
-	height = 400,
+	height = 250,
 	getRowStyle,
 }) => {
 	const [gridApi, setGridApi] = useState(null);
@@ -21,15 +21,12 @@ const Table = ({
 		setGridColumnApi(params.columnApi);
 		params.api.sizeColumnsToFit();
 	};
-	// useEffect(()=>{
-	//   gridApi.SetRow(columnDefs);
-	// },[columnDefs])
 
 	const onFirstDataRendered = (params) => {
 		params.api.sizeColumnsToFit();
 		const allRowData = [];
 		params.api.forEachNode((node) => allRowData.push(node.data));
-    // setGridApi('rowData', rowData);
+		// setGridApi('rowData', rowData);
 		debugger;
 		tableUpdate(allRowData);
 	};
@@ -37,7 +34,7 @@ const Table = ({
 		params.api.sizeColumnsToFit();
 	};
 	console.log(rowData);
-  console.log("Keys of the first dataset:", Object.keys(rowData[0]));
+	console.log("Keys of the first dataset:", Object.keys(rowData[0]));
 	const saveModifiedRows = (params) => {
 		debugger;
 		let currentlocation = location.pathname;
@@ -89,7 +86,7 @@ const Table = ({
 					{columnDefs}
 				</AgGridReact>
 			) : (
-				<AgGridReact rowData={rowData} columnDefs={columnDefs}/>
+				<AgGridReact rowData={rowData} columnDefs={columnDefs} />
 			)}
 			{/* </Typography> */}
 		</div>
