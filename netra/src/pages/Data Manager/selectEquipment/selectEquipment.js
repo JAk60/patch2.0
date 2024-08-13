@@ -8,8 +8,7 @@ const checkedIcon = <CheckBoxIcon fontSize="small" />;
 
 function SelectEquipment(props) {
   const [selectedOptions, setSelectedOptions] = useState([]);
-  let list = props.list;
-  // list=[new Set(...list)]
+  const list = props.list;
   console.log(props.list);
 
   const handleClearOptions = () => setSelectedOptions([]);

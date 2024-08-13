@@ -86,7 +86,7 @@ export default function () {
   );
 
   const lowestSensorValue = Math.min(...Object.values(mps));
-console.log(lowestSensorValue);
+  console.log("HELLOWWWW",mps);
   const handleCloseNoteDialog = () => {
     setOpenNoteDialog(false);
     if (dontShowAgain) {
@@ -170,9 +170,9 @@ console.log(lowestSensorValue);
       if (!response.ok) {
         throw new Error(`Request failed with status ${response.status}`);
       }
-
+debugger;
       const data = await response.json();
-
+      console.log("DATTTAAAAAA",data);
       if (data.code) {
         setMps(data.results);
       } else {
@@ -196,7 +196,7 @@ console.log(lowestSensorValue);
   const handleInfo = () => {
     setOpenNoteDialog(true);
   };
-
+console.log("WWWWWWWWWWWWWWW",mps);
   return (
     <>
       <AccessControl allowedLevels={["L1", "L5"]}>

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import CustomizedSnackbars from "../../ui/CustomSnackBar";
 import {
   Button,
   Table,
@@ -165,10 +166,11 @@ export default function EtlEquipment({ classes }) {
 
       const data = await response.json();
       console.log(data);
+
       if (data.code === 1) {
         setSnackBarMessage({
           severity: "success",
-          message: "Update successful",
+          message: data.message,
           showSnackBar: true,
         });
       } else {
@@ -227,7 +229,13 @@ export default function EtlEquipment({ classes }) {
     setTableData([]);
     setSearchKeyword("");
   }, [currentSelection.department, currentSelection.shipName]);
-
+  const onHandleSnackClose = () => {
+    setSnackBarMessage({
+      severity: "error",
+      message: "Close",
+      showSnackBar: false,
+    });
+  };
   return (
     <div
       style={{

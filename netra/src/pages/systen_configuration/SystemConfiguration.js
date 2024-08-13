@@ -1,23 +1,24 @@
-import { Button } from "@material-ui/core";
-import { makeStyles } from "@material-ui/styles";
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useLocation } from "react-router";
-import { Link, Route, Switch, useHistory } from "react-router-dom";
-import EqptStructuring from "../../components/main/EqptStructuring/EqptStructuring";
-import Navigation from "../../components/navigation/Navigation";
-import StageSlider from "../../components/slider/NewSlider";
-import { treeDataActions } from "../../store/TreeDataStore";
-import CustomizedSnackbars from "../../ui/CustomSnackBar";
-import UserSelection from "../../ui/userSelection/userSelection";
-import AccessControl from "../Home/AccessControl";
+import React, { useEffect, useState, useRef } from "react";
 import styles from "./SystemConfiguration.module.css";
-import AdditionalInfo from "./additionalInfo/additionalInfo";
-import DutyCycle from "./dutyCycle/dutyCycle";
-import FailureMode from "./failureMode/failureMode";
-import MaintenanceInfo from "./maintenanceInfo/maintenanceInfo";
+import Navigation from "../../components/navigation/Navigation";
+import EqptStructuring from "../../components/main/EqptStructuring/EqptStructuring";
+import NewModule from "../../components/module/NewModule";
+import StageSlider from "../../components/slider/NewSlider";
+import { useDispatch, useSelector } from "react-redux";
+import { Button, unstable_createMuiStrictModeTheme } from "@material-ui/core";
+import CustomizedSnackbars from "../../ui/CustomSnackBar";
+import { Switch, Route, useHistory, Link } from "react-router-dom";
+import { makeStyles } from "@material-ui/styles";
+import UserSelection from "../../ui/userSelection/userSelection";
 import RedundancyInfo from "./redundancy/redundancy";
-import { dark } from "@material-ui/core/styles/createPalette";
+import MaintenanceInfo from "./maintenanceInfo/maintenanceInfo";
+import FailureMode from "./failureMode/failureMode";
+import DutyCycle from "./dutyCycle/dutyCycle";
+import AdditionalInfo from "./additionalInfo/additionalInfo";
+import { useLocation } from "react-router";
+import { treeDataActions } from "../../store/TreeDataStore";
+import AccessControl from "../Home/AccessControl";
+import { v4 as uuid } from "uuid";
 const SystemStyles = makeStyles({
   formControl: {
     margin: "2rem",
@@ -40,7 +41,6 @@ const SystemConfiguration = (props) => {
   const dispatch = useDispatch();
   let finalTableData = [];
   const setFinalTableData = (d) => {
-    console.log(d);
     finalTableData = d;
   };
 
@@ -113,8 +113,35 @@ const SystemConfiguration = (props) => {
     }
   };
 
- 
+  const CheckStage = () => {
+    if (Stage === 0) {
+      history.push("/system_config");
+    }
+    if (Stage === 1) {
+      history.push("/system_config/redundancy_info");
+    }
+    if (Stage === 2) {
+      history.push("/system_config/maintenance_info");
+    }
+    if (Stage === 3) {
+      history.push("/system_config/failure_mode");
+    }
+    if (Stage === 4) {
+      history.push("/system_config/duty_cycle");
+    }
+  };
 
+  const nextModule = (settings) => {
+    if (settings.PhaseManager) {
+      props.history.push("/phase_manager");
+    } else if (settings.HEP) {
+      props.history.push("/HEP");
+    } else if (settings.DataManager) {
+      props.history.push("/data_manager");
+    } else if (settings.ReliabilityDashboard) {
+      props.history.push("/rDashboard");
+    }
+  };
 
   const [locationKeys, setLocationKeys] = useState([]);
   useEffect(() => {

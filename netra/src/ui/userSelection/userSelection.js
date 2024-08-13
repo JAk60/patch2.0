@@ -68,11 +68,11 @@ function UserSelection(props) {
   }, []); // Empty dependency array to run only on mount
 
   const handleShipNameChange = (e) => {
-    const shipName = e.target.value;
+    const shipName = e.currentTarget.innerText;
     const filteredData = userSelectionData.filter(
       (x) => x.shipName === shipName
     );
-    console.log(filteredData);
+
     const uniqueCategories = [
       ...new Set(filteredData.map((x) => x.shipCategory)),
     ];
@@ -245,12 +245,12 @@ function UserSelection(props) {
       </Grid>
       <Route
         path={[
+          "/system_config",
           "/system_config/redundancy_info",
           "/system_config/maintenance_info",
           "/system_config/failure_mode",
           "/system_config/duty_cycle",
           "/system_config/",
-          "/system_con/",
           "/data_manager/",
           "/phase_manager/",
           "/HEP/",
@@ -275,12 +275,12 @@ function UserSelection(props) {
       </Route>
       <Route
         path={[
+          "/system_config",
           "/system_config/redundancy_info",
           "/system_config/maintenance_info",
           "/system_config/failure_mode",
           "/system_config/duty_cycle",
           "/system_config/",
-          "/system_con/",
           "/data_manager/",
           "/phase_manager/",
           "/HEP/",

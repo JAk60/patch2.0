@@ -35,13 +35,13 @@ const modules = {
       C) User Selection Configuration - Adding a new ship <br/>
       D) Add System Documents - Documents related with equipments (Manuals/Training books) <br/>
       E) Add Sensor Data`,
-    pdfLink: "/view_data_pdf",
+    pdfLink: "pdf/view_data_pdf.pdf",
   },
   "Maintenance Allocation": {
     info: `A) Create maintenance plan-To specify maintenance plans (Sensor based / Inspection based )
               To specify sensors<br/>
           B) Conduct RCM analysis `,
-    pdfLink: "/maintenance_allocation_pdf",
+    pdfLink: "pdf/maintenance_allocation_pdf.pdf",
   },
   "Time To Failure RUL": {
     info: " Remaining useful life prediction",

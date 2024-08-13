@@ -127,9 +127,8 @@ function DataManager(props) {
   const sData = useSelector((state) => state.userSelection.componentsData);
 
   const currentNomenclature = currentSelection["nomenclature"];
-  const currentShip = currentSelection["shipName"];
-  const matchingItems = sData.filter(item => item.nomenclature === currentNomenclature && item.ship_name === currentShip);
-  console.log(matchingItems);
+  const matchingItems = sData.filter(item => item.nomenclature === currentNomenclature);
+
   const matchingId = matchingItems[0]?.id;
   const handleOnLoadSystem = () => {
     const payload = {
@@ -187,7 +186,6 @@ function DataManager(props) {
 
 
   const handleSaveSupport = (data) => {
-    console.log(data)
     fetch("/save_historical_data", {
       method: "POST",
       body: JSON.stringify({

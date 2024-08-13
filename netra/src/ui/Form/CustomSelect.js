@@ -27,7 +27,7 @@ const StyledInput = withStyles({
     background: "#fff",
     border: "1px solid #0263a1",
     borderRadius: "5px",
-    width: "320px",
+    width: "250px",
     height: "40px",
     boxShadow: "2px 3px 5px -1px rgba(0,0,0,0.2)",
   },

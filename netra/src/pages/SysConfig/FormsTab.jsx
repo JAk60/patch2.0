@@ -46,7 +46,7 @@ const options = [
 
 export default function FormsTab() {
 	const CurrentEquipment = useSelector(
-		(state) => state.userSelection.currentSelection
+		(state) => state.treeData.sortTreeData
 	);
 	console.log(CurrentEquipment);
 	const classes = useStyles();
@@ -86,7 +86,7 @@ export default function FormsTab() {
 
 	return (
 		<div className={classes.root}>
-			{!CurrentEquipment.equipmentName ? (
+			{!CurrentEquipment[0]?.name ? (
 				<Typography variant="h6" color="error">
 					Please load the equipment in the previous tab.
 				</Typography>
@@ -94,8 +94,8 @@ export default function FormsTab() {
 				<>
 					<Typography variant="h4" style={{ marginBottom: "24px" }}>
 						Equipment Under Consideration:{" "}
-						{CurrentEquipment.equipmentName} (
-						{CurrentEquipment.nomenclature})
+						{CurrentEquipment[0]?.name} (
+						{CurrentEquipment[0]?.nomenclature})
 					</Typography>
 					{options.map((option) => (
 						<Accordion

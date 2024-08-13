@@ -94,8 +94,8 @@ export default function CmmsSysConfig() {
 					equipment.ship_name === selectedShip &&
 					equipment.department === value
 			)
-			.map((equipment) => equipment.equipment);
-		console.log("filteredEquipments", filteredEquipments);
+			.map((equipment) => equipment.component_name);
+			
 		setEquipmentOptions([...new Set(filteredEquipments)]);
 		const data = { department: value };
 		dispatch(userActions.onChangeCurrentSelection({ selectedData: data }));
@@ -103,27 +103,25 @@ export default function CmmsSysConfig() {
 
 	const EquipmentChange = (e, value) => {
 		const selectedEquipment = value;
-		console.log(value);
 		const filteredNomenclature = allEquipmentData
 			.filter(
 				(equipment) =>
 					equipment.ship_name === selectedShip &&
 					equipment.department === selectedDepartment &&
-					equipment.equipment === selectedEquipment
+					equipment.component_name === selectedEquipment
 			)
 			.map((equipment) => equipment.nomenclature);
-		console.log("filteredEquipments", filteredNomenclature);
-		const nomenclatureOptionsAsObjects = filteredNomenclature.map(
-			(option) => ({
-				label: option.toLowerCase().replace(/ /g, ""),
-				value: option,
-			})
-		);
+			console.log("abcd",filteredNomenclature)
+      const nomenclatureOptionsAsObjects = filteredNomenclature.map((option) => ({
+        label: option.toLowerCase().replace(/ /g, ''),
+        value: option,
+      }));
+	  console.log("anupam",nomenclatureOptionsAsObjects)
 		setNomenclatureOptions(nomenclatureOptionsAsObjects);
 		const data = { equipmentName: value };
 		dispatch(userActions.onChangeCurrentSelection({ selectedData: data }));
 	};
-	console.log("12345", nomenclatureOptions);
+	console.log("12345",nomenclatureOptions);
 	const NomenclatureChange = (e, values) => {
 		const selectedNomenclatures = values || [];
 
@@ -168,25 +166,22 @@ export default function CmmsSysConfig() {
 		const datac = { equipmentCode: equipmentCodes };
 		dispatch(userActions.onChangeCurrentSelection({ selectedData: datac }));
 	};
-	const handleToggleOption = (selectedOptions) => {
-		console.log(selectedOptions);
-		const data = { nomenclature: selectedOptions };
-		dispatch(userActions.onChangeCurrentSelection({ selectedData: data }));
+	const handleToggleOption = (selectedOptions) =>{
+    console.log(selectedOptions);
+    const data = { nomenclature: selectedOptions };
+    dispatch(userActions.onChangeCurrentSelection({ selectedData: data }));
 		setSelectedOptions(selectedOptions);
-	};
+  }
 	const handleClearOptions = () => setSelectedOptions([]);
 	const handleSelectAll = (isSelected) => {
 		if (isSelected) {
 			setSelectedOptions(nomenclatureOptions);
-			const data = { nomenclature: nomenclatureOptions };
-			dispatch(
-				userActions.onChangeCurrentSelection({ selectedData: data })
-			);
+      const data = { nomenclature: nomenclatureOptions };
+		  dispatch(userActions.onChangeCurrentSelection({ selectedData: data }));
 		} else {
 			handleClearOptions();
 		}
 	};
-	console.log(selectedOptions);
 	const getOptionLabel = (option) => option?.label;
 	return (
 		<>
@@ -250,7 +245,7 @@ export default function CmmsSysConfig() {
 				onToggleOption={handleToggleOption}
 				onClearOptions={handleClearOptions}
 				onSelectAll={handleSelectAll}
-				className={classes.autocomplete}
+        className={classes.autocomplete}
 			/>
 		</>
 	);

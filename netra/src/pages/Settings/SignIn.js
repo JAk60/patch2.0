@@ -155,7 +155,7 @@ const SignIn = (props) => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Password"
-            type="text"
+            type="password"
             required
             onKeyPress={handleEnter}
           />

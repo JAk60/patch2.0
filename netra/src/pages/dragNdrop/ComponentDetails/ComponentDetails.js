@@ -1,17 +1,16 @@
-import React, { useRef, useState } from "react";
-import { makeStyles } from "@material-ui/core/styles";
 import Accordion from "@material-ui/core/Accordion";
-import AccordionSummary from "@material-ui/core/AccordionSummary";
 import AccordionDetails from "@material-ui/core/AccordionDetails";
+import AccordionSummary from "@material-ui/core/AccordionSummary";
+import { makeStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import customclasses from "./ComponentDetails.module.css";
-import Select from "react-select";
-import { useSelector, useDispatch } from "react-redux";
-import { elementActions } from "../../../store/elements";
 import randomColor from "randomcolor";
+import React, { useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import Select from "react-select";
+import { elementActions } from "../../../store/elements";
+import customclasses from "./ComponentDetails.module.css";
 
-import GroupData from "./GroupData";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -47,12 +46,8 @@ const AccordionStyles = makeStyles((theme) => ({
 const ComponentDetails = (props) => {
   const dispatch = useDispatch();
   const selectedNode = useSelector((state) => state.elements.node);
-  const allElements = useSelector((state) => state.elements.elements);
-  const edgesN = allElements
-    .filter((x) => x.dtype === "edge")
-    .map((x) => x.source);
 
-  const groupDataKN = GroupData();
+
   const parentName = useSelector(
     (state) => state.elements.selectedNodeParentName
   );
@@ -69,13 +64,19 @@ const ComponentDetails = (props) => {
   const kRefDS = useRef();
   const kRefAS = useRef();
   const nodeNameRef = useRef();
-  const knP = useRef();
   const classes = useStyles();
 
   const accordionClasses = AccordionStyles();
-  const data = useSelector((state) => state.elements.node.data);
 
   const [inputValues, setInputValues] = useState({
+    k: "",
+    k_elh: "",
+    k_c: "",
+    k_ds: "",
+    k_as: "",
+  });
+
+  const [errorMessages, setErrorMessages] = useState({
     k: "",
     k_elh: "",
     k_c: "",
@@ -94,10 +95,22 @@ const ComponentDetails = (props) => {
 
   const onHandleInputChange = (e) => {
     const { name, value } = e.target;
-    setInputValues((prevValues) => ({
-      ...prevValues,
-      [name]: value,
-    }));
+
+    if (/^[0-9]?$/.test(value)) {
+      setInputValues((prevValues) => ({
+        ...prevValues,
+        [name]: value,
+      }));
+      setErrorMessages((prevErrors) => ({
+        ...prevErrors,
+        [name]: "",
+      }));
+    } else {
+      setErrorMessages((prevErrors) => ({
+        ...prevErrors,
+        [name]: "Please enter a number between 0 and 9.",
+      }));
+    }
   };
 
   const isSaveDisabled =
@@ -106,7 +119,8 @@ const ComponentDetails = (props) => {
     inputValues.k_c !== "" &&
     inputValues.k_ds !== "" &&
     inputValues.k_as !== "";
-console.log(isSaveDisabled);
+  console.log(isSaveDisabled);
+
   const onHandleButtonClick = () => {
     const parallel_comp = p_selectRef.current.state.value;
     const color = randomColor({ luminosity: "bright", format: "rgb" });
@@ -120,15 +134,16 @@ console.log(isSaveDisabled);
         k_as: kRefAS.current.value,
         parallel_comp: parallel_comp,
         color: color,
-      }),
-      setInputValues({
-        k: "",
-        k_elh: "",
-        k_c: "",
-        k_ds: "",
-        k_as: "",
       })
     );
+
+    setInputValues({
+      k: "",
+      k_elh: "",
+      k_c: "",
+      k_ds: "",
+      k_as: "",
+    });
 
     kRef.current.value = "";
     kRefELH.current.value = "";
@@ -137,18 +152,6 @@ console.log(isSaveDisabled);
     kRefAS.current.value = "";
     p_selectRef.current.state.value = null;
   };
-
-  const onHandleUpdateKN = () => {
-    const color = randomColor({ luminosity: "bright", format: "rgb" });
-    const nodes = knP.current.state.value;
-    dispatch(
-      elementActions.onUpdateKNHandler({
-        nodes: nodes,
-        color: color,
-      })
-    );
-  };
-
   return (
     <div className={classes.root}>
       <Accordion
@@ -226,6 +229,9 @@ console.log(isSaveDisabled);
                 value={inputValues.k}
                 onChange={onHandleInputChange}
               ></input>
+              {errorMessages.k && (
+                <span className={customclasses.error}>{errorMessages.k}</span>
+              )}
             </label>
             <label className={customclasses.inputlabel}>
               <input
@@ -237,6 +243,11 @@ console.log(isSaveDisabled);
                 value={inputValues.k_elh}
                 onChange={onHandleInputChange}
               ></input>
+              {errorMessages.k_elh && (
+                <span className={customclasses.error}>
+                  {errorMessages.k_elh}
+                </span>
+              )}
             </label>
             <label className={customclasses.inputlabel}>
               <input
@@ -248,6 +259,9 @@ console.log(isSaveDisabled);
                 value={inputValues.k_c}
                 onChange={onHandleInputChange}
               ></input>
+              {errorMessages.k_c && (
+                <span className={customclasses.error}>{errorMessages.k_c}</span>
+              )}
             </label>
             <label className={customclasses.inputlabel}>
               <input
@@ -259,6 +273,11 @@ console.log(isSaveDisabled);
                 value={inputValues.k_ds}
                 onChange={onHandleInputChange}
               ></input>
+              {errorMessages.k_ds && (
+                <span className={customclasses.error}>
+                  {errorMessages.k_ds}
+                </span>
+              )}
             </label>
             <label className={customclasses.inputlabel}>
               <input
@@ -270,20 +289,15 @@ console.log(isSaveDisabled);
                 value={inputValues.k_as}
                 onChange={onHandleInputChange}
               ></input>
+              {errorMessages.k_as && (
+                <span className={customclasses.error}>
+                  {errorMessages.k_as}
+                </span>
+              )}
             </label>
-            {/* <label className={customclasses.inputlabel}>
-              <input
-                className={customclasses.input}
-                type="number"
-                placeholder="Enter N value"
-                disabled={true}
-                style={{ background: "rgb(235, 235, 228)" }}
-              ></input>
-            </label> */}
             <button
-              className={`${
-                customclasses.savebtn
-              } ${!isSaveDisabled ? customclasses.disabledButton : ""}`}
+              className={`${customclasses.savebtn
+                } ${!isSaveDisabled ? customclasses.disabledButton : ""}`}
               onClick={onHandleButtonClick}
               disabled={!isSaveDisabled}
             >

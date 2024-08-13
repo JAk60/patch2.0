@@ -1,13 +1,11 @@
 .userSelection{
     grid-row: 2/3;
-    grid-column: 3/13;
-    margin: 15px 15px 15px 25px;
+    grid-column: 2/13;
+    margin: 10px 20px 0 4%;
     display: flex;
     align-items:center;
     justify-content: space-around;
-    margin-top: 10px;
     height: fit-content;
-    width: 96%;
     box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
     border-radius: 10px;
     padding: 20px 10px;
@@ -21,7 +19,7 @@
     display: flex;
     grid-row: 4/5;
     grid-column: 2/13; 
-    margin: 20px 20px 0 20px; 
+    margin: 20px 20px 0 4%; 
     box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
     overflow-y: auto;
     border-radius: 10px;
@@ -36,7 +34,7 @@
     display: flex;
     justify-content: space-between;
     padding: 20px;
-    margin: 30px 20px 0 20px; 
+    margin: 30px 20px 0 4%; 
     box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
     height: fit-content;
     border-radius: 10px;
@@ -112,7 +110,7 @@
   padding: 20px;
   grid-row: 4/5;
   grid-column: 2/13; 
-  margin: 30px 20px 0 20px; 
+  margin: 30px 20px 0 4%; 
   box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
   height: fit-content;
   border-radius: 10px;
@@ -123,7 +121,7 @@
   display: flex;
   width: 100%;
   align-items: center;
-  margin: 10px 10px;
+  margin: 10px;
 }
 .formField label{
   min-width: 220px;

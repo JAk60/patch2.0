@@ -19,23 +19,44 @@ import { v4 as uuidv4 } from "uuid";
 import Navigation from "../../components/navigation/Navigation";
 import CustomizedSnackbars from "../../ui/CustomSnackBar";
 import Table from "../../ui/Table/DataManagerTable";
-import { taskMissionTableColumns, taskTableColumns } from "./TaskGridColumns";
+import { taskTableColumns } from "./TaskGridColumns";
 import styles from "./tDashboard.module.css";
 // import RenderParallelComponent from "../systen_configuration/redundancy/RenderParallelComponent";
 import { useDispatch, useSelector } from "react-redux";
 import { taskActions } from "../../store/taskStore";
 import AccessControl from "../Home/AccessControl";
 import PaperTable from "./PaperTable";
-import RenderMultipleComponent from "./TaskRenderMultipleComponent";
 import CollapsibleTable from "./ResTable";
-import MultiSelect from "./MultiSelect";
+import RenderMultipleComponent from "./TaskRenderMultipleComponent";
+// import MultiSelect from "./MultiSelect";
 
 const TaskDashboard = () => {
+	const dropDownStyle = makeStyles({
+		root: {
+			paddingLeft: 10,
+			background: "#fff",
+			border: "1px solid #0263a1",
+			borderRadius: "5px",
+			width: "320px",
+			minHeight: "40px",
+			boxShadow: "2px 3px 5px -1px rgba(0,0,0,0.2)",
+		},
+		inputRoot: {
+			width: "100%",
+		},
+		uiContainer: {},
+		closeButton: {
+			// Styles for the close button
+			display: "block",
+			float: "right",
+			marginTop: "10px", // Add margin or adjust as needed
+			marginRight: "10px", // Add margin or adjust as needed
+		},
+	});
 	const precision = 10;
 	const [gridApi, setGridApi] = useState(null);
 	const [gridCompApi, setGridCompApi] = useState(null);
 	const [gridTaskApi, setGriTaskdApi] = useState(null);
-	const [gridMissionApi, setgridMissionApi] = useState(null);
 	const [missionProfileData, setMissionData] = useState([]);
 	const [rowState, setRows] = useState([]);
 	const [rowCompState, setCompRows] = useState([]);
@@ -50,11 +71,9 @@ const TaskDashboard = () => {
 	};
 	console.log("phasedata", phasedata);
 	console.log(rowCompState, "This is shit!!");
-	const [shipOption, setshipOption] = useState([]);
 	const [taskOption, settaskOption] = useState([]);
 	const [missionOption, setmissionOption] = useState([]);
 	const [taskShipNameOption, settaskShipNameOption] = useState([]);
-	const [loading, setLoading] = useState(false);
 	const [recommedation, setRecommedation] = useState([]);
 	const [totalReliability, setTotalReliability] = useState(null);
 	const [showPaper, setShowPaper] = useState(false);
@@ -230,23 +249,6 @@ const TaskDashboard = () => {
 						showSnackBar: true,
 					});
 				}
-
-				// console.log(data);
-				// setRecommedation(data)
-				// // const totalReliabilityRegex = /Total Reliability: (\d+\.\d+)/;
-				// // const match = data.res[2].match(totalReliabilityRegex);
-				// // console.log(match)
-
-				// const totalRel = data.res[data.res.length - 1];
-				// // console.log(totalRel)
-				// const reliabilityValue = totalRel.split(":")[1];
-				// console.log(reliabilityValue);
-				// setTotalReliability(reliabilityValue);
-				// setSnackBarMessage({
-				//   severity: "Success",
-				//   message: `Reliblity Calculated Sucessfully`,
-				//   showSnackBar: true,
-				// });
 			})
 			.catch((error) => {
 				// Handle errors here
@@ -267,59 +269,73 @@ const TaskDashboard = () => {
 		setCompRows(newData);
 		// debugger;
 	};
-	console.log(recommedation);
-	console.log(missionD);
+
+
 	const saveTaskReset = () => {
 		console.log(totalReliability, "tOTAL rekl");
 		debugger;
-		let allRowData = [];
-		gridApi.forEachNode((node) => allRowData.push(node.data));
-		let allRowCData = [];
-		gridCompApi.forEachNode((node) => allRowCData.push(node.data));
+		try {
+			setShowPaper(false);
+			let allRowData = [];
+			gridApi.forEachNode((node) => allRowData.push(node.data));
+			let allRowCData = [];
+			gridCompApi.forEachNode((node) => allRowCData.push(node.data));
 
-		//logic for saving it to local data
-		let mainData = [];
-		allRowData.forEach((d, index) => {
-			mainData.push({
-				id: allRowData[index]["id"],
-				missionType: allRowData[index]["missionType"],
-				duration: allRowData[index]["duration"],
-				components: allRowCData[index]["components"],
+			//logic for saving it to local data
+			let mainData = [];
+			allRowData.forEach((d, index) => {
+				mainData.push({
+					id: allRowData[index]["id"],
+					missionType: allRowData[index]["missionType"],
+					duration: allRowData[index]["duration"],
+					components: allRowCData[index]["components"],
+				});
 			});
-		});
 
-		// Add a suffix to the task key
-		const suffixedTaskName = currentTaskName + "_Netra";
+			// Add a suffix to the task key
+			const suffixedTaskName = currentTaskName + "_Netra";
 
-		let localData = {
-			shipName: currentShip,
-			taskName: suffixedTaskName,
-			data: mainData,
-			cal_rel: totalReliability,
-		};
+			let localData = {
+				shipName: currentShip,
+				taskName: suffixedTaskName,
+				data: mainData,
+				cal_rel: totalReliability,
+			};
 
-		console.log(localData, "local Data");
-		setPhaseData(mainData);
+			console.log(localData, "local Data");
+			setPhaseData(mainData);
 
-		// Use suffixed task name when storing in local storage
-		localStorage.setItem(
-			`${currentShip}_${suffixedTaskName}`,
-			JSON.stringify(localData)
-		);
+			// Use suffixed task name when storing in local storage
+			localStorage.setItem(
+				`${currentShip}_${suffixedTaskName}`,
+				JSON.stringify(localData)
+			);
 
-		gridApi.selectAll();
-		const selectedRows = gridApi.getSelectedRows();
-		gridApi.applyTransaction({ remove: selectedRows });
+			gridApi.selectAll();
+			const selectedRows = gridApi.getSelectedRows();
+			gridApi.applyTransaction({ remove: selectedRows });
 
-		gridCompApi.selectAll();
-		const selectedCompRows = gridCompApi.getSelectedRows();
-		gridCompApi.applyTransaction({ remove: selectedCompRows });
+			gridCompApi.selectAll();
+			const selectedCompRows = gridCompApi.getSelectedRows();
+			gridCompApi.applyTransaction({ remove: selectedCompRows });
 
-		allRowData = [];
-		setMissionData(allRowData);
-		setRecommedation([]);
-		settaskTableData([]);
-		settaskMissionTableData([]);
+			allRowData = [];
+			setMissionData(allRowData);
+			setRecommedation([]);
+			settaskTableData([]);
+			settaskMissionTableData([]);
+			setSnackBarMessage({
+				severity: "success",
+				message: "Task added for comparison successfully!",
+				showSnackBar: true,
+			});
+		} catch (error) {
+			setSnackBarMessage({
+				severity: "error",
+				message: "Please Select data and Enter Mission Phase Data!!",
+				showSnackBar: true,
+			});
+		}
 	};
 
 	console.log("missiondata", missionProfileData);
@@ -362,43 +378,19 @@ const TaskDashboard = () => {
 			})
 			.then((data) => {
 				const mission_data = data["missionData"];
-				const taskNames = data["tasks"];
-				const taskData = data["tasks_data"];
 				const task_ship_name = data["ship_name"];
 				setmissionOption(mission_data);
 				setentireData(data);
-				// settaskOption(taskNames);
 				settaskShipNameOption(task_ship_name);
 				dispatch(taskActions.onLoad({ taskData: data }));
 			});
 	}, []);
 
-	const dropDownStyle = makeStyles({
-		root: {
-			paddingLeft: 10,
-			background: "#fff",
-			border: "1px solid #0263a1",
-			borderRadius: "5px",
-			width: "320px",
-			minHeight: "40px",
-			boxShadow: "2px 3px 5px -1px rgba(0,0,0,0.2)",
-		},
-		inputRoot: {
-			width: "100%",
-		},
-		uiContainer: {},
-		closeButton: {
-			// Styles for the close button
-			display: "block",
-			float: "right",
-			marginTop: "10px", // Add margin or adjust as needed
-			marginRight: "10px", // Add margin or adjust as needed
-		},
-	});
 	const classes = dropDownStyle();
 
 	const onResetMissionHandler = () => {
 		resetGrids();
+		setShowPaper(false);
 		setRecommedation([]);
 		let storedData = Object.entries(localStorage);
 		storedData.forEach((ele) => {
@@ -428,7 +420,6 @@ const TaskDashboard = () => {
 
 			// Check if the key has the specified suffix
 			if (name.includes("_Netra")) {
-				let elemData = JSON.parse(ele[1]);
 				fData.push(JSON.parse(ele[1]));
 			}
 		});

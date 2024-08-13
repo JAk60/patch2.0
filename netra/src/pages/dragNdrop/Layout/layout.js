@@ -7,15 +7,14 @@ import { makeStyles } from "@material-ui/core/styles";
 import Autocomplete from "@material-ui/lab/Autocomplete/Autocomplete";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useHistory } from "react-router";
 import { v4 as uuid } from "uuid";
+import BackToHomeFab from "../../../components/navigation/MuiFap";
 import { elementActions } from "../../../store/elements";
 import CustomizedSnackbars from "../../../ui/CustomSnackBar";
 import UserSelection from "../../../ui/userSelection/userSelection";
 import ComponentDetails from "../ComponentDetails/ComponentDetails";
 import Flow from "../Flow/flow";
 import styles from "./layout.module.css";
-import BackToHomeFab from "../../../components/navigation/MuiFap";
 
 const drawerWidth = 320;
 
@@ -55,7 +54,7 @@ const Layout = (props) => {
       });
   }, []);
   const [taskNames, setTaskNames] = useState([]);
-  // Snackbar
+  const [kValues, setKValues] = useState({});
   const [SnackBarMessage, setSnackBarMessage] = useState({
     severity: "error",
     message: "This is awesome",
@@ -68,10 +67,8 @@ const Layout = (props) => {
       showSnackBar: false,
     });
   };
-  const history = useHistory();
   const dispatch = useDispatch();
   const allElements = useSelector((state) => state.elements);
-  const components = useSelector((state) => state.userSelection.componentsData);
   const currentSelection = useSelector(
     (state) => state.userSelection.currentSelection
   );
@@ -87,29 +84,6 @@ const Layout = (props) => {
   }, [currDepartment]);
   console.log("currentSelection", currentSelection);
   const onSaveHandler = () => {
-    // const stringObject = JSON.stringify(allElements);
-    // localStorage.setItem("flow", stringObject);
-    // console.log(prompt("Enter Task Name"))
-
-    //SAVE TO DB LOGIC - NOW USING SAVE TO FILE
-    // let edges=allElements.elements.filter(data=>data.dtype==='edge')
-    // let finalData=allElements.elements.filter(data=>data.dtype==='node').map(
-    //   node=>{
-    //     if(node.type==='component'){
-    //       let edge=edges.filter(edge=>edge.target===node.id)[0]
-    //       let newnode={...node,parentId:edge.source,equipmentId:components.filter(x=>x.name===node.data.label)[0].id}
-    //       return newnode
-    //     }
-    //     else if(node.type==='systemNode'){
-    //       let newnode={...node,data:{label:taskName}}
-    //       return newnode
-    //     }
-    //   }
-    // )
-    // console.log(finalData);
-
-    //SAVING TO FILE DIRECTLY
-    debugger;
     fetch("/save_task_configuration", {
       method: "POST",
       body: JSON.stringify({
@@ -166,7 +140,39 @@ const Layout = (props) => {
         return res.json();
       })
       .then((data) => {
+        console.log(data);
         dispatch(elementActions.onRestoreHandler({ elements: data }));
+        const kValues = {};
+
+        data.forEach(item => {
+          if (item.dtype === 'node' && item.data && item.data.label) {
+            const label = item.data.label;
+            const groupType = label.substring(0, 3); // GT or GTG
+
+            if (!kValues[groupType]) {
+              kValues[groupType] = {
+                k: item.data.k,
+                k_as: item.data.k_as,
+                k_c: item.data.k_c,
+                k_ds: item.data.k_ds,
+                k_elh: item.data.k_elh,
+                components: []
+              };
+            }
+
+            kValues[groupType].components.push(label);
+          }
+        });
+
+        // Remove any group that doesn't have k values (like TASK)
+        Object.keys(kValues).forEach(key => {
+          if (kValues[key].k === undefined) {
+            delete kValues[key];
+          }
+        });
+
+        console.log({ kValues });
+        setKValues(kValues)
         setSnackBarMessage({
           severity: "success",
           message: "Data loaded successfully",
@@ -182,13 +188,9 @@ const Layout = (props) => {
       });
     handleLoadClose();
   };
-  const systemData = useSelector((state) => state.treeData.treeData);
-  const handleChange = (event, newValue) => {
-    console.log(newValue);
-    // alert(newValue);
-    setValue(newValue);
-  };
-  console.log(value);
+
+  const TaskDataLength = useSelector((state) => state.elements.elements)?.length > 1;//AS TASK NAME DEFAULT NODE EXISTS
+  console.log(TaskDataLength);
   const reactFlowWrapper = useRef(null);
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
   const [taskName, setTaskName] = useState("");
@@ -211,29 +213,7 @@ const Layout = (props) => {
 
   console.log("reactFlowInstance,", reactFlowInstance);
 
-  useEffect(() => {
-    // This useEffect will run once when the component is mounted
-    if (reactFlowInstance) {
-      const isTaskNameAdded = isNodeAddedMap["Task Name"];
-      if (!isTaskNameAdded) {
-        const newNodeTaskName = {
-          id: uuid(),
-          type: "systemNode",
-          position: { x: 500, y: 300 }, // You can set the initial position as per your requirement
-          data: { label: "Task Name" },
-          dtype: "node",
-          shipName: ship_name,
-        };
-
-        dispatch(elementActions.addElement({ ele: newNodeTaskName }));
-        setIsNodeAddedMap((prevMap) => ({ ...prevMap, "Task Name": true }));
-
-        // Fit the view to include the newly added node
-        reactFlowInstance.fitView();
-      }
-    }
-  }, [reactFlowInstance,clearcanvas]);
-
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const AddNodes = () => {
     const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
 
@@ -282,7 +262,32 @@ const Layout = (props) => {
     });
 
     setBoolCanvas(true);
+
   };
+
+  useEffect(() => {
+    // This useEffect will run once when the component is mounted
+    if (reactFlowInstance) {
+      const isTaskNameAdded = isNodeAddedMap["Task Name"];
+      if (!isTaskNameAdded) {
+        const newNodeTaskName = {
+          id: uuid(),
+          type: "systemNode",
+          position: { x: 500, y: 300 }, // You can set the initial position as per your requirement
+          data: { label: "Task Name" },
+          dtype: "node",
+          shipName: ship_name,
+        };
+
+        dispatch(elementActions.addElement({ ele: newNodeTaskName }));
+        setIsNodeAddedMap((prevMap) => ({ ...prevMap, "Task Name": true }));
+
+        // Fit the view to include the newly added node
+        reactFlowInstance.fitView();
+      }
+    }
+  }, [reactFlowInstance, clearcanvas, isNodeAddedMap, ship_name, dispatch, AddNodes]);
+
 
   const [open, setOpen] = useState(false);
   const handleClickOpen = () => setOpen(true);
@@ -295,9 +300,8 @@ const Layout = (props) => {
   // Modify the onDeleteHandler function to open the confirmation dialog
   const onDeleteHandler = async () => {
     setDeleteConfirmationOpen(true);
-  };
+  }
 
-  // Handle the confirmation and perform deletion
   const handleDeleteConfirmation = async () => {
     try {
       const response = await fetch('/del_task', {
@@ -378,8 +382,10 @@ const Layout = (props) => {
           setValue={setValue}
           setSelectAllNomenclature={setSelectAllNomenclature}
           setSelectAllEquipments={setSelectAllEquipments}
+          kValues={kValues}
         ></Flow>
       </div>
+
       <Drawer
         anchor="right"
         variant="permanent"
@@ -390,12 +396,6 @@ const Layout = (props) => {
       >
         <Container>
           <div className={styles.buttonDiv}>
-            {/* <button
-              onClick={() => history.push("/")}
-              className={styles.savebtn}
-            >
-              Home
-            </button> */}
             <button onClick={handleLoadClickOpen} className={styles.restorebtn}>
               Load Saved Tasks
             </button>
@@ -418,6 +418,7 @@ const Layout = (props) => {
                 onClick={() => {
                   setShowDetails(true);
                 }}
+                disabled={!TaskDataLength}
                 className={styles.restorebtn}
               >
                 Component Details
@@ -484,26 +485,26 @@ const Layout = (props) => {
               </DialogActions>
             </Dialog>
             <Dialog
-        open={deleteConfirmationOpen}
-        onClose={handleDeleteConfirmationCancel}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">Confirm Deletion</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            Are you sure you want to delete {loadname} task?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleDeleteConfirmationCancel} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={handleDeleteConfirmation} color="primary" autoFocus>
-            Delete
-          </Button>
-        </DialogActions>
-      </Dialog>
+              open={deleteConfirmationOpen}
+              onClose={handleDeleteConfirmationCancel}
+              aria-labelledby="alert-dialog-title"
+              aria-describedby="alert-dialog-description"
+            >
+              <DialogTitle id="alert-dialog-title">Confirm Deletion</DialogTitle>
+              <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                  Are you sure you want to delete {loadname} task?
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleDeleteConfirmationCancel} color="primary">
+                  Cancel
+                </Button>
+                <Button onClick={handleDeleteConfirmation} color="primary" autoFocus>
+                  Delete
+                </Button>
+              </DialogActions>
+            </Dialog>
           </div>
           {/* <p>Here the details of each component goes!!</p> */}
           {showDetails ? (
@@ -547,7 +548,7 @@ const Layout = (props) => {
                 color="primary"
                 style={{ marginLeft: 45, marginTop: 7 }}
                 onClick={() => AddNodes()}
-                // disabled={boolcanvas}
+              // disabled={boolcanvas}
               >
                 Load Equipments
               </Button>

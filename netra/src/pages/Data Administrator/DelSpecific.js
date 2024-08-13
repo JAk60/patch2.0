@@ -78,7 +78,7 @@ export default function DelSpecific() {
       "Duty Cycle": "duty_cycle",
       avoidColumns: ["component_id", "duty_cycle_id"],
     },
-    { "Additional Information Info": "system_config_additional_info", avoidColumns: ["id","component_id"] },
+    { "Additional Information Info": "", avoidColumns: ["component_id"] },
     {
       "Operational Data": "operational_data",
       avoidColumns: ["component_id", "id"],

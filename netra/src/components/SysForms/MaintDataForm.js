@@ -58,14 +58,14 @@ const MaintenanceDataFormik = () => {
 		};
 
 		try {
-			const response = await fetch("/save_system", {
+			const response = await fetch("/save_historical_data", {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
 				},
 				body: JSON.stringify({
 					flatData: [dataToSend],
-					dtype: "failure_mode", // Ensure dtype is correct
+					dtype: "maintData", // Ensure dtype is correct
 				}),
 			});
 

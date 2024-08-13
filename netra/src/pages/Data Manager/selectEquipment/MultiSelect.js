@@ -73,7 +73,7 @@ const MultiSelect = ({
       value={selectedValues}
       // groupBy={(option) => option.parentName}
       disableCloseOnSelect
-      limitTags={1}
+      limitTags={2}
       getOptionLabel={getOptionLabel}
       getOptionSelected={getOptionSelected}
       noOptionsText={noOptionsText}

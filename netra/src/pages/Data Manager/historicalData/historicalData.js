@@ -39,10 +39,6 @@ function HistoricalData(props) {
   const systemConfigurationTreeData = useSelector(
     (state) => state.treeData.sortTreeData
   );
-  const systemDirectChildrens = useSelector(
-    (state) => state.treeData.treeData);
-  // .filter(child => child.parentId !== null);
-  console.log(systemDirectChildrens);
   // let filteredSystemConfigData = [];
   const [type, setType] = React.useState("");
 
@@ -96,7 +92,7 @@ function HistoricalData(props) {
     EquipRtype === "Replaceable" ? true : false;
       console.log(systemRepairTypeBool);
       if(!systemRepairTypeBool){ 
-        <Redirect to="/data_manager/historical_data"></Redirect>
+        <Redirect to="/data_manager/historical_data/repairable_overhaul"></Redirect>
        }
     
     if (EquipRtype === "Replaceable") {
@@ -176,10 +172,9 @@ function HistoricalData(props) {
 
   const onEquipmentChange = (e, selectedoption) => {
     debugger;
-    const filteredChild = systemDirectChildrens.filter(
+    const filteredChild = systemConfigurationTreeData.filter(
       (x) => x.id === selectedoption.id
     );
-    console.log(filteredChild,"filteredChild");
     setHistoricalChildData(filteredChild);
   };
 
@@ -193,8 +188,8 @@ function HistoricalData(props) {
     <div>
       {systemRepairTypeBool && ( // Only render if systemRepairTypeBool is true
       <div className={`${styles.flex}`}>
-        <div style={{display:"flex"}}>
-          {/* <Autocomplete
+        <div>
+          <Autocomplete
             id="combo-box-demo"
             groupBy={(option) => option.parentName}
             options={systemConfigurationTreeData}
@@ -203,17 +198,6 @@ function HistoricalData(props) {
             onChange={onEquipmentChange}
             renderInput={(params) => (
               <TextField {...params} label="Select Equipment" variant="outlined" />
-            )}
-          /> */}
-          <Autocomplete
-            id="combo-box-dem"
-            groupBy={(option) => option.parentName}
-            options={systemDirectChildrens}
-            getOptionLabel={(option) => option.nomenclature}
-            style={{ width: 300 }}
-            onChange={onEquipmentChange}
-            renderInput={(params) => (
-              <TextField {...params} label="Select Assembly" variant="outlined" />
             )}
           />
         </div>

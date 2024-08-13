@@ -16,6 +16,7 @@ import PM from "./pages/PM OPTIM/pm";
 import Phasemanager from "./pages/Phase_Manager/Phasemanager";
 import RulLife from './pages/RUL/RulLife';
 import ReliabilityDashboard from "./pages/Reliability Dashboard/ReliabilityDashboard";
+import SysConfig from "./pages/SysConfig/SysConfig";
 // import New from "./pages/Reliability Dashboard/new";
 import ForgotPass from "./pages/Settings/ForgotPassword/Forgot_Password";
 import SignIn from "./pages/Settings/SignIn";
@@ -31,7 +32,6 @@ import SystemConfiguration from "./pages/systen_configuration/SystemConfiguratio
 import UserSelectionConfiguration from "./pages/userSelectionConfig/UserSelectionConfiguration";
 import { setLevel } from "./store/Levels";
 import Administrator from "./pages/Data Administrator/Administrator";
-import SysConfig from "./pages/SysConfig/SysConfig";
 import MainRel from "./pages/Reliability Dashboard/MainRel";
 
 const theme = createMuiTheme({
@@ -85,7 +85,7 @@ function App() {
     const storedUserData = JSON.parse(localStorage.getItem('userData'));
     if (storedUserData) {
       dispatch(setLevel(storedUserData));
-    }  
+    }
   }, []);
 
 
@@ -171,12 +171,6 @@ function App() {
             <Route
               path="/system_config"
               render={(props) => (
-                <SystemConfiguration {...props} settings={settings} />
-              )}
-            />
-            <Route
-              path="/system_con"
-              render={(props) => (
                 <SysConfig {...props} settings={settings} />
               )}
             />
@@ -235,7 +229,10 @@ function App() {
                 <TaskDashboard {...props} settings={settings} />
               )}
             />
-            
+            {/* <Route
+              path="/new"
+              render={(props) => <New {...props} settings={settings} />}
+            /> */}
             <Route
               path="/dnd"
               render={(props) => <DragNDrop {...props} settings={settings} />}

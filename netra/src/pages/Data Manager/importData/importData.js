@@ -10,12 +10,11 @@ const ImportData = (props) => {
   const rows = props.childList.map((x) => {
     return {
       id: x.id,
-      ComponentName: x.nomenclature,
+      ComponentName: x.name,
       ScaleParameter: "",
       ShapeParameter: "",
     };
   });
-  console.log(rows,"rowsssss");
   const ImportColumns = [
     <AgGridColumn
       field="ComponentName"

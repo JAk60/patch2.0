@@ -28,3 +28,6 @@
   cursor: not-allowed; /* Change the cursor to show it's not clickable */
 }
 
+.error{
+  color: red;
+}

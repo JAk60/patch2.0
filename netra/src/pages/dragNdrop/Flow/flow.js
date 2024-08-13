@@ -1,68 +1,68 @@
-import { useSelector, useDispatch } from "react-redux";
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { ContextMenu, ContextMenuTrigger } from "react-contextmenu";
 import Snackbar from "@material-ui/core/Snackbar";
-import MuiAlert from "@material-ui/lab/Alert";
-import { v4 as uuid } from "uuid";
 import { makeStyles } from "@material-ui/core/styles";
-import ReactFlow, {
-  addEdge,
-  removeElements,
-  Background,
-  ReactFlowProvider,
-  Controls,
-  isNode,
-} from "react-flow-renderer";
-import CustomNode from "../CustomNode/CustomNode";
+import MuiAlert from "@material-ui/lab/Alert";
 import dagre from "dagre";
+import React, { useCallback, useEffect, useState } from "react";
+import { ContextMenu, ContextMenuTrigger } from "react-contextmenu";
+import ReactFlow, {
+	addEdge,
+	Background,
+	Controls,
+	isNode,
+	ReactFlowProvider,
+	removeElements,
+} from "react-flow-renderer";
+import { useDispatch, useSelector } from "react-redux";
+import { v4 as uuid } from "uuid";
 import { elementActions } from "../../../store/elements";
-import customCSSClasses from "./flow.module.css";
+import CustomNode from "../CustomNode/CustomNode";
 import "./flow.css";
-import CustomContextMenu from "../ContextMenu/contextMenu";
+import customCSSClasses from "./flow.module.css";
+import { Typography } from "@material-ui/core";
 
 const nodeTypes = {
-  systemNode: CustomNode,
+	systemNode: CustomNode,
 };
 
 const styles = {
-  background: "#EEEEEE",
-  width: "100%",
-  height: "100%",
+	background: "#EEEEEE",
+	width: "100%",
+	height: "100%",
 };
 const useStyles = makeStyles((theme) => ({
-  horizontalButton: {
-    background: "rgb(223, 222, 222)",
-    width: "150px",
-    marginLeft: "0.8rem",
-    border: "0",
-    borderRadius: "5px",
-    color: "Black",
-    padding: "10px",
-  },
-  verticalButton: {
-    background: "rgb(223, 222, 222)",
-    width: "150px",
-    marginLeft: "0.8rem",
-    border: "0",
-    borderRadius: "5px",
-    color: "Black",
-    padding: "10px",
-  },
-  clearButton: {
-    background: "rgb(223, 222, 222)",
-    width: "150px",
-    marginLeft: "0.8rem",
-    border: "0",
-    borderRadius: "5px",
-    color: "Black",
-    padding: "10px",
-  },
-  activeButton: {
-    // Add styles for the active button if needed
-    // For example, you can add a different background color
-    background: "rgb(4, 50, 93)",
-    color: "white",
-  },
+	horizontalButton: {
+		background: "rgb(223, 222, 222)",
+		width: "150px",
+		marginLeft: "0.8rem",
+		border: "0",
+		borderRadius: "5px",
+		color: "Black",
+		padding: "10px",
+	},
+	verticalButton: {
+		background: "rgb(223, 222, 222)",
+		width: "150px",
+		marginLeft: "0.8rem",
+		border: "0",
+		borderRadius: "5px",
+		color: "Black",
+		padding: "10px",
+	},
+	clearButton: {
+		background: "rgb(223, 222, 222)",
+		width: "150px",
+		marginLeft: "0.8rem",
+		border: "0",
+		borderRadius: "5px",
+		color: "Black",
+		padding: "10px",
+	},
+	activeButton: {
+		// Add styles for the active button if needed
+		// For example, you can add a different background color
+		background: "rgb(4, 50, 93)",
+		color: "white",
+	},
 }));
 const dagreGraph = new dagre.graphlib.Graph();
 dagreGraph.setDefaultEdgeLabel(() => ({}));
@@ -74,282 +74,315 @@ const nodeWidth = 172;
 const nodeHeight = 36;
 
 const getLayoutedElements = (elements, direction = "LR") => {
-  const isHorizontal = direction === "LR";
-  dagreGraph.setGraph({ rankdir: direction });
+	const isHorizontal = direction === "LR";
+	dagreGraph.setGraph({ rankdir: direction });
 
-  elements.forEach((el) => {
-    if (isNode(el)) {
-      dagreGraph.setNode(el.id, { width: nodeWidth, height: nodeHeight });
-    } else {
-      dagreGraph.setEdge(el.source, el.target);
-    }
-  });
+	elements.forEach((el) => {
+		if (isNode(el)) {
+			dagreGraph.setNode(el.id, { width: nodeWidth, height: nodeHeight });
+		} else {
+			dagreGraph.setEdge(el.source, el.target);
+		}
+	});
 
-  dagre.layout(dagreGraph);
+	dagre.layout(dagreGraph);
 
-  return elements.map((el) => {
-    if (isNode(el)) {
-      const nodeWithPosition = dagreGraph.node(el.id);
-      el.targetPosition = isHorizontal ? "left" : "top";
-      el.sourcePosition = isHorizontal ? "right" : "bottom";
+	return elements.map((el) => {
+		if (isNode(el)) {
+			const nodeWithPosition = dagreGraph.node(el.id);
+			el.targetPosition = isHorizontal ? "left" : "top";
+			el.sourcePosition = isHorizontal ? "right" : "bottom";
 
-      // Adjust the position to match the react flow node anchor point (top left)
-      el.position = {
-        x: nodeWithPosition.x,
-        y: nodeWithPosition.y,
-      };
-    }
+			// Adjust the position to match the react flow node anchor point (top left)
+			el.position = {
+				x: nodeWithPosition.x,
+				y: nodeWithPosition.y,
+			};
+		}
 
-    return el;
-  });
+		return el;
+	});
 };
 
 const Flow = ({
-  reactFlowInstance,
-  reactFlowWrapper,
-  setReactFlowInstance,
-  boolcanvas,
-  setBoolCanvas,
-  clearCanvas,
-  setClearCanvas,
-  setIsNodeAddedMap,
-  setNomenclature,
-  setValue,
-  setSelectAllNomenclature,
-  setSelectAllEquipments,
+	reactFlowInstance,
+	reactFlowWrapper,
+	setReactFlowInstance,
+	boolcanvas,
+	setBoolCanvas,
+	clearCanvas,
+	setClearCanvas,
+	setIsNodeAddedMap,
+	setNomenclature,
+	setValue,
+	setSelectAllNomenclature,
+	setSelectAllEquipments,
+	kValues
 }) => {
-  const classes = useStyles();
-  const [isSnackbarOpen, setIsSnackbarOpen] = useState(false);
-  const [activeButton, setActiveButton] = useState("LR");
+	const classes = useStyles();
+	const [isSnackbarOpen, setIsSnackbarOpen] = useState(false);
+	const [activeButton, setActiveButton] = useState("LR");
+	const dispatch = useDispatch();
 
-  useEffect(() => {
-    // Set the default layout to "LR" (left to right)
-    const defaultLayoutDirection = "LR";
-    let elements = JSON.parse(JSON.stringify(ielements));
-    const layoutedElements = getLayoutedElements(
-      elements,
-      defaultLayoutDirection
-    );
-    dispatch(elementActions.layoutChange({ elements: layoutedElements }));
-  }, [boolcanvas]);
+	useEffect(() => {
+		// Set the default layout to "LR" (left to right)
+		const defaultLayoutDirection = "LR";
+		let elements = JSON.parse(JSON.stringify(ielements));
+		const layoutedElements = getLayoutedElements(
+			elements,
+			defaultLayoutDirection
+		);
+		dispatch(elementActions.layoutChange({ elements: layoutedElements }));
+	}, [boolcanvas]);
 
-  const handleCloseSnackbar = () => {
-    setIsSnackbarOpen(false);
-  };
-  const dispatch = useDispatch();
+	const handleCloseSnackbar = () => {
+		setIsSnackbarOpen(false);
+	};
 
-  const ielements = useSelector((state) => state.elements.elements);
-  const onElementsRemove = (elementsToRemove) => {
-    let ele = removeElements(elementsToRemove, ielements);
-    dispatch(elementActions.removeElement(ele));
-  };
-  const onConnect = (params) => {
-    params.type = "smoothstep";
-    params.id = uuid();
-    params.dtype = "edge";
-    let ele = addEdge(params, ielements);
-    dispatch(elementActions.onConnect(ele));
-  };
-  const onDragOver = (event) => {
-    event.preventDefault();
-    event.dataTransfer.dropEffect = "move";
-  };
-  const onElementClick = (event, node) => {
-    dispatch(elementActions.setNodeDetail(node));
-  };
-  const onLoad = (_reactFlowInstance) => {
-    setReactFlowInstance(_reactFlowInstance);
+	const ielements = useSelector((state) => state.elements.elements);
+	const onElementsRemove = (elementsToRemove) => {
+		let ele = removeElements(elementsToRemove, ielements);
+		dispatch(elementActions.removeElement(ele));
+	};
+	const onConnect = (params) => {
+		params.type = "smoothstep";
+		params.id = uuid();
+		params.dtype = "edge";
+		let ele = addEdge(params, ielements);
+		dispatch(elementActions.onConnect(ele));
+	};
+	const onDragOver = (event) => {
+		event.preventDefault();
+		event.dataTransfer.dropEffect = "move";
+	};
+	const onElementClick = (event, node) => {
+		dispatch(elementActions.setNodeDetail(node));
+	};
+	const onLoad = (_reactFlowInstance) => {
+		setReactFlowInstance(_reactFlowInstance);
 
-    // Find the main node
-    const mainNode = ielements.find((node) => node.type === "systemNode");
+		// Find the main node
+		const mainNode = ielements.find((node) => node.type === "systemNode");
 
-    // If a main node is found, connect all components to it
-    if (mainNode) {
-      const componentNodes = ielements.filter(
-        (node) => node.type === "component"
-      );
-      const edgesToAdd = componentNodes.map((componentNode) => ({
-        id: uuid(),
-        type: "smoothstep", // Assuming this is the type of edge
-        source: mainNode.id,
-        target: componentNode.id,
-        dtype: "edge",
-      }));
+		// If a main node is found, connect all components to it
+		if (mainNode) {
+			const componentNodes = ielements.filter(
+				(node) => node.type === "component"
+			);
+			const edgesToAdd = componentNodes.map((componentNode) => ({
+				id: uuid(),
+				type: "smoothstep", // Assuming this is the type of edge
+				source: mainNode.id,
+				target: componentNode.id,
+				dtype: "edge",
+			}));
 
-      dispatch(elementActions.onConnect(edgesToAdd));
-    }
-  };
+			dispatch(elementActions.onConnect(edgesToAdd));
+		}
+	};
 
-  const onLayout = useCallback(
-    (direction) => {
-      let elements = JSON.parse(JSON.stringify(ielements));
-      const layoutedElements = getLayoutedElements(elements, direction);
-      dispatch(elementActions.layoutChange({ elements: layoutedElements }));
-      setActiveButton(direction);
-    },
-    [ielements]
-  );
+	const onLayout = useCallback(
+		(direction) => {
+			let elements = JSON.parse(JSON.stringify(ielements));
+			const layoutedElements = getLayoutedElements(elements, direction);
+			dispatch(
+				elementActions.layoutChange({ elements: layoutedElements })
+			);
+			setActiveButton(direction);
+		},
+		[ielements]
+	);
 
-  const onContextMenu = (e) => {
-    e.preventDefault();
-    return <ContextMenu></ContextMenu>;
-  };
-  const onDrop = (event) => {
-    event.preventDefault();
-    const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
-    const type = event.dataTransfer.getData("application/reactflow");
-    if (type === "systemNode") {
-      let isRootNodeExist =
-        ielements.filter((x) => x.type === "systemNode").length > 0;
-      if (isRootNodeExist) {
-        alert("System already exist!!");
-        return false;
-      }
-    }
+	const onContextMenu = (e) => {
+		e.preventDefault();
+		return <ContextMenu></ContextMenu>;
+	};
+	const onDrop = (event) => {
+		event.preventDefault();
+		// const reactFlowBounds =
+		// 	reactFlowWrapper.current.getBoundingClientRect();
+		const type = event.dataTransfer.getData("application/reactflow");
+		if (type === "systemNode") {
+			let isRootNodeExist =
+				ielements.filter((x) => x.type === "systemNode").length > 0;
+			if (isRootNodeExist) {
+				alert("System already exist!!");
+				return false;
+			}
+		}
 
-    const position = reactFlowInstance.project({
-      x: event.clientX - reactFlowBounds.left,
-      y: event.clientY - reactFlowBounds.top,
-    });
-    let style = {};
-    if (type === "output") {
-      style = {
-        border: "2px solid black",
-        borderRadius: "5px",
-        background: "#DCFFC0",
-        borderColor: "black",
-      };
-    } else {
-      style = {
-        border: "2px solid black",
-        borderRadius: "5px",
-        background: "#FFFBDA",
-      };
-    }
-    const newNode = {
-      id: uuid(),
-      type: "component",
-      position: { x: 150, y: 150 },
-      data: { label: "New Component" },
-      dtype: "node",
-      style: {
-        background: "blue",
-        color: "white",
-      },
-    };
+		// const position = reactFlowInstance.project({
+		// 	x: event.clientX - reactFlowBounds.left,
+		// 	y: event.clientY - reactFlowBounds.top,
+		// });
+		let style = {};
+		if (type === "output") {
+			style = {
+				border: "2px solid black",
+				borderRadius: "5px",
+				background: "#DCFFC0",
+				borderColor: "black",
+			};
+		} else {
+			style = {
+				border: "2px solid black",
+				borderRadius: "5px",
+				background: "#FFFBDA",
+			};
+		}
+		const newNode = {
+			id: uuid(),
+			type: "component",
+			position: { x: 150, y: 150 },
+			data: { label: "New Component" },
+			dtype: "node",
+			style: {
+				background: "blue",
+				color: "white",
+			},
+		};
 
-    dispatch(elementActions.addElement({ ele: newNode }));
-  };
+		dispatch(elementActions.addElement({ ele: newNode }));
+	};
 
-  const onHoverBegin = (event, node) => {
-    // console.log(node)
-    let pc = "";
+	const onHoverBegin = (event, node) => {
+		debugger
+		let pc = "";
+	
+		if ("parallel_comp" in node.data) {
+			node.data.parallel_comp.forEach((component) => {
+				pc += "<br/>" + component.label;
+			});
 
-    if ("parallel_comp" in node.data) {
-      node.data.parallel_comp.map((component) => {
-        return (pc += "<br/>" + component.label);
-      });
-      document.getElementById("tooltip").innerHTML =
-        `<h4>${node.data.label}</h4>` + "<p>Parallel Components:" + pc + "</p>";
-      document.getElementById("tooltip").style.opacity = 1;
-    }
-  };
+			console.log(kValues, "kvalues");
+			
+			// Filter kValues to include only those with candidates containing the node's label
+			const filteredKValues = Object.keys(kValues).filter(key =>
+				kValues[key].components.includes(node.data.label)
+			).map((key) => (
+				`<div key=${key}>
+					<h3>${key} K/N Configuration</h3>
+					<div style="display: flex; flex-direction: column;">
+					<Typography variant="h5">HARBOUR: ${kValues[key].k}</Typography>
+					<Typography variant="h5">ACTION STATION: ${kValues[key].k_as}</Typography>
+					<Typography variant="h5">CRUISE: ${kValues[key].k_c}</Typography>
+					<Typography variant="h5">DEFENSE STATION: ${kValues[key].k_ds}</Typography>
+					<Typography variant="h5">ENTRY LEAVING HARBOUR: ${kValues[key].k_elh}</Typography>
+					</div>
+					<p>Parallel Components: ${kValues[key].components.join(', ')}</p>
+					<hr />
+				</div>`
+			)).join('');
+	
+			document.getElementById("tooltip").innerHTML =
+				`<h4>${node.data.label}</h4>
+				<div>${filteredKValues}</div>`;
+			
+			document.getElementById("tooltip").style.opacity = 1;
+		}
+	};
+	
 
-  const duringHover = (event, node) => {
-    //console.log(event);
-    debugger;
-    document.getElementById("tooltip").style.left = event.pageX - 20 + "px";
-    document.getElementById("tooltip").style.top = event.pageY - 110 + "px";
-  };
+	const duringHover = (event, node) => {
+		//console.log(event);
+		debugger;
+		document.getElementById("tooltip").style.left = event.pageX - 20 + "px";
+		document.getElementById("tooltip").style.top = event.pageY - 110 + "px";
+	};
 
-  const onHoverEnd = (event, node) => {
-    document.getElementById("tooltip").style.opacity = 0;
-    document.getElementById("tooltip").innerHTML = null;
-  };
-  const handleClear = () => {
-    dispatch(elementActions.clearCanvas());
-    setIsSnackbarOpen(true);
-    setActiveButton("LR");
-    setIsNodeAddedMap({});
-    setClearCanvas(true);
-    setBoolCanvas(true);
-    setNomenclature([]);
-    setValue([]);
-    setSelectAllNomenclature(false);
-    setSelectAllEquipments(false);
-  };
+	const onHoverEnd = (event, node) => {
+		document.getElementById("tooltip").style.opacity = 0;
+		document.getElementById("tooltip").innerHTML = null;
+	};
+	const handleClear = () => {
+		dispatch(elementActions.clearCanvas());
+		setIsSnackbarOpen(true);
+		setActiveButton("LR");
+		setIsNodeAddedMap({});
+		setClearCanvas(true);
+		setBoolCanvas(true);
+		setNomenclature([]);
+		setValue([]);
+		setSelectAllNomenclature(false);
+		setSelectAllEquipments(false);
+	};
 
-  return (
-    <>
-      <ContextMenuTrigger id="same_unique_identifier">
-        <ReactFlowProvider>
-          <div className={customCSSClasses.react_flow_pane_parent}>
-            <div
-              style={{ height: "98vh", width: "100%" }}
-              ref={reactFlowWrapper}
-            >
-              {/* <CustomContextMenu/> */}
-              <ReactFlow
-                style={styles}
-                elements={ielements}
-                onElementsRemove={onElementsRemove}
-                onConnect={onConnect}
-                onDrop={onDrop}
-                onLoad={onLoad}
-                onDragOver={onDragOver}
-                nodeTypes={nodeTypes}
-                onElementClick={onElementClick}
-                onNodeContextMenu={onContextMenu}
-                // onNodeDoubleClick={onDoubleClick}
-                fitView
-                onNodeMouseEnter={onHoverBegin}
-                onNodeMouseMove={duringHover}
-                onNodeMouseLeave={onHoverEnd}
-              >
-                <div id="tooltip"></div>
-                <Controls></Controls>
-                <Background></Background>
-              </ReactFlow>
-            </div>
-            <div className={`controls + ' ' + ${customCSSClasses.control_div}`}>
-              <button
-                className={`${classes.horizontalButton} ${
-                  activeButton === "LR" ? classes.activeButton : ""
-                }`}
-                onClick={() => onLayout("LR")}
-              >
-                Horizontal Layout
-              </button>
-              <button
-                className={`${classes.verticalButton} ${
-                  activeButton === "TB" ? classes.activeButton : ""
-                }`}
-                onClick={() => onLayout("TB")}
-              >
-                Vertical Layout
-              </button>
-              <button
-                className={`${classes.clearButton}`}
-                onClick={handleClear}
-              >
-                Clear Layout
-              </button>
-            </div>
-          </div>
-        </ReactFlowProvider>
-      </ContextMenuTrigger>
-      <Snackbar
-        open={isSnackbarOpen}
-        autoHideDuration={3000}
-        onClose={handleCloseSnackbar}
-        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-      >
-        <MuiAlert onClose={handleCloseSnackbar} severity="success">
-          Canvas cleared!
-        </MuiAlert>
-      </Snackbar>
-    </>
-  );
+
+	return (
+		<>
+			<ContextMenuTrigger id="same_unique_identifier">
+				<ReactFlowProvider>
+					<div className={customCSSClasses.react_flow_pane_parent}>
+						<div
+							style={{ height: "98vh", width: "100%" }}
+							ref={reactFlowWrapper}
+						>
+							<ReactFlow
+								style={styles}
+								elements={ielements}
+								onElementsRemove={onElementsRemove}
+								onConnect={onConnect}
+								onDrop={onDrop}
+								onLoad={onLoad}
+								onDragOver={onDragOver}
+								nodeTypes={nodeTypes}
+								onElementClick={onElementClick}
+								onNodeContextMenu={onContextMenu}
+								// onNodeDoubleClick={onDoubleClick}
+								fitView
+								onNodeMouseEnter={onHoverBegin}
+								onNodeMouseMove={duringHover}
+								onNodeMouseLeave={onHoverEnd}
+							>
+								<div id="tooltip"></div>
+								<Controls></Controls>
+								<Background></Background>
+							</ReactFlow>
+						</div>
+						<div
+							className={`controls + ' ' + ${customCSSClasses.control_div}`}
+						>
+							<button
+								className={`${classes.horizontalButton} ${activeButton === "LR"
+									? classes.activeButton
+									: ""
+									}`}
+								onClick={() => onLayout("LR")}
+							>
+								Horizontal Layout
+							</button>
+							<button
+								className={`${classes.verticalButton} ${activeButton === "TB"
+									? classes.activeButton
+									: ""
+									}`}
+								onClick={() => onLayout("TB")}
+							>
+								Vertical Layout
+							</button>
+							<button
+								className={`${classes.clearButton}`}
+								onClick={handleClear}
+							>
+								Clear Layout
+							</button>
+
+						</div>
+					</div>
+				</ReactFlowProvider>
+			</ContextMenuTrigger>
+			<Snackbar
+				open={isSnackbarOpen}
+				autoHideDuration={3000}
+				onClose={handleCloseSnackbar}
+				anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+			>
+				<MuiAlert onClose={handleCloseSnackbar} severity="success">
+					Canvas cleared!
+				</MuiAlert>
+			</Snackbar>
+		</>
+	);
 };
 
 export default Flow;
