@@ -1,17 +1,13 @@
-import React, { useState } from "react";
 import {
 	AppBar,
-	Tabs,
-	Tab,
-	Container,
 	makeStyles,
-	useTheme,
+	Tab,
+	Tabs
 } from "@material-ui/core";
+import React, { useState } from "react";
 import Navigation from "../../components/navigation/Navigation";
-import EqptStructuring from "../../components/main/EqptStructuring/EqptStructuring";
-import SystemConfiguration from "./SystemConfiguration";
 import FormsTab from "./FormsTab";
-import TreeView from "./TreeView";
+import SystemConfiguration from "./SystemConfiguration";
 import TreeVisualization from "./TreeView";
 
 const useStyles = makeStyles((theme) => ({
@@ -33,7 +29,6 @@ const useStyles = makeStyles((theme) => ({
 export default function SysConfig() {
 	const [selectedTab, setSelectedTab] = useState(0);
 	const classes = useStyles();
-	const theme = useTheme(); // Accessing the theme
 
 	const handleChange = (event, newValue) => {
 		setSelectedTab(newValue);

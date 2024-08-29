@@ -39,7 +39,7 @@ const ViewData = (props) => {
   }));
   const ViewDataPaths = [
     { name: "Data Manager", path: "/data_manager", icon: <StorageIcon /> },
-    { name: "Historical Data", path: "/data_manager/historical_data", icon: <HourglassEmptyIcon /> },
+    { name: "Historical Data", path: "/historical_data", icon: <HourglassEmptyIcon /> },
     { name: "Add New Ship", path: "/user_selection_config", icon: <CreateIcon /> },
     { name: "Add System Doc", path: "/add_system_doc", icon: <SaveAltIcon /> },
     { name: "Add Sensor Data", path: "/maintenance_allocation/add_data", icon: <WifiTetheringIcon /> },
@@ -80,7 +80,7 @@ const ViewData = (props) => {
         </div>
         <div className={styles.netra}>
           <img src="/netra-logo-removebg.png" alt="Netra Logo" className={classes.logoImg} />
-          <div className={styles.logotxt}>NETRA</div>
+          <div className={styles.logotxt}>NETRA v2.0</div>
         </div>
       </div>
     </AccessControl>

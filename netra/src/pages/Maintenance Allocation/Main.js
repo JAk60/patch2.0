@@ -60,7 +60,7 @@ const Main = (props) => {
         </div>
         <div className={styles.netra}>
           <img src="/netra-logo-removebg.png" width={300} height={400} alt="Netra Logo" />
-          <div className={styles.logotxt}>NETRA</div>
+          <div className={styles.logotxt}>NETRA v2.0</div>
         </div>
       </div>
     </AccessControl>

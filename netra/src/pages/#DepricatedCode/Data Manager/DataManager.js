@@ -438,9 +438,9 @@ function DataManager(props) {
     <React.Fragment>
       <Navigation />
       {/* <NewModule /> */}
-      {location.pathname !== "/data_manager/historical_data/repairable_overhaul" && (
+      {/* {location.pathname !== "/data_manager/historical_data/repairable_overhaul" && (
         <StageSlider marks={marks} default={marks[Stage]["value"]} />
-      )}
+      )} */}
       <Route
         path={[
           "/data_manager/maintenance_data",

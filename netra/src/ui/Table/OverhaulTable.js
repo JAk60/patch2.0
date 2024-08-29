@@ -18,20 +18,6 @@ export const getDatePicker = () => {
   const fillZeros = (a) => {
     return Number(a) < 10 ? "0" + a : a;
   };
-  const monthNames = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
   const getFormattedDateOutput = (dateString) => {
     const dateParse = new Date(dateString);
     const dd = dateParse.getDate();
@@ -92,7 +78,7 @@ const createData = (data) => {
     if (index === 0) {
       finalRows.push({
         fullWidth: true,
-        name: "Initiation to" + " Overhaul " + overhaulCount,
+        name: "Initiation to Overhaul " + overhaulCount,
         overhaulId: ele.id,
       });
     } else {
@@ -143,16 +129,8 @@ const OverhaulTable = (props) => {
   } catch {
     <Redirect to="/data_manager/historical_data"></Redirect>;
   }
-  //   const parent = systemConfigurationTreeData.filter(
-  //     (x) => x.parentId === null
-  //   )[0].id;
-  //   const subSystem = systemConfigurationTreeData.filter(
-  //     (x) => x.parentId === null || x.parentId === parent
-  //   );
   const onGridReady = (params) => {
     setGridApi(params.api);
-    // props.setGrid(params.api);
-    //   setGridColumnApi(params.columnApi);
     params.api.sizeColumnsToFit();
   };
   const onFirstDataRendered = (params) => {
@@ -243,7 +221,13 @@ const OverhaulTable = (props) => {
     props.tableUpdate({ mainTable: allRowData, subTable: props.data });
   };
   return (
-    <div className="ag-theme-alpine" style={{ height: 400, width: "100%" }}>
+    <div className="ag-theme-alpine" style={{
+      height: 400,
+      width: "95%",
+      gridRow: "5",
+      marginLeft: " 4%",
+      marginRight: "3%"
+    }}>
       <AgGridReact
         rowData={rowData}
         onGridReady={onGridReady}

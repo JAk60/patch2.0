@@ -18,7 +18,7 @@
 	margin-left: 5%;
 	margin-top: 50px;
 	gap: 1rem;
-	align-items: end;
+	align-items: flex-end;
 	border-radius: 10px;
   padding: 2rem;
 	box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);

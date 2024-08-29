@@ -1,15 +1,10 @@
 import {
-    AppBar,
-    Container,
-    Tab,
-    Tabs,
-    makeStyles,
-    useTheme,
+  Container,
+  makeStyles
 } from "@material-ui/core";
-import React, { useState } from "react";
+import React from "react";
 import Navigation from "../../components/navigation/Navigation";
 import ReliabilityDashboard from "./ReliabilityDashboard";
-import AssemblyRelDash from "./AssemblyRelDash";
 
 const useStyles = makeStyles((theme) => ({
   transparentTab: {
@@ -30,54 +25,16 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function MainRel() {
-  const [selectedTab, setSelectedTab] = useState(0);
   const classes = useStyles();
-  const theme = useTheme(); // Accessing the theme
-
-  const handleChange = (event, newValue) => {
-    setSelectedTab(newValue);
-  };
-
   return (
     <>
       <div style={{ display: "flex", flexDirection: "row" }}>
         <Navigation />
-
-        <AppBar
-          style={{
-            zIndex: "1",
-            marginLeft: "20px",
-          }}
-        >
-          <Tabs value={selectedTab} onChange={handleChange} variant="fullWidth">
-            <Tab
-              label="Equipment Reliability"
-              className={
-                selectedTab === 0 ? classes.coloredTab : classes.transparentTab
-              }
-            />
-            <Tab
-              label="Assembly Reliability"
-              className={
-                selectedTab === 1 ? classes.coloredTab : classes.transparentTab
-              }
-            />
-          </Tabs>
-        </AppBar>
       </div>
       <Container
         className={classes.content}
       >
-        {selectedTab === 0 && (
-        //   <div className={classes.content}>
-            <ReliabilityDashboard />
-        //   </div>
-        )}
-        {selectedTab === 1 && (
-          <div>
-            <AssemblyRelDash />
-          </div>
-        )}
+          <ReliabilityDashboard />
       </Container>
     </>
   );

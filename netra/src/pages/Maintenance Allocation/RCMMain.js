@@ -14,22 +14,10 @@ const RCMMain=(props)=> {
           </div>
           RCM Analysis
         </Link>
-        {/* <Link to="/maintenance_allocation/conduct_rcm_analysis/critical_comp">
-          <div className={styles.circleIcon}>
-            <i class="fas fa-microchip"></i>
-          </div>
-          Select Critical Components
-        </Link>
-        <Link to="/maintenance_allocation/display">
-          <div className={styles.circleIcon}>
-            <i class="fas fa-microchip"></i>
-          </div>
-          Create RCM Analysis
-        </Link> */}
       </div>
       <div className={styles.netra}>
-        <img src="/netra-logo-removebg.png" width={200} height={200} />
-        <div>NETRA</div>
+        <img src="/netra-logo-removebg.png" width={200} height={200} alt='NetraLogo'/>
+        <div>NETRA v2.0</div>
       </div>
     </div>;
   }

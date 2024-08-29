@@ -1,14 +1,12 @@
+import TextField from "@material-ui/core/TextField";
+import Autocomplete from "@material-ui/lab/Autocomplete";
 import React, {
-  useEffect,
-  useState,
+  forwardRef,
   useImperativeHandle,
   useRef,
-  forwardRef,
+  useState
 } from "react";
-import Autocomplete from "@material-ui/lab/Autocomplete";
-import TextField from "@material-ui/core/TextField";
-import { useDispatch, useSelector } from "react-redux";
-import SystemConfiguration from "../../systen_configuration/SystemConfiguration";
+import { useSelector } from "react-redux";
 import { useLocation } from "react-router";
 
 const EquipmentName = forwardRef((props, ref) => {

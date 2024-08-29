@@ -1,0 +1,43 @@
+.flex {
+	grid-row: 3/4;
+	grid-column: 2/13;
+	height: 40%;
+	width: 94%;
+	margin-left: 4%;
+	display: flex;
+	align-items: center;
+	flex-direction: row;
+	justify-content: space-between;
+}
+.UserSelection {
+	height: fit-content;
+	grid-row: 2/4;
+	grid-column: 2/13;
+	width: 94%;
+	margin-left: 4%;
+	display: flex;
+	align-items: center;
+	flex-direction: row;
+	justify-content: space-between;
+	padding: 20px 20px 30px 20px;
+	border-radius: 10px;
+	box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+}
+.OverhaulParent{
+	grid-column: 2/13;
+	grid-row: 2/5;
+}
+.table {
+	grid-row: 4;
+	grid-column: 2/13;
+	margin-left: 1%;
+	width: 98%;
+	justify-self: center;
+	align-self: center;
+	margin-bottom: 70px;
+}
+.buttons {
+    margin-left: 10;
+    margin-top: 15;
+    min-width: 150;
+  }

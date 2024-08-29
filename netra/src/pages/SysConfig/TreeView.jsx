@@ -1,18 +1,18 @@
-import { transformData } from "./transformData";
+import {
+	Button,
+	Dialog,
+	DialogActions,
+	DialogContent,
+	DialogTitle,
+} from "@material-ui/core";
+import React, { useCallback, useState } from "react";
 import ReactFlow, {
-	ReactFlowProvider,
-	Controls,
 	Background,
+	Controls,
+	ReactFlowProvider,
 } from "react-flow-renderer";
 import { useSelector } from "react-redux";
-import {
-	Dialog,
-	DialogTitle,
-	DialogContent,
-	DialogActions,
-	Button,
-} from "@material-ui/core";
-import React, { useState, useCallback, useEffect } from "react";
+import { transformData } from "./transformData";
 
 const HierarchyTree = ({ nodes, edges, elements, data }) => {
 	const [open, setOpen] = useState(false);
@@ -111,10 +111,11 @@ function TreeVisualization() {
 					display: "flex",
 					justifyContent: "center",
 					alignItems: "center",
-					height: "100vh",
+					height: "92vh",
+					color: "red"
 				}}
 			>
-				<h2>No equipment loaded</h2>
+				<h2>Please load the equipment in the CREATE SYSTEM tab.</h2>
 			</div>
 		);
 	}

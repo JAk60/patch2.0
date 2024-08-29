@@ -18,7 +18,6 @@ import { elementActions } from "../../../store/elements";
 import CustomNode from "../CustomNode/CustomNode";
 import "./flow.css";
 import customCSSClasses from "./flow.module.css";
-import { Typography } from "@material-ui/core";
 
 const nodeTypes = {
 	systemNode: CustomNode,
@@ -248,7 +247,7 @@ const Flow = ({
 	const onHoverBegin = (event, node) => {
 		debugger
 		let pc = "";
-	
+		
 		if ("parallel_comp" in node.data) {
 			node.data.parallel_comp.forEach((component) => {
 				pc += "<br/>" + component.label;

@@ -1,46 +1,18 @@
-import React, { useState } from "react";
-import { useLocation } from "react-router-dom";
-import { AgGridReact } from "ag-grid-react";
-import "ag-grid-community/dist/styles/ag-grid.css";
-import "ag-grid-community/dist/styles/ag-theme-alpine.css";
-import "./Table.css";
-import ReactDom from "react-dom";
 import {
 	Button,
 	makeStyles,
 	Slider,
-	TextField,
-	Typography,
+	TextField
 } from "@material-ui/core";
-import DeleteIcon from "@material-ui/icons/Delete";
 import IconButton from "@material-ui/core/IconButton";
-
-// function getDatePicker() {
-//   function Datepicker() {}
-//   Datepicker.prototype.init = function (params) {
-//     this.eInput = document.createElement("input");
-//     this.eInput.value = params.value;
-//     this.eInput.classList.add("ag-input");
-//     this.eInput.style.height = "100%";
-//     $(this.eInput).datepicker({ dateFormat: "dd/mm/yy" });
-//     console.log(params);
-//   };
-//   Datepicker.prototype.getGui = function () {
-//     return this.eInput;
-//   };
-//   Datepicker.prototype.afterGuiAttached = function () {
-//     this.eInput.focus();
-//     this.eInput.select();
-//   };
-//   Datepicker.prototype.getValue = function () {
-//     return this.eInput.value;
-//   };
-//   Datepicker.prototype.destroy = function () {};
-//   Datepicker.prototype.isPopup = function () {
-//     return false;
-//   };
-//   return Datepicker;
-// }
+import DeleteIcon from "@material-ui/icons/Delete";
+import "ag-grid-community/dist/styles/ag-grid.css";
+import "ag-grid-community/dist/styles/ag-theme-alpine.css";
+import { AgGridReact } from "ag-grid-react";
+import React from "react";
+import ReactDom from "react-dom";
+import { useLocation } from "react-router-dom";
+import "./Table.css";
 
 const useStyles = makeStyles({
 	slider: {
@@ -56,20 +28,6 @@ export const getDatePicker = () => {
 	const fillZeros = (a) => {
 		return Number(a) < 10 ? "0" + a : a;
 	};
-	const monthNames = [
-		"January",
-		"February",
-		"March",
-		"April",
-		"May",
-		"June",
-		"July",
-		"August",
-		"September",
-		"October",
-		"November",
-		"December",
-	];
 	const getFormattedDateOutput = (dateString) => {
 		const dateParse = new Date(dateString);
 		const dd = dateParse.getDate();
@@ -78,16 +36,16 @@ export const getDatePicker = () => {
 		// console.log(dateString, dateParse);
 		return fillZeros(dd) + "/" + fillZeros(mm) + "/" + yyyy;
 	};
-	function Datepicker() {}
+	function Datepicker() { }
 	Datepicker.prototype.init = function (params) {
 		this.textInput = React.createRef();
 		const getFormattedDateMaterial = (dateString) => {
 			const dateParse = new Date(
 				dateString.split("/")[2] +
-					"-" +
-					dateString.split("/")[1] +
-					"-" +
-					dateString.split("/")[0]
+				"-" +
+				dateString.split("/")[1] +
+				"-" +
+				dateString.split("/")[0]
 			);
 			const dd = dateParse.getDate();
 			const mm = dateParse.getMonth() + 1; //January is 0!
@@ -116,7 +74,7 @@ export const getDatePicker = () => {
 			this.textInput.current.querySelector("input").value
 		);
 	};
-	Datepicker.prototype.destroy = function () {};
+	Datepicker.prototype.destroy = function () { };
 	Datepicker.prototype.isPopup = function () {
 		return false;
 	};
@@ -143,22 +101,21 @@ const getMonthPicker = () => {
 	];
 	const getFormattedDateOutput = (dateString) => {
 		const dateParse = new Date(dateString);
-		const dd = dateParse.getDate();
 		const mm = dateParse.getMonth(); //January is 0!
 		const yyyy = dateParse.getFullYear();
 		// console.log(dateString, dateParse);
 		return monthNames[mm] + "/" + yyyy;
 	};
-	function Monthpicker() {}
+	function Monthpicker() { }
 	Monthpicker.prototype.init = function (params) {
 		this.textInput = React.createRef();
 		const getFormattedDateMaterial = (dateString) => {
 			const dateParse = new Date(
 				dateString.split("/")[2] +
-					"-" +
-					dateString.split("/")[1] +
-					"-" +
-					dateString.split("/")[0]
+				"-" +
+				dateString.split("/")[1] +
+				"-" +
+				dateString.split("/")[0]
 			);
 			const dd = dateParse.getDate();
 			const mm = dateParse.getMonth() + 1; //January is 0!
@@ -187,7 +144,7 @@ const getMonthPicker = () => {
 			this.textInput.current.querySelector("input").value
 		);
 	};
-	Monthpicker.prototype.destroy = function () {};
+	Monthpicker.prototype.destroy = function () { };
 	Monthpicker.prototype.isPopup = function () {
 		return false;
 	};
@@ -198,13 +155,12 @@ const DataManagerTable = (props) => {
 	console.log("props", props.rowData);
 	const location = useLocation();
 	const tableHeight = props.tableSize ? props.tableSize : 400;
-	// const [gridApi, setGridApi] = useState(null);
+
 	const Sliderclasses = useStyles();
-	const [gridColumnApi, setGridColumnApi] = useState(null);
 	const onGridReady = (params) => {
 		props.setGrid(params.api);
 		props.setGrid(params.api);
-		setGridColumnApi(params.columnApi);
+
 		params.api.sizeColumnsToFit();
 	};
 
@@ -217,10 +173,10 @@ const DataManagerTable = (props) => {
 			props.tableUpdate(allRowData);
 			console.log("hiii", allRowData);
 
-			 // Set row data directly to the grid if it's the second AgGridReact component
-       if (location.pathname === "/system_con") {
-        params.api.setRowData(allRowData);
-      }
+			// Set row data directly to the grid if it's the second AgGridReact component
+			if (location.pathname === "/system_con") {
+				params.api.setRowData(allRowData);
+			}
 		} catch (err) {
 			console.log(err);
 		}
@@ -255,7 +211,7 @@ const DataManagerTable = (props) => {
 		let currentlocation = location.pathname;
 		try {
 			let selectedId = "";
-			if (currentlocation === "/data_manager/maintenance_data") {
+			if (currentlocation === "/maintenance_data") {
 				if (params.column.colId === "LMU") {
 					selectedId = params.data.id;
 					const allRowData = [];
@@ -268,6 +224,8 @@ const DataManagerTable = (props) => {
 					props.gridApi.forEachNode((node) =>
 						allRowData.push(node.data)
 					);
+					console.log(allRowData);
+					
 					props.tableUpdate(allRowData);
 				}
 			} else if (currentlocation === "/system_config/failure_mode") {
@@ -358,20 +316,10 @@ const DataManagerTable = (props) => {
 			</div>
 		);
 	};
-	const buttonClick = (e) => {
-		// e is getting the current node (Row Node)
-
-		this.setState({
-			visible: true,
-		});
-		let deletedRow = props.node.data;
-		e.gridApi.updateRowData({ remove: [deletedRow] }); // It will update the row
-	};
-	// debugger;
 	return (
 		<div
 			className="ag-theme-alpine"
-			style={{ height: tableHeight, width: "100%" }}
+			style={{ height: tableHeight, width: "94%", margin: "1rem 4%" }}
 		>
 			{location.pathname !== "/system_config" ? (
 				<AgGridReact
@@ -408,7 +356,8 @@ const DataManagerTable = (props) => {
 				<AgGridReact
 					columnDefs={props.columnDefs}
 					rowData={props.rowData}
-          onFirstDataRendered={onFirstDataRendered}
+					onFirstDataRendered={onFirstDataRendered}
+					onCellValueChanged={saveModifiedRows}
 				/>
 			)}
 		</div>

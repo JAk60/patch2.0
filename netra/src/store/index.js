@@ -1,13 +1,11 @@
-import { configureStore, combineReducers } from "@reduxjs/toolkit";
-import treeData from "./TreeDataStore";
-import phase from "./PhaseStore";
+import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import userSelection from "./ApplicationVariable";
-import elements from "./elements.js"
-import taskData from "./taskStore";
+import elements from "./elements.js";
 import levelsReducer from "./Levels";
+import taskData from "./taskStore";
+import treeData from "./TreeDataStore";
 const reducers = combineReducers({
   treeData: treeData.reducer,
-  phase: phase.reducer,
   userSelection: userSelection.reducer,
   elements: elements.reducer,
   taskData: taskData.reducer,

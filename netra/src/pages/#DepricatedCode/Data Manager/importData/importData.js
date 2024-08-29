@@ -1,9 +1,8 @@
-import React, { useState } from "react";
-import Table from "../../../ui/Table/DataManagerTable";
-import { AgGridColumn } from "ag-grid-react";
-import LensIcon from "@material-ui/icons/Lens";
 import { Button } from "@material-ui/core";
 import DeleteIcon from "@material-ui/icons/Delete";
+import { AgGridColumn } from "ag-grid-react";
+import React, { useState } from "react";
+import Table from "../../../ui/Table/DataManagerTable";
 import styles from "../DataManager.module.css";
 const ImportData = (props) => {
   const [gridApi, setGridApi] = useState(null);

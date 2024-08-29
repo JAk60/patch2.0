@@ -9,7 +9,7 @@ import AddInfoFormikForm from "../../components/SysForms/AdditionalInfoForm";
 import FMFormikForm from "../../components/SysForms/FailureModeForm";
 import MaintenanceDataFormik from "../../components/SysForms/MaintDataForm";
 import MaintenanceFormikForm from "../../components/SysForms/MaintenanceForm";
-import RedundancyInfo from "../systen_configuration/redundancy/redundancy";
+import RedundancyInfo from "./redundancy/redundancy";
 import { useSelector } from "react-redux";
 
 const useStyles = makeStyles((theme) => ({
@@ -87,9 +87,18 @@ export default function FormsTab() {
 	return (
 		<div className={classes.root}>
 			{!CurrentEquipment[0]?.name ? (
-				<Typography variant="h6" color="error">
-					Please load the equipment in the previous tab.
-				</Typography>
+				<div
+					className="App"
+					style={{
+						display: "flex",
+						justifyContent: "center",
+						alignItems: "center",
+						height: "70vh",
+						color: "red"
+					}}
+				>
+					<h2>Please load the equipment in the CREATE SYSTEM tab.</h2>
+				</div>
 			) : (
 				<>
 					<Typography variant="h4" style={{ marginBottom: "24px" }}>
@@ -108,7 +117,9 @@ export default function FormsTab() {
 								<Typography>{option}</Typography>
 							</AccordionSummary>
 							<AccordionDetails className={classes.formContainer}>
-								<div>{selectedOption === option && renderForm()}</div>
+								<div>
+									{selectedOption === option && renderForm()}
+								</div>
 							</AccordionDetails>
 						</Accordion>
 					))}

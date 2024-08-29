@@ -1,12 +1,10 @@
 import TextField from "@material-ui/core/TextField";
 import Autocomplete from "@material-ui/lab/Autocomplete";
-import React, { forwardRef, useImperativeHandle, useRef, useState } from "react";
+import React, { forwardRef, useImperativeHandle, useState } from "react";
 import { useSelector } from "react-redux";
-import { useLocation } from "react-router";
 
 const RenderMultipleComponent = forwardRef((props, ref) => {
   const [value, setValue] = useState([]);
-  const location = useLocation();
   const currentShip = useSelector((state) => state.taskData.currentShip);
   const currentTaskName = useSelector((state) => state.taskData.currentTaskName);
   const taskData = useSelector((state) => state.taskData.taskData);

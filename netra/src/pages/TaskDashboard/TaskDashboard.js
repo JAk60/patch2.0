@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-// import styles from "./TaskDashboard.module.css";
 import {
 	Button,
 	InputLabel,
@@ -7,7 +6,6 @@ import {
 	Typography,
 	makeStyles,
 } from "@material-ui/core";
-// import { arr,arr2 } from "./data";
 import { MuiPickersUtilsProvider } from "@material-ui/pickers";
 
 import MomentUtils from "@date-io/moment";
@@ -20,15 +18,13 @@ import Navigation from "../../components/navigation/Navigation";
 import CustomizedSnackbars from "../../ui/CustomSnackBar";
 import Table from "../../ui/Table/DataManagerTable";
 import { taskTableColumns } from "./TaskGridColumns";
-import styles from "./tDashboard.module.css";
-// import RenderParallelComponent from "../systen_configuration/redundancy/RenderParallelComponent";
+import styles from "./tDashboard.module.css"
 import { useDispatch, useSelector } from "react-redux";
 import { taskActions } from "../../store/taskStore";
 import AccessControl from "../Home/AccessControl";
 import PaperTable from "./PaperTable";
 import CollapsibleTable from "./ResTable";
 import RenderMultipleComponent from "./TaskRenderMultipleComponent";
-// import MultiSelect from "./MultiSelect";
 
 const TaskDashboard = () => {
 	const dropDownStyle = makeStyles({
@@ -72,7 +68,6 @@ const TaskDashboard = () => {
 	console.log("phasedata", phasedata);
 	console.log(rowCompState, "This is shit!!");
 	const [taskOption, settaskOption] = useState([]);
-	const [missionOption, setmissionOption] = useState([]);
 	const [taskShipNameOption, settaskShipNameOption] = useState([]);
 	const [recommedation, setRecommedation] = useState([]);
 	const [totalReliability, setTotalReliability] = useState(null);
@@ -377,9 +372,7 @@ const TaskDashboard = () => {
 				return res.json();
 			})
 			.then((data) => {
-				const mission_data = data["missionData"];
 				const task_ship_name = data["ship_name"];
-				setmissionOption(mission_data);
 				setentireData(data);
 				settaskShipNameOption(task_ship_name);
 				dispatch(taskActions.onLoad({ taskData: data }));

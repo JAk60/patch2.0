@@ -1,14 +1,13 @@
-import React, { useState } from "react";
-import Table from "../../../ui/Table/DataManagerTable";
-import { AgGridColumn } from "ag-grid-react";
 import { Button } from "@material-ui/core";
 import AddIcon from "@material-ui/icons/Add";
-import IconButton from "@material-ui/core/IconButton";
 import DeleteIcon from "@material-ui/icons/Delete";
-import styles from "../DataManager.module.css";
-import EquipmentName from "./EquipmentName";
+import { AgGridColumn } from "ag-grid-react";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import { v4 as uuid } from "uuid";
+import Table from "../../../ui/Table/DataManagerTable";
+import styles from "../DataManager.module.css";
+import EquipmentName from "./EquipmentName";
 const MaintenanceData = (props) => {
   const [gridApi, setGridApi] = useState(null);
   const systemData = useSelector((state) => state.treeData.treeData);
