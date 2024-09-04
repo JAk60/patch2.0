@@ -1,7 +1,7 @@
 import { TextField, makeStyles } from "@material-ui/core";
 import { Autocomplete } from "@material-ui/lab";
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { userActions } from "../../store/ApplicationVariable";
 
 const useStyles = makeStyles({
@@ -24,7 +24,6 @@ export default function RULInputs({ CData }) {
   const [shipsOptions, setShipOptions] = useState([]);
   const [equipmentOptions, setEquipmentOptions] = useState([]);
   const [nomenclatureOptions, setNomenclatureOptions] = useState([]);
-  const [sensorOptions, setSensorOptions] = useState([]);
   const [selectedShip, setSelectedShip] = useState("");
   console.log(allEquipmentData);
   const classes = useStyles();
@@ -66,7 +65,7 @@ export default function RULInputs({ CData }) {
     };
 
     fetchData(); // Call the asynchronous function
-  }, []); // Empty dependency array to run only on mount
+  }, [dispatch]); // Empty dependency array to run only on mount
   console.log(shipsOptions);
 
   const ShipChange = (e, value) => {
@@ -139,15 +138,11 @@ export default function RULInputs({ CData }) {
             selectedData: res,
           })
         );
-        setSensorOptions(result);
       })
       .catch((error) => {
         console.error("Error:", error);
       });
     // dispatch(userActions.onChangeCurrentSelection({ selectedData: data }));
-  };
-  const SensorChange = (e, value) => {
-    console.log(value);
   };
   return (
     <>
@@ -178,15 +173,6 @@ export default function RULInputs({ CData }) {
           <TextField {...params} label="Nomenclature" variant="outlined" />
         )}
       />
-      {/* <Autocomplete
-        className={classes.autocomplete}
-        options={sensorOptions}
-        getOptionLabel={(option) => option}
-        onChange={SensorChange}
-        renderInput={(params) => (
-          <TextField {...params} label="Sensors" variant="outlined" />
-        )}
-      /> */}
     </>
   );
 }

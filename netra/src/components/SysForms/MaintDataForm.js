@@ -1,10 +1,10 @@
-import React, { useState } from "react";
-import { Formik, Form, Field, ErrorMessage } from "formik";
 import { Button, TextField } from "@material-ui/core";
 import { Autocomplete } from "@material-ui/lab";
+import { Form, Formik } from "formik";
+import React, { useState } from "react";
+import { useSelector } from "react-redux";
 import { v4 as uuid } from "uuid";
 import CustomizedSnackbars from "../../ui/CustomSnackBar";
-import { useSelector } from "react-redux";
 
 const initialValues = {
 	LMU: "",
@@ -97,11 +97,6 @@ const MaintenanceDataFormik = () => {
 			showSnackBar: false,
 		});
 	};
-	const equipmentOptions = [
-		{ label: "Option 1", value: "option1" },
-		{ label: "Option 2", value: "option2" },
-		{ label: "Option 3", value: "option3" },
-	];
 
 	return (
 		<div

@@ -1,42 +1,44 @@
-from flask import Flask, json, session, request, jsonify, send_file, send_from_directory
-from flask_mail import Mail, Message
-from datetime import datetime
-import os
 import io
-import middleware
-from dB.dB_connection import cnxn, cursor
+import os
+from datetime import datetime
 from os import listdir
-from werkzeug.utils import secure_filename
 from os.path import isfile, join
-from classes.reliability import Reliability
-from classes.trial2 import read_excel
-from dB.data_manager.data_manager_dB import DataManagerDB
-from dB.maintenance_allocation.maintenanceAllocation import maintenanceAllocation_dB
-from dB.phase_manager.phase_manager_dB import Phase_Manager_dB
-from dB.hep.hep_dB import Hep_dB
-from dB.condition_monitoring.condition_monitoring import conditionMonitoring_dB
-from dB.condition_monitoring.cgraph import GraphDashBoard
-from dB.mission_profile import MissionProfile
-from dB.data_manager.data_manager import Data_Manager
-from dB.system_configuration.system_configurationdB_table import (
-    SystemConfigurationdBTable,
-)
-from dB.Dashboard.DashBoard import DashBoard
-from dB.password_reset.passwordReset import EmailSender
-from classes.System_Configuration_Netra import System_Configuration_N
-from classes.custom_settings import Custom_Settings
-from dB.task_configuration.task_configuration import taskConfiguration_dB
-from dB.RUL.rul import RUL_dB
-from classes.taskReliability import TaskReliability
-from dB.Data_Adminstrator.data_adminstrator import Data_Administrator
-from dB.dB_utility import add_user_selection_data
-from dB.RCM.rcmDB import RCMDB
-from dB.PM.optimize import optimizer
-from dB.Authentication.signin import Authentication
-from dB.Oem_Upload.oem import OEMData
-from dB.ETL.sourceData import ETL
-from flask_apscheduler import APScheduler
+
 import requests
+from flask import (Flask, json, jsonify, request, send_file,
+                   send_from_directory, session)
+from flask_apscheduler import APScheduler
+from flask_mail import Mail, Message
+from werkzeug.utils import secure_filename
+
+import middleware
+from classes.custom_settings import Custom_Settings
+from classes.reliability import Reliability
+from classes.System_Configuration_Netra import System_Configuration_N
+from classes.taskReliability import TaskReliability
+from dB.Authentication.signin import Authentication
+from dB.condition_monitoring.cgraph import GraphDashBoard
+from dB.condition_monitoring.condition_monitoring import conditionMonitoring_dB
+from dB.Dashboard.DashBoard import DashBoard
+from dB.Data_Adminstrator.data_adminstrator import Data_Administrator
+from dB.data_manager.data_manager import Data_Manager
+from dB.data_manager.data_manager_dB import DataManagerDB
+from dB.dB_connection import cnxn, cursor
+from dB.dB_utility import add_user_selection_data
+from dB.ETL.sourceData import ETL
+from dB.hep.hep_dB import Hep_dB
+from dB.maintenance_allocation.maintenanceAllocation import \
+    maintenanceAllocation_dB
+from dB.mission_profile import MissionProfile
+from dB.Oem_Upload.oem import OEMData
+from dB.password_reset.passwordReset import EmailSender
+from dB.phase_manager.phase_manager_dB import Phase_Manager_dB
+from dB.PM.optimize import optimizer
+from dB.RCM.rcmDB import RCMDB
+from dB.RUL.rul import RUL_dB
+from dB.system_configuration.system_configurationdB_table import \
+    SystemConfigurationdBTable
+from dB.task_configuration.task_configuration import taskConfiguration_dB
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 app = Flask(__name__)
@@ -64,15 +66,19 @@ app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
 res = SystemConfigurationdBTable()
 
+
 def hit_srcetl_endpoint():
     endpoint_url = "http://127.0.0.1:5000/srcetl"  # Update with your actual URL
     response = requests.get(endpoint_url)
     print(f"Response from /srcetl endpoint: {response.text}")
 
 # Schedule the task to run every 5 seconds
+
+
 @scheduler.task('interval', id='hit_srcetl', days=5, misfire_grace_time=10)
 def scheduled_task():
     hit_srcetl_endpoint()
+
 
 @app.route("/home")
 def home():
@@ -140,7 +146,6 @@ def fetch_system():
         except:
             pass
     return jsonify(res)
-
 
 
 @app.route("/fmodes", methods=["POST"])  # Update the method to 'POST'
@@ -216,11 +221,12 @@ def rel_dashboard():
 
 @app.route("/fetch_sensors", methods=["POST"])
 def fetch_sensors():
-        data=request.get_json()
-        inst=RUL_dB()
-        response =inst.fetch_specific_sensors(data)
-        return response
-    
+    data = request.get_json()
+    inst = RUL_dB()
+    response = inst.fetch_specific_sensors(data)
+    return response
+
+
 @app.route("/cm_dashboard", methods=["GET", "POST"])
 def cm_dashboard():
     if request.method == "GET":
@@ -273,10 +279,14 @@ def update_parameters():
 def save_historical_data():
     if request.method == "POST":
         data = request.get_json(force=True)
-        data = data["data"]
-        d_inst = Data_Manager()
-        res = d_inst.insert_data(data)
-        return jsonify(res)
+        if data and "data" in data:
+            data = data["data"]
+            d_inst = Data_Manager()
+            res = d_inst.insert_data(data)
+            print(res)
+            return jsonify({"code": 1, "result": res})
+        else:
+            return jsonify({"code": 0, "message": "Invalid data format"}), 400
 
 
 @app.route("/add_data", methods=["POST"])
@@ -371,7 +381,8 @@ def save_task_configuration():
                     if k_key in item["data"] and item["data"][k_key] > item["data"]["n"]
                 ]
                 if exceeded_k_values:
-                    invalid_tasks.append((item["data"]["label"], exceeded_k_values))
+                    invalid_tasks.append(
+                        (item["data"]["label"], exceeded_k_values))
 
         if invalid_tasks:
             messages = []
@@ -453,7 +464,7 @@ def task_dash_populate():
     return jsonify(data)
 
 
-@app.route("/addUserSelectionData", methods=["POST","GET"])
+@app.route("/addUserSelectionData", methods=["POST", "GET"])
 def addUserSelectionData():
     data = request.get_json(force=True)
     response = add_user_selection_data(data)
@@ -486,7 +497,8 @@ def save_assembly_rcm():
 def fetch_assembly_rcm():
     data = request.get_json(force=True)
     sys_inst = System_Configuration_N()
-    component_id = sys_inst.fetch_component_id(data["ship_name"], data["nomenclature"])
+    component_id = sys_inst.fetch_component_id(
+        data["ship_name"], data["nomenclature"])
     res = sys_inst.fetch_system(data, component_id)
     rcm = RCMDB()
     res_r = rcm.fetch_saved_asm(data)
@@ -532,7 +544,8 @@ def fileUpload():
         pl = request.form.get("name")
         target_folder = os.path.join(
             APP_ROOT,
-            "netra\public\{0}_{1}".format(pl.replace(" ", ""), ss.replace(" ", "")),
+            "netra\public\{0}_{1}".format(
+                pl.replace(" ", ""), ss.replace(" ", "")),
         )
         if not os.path.exists(target_folder):
             os.mkdir(target_folder)
@@ -552,7 +565,8 @@ def fetch_system_files():
         pl = data["ship_name"]
         target_folder = os.path.join(
             APP_ROOT,
-            "netra\public\{0}_{1}".format(pl.replace(" ", ""), ss.replace(" ", "")),
+            "netra\public\{0}_{1}".format(
+                pl.replace(" ", ""), ss.replace(" ", "")),
         )
         files = os.listdir(target_folder)
         return jsonify({"files": files})
@@ -711,6 +725,7 @@ def set_component_overhaul_age():
     inst = Data_Manager()
     return inst.set_component_overhaul_age(ship_name, component_name, age)
 
+
 @app.route('/pdf/<path:filename>', methods=["GET"])
 def download_pdf(filename):
     print(filename)
@@ -723,12 +738,14 @@ def get_overhaul_hours():
     inst = Data_Manager()
     return inst.get_component_overhaul_hours(data)
 
+
 @app.route('/reset_password', methods=["POST"])
 def reset_password():
     data = request.json
-    username=data["username"]
+    username = data["username"]
     inst = EmailSender(mail)
-    return inst.send_notification_email(username,logo_data)
+    return inst.send_notification_email(username, logo_data)
+
 
 @app.route('/get_users', methods=['POST'])
 def get_users():
@@ -736,11 +753,13 @@ def get_users():
     inst = DashBoard()
     return inst.fetch_users(data)
 
+
 @app.route('/update_user', methods=['PUT'])
 def update_user_endpoint():
     data = request.json
     inst = DashBoard()
     return inst.update_user(data)
+
 
 @app.route('/delete_user', methods=['POST'])
 def delete_user():
@@ -754,15 +773,17 @@ def card_counts():
     inst = DashBoard()
     return inst.card_counts()
 
+
 @app.route('/srcetl', methods=['GET'])
 def srcetl():
     inst = ETL()
-    value=inst.operational_data_etl()
-    val=inst.overhaul_data_etl()
+    value = inst.operational_data_etl()
+    val = inst.overhaul_data_etl()
     return jsonify({
-                "code": 1,
-                "message": "ETL processes completed successfully"
-            })
+        "code": 1,
+        "message": "ETL processes completed successfully"
+    })
+
 
 @app.route('/set_equip_etl', methods=['POST'])
 def set_equip_etl():
@@ -775,11 +796,13 @@ def set_equip_etl():
     # Assuming set_for_etl does not return anything, you can respond with a success message
     return jsonify({'message': 'ETL flag set successfully'})
 
+
 @app.route('/unregister_equipment', methods=['POST'])
 def unregister_equipment():
     data = request.get_json(force=True)
     inst = Data_Administrator()
     return inst.delete_data_for_component(data)
+
 
 @app.route('/sysmetl', methods=['POST'])
 def sysmetl():
@@ -787,11 +810,13 @@ def sysmetl():
     inst = Data_Administrator()
     return inst.register_equipment(data)
 
+
 @app.route('/equipment_onship', methods=['POST'])
 def equipment_onship():
     data = request.get_json(force=True)
     inst = Data_Administrator()
     return inst.get_equipments_onship(data)
+
 
 @app.route('/delspecific', methods=['POST'])
 def delspecific():
@@ -800,9 +825,10 @@ def delspecific():
         print(data)
         inst = Data_Administrator()
         result = inst.del_specific_data(data)
-        return jsonify(result) 
+        return jsonify(result)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
 
 @app.route('/getspecific_data', methods=['POST'])
 def getspecific_data():
@@ -820,6 +846,7 @@ def oem_data():
     return jsonify({
         "messege": "JSON DATA"
     })
+
 
 @app.route('/del_task', methods=['POST'])
 def delete_file():
@@ -849,14 +876,16 @@ def delete_file():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+
 @app.route("/fetch_cmms_selection", methods=["GET"])
 def fetch_cmms_selection():
     custom = Custom_Settings()
     data = custom.fetch_cmms_selection()
     return data
 
+
 if __name__ == "__main__":
     app.secret_key = os.urandom(32)
     app.wsgi_app = middleware.TaskMiddleWare(app.wsgi_app, APP_ROOT)
     scheduler.start()
-    app.run(debug=False)
+    app.run(debug=True)

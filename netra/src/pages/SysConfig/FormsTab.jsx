@@ -40,9 +40,9 @@ const options = [
 	"Redundancy & Parallel Information",
 	"Maintenance Information",
 	"Failure Modes",
-	"Additional Information",
-	"Maintenance Data",
-]; // Replace with your options
+	"Additional Information (Optional)",
+	"Maintenance Data (Optional)",
+]; 
 
 export default function FormsTab() {
 	const CurrentEquipment = useSelector(

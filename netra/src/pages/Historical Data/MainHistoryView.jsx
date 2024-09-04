@@ -286,10 +286,7 @@ export default function MainHistoryView() {
 	};
 	const handleTableUpdatedRows = (allRows, dataType) => {
 		setTableRows(allRows);
-		if (
-			location.pathname ===
-			"/historical_data/repairable_overhaul"
-		) {
+		if (location.pathname === "/historical_data/repairable_overhaul") {
 			setDataType(dataType);
 		} else if (location.pathname === "/maintenance_data") {
 			setDataType(dataType);
@@ -320,17 +317,17 @@ export default function MainHistoryView() {
 							variant="contained"
 							color="primary"
 							// className={styles.buttons}
-							onClick={handleSave}
+							onClick={handleOnLoadSystem}
 						>
-							Save
+							Load Equipment
 						</Button>
 						<Button
 							variant="contained"
 							color="primary"
 							// className={styles.buttons}
-							onClick={handleOnLoadSystem}
+							onClick={handleSave}
 						>
-							Load Equipment
+							Save
 						</Button>
 					</div>
 				</div>

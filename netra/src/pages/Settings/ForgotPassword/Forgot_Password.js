@@ -1,18 +1,17 @@
-import React, { useState } from "react";
-import styles from "./ForgotPass.module.css";
-import CustomizedSnackbars from "../../../ui/CustomSnackBar";
 import {
-  Paper,
-  makeStyles,
-  InputBase,
   Button,
-  Typography,
   IconButton,
+  InputBase,
+  Paper,
+  Typography,
+  makeStyles,
 } from "@material-ui/core";
-import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import HomeIcon from '@material-ui/icons/Home';
+import React, { useState } from "react";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import CustomizedSnackbars from "../../../ui/CustomSnackBar";
+import styles from "./ForgotPass.module.css";
 const InputStyles = makeStyles({
   root: {
     margin: "15px 0px 5px 0px",

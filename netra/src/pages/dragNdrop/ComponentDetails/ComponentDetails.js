@@ -154,160 +154,171 @@ const ComponentDetails = (props) => {
   };
   return (
     <div className={classes.root}>
-      <Accordion
-        square
-        elevation={0}
-        classes={accordionClasses}
-        defaultExpanded={true}
-      >
-        <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls="panel1a-content"
-          id="panel1a-header"
-        >
-          <Typography className={classes.heading}>Basic Details</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <div>
-            <form onSubmit={(e) => e.preventDefault()}>
-              <div>
-                <label className={customclasses.inputlabel}>
-                  Name
-                  <input
-                    className={customclasses.input}
-                    ref={nodeNameRef}
-                    type="text"
-                    placeholder="Name"
-                    value={selectedNode.data.label}
-                    onChange={onHandleChange}
-                  ></input>
-                </label>
-                <label className={customclasses.inputlabel}>
-                  Parent Name
-                  <input
-                    className={customclasses.input}
-                    type="text"
-                    placeholder="Parent Name"
-                    value={parentName}
-                    readOnly
-                    disabled
-                  ></input>
-                </label>
-              </div>
-            </form>
-          </div>
-        </AccordionDetails>
-      </Accordion>
-      <Accordion square elevation={0} classes={accordionClasses}>
-        <AccordionSummary
-          expandIcon={<ExpandMoreIcon />}
-          aria-controls="panel2a-content"
-          id="panel2a-header"
-        >
-          <Typography className={classes.heading}>
-            Advance Details
-          </Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <div>
-            <label className={customclasses.inputlabel}>
-              Please Select Parallel Components
-              <Select
-                ref={p_selectRef}
-                options={filteredOptions}
-                isMulti
-                isSearchable
-              />
-            </label>
-            <label className={customclasses.inputlabel}>
-              <input
-                className={customclasses.input}
-                name="k"
-                ref={kRef}
-                type="number"
-                placeholder="Enter K-Harbour value"
-                value={inputValues.k}
-                onChange={onHandleInputChange}
-              ></input>
-              {errorMessages.k && (
-                <span className={customclasses.error}>{errorMessages.k}</span>
-              )}
-            </label>
-            <label className={customclasses.inputlabel}>
-              <input
-                className={customclasses.input}
-                name="k_elh"
-                ref={kRefELH}
-                type="number"
-                placeholder="Enter K- Entry Leaving Harbour value"
-                value={inputValues.k_elh}
-                onChange={onHandleInputChange}
-              ></input>
-              {errorMessages.k_elh && (
-                <span className={customclasses.error}>
-                  {errorMessages.k_elh}
-                </span>
-              )}
-            </label>
-            <label className={customclasses.inputlabel}>
-              <input
-                className={customclasses.input}
-                name="k_c"
-                ref={kRefC}
-                type="number"
-                placeholder="Enter K-Cruise value"
-                value={inputValues.k_c}
-                onChange={onHandleInputChange}
-              ></input>
-              {errorMessages.k_c && (
-                <span className={customclasses.error}>{errorMessages.k_c}</span>
-              )}
-            </label>
-            <label className={customclasses.inputlabel}>
-              <input
-                className={customclasses.input}
-                name="k_ds"
-                ref={kRefDS}
-                type="number"
-                placeholder="Enter K-Defense Station value"
-                value={inputValues.k_ds}
-                onChange={onHandleInputChange}
-              ></input>
-              {errorMessages.k_ds && (
-                <span className={customclasses.error}>
-                  {errorMessages.k_ds}
-                </span>
-              )}
-            </label>
-            <label className={customclasses.inputlabel}>
-              <input
-                className={customclasses.input}
-                name="k_as"
-                ref={kRefAS}
-                type="number"
-                placeholder="Enter K-Action Station value"
-                value={inputValues.k_as}
-                onChange={onHandleInputChange}
-              ></input>
-              {errorMessages.k_as && (
-                <span className={customclasses.error}>
-                  {errorMessages.k_as}
-                </span>
-              )}
-            </label>
-            <button
-              className={`${customclasses.savebtn
-                } ${!isSaveDisabled ? customclasses.disabledButton : ""}`}
-              onClick={onHandleButtonClick}
-              disabled={!isSaveDisabled}
-            >
-              Save Details
-            </button>
-          </div>
-        </AccordionDetails>
-      </Accordion>
+      {BasicDetailsAccordion()}
+      {AdvanceDetailsAccordion()}
     </div>
   );
+
+  function BasicDetailsAccordion() {
+    return <Accordion
+      square
+      elevation={0}
+      classes={accordionClasses}
+      defaultExpanded={true}
+    >
+      <AccordionSummary
+        expandIcon={<ExpandMoreIcon />}
+        aria-controls="panel1a-content"
+        id="panel1a-header"
+      >
+        <Typography className={classes.heading}>Basic Details</Typography>
+      </AccordionSummary>
+      <AccordionDetails>
+        <div>
+          <form onSubmit={(e) => e.preventDefault()}>
+            <div>
+              <label className={customclasses.inputlabel}>
+                Name
+                <input
+                  className={customclasses.input}
+                  ref={nodeNameRef}
+                  type="text"
+                  placeholder="Name"
+                  value={selectedNode.data.label}
+                  onChange={onHandleChange}
+                ></input>
+              </label>
+              <label className={customclasses.inputlabel}>
+                Parent Name
+                <input
+                  className={customclasses.input}
+                  type="text"
+                  placeholder="Parent Name"
+                  value={parentName}
+                  readOnly
+                  disabled
+                ></input>
+              </label>
+            </div>
+          </form>
+        </div>
+      </AccordionDetails>
+    </Accordion>;
+  }
+
+  function AdvanceDetailsAccordion() {
+    return <Accordion
+      square
+      elevation={0}
+      classes={accordionClasses}
+      defaultExpanded
+    >
+      <AccordionSummary
+        expandIcon={<ExpandMoreIcon />}
+        aria-controls="panel2a-content"
+        id="panel2a-header"
+      >
+        <Typography className={classes.heading}>
+          Advance Details
+        </Typography>
+      </AccordionSummary>
+      <AccordionDetails>
+        <div>
+          <label className={customclasses.inputlabel}>
+            Please Select Parallel Components
+            <Select
+              ref={p_selectRef}
+              options={filteredOptions}
+              isMulti
+              isSearchable />
+          </label>
+          <label className={customclasses.inputlabel}>
+            <input
+              className={customclasses.input}
+              name="k"
+              ref={kRef}
+              type="number"
+              placeholder="Enter K-Harbour value"
+              value={inputValues.k}
+              onChange={onHandleInputChange}
+            ></input>
+            {errorMessages.k && (
+              <span className={customclasses.error}>{errorMessages.k}</span>
+            )}
+          </label>
+          <label className={customclasses.inputlabel}>
+            <input
+              className={customclasses.input}
+              name="k_elh"
+              ref={kRefELH}
+              type="number"
+              placeholder="Enter K- Entry Leaving Harbour value"
+              value={inputValues.k_elh}
+              onChange={onHandleInputChange}
+            ></input>
+            {errorMessages.k_elh && (
+              <span className={customclasses.error}>
+                {errorMessages.k_elh}
+              </span>
+            )}
+          </label>
+          <label className={customclasses.inputlabel}>
+            <input
+              className={customclasses.input}
+              name="k_c"
+              ref={kRefC}
+              type="number"
+              placeholder="Enter K-Cruise value"
+              value={inputValues.k_c}
+              onChange={onHandleInputChange}
+            ></input>
+            {errorMessages.k_c && (
+              <span className={customclasses.error}>{errorMessages.k_c}</span>
+            )}
+          </label>
+          <label className={customclasses.inputlabel}>
+            <input
+              className={customclasses.input}
+              name="k_ds"
+              ref={kRefDS}
+              type="number"
+              placeholder="Enter K-Defense Station value"
+              value={inputValues.k_ds}
+              onChange={onHandleInputChange}
+            ></input>
+            {errorMessages.k_ds && (
+              <span className={customclasses.error}>
+                {errorMessages.k_ds}
+              </span>
+            )}
+          </label>
+          <label className={customclasses.inputlabel}>
+            <input
+              className={customclasses.input}
+              name="k_as"
+              ref={kRefAS}
+              type="number"
+              placeholder="Enter K-Action Station value"
+              value={inputValues.k_as}
+              onChange={onHandleInputChange}
+            ></input>
+            {errorMessages.k_as && (
+              <span className={customclasses.error}>
+                {errorMessages.k_as}
+              </span>
+            )}
+          </label>
+          <button
+            className={`${customclasses.savebtn} ${!isSaveDisabled ? customclasses.disabledButton : ""}`}
+            onClick={onHandleButtonClick}
+            disabled={!isSaveDisabled}
+          >
+            Save Details
+          </button>
+        </div>
+      </AccordionDetails>
+    </Accordion>;
+  }
 };
 
 export default ComponentDetails;

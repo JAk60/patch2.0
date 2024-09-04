@@ -1,4 +1,4 @@
-import { Button, makeStyles, Tab, Tabs, Typography } from "@material-ui/core";
+import { Button, makeStyles, Tab, Tabs } from "@material-ui/core";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import Navigation from "../../components/navigation/Navigation";

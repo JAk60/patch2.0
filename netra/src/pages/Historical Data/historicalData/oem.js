@@ -5,7 +5,6 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import { AgGridColumn } from "ag-grid-react";
 import React, { useState } from "react";
 import Table from "../../../ui/Table/DataManagerTable";
-import styles from "../DataManager.module.css";
 const useStyles = makeStyles((theme) => ({
   root: {
     width: "50px",

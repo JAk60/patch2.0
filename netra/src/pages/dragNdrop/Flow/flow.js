@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import Snackbar from "@material-ui/core/Snackbar";
 import { makeStyles } from "@material-ui/core/styles";
 import MuiAlert from "@material-ui/lab/Alert";
@@ -122,7 +123,7 @@ const Flow = ({
 	const [isSnackbarOpen, setIsSnackbarOpen] = useState(false);
 	const [activeButton, setActiveButton] = useState("LR");
 	const dispatch = useDispatch();
-
+	const ielements = useSelector((state) => state.elements.elements);
 	useEffect(() => {
 		// Set the default layout to "LR" (left to right)
 		const defaultLayoutDirection = "LR";
@@ -138,7 +139,7 @@ const Flow = ({
 		setIsSnackbarOpen(false);
 	};
 
-	const ielements = useSelector((state) => state.elements.elements);
+
 	const onElementsRemove = (elementsToRemove) => {
 		let ele = removeElements(elementsToRemove, ielements);
 		dispatch(elementActions.removeElement(ele));
@@ -198,37 +199,15 @@ const Flow = ({
 	};
 	const onDrop = (event) => {
 		event.preventDefault();
-		// const reactFlowBounds =
-		// 	reactFlowWrapper.current.getBoundingClientRect();
 		const type = event.dataTransfer.getData("application/reactflow");
-		if (type === "systemNode") {
-			let isRootNodeExist =
-				ielements.filter((x) => x.type === "systemNode").length > 0;
-			if (isRootNodeExist) {
-				alert("System already exist!!");
-				return false;
-			}
+	
+		// Check if a root node of type 'systemNode' already exists
+		const isRootNodeExist = ielements.some(element => element.type === "systemNode");
+		if (type === "systemNode" && isRootNodeExist) {
+			alert("System already exists!");
+			return;
 		}
-
-		// const position = reactFlowInstance.project({
-		// 	x: event.clientX - reactFlowBounds.left,
-		// 	y: event.clientY - reactFlowBounds.top,
-		// });
-		let style = {};
-		if (type === "output") {
-			style = {
-				border: "2px solid black",
-				borderRadius: "5px",
-				background: "#DCFFC0",
-				borderColor: "black",
-			};
-		} else {
-			style = {
-				border: "2px solid black",
-				borderRadius: "5px",
-				background: "#FFFBDA",
-			};
-		}
+		// Create the new node with specified properties
 		const newNode = {
 			id: uuid(),
 			type: "component",
@@ -240,21 +219,15 @@ const Flow = ({
 				color: "white",
 			},
 		};
-
+	
+		// Dispatch action to add the new element
 		dispatch(elementActions.addElement({ ele: newNode }));
 	};
+	
 
 	const onHoverBegin = (event, node) => {
-		debugger
-		let pc = "";
-		
 		if ("parallel_comp" in node.data) {
-			node.data.parallel_comp.forEach((component) => {
-				pc += "<br/>" + component.label;
-			});
-
 			console.log(kValues, "kvalues");
-			
 			// Filter kValues to include only those with candidates containing the node's label
 			const filteredKValues = Object.keys(kValues).filter(key =>
 				kValues[key].components.includes(node.data.label)
@@ -272,19 +245,17 @@ const Flow = ({
 					<hr />
 				</div>`
 			)).join('');
-	
+
 			document.getElementById("tooltip").innerHTML =
 				`<h4>${node.data.label}</h4>
 				<div>${filteredKValues}</div>`;
-			
+
 			document.getElementById("tooltip").style.opacity = 1;
 		}
 	};
-	
+
 
 	const duringHover = (event, node) => {
-		//console.log(event);
-		debugger;
 		document.getElementById("tooltip").style.left = event.pageX - 20 + "px";
 		document.getElementById("tooltip").style.top = event.pageY - 110 + "px";
 	};

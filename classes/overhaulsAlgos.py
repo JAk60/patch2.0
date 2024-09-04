@@ -21,12 +21,12 @@ class OverhaulsAlgos:
         return days
 
     def insert_overhauls_data(self, equipment_id, run_age_component):
-        # query = "SELECT ship_name,nomenclature FROM system_configuration where component_id = ?"
-        # cursor.execute(query, equipment_id)
-        # odata = cursor.fetchall()
-        # ship_name, nomenclature = odata[0]
-        # inst= Data_Administrator()
-        # inst.overhaul_data_reset(component_id=equipment_id, nomenclature=nomenclature, ship_name=ship_name)
+        query = "SELECT ship_name,nomenclature FROM system_configuration where component_id = ?"
+        cursor.execute(query, equipment_id)
+        odata = cursor.fetchall()
+        ship_name, nomenclature = odata[0]
+        inst= Data_Administrator()
+        inst.overhaul_data_reset(component_id=equipment_id, nomenclature=nomenclature, ship_name=ship_name)
         new_data = []
         clk_reset = 0
         index = 0
@@ -97,7 +97,7 @@ class OverhaulsAlgos:
                     else:
                         maintenance_type = "Overhaul"
                         prev_date = data[index - 1][3]
-                        date = datetime.strptime(prev_date, "%Y-%m-%d") + timedelta(
+                        date = datetime.strptime(str(prev_date), "%Y-%m-%d") + timedelta(
                             days=days
                         )
                         date = date.strftime("%Y-%m-%d")
@@ -169,7 +169,7 @@ class OverhaulsAlgos:
                         running_age = age
                         multiplication_factor += 1
                         prev_date = data[index - 1][3]
-                        date = datetime.strptime(prev_date, "%Y-%m-%d") + timedelta(
+                        date = datetime.strptime(str(prev_date), "%Y-%m-%d") + timedelta(
                             days=days
                         )
                         date = date.strftime("%Y-%m-%d")
@@ -208,7 +208,6 @@ class OverhaulsAlgos:
                 query = "DELETE FROM data_manager_overhaul_maint_data WHERE component_id = ?"
                 cursor.execute(query, equipment_id)
                 cnxn.commit()
-                # new_sorted_data = sorted(new_data, key=lambda x: x[3])
                 insert_query = """
                     INSERT INTO data_manager_overhaul_maint_data (id, 
                     component_id, overhaul_id, date, maintenance_type, running_age,
@@ -282,56 +281,57 @@ class OverhaulsAlgos:
         # return run_ages
 
     def alpha_beta_calculation(self, mainData, subData, id):
-        failure_times = self.equipment_failure_times(mainData)
-        T = self. extract_running_ages(sub_data=subData, failure_times=failure_times)
-        for sublist in failure_times:
-            # Check if the sublist matches T
-            if sublist == T:
-                # If matched, remove the sublist from failure_times
-                failure_times.pop(failure_times.index(sublist))
-        N = [len(subarray) for subarray in failure_times]
-        print(f"FALIURE TIMES: {failure_times}")
-        print(f"N: {N}")
-        print(f"T: {T}")
-        if not failure_times:
-            query = "select alpha,beta from alpha_beta where component_id=?"
-            cursor.execute(query, id)
-            AB = cursor.fetchall() ##alpha and beta
-            print("--------------------------->>>>>>>",AB)
-            for i in AB:
-                alpha,beta=i
-            return alpha,beta
-        def para(system_failures_list):
-            getcontext().prec = 28  # Set precision to desired value
-            T = [Decimal(max(failures)) * Decimal('1.05') for failures in system_failures_list]
-            sum_ln_T_Xiq = [sum(Decimal(math.log(ti / Decimal(x))) for x in failures) for ti, failures in zip(T, system_failures_list)]
+            failure_times = self.equipment_failure_times(mainData)
+            T = self. extract_running_ages(sub_data=subData, failure_times=failure_times)
+            for sublist in failure_times:
+                # Check if the sublist matches T
+                if sublist == T:
+                    # If matched, remove the sublist from failure_times
+                    failure_times.pop(failure_times.index(sublist))
+            N = [len(subarray) for subarray in failure_times]
+            print(f"FALIURE TIMES from alpha_beta_calculation in overhaulsAlgos.py: {failure_times}")
+            print(f"N from alpha_beta_calculation in overhaulsAlgos.py: {N}")
+            print(f"T from alpha_beta_calculation in overhaulsAlgos.py: {T}")
+            if not failure_times:
+                query = "select alpha,beta from alpha_beta where component_id=?"
+                cursor.execute(query, id)
+                AB = cursor.fetchall() ##alpha and beta
+                print("--------------------------->>>>>>>",AB)
+                for i in AB:
+                    alpha,beta=i
+                return alpha,beta
+            def para(system_failures_list):
+                getcontext().prec = 28  # Set precision to desired value
+                T = [Decimal(max(failures)) * Decimal('1.05') for failures in system_failures_list]
+                sum_ln_T_Xiq = [sum(Decimal(math.log(ti / Decimal(x))) for x in failures) for ti, failures in zip(T, system_failures_list)]
 
-            BETA = sum(Decimal(len(failures)) for failures in system_failures_list) / sum(sum_ln_T_Xiq)
-            ALPHA = sum(Decimal(len(failures)) for failures in system_failures_list) / sum(ti ** BETA for ti in T)
+                BETA = sum(Decimal(len(failures)) for failures in system_failures_list) / sum(sum_ln_T_Xiq)
+                ALPHA = sum(Decimal(len(failures)) for failures in system_failures_list) / sum(ti ** BETA for ti in T)
 
-            return ALPHA, BETA
-        alpha, beta = para(failure_times)    
-        a_b_id = uuid.uuid4()
-        merge_query = '''
-            MERGE INTO alpha_beta AS target
-            USING (VALUES (?, ?, ?, ?)) AS source (id, component_id, alpha, beta)   
-            ON target.component_id = source.component_id
-            WHEN MATCHED THEN
-                UPDATE SET alpha = source.alpha, beta = source.beta
-            WHEN NOT MATCHED THEN
-                INSERT (id, component_id, alpha, beta)
-                VALUES (source.id, source.component_id, source.alpha, source.beta);
-        '''
+                return ALPHA, BETA
+            alpha, beta = para(failure_times)    
+            a_b_id = uuid.uuid4()
+            merge_query = '''
+                MERGE INTO alpha_beta AS target
+                USING (VALUES (?, ?, ?, ?)) AS source (id, component_id, alpha, beta)
+                ON target.component_id = source.component_id
+                WHEN MATCHED THEN
+                    UPDATE SET alpha = source.alpha, beta = source.beta
+                WHEN NOT MATCHED THEN
+                    INSERT (id, component_id, alpha, beta)
+                    VALUES (source.id, source.component_id, source.alpha, source.beta);
+            '''
 
-        # Assuming you have appropriate values for 'component_id', 'alpha', and 'beta'
-        cursor.execute(merge_query, (a_b_id, id, float(alpha), float(beta)))
-        cnxn.commit()
+            # Assuming you have appropriate values for 'component_id', 'alpha', and 'beta'
+            cursor.execute(merge_query, (a_b_id, id, float(alpha), float(beta)))
+            cnxn.commit()
+
 
     def _get_interpolated_age(self, date, component_id):
         query = "SELECT SUM(average_running) FROM operational_data WHERE operation_date<?  AND component_id = ?"
         cursor.execute(query, date, component_id)
         age = cursor.fetchone()[0]
-        date = datetime.strptime(date, '%Y-%m-%d')
+        date = datetime.strptime(str(date), '%Y-%m-%d')
         utilization_date = f"{date.year}-{date.month}-01"
         sql = "SELECT average_running FROM operational_data where operation_date=? and component_id=?"
         cursor.execute(sql, utilization_date, component_id)
@@ -348,7 +348,7 @@ class OverhaulsAlgos:
             return age
         else:
             daily_avg = utilization / 30
-        age = age + daily_avg * int(date.day) 
+        age = age + daily_avg * int(date.day)
         return age
 
 

@@ -37,18 +37,18 @@ class GraphDashBoard:
 
                 # Query 3: Fetch joined data from sensor_based_data and parameter_data tables
                 query3 = """
-                    SELECT TOP 30
+                    SELECT 
                     pc.component_name, pc.nomenclature,
                     p.name, p.value, p.date,
                     s.equipment_id, p.operating_hours, s.min_value, s.max_value, s.failure_mode_id, s.unit
                     FROM parameter_data p
                     JOIN sensor_based_data s ON p.parameter_id = s.id
                     JOIN system_configuration pc ON p.component_id = pc.component_id
-                    WHERE pc.component_id = ?
-                    ORDER BY p.date;
+                    WHERE pc.component_id = ?;
                 """
                 cursor.execute(query3, (equipment_id,))
                 result3 = cursor.fetchall()
+
                 for row in result1:
                     sensor_data.append(
                         {

@@ -7,9 +7,6 @@ import { treeDataActions } from "../../../store/TreeDataStore";
 import AutoSelect from "../../../ui/Form/AutoSelect";
 import UserSelection from "../../../ui/userSelection/userSelection";
 import styles from "../CreateMaintenance/CreateMaintenance.module.css";
-// import { useHistory } from "react-router-dom";
-// import {useNavigate} from 'react-router-dom'
-// import AssignType from './AssignType';
 import CustomizedSnackbars from "../../../ui/CustomSnackBar";
 import CustomSelect from "../../../ui/Form/CustomSelect";
 
@@ -21,13 +18,11 @@ const Critical_RCM = (props) => {
   );
   const [fData, setfData] = useState([]);
   const [fDataCritical, setfDataCritical] = useState([]);
-  const [questionsOptions, setquestionsOptions] = useState(["Yes", "No"]);
+  const questionsOptions= ["Yes", "No"];
   const [questionsF, setquestionsF] = useState(null);
   const [questionsConditional, setquestionsConditional] = useState(null);
   const [questionsPreventive, setquestionsPreventive] = useState(null);
-  const [questionsCost, setquestionsCost] = useState(null);
   const [questionsSensor, setquestionsSensor] = useState(null);
-  const [questionsContinous, setquestionsContinous] = useState(null);
   const [questionsMission, setquestionsMission] = useState(null);
 
   const [questionsOperating, setquestionsOperating] = useState(null);
@@ -43,11 +38,6 @@ const Critical_RCM = (props) => {
   let AllData = useSelector((state) => state.treeData.treeData);
 
   const [finalRCMAns, setfinalRCMAns] = useState(null);
-  // AllData = AllData.filter(x => x.parentName === currentSelection["equipmentName"])
-  // fData = fData.filter(x => x.parentName === currentSelection["equipmentName"])
-  //console.log(fData);
-  // const rowData = []
-  const [finalRCMData, setFinalRCMData] = useState([]);
 
   const [SnackBarMessage, setSnackBarMessage] = useState({
     severity: "error",
@@ -150,27 +140,20 @@ const [tData,setTdata]=useState([]);
     setquestionIsItCose(null);
     setquestionsSensor(null);
     setquestionsPreventive(null);
-    setquestionsContinous(null);
-    setquestionsCost(null);
   };
   const resert_below_conditional = () => {
     setfinalRCMAns(null);
     setquestionIsItCose(null);
     setquestionsSensor(null);
     setquestionsPreventive(null);
-    setquestionsContinous(null);
-    setquestionsCost(null);
   };
   const resert_below_cost = () => {
     setfinalRCMAns(null);
     setquestionsSensor(null);
     setquestionsPreventive(null);
-    setquestionsContinous(null);
-    setquestionsCost(null);
   };
   const resert_below_sensor = () => {
     setfinalRCMAns(null);
-    setquestionsContinous(null);
   };
   const reset_everything2 = () => {
     setfinalRCMAns(null);
@@ -180,8 +163,6 @@ const [tData,setTdata]=useState([]);
     setquestionsPreventive(null);
     setquestionFeasible(null);
     setquestionIsItCose(null);
-    setquestionsCost(null);
-    setquestionsContinous(null);
   };
   const reset_below_sensor_s_m = () => {
     setfinalRCMAns(null);
@@ -190,7 +171,6 @@ const [tData,setTdata]=useState([]);
     setquestionsPreventive(null);
     setquestionFeasible(null);
     setquestionIsItCose(null);
-    setquestionsContinous(null);
   };
   const reset_below_PFS = () => {
     setfinalRCMAns(null);
@@ -198,7 +178,6 @@ const [tData,setTdata]=useState([]);
     setquestionsPreventive(null);
     setquestionFeasible(null);
     setquestionIsItCose(null);
-    setquestionsContinous(null);
   };
   const reset_below_Inspection = () => {
     setfinalRCMAns(null);
@@ -237,17 +216,13 @@ const [tData,setTdata]=useState([]);
     } else if (name === "Is the cost is high?") {
       if (data === "No") {
         setfinalRCMAns("Calendar time based preventive Maintenance!!");
-        setquestionsCost(data);
       } else {
         setfinalRCMAns("Age based preventive Maintenance!!");
-        setquestionsCost(data);
       }
     } else if (name === "Is Continous Monitoring feasible?") {
       if (data === "No") {
-        setquestionsContinous(data);
         setfinalRCMAns("Sensor based intermittent monitoring!!");
       } else {
-        setquestionsContinous(data);
         setfinalRCMAns("Sensor based continous monitoring!!");
       }
     }
@@ -273,10 +248,8 @@ const [tData,setTdata]=useState([]);
       //cost loop
       if (data === "No") {
         setfinalRCMAns("Calendar time based preventive Maintenance!!");
-        setquestionsCost(data);
       } else {
         setfinalRCMAns("Age based preventive Maintenance!!");
-        setquestionsCost(data);
       }
     } else if (name === "Is Sensor based Monitoring available?") {
       resert_below_sensor();
@@ -288,10 +261,8 @@ const [tData,setTdata]=useState([]);
       }
     } else if (name === "Is Continous Monitoring feasible?") {
       if (data === "No") {
-        setquestionsContinous(data);
         setfinalRCMAns("Sensor based intermittent monitoring!!");
       } else {
-        setquestionsContinous(data);
         setfinalRCMAns("Sensor based continous monitoring!!");
       }
     }
@@ -420,23 +391,6 @@ const [tData,setTdata]=useState([]);
         });
     }
   };
-
-  const updateFinalRowData = (allRows) => {};
-
-  // const  saveAsFile = (text, filename) => {
-  //     // Step 1: Create the blob object with the text you received
-  //     const type = 'application/text'; // modify or get it from response
-  //     const blob = new BlobBuilder([text], {type});
-
-  //     // Step 2: Create Blob Object URL for that blob
-  //     const url = URL.createObjectURL(blob);
-
-  //     // Step 3: Trigger downloading the object using that URL
-  //     const a = document.createElement('a');
-  //     a.href = url;
-  //     a.download = filename;
-  //     a.click(); // triggering it manually
-  //   }
 
   return (
     <>

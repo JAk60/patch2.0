@@ -17,7 +17,6 @@ const Main = (props) => {
       borderRadius: "50%",
       width: "50px",
       height: "50px",
-      display: "flex",
       justifyContent: "center",
       alignItems: "center",
       color: " #004d90",

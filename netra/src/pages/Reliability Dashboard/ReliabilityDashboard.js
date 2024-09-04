@@ -11,7 +11,6 @@ import ReliabilityChart from "./ReliabilityChart";
 import styles from "./rDashboard.module.css";
 
 const ReliabilityDashboard = () => {
-	const [tempMissionData, setTempMissionData] = useState([]);
 
 	const [eqDataOption, setEqDataOption] = useState([]);
 	const [nomenclatureDataOption, setNomenclatureDataOption] = useState([]);
@@ -54,11 +53,8 @@ const ReliabilityDashboard = () => {
 				return res.json();
 			})
 			.then((data) => {
-				debugger;
-				const mission_data = data["mission_data"];
 				const user_selection = data["user_selection"]["data"];
 				const eqData = data["user_selection"]["eqData"];
-				const mNames = mission_data.map((x) => x["missionName"]);
 				let shipName = user_selection.map((x) => x.shipName);
 				shipName = [...new Set(shipName)];
 				setUserSelectionData(eqData);
@@ -68,7 +64,7 @@ const ReliabilityDashboard = () => {
 					})
 				);
 			});
-	}, [setUserSelectionData]);
+	}, [dispatch, setUserSelectionData]);
 
 	console.log(userSelectionData);
 	const getSelectedValues = (d, selectType) => {
@@ -183,7 +179,7 @@ const ReliabilityDashboard = () => {
 			equipments: selectedEqName,
 			nomenclature: nomenclature,
 			shipClass: selectedShipName,
-			tempMissions: tempMissionData,
+			tempMissions: [],
 		};
 		console.log(data, "tooltip");
 

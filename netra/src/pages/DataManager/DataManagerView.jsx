@@ -50,8 +50,8 @@ export default function DataManagerView(props) {
 	};
 	console.log(tableRows);
 	const handleSave = () => {
-		let data = [];
-		data = tableRows.map((x) => {
+		let d = [];
+		d = tableRows.map((x) => {
 			return {
 				id: x.id,
 				oid: uuid(),
@@ -59,17 +59,17 @@ export default function DataManagerView(props) {
 				AverageRunning: x.AverageRunning,
 			};
 		});
-
+		d = d.filter((x) => x !== undefined);
+		const data={
+			data: d,
+			dataType: "insertOpData",
+		}
 		// Filter out any undefined data, though it's not needed here as there's only one case
-		data = data.filter((x) => x !== undefined);
-
+		console.log('data', data)
 		// Call the save function
 		fetch("/save_historical_data", {
 			method: "POST",
-			body: JSON.stringify({
-				data: data,
-				dataType: "dataType",
-			}),
+			body: JSON.stringify({data}),
 			headers: {
 				"Content-Type": "application/json",
 				Accept: "application/json",
@@ -189,16 +189,16 @@ export default function DataManagerView(props) {
 						<Button
 							variant="contained"
 							color="primary"
-							onClick={handleSave}
+							onClick={handleOnLoadSystem}
 						>
-							Save
+							Load Equipment
 						</Button>
 						<Button
 							variant="contained"
 							color="primary"
-							onClick={handleOnLoadSystem}
+							onClick={handleSave}
 						>
-							Load Equipment
+							Save
 						</Button>
 					</div>
 				</div>

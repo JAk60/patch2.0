@@ -17,7 +17,7 @@ import { transformData } from "./transformData";
 const HierarchyTree = ({ nodes, edges, elements, data }) => {
 	const [open, setOpen] = useState(false);
 	const [selectedNode, setSelectedNode] = useState(null);
-
+	console.log('selectedNode', selectedNode)
 	const onNodeClick = useCallback(
 		(event, node) => {
 			const selectedNodeData = data.find(
@@ -68,11 +68,9 @@ const HierarchyTree = ({ nodes, edges, elements, data }) => {
 						<div>
 							<p>Name: {selectedNode.name}</p>
 							<p>Nomenclature: {selectedNode.nomenclature}</p>
-							<p>Department: {selectedNode.department}</p>
-							<p>Command: {selectedNode.command}</p>
 							<p>Ship Name: {selectedNode.shipName}</p>
-							<p>Ship Class: {selectedNode.shipClass}</p>
-							<p>Ship Category: {selectedNode.shipCategory}</p>
+							<p>Department: {selectedNode.department}</p>
+							{selectedNode.parentId !==null && <p>Parent: {selectedNode.parentName}</p>}
 							<p>Repair Type: {selectedNode.repairType}</p>
 							<p>
 								Can Be Replaced By Ship Staff:{" "}
@@ -85,8 +83,6 @@ const HierarchyTree = ({ nodes, edges, elements, data }) => {
 								{selectedNode.isSystemParamRecorded}
 							</p>
 							<p>PM Applicable: {selectedNode.pmApplicable}</p>
-							<p>PM Interval: {selectedNode.pmInterval}</p>
-							<p>LMU: {selectedNode.lmu}</p>
 						</div>
 					)}
 				</DialogContent>

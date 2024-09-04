@@ -1,25 +1,24 @@
 import {
   Button,
-  Dialog,
   FormControlLabel,
   MenuItem,
   Radio,
   RadioGroup,
   Select,
-  makeStyles,
+  makeStyles
 } from "@material-ui/core";
 import { AgGridColumn } from "ag-grid-react";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { v4 as uuid } from "uuid";
-import CustomizedSnackbars from "../../../ui/CustomSnackBar";
+import Navigation from "../../../components/navigation/Navigation";
 import { treeDataActions } from "../../../store/TreeDataStore";
+import CustomizedSnackbars from "../../../ui/CustomSnackBar";
 import Table from "../../../ui/Table/Table";
+import UserSelection from "../../../ui/userSelection/userSelection";
 import styles from "./CreateMaintenance.module.css";
 import { saveSensor } from "./SaveHandler";
-import UserSelection from "../../../ui/userSelection/userSelection";
-import Navigation from "../../../components/navigation/Navigation";
 
 const useStyles = makeStyles({
   buttons: {
@@ -65,17 +64,12 @@ const AssignType = (props) => {
   const [calendarBasedUnit, setCalendarBasedUnit] = useState(null);
   const [condition, setCondition] = useState("sensorBased");
   const [failureMode, setFailureMode] = useState(null);
-  const [visualWearLevels, setVisualWearLevels] = useState(0);
-  const [visualCorrosionLevels, setVisualCorrosionLevels] = useState(0);
-  const [visualFrequency, setVisualFrequency] = useState(0);
-  const [degradationWearLevels, setDegradationWearLevels] = useState(0);
   const [pRows, setpRows] = useState([]);
   const [VisualWearRows, setVisualWearRows] = useState([]);
   const [VisualCorrosionRows, setVisualCorrosionRows] = useState([]);
   const [visualActionsRows, setVisualActionRows] = useState([]);
   const [selectedEquipment, setSelectedEquipment] = useState("");
   const fileInputRef = useRef(null);
-  const hello = ["This", "is", "beauty"];
   const classes = useStyles();
   const dispatch = useDispatch();
 
@@ -124,21 +118,6 @@ const AssignType = (props) => {
       reader.readAsText(file);
     }
   };
-
-  const changeVisualFrequency = (e) => {
-    setVisualFrequency(e.target.value);
-  };
-  const changeVisualWearLevel = (e) => {
-    setVisualWearLevels(e.target.value);
-    addVisualWearRows(e.target.value);
-  };
-  const changeVisualCorrosionLevel = (e) => {
-    setVisualCorrosionLevels(e.target.value);
-    addVisualCorrosionRows(e.target.value);
-  };
-  const changeDegradationWearLevel = (e) => {
-    setVisualWearLevels(e.target.value);
-  };
   const handleMtypeChange = (e) => {
     setType(e.target.value);
   };
@@ -146,29 +125,6 @@ const AssignType = (props) => {
     addVisualActionRows();
   }, [VisualWearRows, VisualCorrosionRows]);
 
-  const addVisualWearRows = (n) => {
-    let newRows = [];
-    let i = 1;
-    while (n > 0) {
-      newRows = [...newRows, { level: `L${i}`, wear: "", image: "" }];
-      n--;
-      i++;
-    }
-    console.log(newRows);
-    setVisualWearRows(newRows);
-  };
-
-  const addVisualCorrosionRows = (n) => {
-    let newRows = [];
-    let i = 1;
-    while (n > 0) {
-      newRows = [...newRows, { level: `L${i}`, corrosion: "", image: "" }];
-      n--;
-      i++;
-    }
-    console.log(newRows);
-    setVisualCorrosionRows(newRows);
-  };
 
   const matchingId = matchingItems[0]?.id;
   const addVisualActionRows = () => {
@@ -345,7 +301,7 @@ const AssignType = (props) => {
     setSbAlarmRows(rows);
     //get columns
     let columns = allRows.map((data) => {
-      if (data.name != "") {
+      if (data.name !== "") {
         return (
           <AgGridColumn
             field={data.name}
@@ -387,7 +343,6 @@ const AssignType = (props) => {
       ...columns,
     ]);
   };
-  //sensor-based Alarms Table
   const [sbAlarmCols, setSbAlarmCols] = useState([]);
   const [lvlwiseRows, setLvlwiseRows] = useState([]);
   const [sbAlarmRows, setSbAlarmRows] = useState([]);
@@ -503,7 +458,6 @@ const AssignType = (props) => {
               onChange={handleMtypeChange}
               className={styles.mtypeRadio}
             >
-              {/* props.selectedComponent?.repairType === "Repairable" ||  */}
               {
                 <FormControlLabel
                   value="runToFailure"
@@ -511,14 +465,14 @@ const AssignType = (props) => {
                   label="Run to Failure"
                 />
               }
-              {Rtype == "Repairable" || (
+              {Rtype === "Repairable" || (
                 <FormControlLabel
                   value="ageBased"
                   control={<Radio />}
                   label="Age Based Maintenance"
                 />
               )}
-              {Rtype == "Repairable" || (
+              {Rtype === "Repairable" || (
                 <FormControlLabel
                   value="calendarBased"
                   control={<Radio />}
@@ -534,48 +488,7 @@ const AssignType = (props) => {
               }
             </RadioGroup>
           </div>
-          <div className={styles.btns}>
-            {/* <Button variant="contained" color="primary" onClick={handleSave}>
-              Save
-            </Button> */}
-            {/* <Link to="/rul">
-              <Button variant="contained" color="primary">
-                RUL
-              </Button>
-            </Link> */}
-            {/* <Link to="/optimize">
-              <Button variant="contained" color="primary">
-                Optimize
-              </Button>
-            </Link> */}
-          </div>
         </div>
-        {/* <Dialog open={modal} onClose={() => setModal(false)}>
-          <div className={styles.modal}>
-            <h4>Select Condition</h4>
-            <RadioGroup
-              name="condition"
-              value={condition}
-              onChange={(e) => setCondition(e.target.value)}
-            >
-              <FormControlLabel
-                value="visual"
-                control={<Radio />}
-                label="Visual Inspection"
-              />
-              <FormControlLabel
-                value="degradation"
-                control={<Radio />}
-                label="Degradation Measurement"
-              />
-              <FormControlLabel
-                value="sensorBased"
-                control={<Radio />}
-                label="Sensor Based"
-              />
-            </RadioGroup>
-          </div>
-        </Dialog> */}
         {type === "runToFailure" && (
           <div className={styles.MTypeContent}>
             <div
@@ -701,120 +614,6 @@ const AssignType = (props) => {
                 })}
               </Select>
             </div>
-            {/* {condition === "visual" && (
-              <>
-                <div className={styles.formField}>
-                  <label htmlFor="inspection-frequency">
-                    {" "}
-                    Inspection Frequency
-                  </label>
-                  <input
-                    className={styles.input}
-                    value={visualFrequency}
-                    onChange={changeVisualFrequency}
-                    type="number"
-                    id="inspection-frequency"
-                    name="inspection-frequency"
-                  />
-                </div>
-                <div className={styles.levels}>
-                  <div className={styles.levelCol}>
-                    <div className={styles.sectionHead}>Wear</div>
-                    <div className={styles.formField}>
-                      <label htmlFor="visual-wear-level">No. of levels</label>
-                      <input
-                        className={styles.input}
-                        value={visualWearLevels}
-                        onChange={changeVisualWearLevel}
-                        type="number"
-                        id="visual-wear-level"
-                        name="visual-wear-level"
-                      />
-                    </div>
-                    <Table
-                      columnDefs={visualWearColumnDefs}
-                      rowData={VisualWearRows}
-                      tableUpdate={(rows) => {
-                        console.log(rows);
-                      }}
-                      height={250}
-                    />
-                  </div>
-                  <div className={styles.levelCol}>
-                    <div className={styles.sectionHead}>Corrosion</div>
-                    <div className={styles.formField}>
-                      <label htmlFor="visual-corrosion-level">
-                        No. of levels
-                      </label>
-                      <input
-                        className={styles.input}
-                        value={visualCorrosionLevels}
-                        onChange={changeVisualCorrosionLevel}
-                        type="number"
-                        id="visual-corrosion-level"
-                        name="visual-corrosion-level"
-                      />
-                    </div>
-                    <Table
-                      columnDefs={visualCorrosionColumnDefs}
-                      rowData={VisualCorrosionRows}
-                      tableUpdate={(rows) => {
-                        console.log(rows);
-                      }}
-                      height={250}
-                    />
-                  </div>
-                </div>
-                <div className={styles.levelwise}>
-                  <div className={styles.lwCol}>
-                    Actions
-                    <Table
-                      columnDefs={visualActionsCols}
-                      rowData={visualActionsRows}
-                      tableUpdate={(data) => console.log(data)}
-                      height={200}
-                    />
-                  </div>
-                </div>
-              </>
-            )}
-            {condition === "degradation" && (
-              <>
-                <div className={styles.levels}>
-                  <div className={styles.levelCol}>
-                    <div className={styles.sectionHead}>Wear</div>
-                    <div className={styles.sectionHead}>Corrosion</div>
-                  </div>
-                  <div className={styles.levelCol}>
-                    <div className={styles.formField}>
-                      <label htmlFor="degradation-wear-level">
-                        No. of levels
-                      </label>
-                      <input
-                        className={styles.input}
-                        value={degradationWearLevels}
-                        onChange={changeDegradationWearLevel}
-                        type="number"
-                        id="degradation-wear-level"
-                        name="degradation-wear-level"
-                      />
-                    </div>
-                    <div className={styles.formField}>
-                      <label htmlFor="degradation-corrosion-level">
-                        No. of levels
-                      </label>
-                      <input
-                        className={styles.input}
-                        type="text"
-                        id="degradation-corrosion-level"
-                        name="degradation-corrosion-level"
-                      />
-                    </div>
-                  </div>
-                  <div className={styles.levelCol}></div>
-                </div>
-              </>
-            )} */}
             {condition === "sensorBased" && (
               <>
                 <RadioGroup

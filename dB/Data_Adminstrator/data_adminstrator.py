@@ -348,12 +348,12 @@ class Data_Administrator:
                 cursor.commit()
 
                 # Return a message if the process is completed
-                return "ETL process completed successfully"
+                return jsonify({'code': 1,'message': 'Equipment registered successfully'})
 
         except Exception as e:
             # Rollback changes in case of an error
             cnxn.rollback()
-            return jsonify({'status': 'error', 'message': f'Error executing the query: {str(e)}'})
+            return jsonify({'code': 0, 'message': f'Error executing the query: {str(e)}'})
 
     def overhaul_data_reset(self, component_id, nomenclature, ship_name):
         # First, delete existing data for the specified component_id

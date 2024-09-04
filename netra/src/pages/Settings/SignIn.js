@@ -1,21 +1,18 @@
-import React, { useEffect, useState } from "react";
-import styles from "./SignIn.module.css";
 import {
-  Paper,
-  makeStyles,
-  InputBase,
   Button,
-  FormControlLabel,
-  Checkbox,
+  InputBase,
+  Paper,
   Typography,
+  makeStyles
 } from "@material-ui/core";
-import { Link } from "react-router-dom";
-import CustomizedSnackbars from "../../ui/CustomSnackBar";
-import { useDispatch } from "react-redux";
-import { setLevel } from "../../store/Levels";
-import { useLocation } from "react-router-dom";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { Link, useLocation } from "react-router-dom";
+import { setLevel } from "../../store/Levels";
+import CustomizedSnackbars from "../../ui/CustomSnackBar";
+import styles from "./SignIn.module.css";
 
 const InputStyles = makeStyles({
   root: {
@@ -41,8 +38,6 @@ const SignIn = (props) => {
   const location = useLocation();
   const message = location.state?.message;
   const [open, setOpen] = React.useState(!!message);
-
-  const [keepLogin, setKeepLogin] = useState(false);
   const InputClasses = InputStyles();
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
@@ -50,8 +45,6 @@ const SignIn = (props) => {
   const handleMClose = () => {
     setOpen(false);
   };
-
-  const [showSnackBar, setShowSnackBar] = useState(false);
   const [SnackBarMessage, setSnackBarMessage] = useState({
     severity: "error",
     message: "",
@@ -129,7 +122,7 @@ const SignIn = (props) => {
       </Snackbar>
       <Paper className={styles.SignInPaper} elevation={5}>
         <div className={styles.welcome_text}>
-          <img src="/netra-logo-removebg.png" height={300} />
+          <img src="/netra-logo-removebg.png" height={300} alt="Netra Logo"/>
           <div className={styles.netra}>NETRA</div>
         </div>
         <div className={styles.input_fields}>

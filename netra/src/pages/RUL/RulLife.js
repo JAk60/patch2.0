@@ -23,6 +23,7 @@ import AccessControl from "../Home/AccessControl";
 import RULInputs from "./RULInputs";
 import styles from "./rul.module.css";
 import InfoIcon from "@material-ui/icons/Info";
+import CustomizedSnackbars from "../../ui/CustomSnackBar";
 
 const useStyles = makeStyles({
   autocomplete: {
@@ -53,21 +54,27 @@ const useStyles = makeStyles({
   },
 });
 
-export default function () {
+export default function RulLife () {
   const [submitted, setSubmitted] = useState(false);
   const [SnackBarMessage, setSnackBarMessage] = useState({
     severity: "error",
     message: "This is awesome",
     showSnackBar: false,
   });
+  const onHandleSnackClose = () => {
+    setSnackBarMessage({
+      severity: "error",
+      message: "Please Add Systems",
+      showSnackBar: false,
+    });
+  };
   const [mps, setMps] = useState([]);
-  const [ssrul, setSSRul] = useState([]);
   const [dtable, setDtable] = useState([]);
   const [openDialog, setOpenDialog] = useState(false);
   const [openNoteDialog, setOpenNoteDialog] = useState(true);
   const [dontShowAgain, setDontShowAgain] = useState(false);
   const [sensor, setSensor] = useState({ name: "", P: 0, F: 0 });
-  const [hoveredChip, setHoveredChip] = useState(null); // New state variable
+  
   const classes = useStyles();
   const allEquipmentData = useSelector(
     (state) => state.userSelection.componentsData
@@ -127,7 +134,6 @@ export default function () {
       const data = await response.json();
 
       if (data.code) {
-        setSSRul(data.results);
         setDtable(data.results.Table);
         setOpenDialog(true);
         setSensor({
@@ -265,8 +271,6 @@ console.log("WWWWWWWWWWWWWWW",mps);
                         }`}
                         color="secondary"
                         variant="outlined"
-                        onMouseEnter={() => setHoveredChip(sensor)}
-                        onMouseLeave={() => setHoveredChip(null)}
                         onClick={() => handleChipClick(sensor)}
                       />
                     ))}
@@ -358,6 +362,12 @@ console.log("WWWWWWWWWWWWWWW",mps);
           />
         </DialogContent>
       </Dialog>
+      {SnackBarMessage.showSnackBar && (
+        <CustomizedSnackbars
+          message={SnackBarMessage}
+          onHandleClose={onHandleSnackClose}
+        />
+      )}
     </>
   );
 }

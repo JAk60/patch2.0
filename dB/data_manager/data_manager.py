@@ -130,6 +130,7 @@ class Data_Manager:
             return final_data
 
     def insert_data(self, data_obj):
+        print(data_obj,"data_obj")
         data = data_obj["data"]
         dt = data_obj["dataType"]
         res = {}

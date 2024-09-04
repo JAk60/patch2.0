@@ -147,8 +147,7 @@ class ETL():
                     merge_query = """
                     MERGE INTO data_manager_overhaul_maint_data AS target
                     USING (VALUES (?, ?, ?, ?, ?,NULL, ?, NULL)) AS source (id, component_id, overhaul_id, date, maintenance_type, running_age, associated_sub_system, cmms_running_age)
-                    ON target.component_id = source.component_id
-                    AND target.date = source.date
+                    ON target.id = source.id
                     WHEN NOT MATCHED THEN
                     INSERT (id, component_id, overhaul_id, date, maintenance_type, running_age, associated_sub_system, cmms_running_age)
                     VALUES (?, ?, ?, ?, ?,NULL, ?, NULL);
@@ -166,5 +165,3 @@ class ETL():
         except Exception as e:
             # Return an error message if something went wrong
             return f"Error during ETL process: {str(e)}"
-        
-    

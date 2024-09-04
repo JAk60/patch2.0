@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from "react";
 import {
   Card,
   CardContent,
@@ -6,6 +5,7 @@ import {
   Grid,
   Typography,
 } from "@material-ui/core";
+import React from "react";
 
 
 const styles = {
@@ -34,7 +34,6 @@ const styles = {
     marginTop: "30px",
     boxShadow: "0 3px 10px rgb(0 0 0 / 0.2)",
     fontSize: "24px",
-    background: "rgb(73,143,232)",
     color:"white",
     background: "linear-gradient(90deg, rgba(73,143,232,1) 5%, rgba(42,42,114,1) 100%)"
   },

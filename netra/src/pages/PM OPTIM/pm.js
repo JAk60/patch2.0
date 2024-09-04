@@ -96,7 +96,7 @@ const PM = () => {
   return (
     <>
       <Navigation />
-      <div>
+      <div style={{marginLeft: "8%",width: "88vw"}}>
         <div className={styles.userSelect}>
           <UserSelection />
           <Button variant="contained" color="primary" onClick={HandleSubmit}>Submit</Button>
@@ -170,7 +170,7 @@ const PM = () => {
           </Grid>
 
 
-          <div className={`${styles.userSelection} ${styles.flexibleBorders}`}>
+          <div className={`${styles.userSelection}`}>
             {selectedOption && (
               <OptiQ
                 option={selectedOption}

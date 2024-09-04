@@ -1,18 +1,14 @@
-import React, { useState } from 'react'
+import { Button } from '@material-ui/core';
+import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useHistory } from 'react-router';
 import Navigation from '../../../components/navigation/Navigation';
-import styles from "../CreateMaintenance/CreateMaintenance.module.css";
-import UserSelection from '../../../ui/userSelection/userSelection'
-import { Button, RadioGroup, FormControlLabel, Radio } from '@material-ui/core';
 import TreeComponent from '../../../components/sortableTree/SortableTree';
-import { useSelector, useDispatch } from 'react-redux';
 import { treeDataActions } from "../../../store/TreeDataStore";
-import AutoSelect from '../../../ui/Form/AutoSelect';
-import { Route, useHistory } from 'react-router';
-// import { useHistory } from "react-router-dom";
-// import {useNavigate} from 'react-router-dom'
-// import AssignType from './AssignType';
-import AssignType from '../CreateMaintenance/AssignType';
 import CustomizedSnackbars from '../../../ui/CustomSnackBar';
+import AutoSelect from '../../../ui/Form/AutoSelect';
+import UserSelection from '../../../ui/userSelection/userSelection';
+import styles from "../CreateMaintenance/CreateMaintenance.module.css";
 
 
 

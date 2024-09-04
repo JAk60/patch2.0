@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from "react";
 import {
 	Button,
 	InputLabel,
@@ -7,24 +6,25 @@ import {
 	makeStyles,
 } from "@material-ui/core";
 import { MuiPickersUtilsProvider } from "@material-ui/pickers";
+import React, { useEffect, useState } from "react";
 
 import MomentUtils from "@date-io/moment";
 import AddIcon from "@material-ui/icons/Add";
 import DeleteIcon from "@material-ui/icons/Delete";
 import { Autocomplete } from "@material-ui/lab";
 import { AgGridColumn } from "ag-grid-react";
+import { useDispatch, useSelector } from "react-redux";
 import { v4 as uuidv4 } from "uuid";
 import Navigation from "../../components/navigation/Navigation";
+import { taskActions } from "../../store/taskStore";
 import CustomizedSnackbars from "../../ui/CustomSnackBar";
 import Table from "../../ui/Table/DataManagerTable";
-import { taskTableColumns } from "./TaskGridColumns";
-import styles from "./tDashboard.module.css"
-import { useDispatch, useSelector } from "react-redux";
-import { taskActions } from "../../store/taskStore";
 import AccessControl from "../Home/AccessControl";
 import PaperTable from "./PaperTable";
 import CollapsibleTable from "./ResTable";
+import { taskTableColumns } from "./TaskGridColumns";
 import RenderMultipleComponent from "./TaskRenderMultipleComponent";
+import styles from "./tDashboard.module.css";
 
 const TaskDashboard = () => {
 	const dropDownStyle = makeStyles({
@@ -90,12 +90,11 @@ const TaskDashboard = () => {
 		(state) => state.taskData.currentTaskName
 	);
 	///point1
-	const [missionD, setMissionD] = useState([]);
 
 	const onCellValueChanged = (params) => {
 		console.table(phasedata, "phase data");
 		const { data } = params;
-		const { missionType, duration } = data;
+		const { missionType } = data;
 		console.log(missionType);
 		if (params.colDef.field === "duration") {
 			const updatedDurations = missionDurations.map((duration, index) =>
@@ -103,11 +102,6 @@ const TaskDashboard = () => {
 			);
 			setMissionDurations(updatedDurations);
 		}
-		// setMissionD(prev =>{
-		//   return [...prev, {[missionType]: duration}];
-
-		// });
-		console.log(missionD);
 	};
 	const ImportColumns = [
 		<AgGridColumn

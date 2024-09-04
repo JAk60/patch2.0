@@ -1,12 +1,12 @@
-import React,{useState} from 'react'
+import { Button } from '@material-ui/core';
+import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import Navigation from '../../../components/navigation/Navigation';
-import styles from "./ShareMaintenance.module.css";
-import UserSelection from '../../../ui/userSelection/userSelection'
-import { Button,RadioGroup,FormControlLabel,Radio } from '@material-ui/core';
 import TreeComponent from '../../../components/sortableTree/SortableTree';
-import { useSelector,useDispatch } from 'react-redux';
 import { treeDataActions } from "../../../store/TreeDataStore";
 import AutoSelect from '../../../ui/Form/AutoSelect';
+import UserSelection from '../../../ui/userSelection/userSelection';
+import styles from "./ShareMaintenance.module.css";
 
 
 
@@ -57,14 +57,10 @@ const ShareMaintenance=(props)=> {
       });
   };
 
-      const[nextOption,setNext]=useState('assignMaintenance')
       const[selectedComponent,setComponent]=useState(null)
       const selectOnChange=(e,value)=>{
         debugger
         setComponent(value)
-      }
-      const handleNextChange=(e)=>{
-        setNext(e.target.value)
       }
     return (
       <>

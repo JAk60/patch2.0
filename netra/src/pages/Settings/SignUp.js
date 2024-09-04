@@ -1,25 +1,21 @@
-import React, { useState } from 'react';
-import styles from './SignUp.module.css';
-import CustomizedSnackbars from '../../ui/CustomSnackBar';
 import {
-  Paper,
-  makeStyles,
-  InputBase,
   Button,
-  FormControlLabel,
-  Checkbox,
-  InputAdornment,
   IconButton,
+  InputAdornment,
+  InputBase,
+  Paper,
+  TextField,
   Typography,
-  TextField, // Import the TextField component
+  makeStyles
 } from '@material-ui/core';
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import HomeIcon from '@material-ui/icons/Home';
-import { Link } from 'react-router-dom';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
+import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
+import CustomizedSnackbars from '../../ui/CustomSnackBar';
+import styles from './SignUp.module.css';
 
 const InputStyles = makeStyles({
   root: {
@@ -110,7 +106,7 @@ const SignUp = () => {
           <HomeIcon/>
         </IconButton>
         <div className={styles.welcome_text}>
-          <img src='/netra-logo-removebg.png' height={300} />
+          <img src='/netra-logo-removebg.png' height={300} alt='Netra Logo'/>
           <div className={styles.netra}>NETRA</div>
         </div>
         <div className={styles.input_fields}>

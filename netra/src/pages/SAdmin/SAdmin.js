@@ -1,22 +1,22 @@
-import React, { useState, useEffect } from "react";
 import {
+  Box,
+  CssBaseline,
   Drawer,
   List,
   ListItem,
-  ListItemText,
   ListItemIcon,
-  CssBaseline,
+  ListItemText,
   makeStyles,
   Typography,
-  Box,
 } from "@material-ui/core";
+import AccountBalanceIcon from "@material-ui/icons/AccountBalance";
+import BorderColorIcon from "@material-ui/icons/BorderColor";
+import DashboardIcon from "@material-ui/icons/Dashboard";
+import ExitToAppIcon from "@material-ui/icons/ExitToApp";
+import React, { useEffect, useState } from "react";
 import AccCreate from "./AccCreate";
 import ManageUsers from "./Manage_User";
 import WelcomePage from "./welcome";
-import BorderColorIcon from "@material-ui/icons/BorderColor";
-import AccountBalanceIcon from "@material-ui/icons/AccountBalance";
-import ExitToAppIcon from "@material-ui/icons/ExitToApp";
-import DashboardIcon from "@material-ui/icons/Dashboard";
 
 const useStyles = makeStyles((theme) => ({
   drawer: {
@@ -59,7 +59,6 @@ const useStyles = makeStyles((theme) => ({
 const SAdmin = ({ logout }) => {
   const classes = useStyles();
   const [selectedMenu, setSelectedMenu] = useState("Welcome");
-  const [setUsers,setUsersData]=useState([])
 
   const handleMenuClick = (menu) => {
     setSelectedMenu(menu);

@@ -1,15 +1,14 @@
-import React,{useState} from 'react'
+import { Button } from '@material-ui/core';
+import { AgGridColumn } from 'ag-grid-react';
+import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import Navigation from '../../../components/navigation/Navigation';
-import styles from "./ModifyandDisplayMaintenance.module.css";
-import UserSelection from '../../../ui/userSelection/userSelection'
-import { Button,RadioGroup,FormControlLabel,Radio } from '@material-ui/core';
 import TreeComponent from '../../../components/sortableTree/SortableTree';
-import { useSelector,useDispatch } from 'react-redux';
 import { treeDataActions } from "../../../store/TreeDataStore";
 import AutoSelect from '../../../ui/Form/AutoSelect';
-import { AgGridColumn } from 'ag-grid-react';
-import {v4 as uuid} from 'uuid';
-import Table from '../../../ui/Table/Table'
+import Table from '../../../ui/Table/Table';
+import UserSelection from '../../../ui/userSelection/userSelection';
+import styles from "./ModifyandDisplayMaintenance.module.css";
 
 const ModifyandDisplayMaintenance=(props)=> {
 
@@ -111,14 +110,10 @@ const ModifyandDisplayMaintenance=(props)=> {
         )
       });
   };
-      const[nextOption,setNext]=useState('assignMaintenance')
       const[selectedComponent,setComponent]=useState(null)
       const selectOnChange=(e,value)=>{
         debugger
         setComponent(value)
-      }
-      const handleNextChange=(e)=>{
-        setNext(e.target.value)
       }
       const updateFinalRowData = (allRows) => {
         setTableRows(allRows);

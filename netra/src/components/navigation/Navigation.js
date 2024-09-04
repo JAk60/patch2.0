@@ -1,20 +1,22 @@
-import AccountCircleTcon from "@material-ui/icons/AccountCircle";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
-import classes from "./Navigation.module.css";
-import { Link } from "react-router-dom";
 import { useState } from "react";
-import SideBarData from "./SideBarData";
-import { useDispatch, useSelector } from "react-redux";
-import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import { useDispatch } from "react-redux";
+import { Link } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom/cjs/react-router-dom.min";
 import { resetLevels } from "../../store/Levels";
+import classes from "./Navigation.module.css";
+import { getSideBarData } from "./SideBarData";
+import { LowLevelSideBarData } from "./LowLevelSideBarData";
 
 const Navigation = () => {
+  const location = useLocation();
+  const User = localStorage.getItem("userData");
+  console.log('User', User)
   const [sidebar, setSidebar] = useState(true);
   const history = useHistory();
   const dispatch = useDispatch();
   const Logout = () => {
     localStorage.setItem("login", false);
-    const isLoggedIn = localStorage.getItem("login");
     history.push("/sign_in");
     dispatch(resetLevels({
       L1: false,
@@ -32,54 +34,54 @@ const Navigation = () => {
   const onMouseOutHandler = () => {
     setSidebar(true);
   };
+  const SideBarData = getSideBarData(location.pathname);
+  const LowLevelSideBar = LowLevelSideBarData(location.pathname,JSON.parse(User));
+  console.log('LowLevelSideBar', LowLevelSideBar)
   return (
     <nav
       className={classes.navigation}
       onMouseEnter={onMouseInHandler}
       onMouseLeave={onMouseOutHandler}
     >
-      <ul className={classes.nav}>
-        {/* <li className={classes.nav_link}>
-          <Link to='/module_select'>
-            <AccountCircleTcon fontSize="large" />
-          </Link>
-        </li> */}
-        {SideBarData.map((item, index) => {
-          return (
-            <li key={index} className={classes.nav_link}>
-              <Link to={item.path}>
-                {item.icon}
-                <div
-                  className={
-                    sidebar
-                      ? `${classes.div}`
-                      : `${classes.div} + ' ' + ${classes.active}`
-                  }
-                >
-                  {item.title}
-                </div>
-              </Link>
-            </li>
-          );
-        })}
-        <hr className={classes.hr}></hr>
-        <li className={classes.nav_link}>
-          <Link onClick={Logout}>
-            <ExitToAppIcon fontSize="large" />
-            <div
-              className={
-                sidebar
-                  ? `${classes.div}`
-                  : `${classes.div} + ' ' + ${classes.active}`
-              }
-            >
-              Logout
-            </div>
-          </Link>
-        </li>
-      </ul>
+      {(JSON.parse(User).level === 'L1' || JSON.parse(User).level === 'L6') ?
+        NavIterator(SideBarData, sidebar, Logout)
+        : NavIterator(LowLevelSideBar, sidebar, Logout)}
     </nav>
   );
 };
 
 export default Navigation;
+function NavIterator(SideBarData, sidebar, Logout) {
+  return <ul className={classes.nav}>
+    {SideBarData?.map((item, index) => {
+      return (
+        <li key={index} className={classes.nav_link}>
+          <Link to={item.path}>
+            {item.icon}
+            <div
+              className={sidebar
+                ? `${classes.div}`
+                : `${classes.div} + ' ' + ${classes.active}`}
+            >
+              {item.title}
+            </div>
+          </Link>
+        </li>
+      );
+    })}
+    <hr className={classes.hr}></hr>
+    <li className={classes.nav_link}>
+      <Link onClick={Logout}>
+        <ExitToAppIcon fontSize="large" />
+        <div
+          className={sidebar
+            ? `${classes.div}`
+            : `${classes.div} + ' ' + ${classes.active}`}
+        >
+          Logout
+        </div>
+      </Link>
+    </li>
+  </ul>;
+}
+

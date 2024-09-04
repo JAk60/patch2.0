@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
-import { TextField, Button, Dialog, DialogTitle, DialogContent, DialogActions, Grid, Typography } from "@material-ui/core";
-import styles from "./pm.module.css";
-import OptTable from "./OptTable";
+import { Button, Grid, TextField, Typography } from "@material-ui/core";
+import React, { useEffect, useState } from "react";
 import GroupTable from "./GroupTable";
+import OptTable from "./OptTable";
+import styles from "./pm.module.css";
 
 const OptiQ = ({ questions, name, currQ, option, eta, beta }) => {
   const [answers, setAnswers] = useState({
@@ -28,7 +28,7 @@ const OptiQ = ({ questions, name, currQ, option, eta, beta }) => {
       eeta: eta,
       beta: beta,
     });
-  }, [eta, beta]);
+  }, [eta, beta, answers]);
 
   const handleAddRow = (e) => {
     e.preventDefault();

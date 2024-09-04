@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from "react";
-import Navigation from "../../components/navigation/Navigation";
-import classes from "./configureHistory2.module.css";
-import Button from "@material-ui/core/Button";
-import CustomSelect from "../../ui/Form/CustomSelect";
-import { components } from "../../ui/userSelection/userSelectionData";
 import { Grid, makeStyles, Slider } from "@material-ui/core";
+import Button from "@material-ui/core/Button";
+import React, { useState } from "react";
+import Navigation from "../../components/navigation/Navigation";
+import CustomSelect from "../../ui/Form/CustomSelect";
+import classes from "./configureHistory2.module.css";
 
 const useStyles = makeStyles({
   slider: {
@@ -23,24 +22,6 @@ const ConfigureHistory2 = () => {
     "Vikrant",
   ]);
   const [eqData, setEqData] = useState(["DA1", "DA2", "DA3", "DA4", "DA5"]);
-  // useEffect(() => {
-  //   fetch("/fetch_user_selection", {
-  //     method: "GET",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //       Accept: "application/json",
-  //     },
-  //   })
-  //     .then((res) => {
-  //       return res.json();
-  //     })
-  //     .then((data) => {
-  //       const userData = data["data"];
-  //       const shipName = userData.map((x) => x.shipName);
-  //       setEqData(data["eqData"]);
-  //       setPlatformName(shipName);
-  //     });
-  // }, [eqData, platformName, setEqData, setPlatformName]);
   const Sliderclasses = useStyles();
   const marks = [
     {

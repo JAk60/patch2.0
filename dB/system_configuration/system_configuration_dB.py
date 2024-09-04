@@ -78,7 +78,7 @@ class System_Configuration_dB():
                     print(result[0])  # Assuming the message is in the first column of the result
 
             cursor.commit()
-            return self.success_return
+            return {"message":"Eqipment created successfully"}
         except Exception as e:
             self.error_return['message'] = str(e)
             return self.error_return
@@ -130,20 +130,20 @@ class System_Configuration_dB():
                 pm_applicable = d['PreventiveMaintenaceApplicable']
                 pm_interval = float(d['PreventiveMaintenaceInterval'])
                 replaced_during_mission = d['ComponentsReplaced']
+                condition_monitoring_applicable = d['ConditionMonitoring']
                 is_component_exist = check_component_exist(
                     'maintenance_configuration_data', component_id)
                 if is_component_exist:
                     self.update_maintenance_config(d)
                 else:
-                    cursor.execute(insert_maintenance, (maintenance_id, component_id, repair_type,
-                                    pm_applicable, pm_interval, replaced_during_mission, "No"))
+                    cursor.execute(insert_maintenance, maintenance_id, component_id, repair_type,
+                                   pm_applicable, pm_interval, replaced_during_mission,
+                                   condition_monitoring_applicable)
             cursor.commit()
             return self.success_return
         except Exception as e:
             self.error_return['message'] = str(e)
             return self.error_return
-
-
 
     def insert_failure_data(self, rows):
         try:
@@ -260,20 +260,19 @@ class System_Configuration_dB():
         repair_type = d['RepairType']
         pm_applicable = d['PreventiveMaintenaceApplicable']
         pm_interval = d['PreventiveMaintenaceInterval']
-        replaced_during_mission = d['ComponentsReplaced'] 
-        update_sql = '''UPDATE maintenance_configuration_data SET repair_type=?, 
-                        pm_applicable=?, pm_interval=?, is_system_param_recorded=?, 
-                        can_be_replaced_by_ship_staff=? WHERE component_id=?'''
+        replaced_during_mission = d['ComponentsReplaced']
+        condition_monitoring_applicable = d['ConditionMonitoring']
+        update_sql = '''update maintenance_configuration_data set repair_type  = ?, pm_applicable = ?,
+         pm_interval = ?, is_system_param_recorded = ?, can_be_replaced_by_ship_staff = ?
+         where component_id=?'''
         try:
-            # Assuming 'cursor' and 'conn' are defined earlier in your code
-            cursor.execute(update_sql, (repair_type, pm_applicable, pm_interval, "No", replaced_during_mission, component_id))
-            cursor.commit()  # Commit the transaction
-            return self.success_return
+            cursor.execute(update_sql, repair_type, pm_applicable, pm_interval,
+                           condition_monitoring_applicable, replaced_during_mission, component_id)
+            # cursor.commit()
+            self.success_return
         except Exception as e:
             self.error_return['message'] = str(e)
             return self.error_return
-
-
 
     def update_failure(self, data):
         failure_id = data['failure_id']

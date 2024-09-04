@@ -72,7 +72,7 @@
 .parent {
   display: flex;
   flex-direction: column;
-  justify-content: end;
+  justify-content: flex-end;
   width: 100%;
   text-align: center;
   margin-left: 2%;

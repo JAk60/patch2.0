@@ -24,7 +24,6 @@ const useStyles = makeStyles({
   },
   paper: {
     width: "70%",
-    padding: "40px 0;",
     textAlign: "center",
     padding: "20px 20px 30px 20px",
     borderRadius: "10px",

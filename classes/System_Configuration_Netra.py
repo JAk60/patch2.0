@@ -27,26 +27,22 @@ class System_Configuration_N():
         return data[0]
 
     def fetch_system(self, data,component_id):
+        failure_data = self.fmodesData(component_id)
         nomenclature = data['nomenclature']
         ship_name = data['ship_name']
-        if component_id is None:
-            component_id=self.fetch_component_id(ship_name,nomenclature)
-        failure_data = self.fmodesData(component_id)
-        sql = '''WITH ComponentHierarchy AS (
-                            SELECT s.*
-                            FROM system_configuration AS s
-                            WHERE s.component_id = ?
-                            UNION ALL
-                            SELECT s.*
-                            FROM system_configuration AS s
-                            INNER JOIN ComponentHierarchy AS ch ON s.parent_id = ch.component_id
-                        )
-                        SELECT s.*, ab.*
-                        FROM ComponentHierarchy AS s
-                        LEFT JOIN maintenance_configuration_data AS ab ON s.component_id = ab.component_id
-                        WHERE s.ship_name = ?;
+        sql = '''SELECT s.*, ab.*
+                FROM system_configuration AS s
+                LEFT JOIN maintenance_configuration_data AS ab ON s.component_id = ab.component_id
+                WHERE (s.nomenclature = ? AND s.ship_name = ?)
+                OR s.component_id IN (
+                    SELECT DISTINCT s1.component_id
+                    FROM system_configuration AS s1
+                    LEFT JOIN system_configuration AS s2 ON s1.component_id = s2.parent_id
+                    WHERE s1.parent_id = ?
+                        OR s1.component_id = ?
+                );
         '''
-        cursor.execute(sql,component_id, ship_name)
+        cursor.execute(sql, nomenclature, ship_name, component_id, component_id)
         data = cursor.fetchall()
         f_data = []
         if data:
@@ -64,11 +60,11 @@ class System_Configuration_N():
                     'shipCategory': r[7],
                     'shipClass': r[8],
                     'shipName': r[6],
-                    'repairType': r[15],
-                    'canBeReplacedByShipStaff': r[17],
-                    'isSystemParamRecorded': r[18],
-                    'pmApplicable': r[16],
-                    'pmInterval': r[17],
+                    'repairType': r[16],
+                    'canBeReplacedByShipStaff': r[18],
+                    'isSystemParamRecorded': r[19],
+                    'pmApplicable': r[17],
+                    'pmInterval': r[18],
                     'nomenclature': r[11]
                 })
         else:
