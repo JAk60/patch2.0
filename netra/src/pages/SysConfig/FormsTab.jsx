@@ -73,9 +73,9 @@ export default function FormsTab() {
 					return <MaintenanceFormikForm />;
 				case "Failure Modes":
 					return <FMFormikForm />;
-				case "Additional Information":
+				case "Additional Information (Optional)":
 					return <AddInfoFormikForm />;
-				case "Maintenance Data":
+				case "Maintenance Data (Optional)":
 					return <MaintenanceDataFormik />;
 				default:
 					return <Typography>Hello, nothing here</Typography>;

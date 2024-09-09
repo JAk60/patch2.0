@@ -1,12 +1,10 @@
 // BackToHomeFab.js
-import React from "react";
 import Fab from "@material-ui/core/Fab";
-
+import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
-import HomeIcon from "@material-ui/icons/Home";
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { useDispatch } from "react-redux";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { elementActions } from "../../store/elements";
 
 const useStyles = makeStyles((theme) => ({

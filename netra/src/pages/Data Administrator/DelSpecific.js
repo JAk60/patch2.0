@@ -20,6 +20,7 @@ import {
 import { Autocomplete } from "@material-ui/lab";
 import { useSelector } from "react-redux";
 import AdminInputs from "./AdminInputs";
+import CustomizedSnackbars from "../../ui/CustomSnackBar";
 
 const useStyles = makeStyles({
   root: {
@@ -45,7 +46,7 @@ export default function DelSpecific() {
   const [table, setTable] = useState("");
   const [selectedRows, setSelectedRows] = useState([]);
   const [searchKeyword, setSearchKeyword] = useState("");
-  const [snackBarMessage, setSnackBarMessage] = useState({
+  const [SnackBarMessage, setSnackBarMessage] = useState({
     severity: "success",
     message: "",
     showSnackBar: false,
@@ -276,7 +277,13 @@ export default function DelSpecific() {
         value.toLowerCase().includes(searchKeyword.toLowerCase())
     )
   );
-
+  const onHandleSnackClose = () => {
+    setSnackBarMessage({
+      severity: "error",
+      message: "Close",
+      showSnackBar: false,
+    });
+  };
   return (
     <div
       style={{
@@ -409,6 +416,12 @@ export default function DelSpecific() {
           </Button>
         </DialogActions>
       </Dialog>
+      {SnackBarMessage.showSnackBar && (
+        <CustomizedSnackbars
+          message={SnackBarMessage}
+          onHandleClose={onHandleSnackClose}
+        />
+      )}
     </div>
   );
 }

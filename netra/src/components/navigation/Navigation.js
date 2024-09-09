@@ -43,7 +43,7 @@ const Navigation = () => {
       onMouseEnter={onMouseInHandler}
       onMouseLeave={onMouseOutHandler}
     >
-      {(JSON.parse(User).level === 'L1' || JSON.parse(User).level === 'L6') ?
+      {(JSON.parse(User).level === 'L1' || JSON.parse(User).level === 'L5') ?
         NavIterator(SideBarData, sidebar, Logout)
         : NavIterator(LowLevelSideBar, sidebar, Logout)}
     </nav>

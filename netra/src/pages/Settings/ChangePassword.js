@@ -84,7 +84,7 @@ const PassModal = (props) => {
         <Fade in={props.passModal}>
         <Paper className={styles.PassPaper} elevation={5}>
             <div>
-            <img src='/netra-logo.png' width={60} height={60}/>
+            <img src='/netra-logo.png' width={60} height={60} alt='Netra Logo'/>
             <div className={styles.netra}>NETRA</div>
             </div>
             <div style={{textAlign:'center'}}>

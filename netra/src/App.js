@@ -4,28 +4,25 @@ import { useDispatch } from "react-redux";
 import { Route, BrowserRouter as Router, Switch } from "react-router-dom";
 import "./App.css";
 import CDashboard from "./pages/CDashboard/CDashboard";
+import Administrator from "./pages/Data Administrator/Administrator";
+import DataManagerView from "./pages/DataManager/DataManagerView";
 import Help from "./pages/Help/Help";
+import MainHistoryView from "./pages/Historical Data/MainHistoryView";
 import Home from "./pages/Home/Home";
 import MaintenanceAllocation from "./pages/Maintenance Allocation/MaintenanceAllocation";
 import PM from "./pages/PM OPTIM/pm";
 import RulLife from './pages/RUL/RulLife';
-import SysConfig from "./pages/SysConfig/SysConfig";
-import Administrator from "./pages/Data Administrator/Administrator";
-import DataManagerView from "./pages/DataManager/DataManagerView";
-import MainHistoryView from "./pages/Historical Data/MainHistoryView";
 import MainRel from "./pages/Reliability Dashboard/MainRel";
 import ForgotPass from "./pages/Settings/ForgotPassword/Forgot_Password";
 import SignIn from "./pages/Settings/SignIn";
 import SignUp from "./pages/Settings/SignUp";
-import ConfigureHistory from "./pages/Settings/configureHistory";
-import ConfigureHistory2 from "./pages/Settings/configureHistory2";
-import UserApproval from "./pages/Settings/userApproval";
+import SysConfig from "./pages/SysConfig/SysConfig";
 import SysDocs from "./pages/System Docs/SysDocs";
 import TaskDashboard from "./pages/TaskDashboard/TaskDashboard";
 import ViewData from "./pages/ViewData/ViewData";
 import DragNDrop from "./pages/dragNdrop/DragNdrop";
-import { setLevel } from "./store/Levels";
 import UserSelectionConfiguration from "./pages/userSelectionConfig/UserSelectionConfiguration";
+import { setLevel } from "./store/Levels";
 
 const theme = createMuiTheme({
   palette: {
@@ -69,6 +66,7 @@ function App() {
     if (storedUserData) {
       dispatch(setLevel(storedUserData));
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return (
     <ThemeProvider theme={theme}>
@@ -91,15 +89,6 @@ function App() {
               setLoggedIn={setLoggedIn}
               settings={settings} />
           )} />
-        <Route
-          path="/configure_history"
-          exact
-          component={ConfigureHistory} />
-        <Route
-          path="/configure_history2"
-          exact
-          component={ConfigureHistory2} />
-        <Route path="/user_approval" exact component={UserApproval} />
         <Route path="/forgot_password" exact component={ForgotPass} />
         <Route path="/know_netra" exact component={Help} />
         <Route

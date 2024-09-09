@@ -2,14 +2,12 @@
 Reference: https://codesandbox.io/s/thirsty-moon-9egd9?file=/src/MultiSelect/MultiSelect.js
 */
 
-import React from "react";
-import TextField from "@material-ui/core/TextField";
-import Autocomplete, {
-  createFilterOptions,
-} from "@material-ui/lab/Autocomplete";
-import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
-import CheckBoxIcon from "@material-ui/icons/CheckBox";
 import { Checkbox } from "@material-ui/core";
+import TextField from "@material-ui/core/TextField";
+import CheckBoxIcon from "@material-ui/icons/CheckBox";
+import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
+import Autocomplete from "@material-ui/lab/Autocomplete";
+import React from "react";
 
 const MultiSelect = ({
   items,
@@ -64,23 +62,17 @@ const MultiSelect = ({
   );
   const getOptionSelected = (option, anotherOption) =>
     option.name === anotherOption.name;
-  const filter = createFilterOptions();
   return (
     <Autocomplete
       multiple
       style={{ width: 500 }}
       options={items}
       value={selectedValues}
-      // groupBy={(option) => option.parentName}
       disableCloseOnSelect
       limitTags={2}
       getOptionLabel={getOptionLabel}
       getOptionSelected={getOptionSelected}
       noOptionsText={noOptionsText}
-      // filterOptions={(options, params) => {
-      //   const filtered = filter(options, params);
-      //   return [{ label: selectAllLabel, name: "Select All" }, ...filtered];
-      // }}
       onChange={handleChange}
       renderOption={optionRenderer}
       renderInput={inputRenderer}

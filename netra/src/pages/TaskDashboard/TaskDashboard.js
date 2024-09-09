@@ -54,16 +54,14 @@ const TaskDashboard = () => {
 	const [gridCompApi, setGridCompApi] = useState(null);
 	const [gridTaskApi, setGriTaskdApi] = useState(null);
 	const [missionProfileData, setMissionData] = useState([]);
-	const [rowState, setRows] = useState([]);
+	const rowState= []
 	const [rowCompState, setCompRows] = useState([]);
 	const dispatch = useDispatch();
 	const [phasedata, setPhaseData] = useState([]);
 	const [missionDurations, setMissionDurations] = useState([]);
-	let ParallelIds = [];
 	const setParallelIds = (d) => {
 		console.log("This is shit!!");
 		console.log(d);
-		ParallelIds = d;
 	};
 	console.log("phasedata", phasedata);
 	console.log(rowCompState, "This is shit!!");
@@ -73,8 +71,7 @@ const TaskDashboard = () => {
 	const [totalReliability, setTotalReliability] = useState(null);
 	const [showPaper, setShowPaper] = useState(false);
 	const [showInputTables, setShowInputTables] = useState(true);
-	const [selectedTaskName, setselectedTaskName] = useState("");
-
+	const selectedTaskName="";
 	const [taskTableData, settaskTableData] = useState([]);
 	const [taskMissionTableData, settaskMissionTableData] = useState([]);
 	const [SnackBarMessage, setSnackBarMessage] = useState({
@@ -216,10 +213,12 @@ const TaskDashboard = () => {
 						if (recommendation_array.hasOwnProperty(item["id"])) {
 							return {
 								...item,
+								// eslint-disable-next-line no-useless-computed-key
 								["components"]:
 									recommendation_array[item["id"]],
 							};
 						}
+						return item
 					});
 					console.log(results);
 					setSnackBarMessage({
@@ -371,6 +370,7 @@ const TaskDashboard = () => {
 				settaskShipNameOption(task_ship_name);
 				dispatch(taskActions.onLoad({ taskData: data }));
 			});
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const classes = dropDownStyle();

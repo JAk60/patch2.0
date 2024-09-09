@@ -197,6 +197,7 @@ export default function MainHistoryView() {
 						beta: x.ShapeParameter,
 					};
 				}
+				return null
 			});
 			console.log("");
 		} else if (dataType === "insertOpData") {
@@ -250,6 +251,7 @@ export default function MainHistoryView() {
 							subSystemId: subSystemId,
 						};
 					}
+					return null
 				});
 				data = [{ mainData: mainFinalData, subData: subFinalData }];
 			} catch {

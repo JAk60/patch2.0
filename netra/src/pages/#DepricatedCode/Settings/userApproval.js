@@ -8,14 +8,14 @@ import DeleteIcon from "@material-ui/icons/Delete";
 
 function UserApproval() {
   const [gridApi, setGridApi] = useState(null);
-  const [rowState, setRows] = useState([
+  const rowState=[
     {
       Name: "Bhupendra Singh",
       Email: "xyz@gmail.com",
       PermissionLevel: "L1",
       Status: "Pending",
     },
-  ]);
+  ]
   let finalTableData = [];
   const setFinalTableData = (d) => {
     finalTableData = d;
@@ -95,7 +95,7 @@ function UserApproval() {
       </div>
         </div>
         <div className={classes.img}>
-          <img src="/netra-logo-removebg.png" width={60} height={60} />
+          <img src="/netra-logo-removebg.png" width={60} height={60} alt="Netra Logo"/>
         </div>
       </div>
     </div>

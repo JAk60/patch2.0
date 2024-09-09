@@ -19,7 +19,7 @@ const MonthlyUtilization = (props) => {
     };
   })
 
-  const [rowData, setRows] = useState(rows)
+  // const [rowData, setRows] = useState(rows)
 
   const OperationalColumns = [
     <AgGridColumn
@@ -66,7 +66,7 @@ const MonthlyUtilization = (props) => {
     <div>
       <Table
         columnDefs={OperationalColumns}
-        rowData={rowData}
+        rowData={rows}
         setGrid={setGridApi}
         gridApi={gridApi}
         tableUpdate={updateFinalRowData}

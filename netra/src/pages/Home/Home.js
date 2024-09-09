@@ -10,7 +10,6 @@ import AlarmAddOutlinedIcon from "@material-ui/icons/AlarmAddOutlined";
 import BarChartOutlinedIcon from "@material-ui/icons/BarChartOutlined";
 import BuildOutlinedIcon from "@material-ui/icons/BuildOutlined";
 import DirectionsBoatOutlinedIcon from "@material-ui/icons/DirectionsBoatOutlined";
-import FormatAlignJustifyOutlinedIcon from "@material-ui/icons/FormatAlignJustifyOutlined";
 import RateReviewOutlinedIcon from "@material-ui/icons/RateReviewOutlined";
 import SettingsIcon from "@material-ui/icons/Settings";
 import ShowChartOutlinedIcon from "@material-ui/icons/ShowChartOutlined";
@@ -44,7 +43,6 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: "50%",
     width: "50px",
     height: "50px",
-    display: "flex",
     justifyContent: "center",
     alignItems: "center",
     color: " #004d90",
@@ -61,7 +59,6 @@ const useStyles = makeStyles((theme) => ({
 
 const Home = (props) => {
   const classes = useStyles();
-  const [anchorEl, setAnchorEl] = useState(null);
   const location = useLocation();
   const message = location.state?.message;
   const [open, setOpen] = useState(!!message); // Set open state based on the presence of the message

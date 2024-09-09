@@ -8,7 +8,6 @@ import styles from "./repairable.module.css";
 const RepairableSubTableMaual = (props) => {
 	const [gridApi, setGridApi] = useState(null);
 	const [secondRows, setSecondRows] = useState([]);
-	const [gridColumnApi, setGridColumnApi] = useState(null);
 	const [overhaulNums, setOverhaulNums] = useState("0");
 	const currSelectedData = useSelector(
 		(state) => state.userSelection.currentSelection
@@ -24,8 +23,6 @@ const RepairableSubTableMaual = (props) => {
 	}
 	const onGridReady = (params) => {
 		setGridApi(params.api);
-		// props.setGrid(params.api);
-		setGridColumnApi(params.columnApi);
 		params.api.sizeColumnsToFit();
 	};
 	const numOverhaulColumns = [
@@ -104,6 +101,7 @@ const RepairableSubTableMaual = (props) => {
 			// Handle the case when currNomenclature is null or empty
 			setCurrAge("0"); // Reset currAge to "0"
 		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [currNomenclature]);
 
 	return (

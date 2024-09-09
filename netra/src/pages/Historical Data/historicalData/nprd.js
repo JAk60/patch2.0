@@ -39,14 +39,14 @@ const NPRD = (props) => {
     return { name: x.name, id: x.id };
   });
 
-  const [rowState, setRows] = useState([
+  const rowState =[
     {
       id: rows[0]?.id,
       ComponentName: rows[0]?.name,
       FailureRate: "2",
       Beta: "2",
     },
-  ]);
+  ]
 
   const NPRDColumns = [
     <AgGridColumn

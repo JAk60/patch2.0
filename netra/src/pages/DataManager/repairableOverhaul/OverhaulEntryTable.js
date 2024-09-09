@@ -1,7 +1,6 @@
 import { AgGridColumn, AgGridReact } from "ag-grid-react";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { v4 as uuid } from "uuid";
 
 
 
@@ -14,12 +13,9 @@ const OverhaulEntryTable = (props) => {
     const currShipName = currSelectedData.shipName;
     const currEquipmentName = currSelectedData.equipmentName;
     const [gridApi, setGridApi] = useState(null);
-    const [gridColumnApi, setGridColumnApi] = useState(null);
     const [secondRows, setSecondRows] = useState([]);
     const onGridReady = (params) => {
         setGridApi(params.api);
-        // props.setGrid(params.api);
-        setGridColumnApi(params.columnApi);
         params.api.sizeColumnsToFit();
     };
 
@@ -80,6 +76,7 @@ const OverhaulEntryTable = (props) => {
             // Handle the case when currNomenclature is null or empty
             setCurrAge("0"); // Reset currAge to "0"
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currNomenclature]);
     
     useEffect(() => {
@@ -95,6 +92,7 @@ const OverhaulEntryTable = (props) => {
         } else {
             setSecondRows([]); // Clear the data
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currNomenclature, currAge]);
     
 

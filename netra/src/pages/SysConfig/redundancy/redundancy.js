@@ -9,7 +9,7 @@ import RenderParallelComponent from "./RenderParallelComponent";
 
 const RedundancyInfo = (props) => {
 	const [gridApi, setGridApi] = useState(null);
-	let ParallelIds = [];
+	// let ParallelIds = [];
 	const [SnackBarMessage, setSnackBarMessage] = useState({
 		severity: "error",
 		message: "This is awesome",
@@ -17,7 +17,7 @@ const RedundancyInfo = (props) => {
 	  });
 
 	const setParallelIds = (d) => {
-		ParallelIds = d;
+		// ParallelIds = d;
 	};
 
 	const systemData = useSelector((state) => state.treeData.treeData);

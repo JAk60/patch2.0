@@ -17,7 +17,7 @@ const FailureDataPoint = (props) => {
     return { name: x.name, id: x.id };
   });
   const classes=useStyles();
-  const [rowState, setRows] = useState([
+  const rowState= [
     {
       id: rows[0]?.id,
       ComponentName: rows[0]?.name,
@@ -25,7 +25,7 @@ const FailureDataPoint = (props) => {
       removalDate: "",
       AFS: "Failure",
     },
-  ]);
+  ]
 
   const DPColumns = [
     <AgGridColumn

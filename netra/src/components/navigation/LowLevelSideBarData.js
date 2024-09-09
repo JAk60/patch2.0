@@ -1,15 +1,9 @@
 // sidebarData.js
-import React from 'react';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import HomeIcon from '@material-ui/icons/Home';
 import SettingsIcon from '@material-ui/icons/Settings';
-import BarChartIcon from '@material-ui/icons/BarChart';
-import RateReviewIcon from '@material-ui/icons/RateReview';
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import AccountTreeIcon from '@material-ui/icons/AccountTree';
 import TimelineIcon from '@material-ui/icons/Timeline';
-import AddAlarmIcon from '@material-ui/icons/AddAlarm';
-import BuildIcon from '@material-ui/icons/Build';
-import ShowChartIcon from '@material-ui/icons/ShowChart';
+import React from 'react';
 
 export const LowLevelSideBarData = (pathname, User) => {
     console.log(pathname, User, User.level);

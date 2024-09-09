@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import Navigation from "../../components/navigation/Navigation";
-import Table from "../../ui/Table/DataManagerTable";
+import Navigation from "../../../components/navigation/Navigation";
+import Table from "../../../ui/Table/DataManagerTable";
 import { AgGridColumn } from "ag-grid-react";
 import classes from "./editProfile.module.css";
 import Button from "@material-ui/core/Button";
-import PassModal from "./ChangePassword";
+import PassModal from "../ChangePassword";
 
 function EditProfile() {
   const [gridApi, setGridApi] = useState(null);

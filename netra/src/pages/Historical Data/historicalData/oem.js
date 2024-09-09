@@ -74,14 +74,14 @@ const OEM = (props) => {
   ]);
   // console.log(lifeEstimates);
   const classes = useStyles();
-  const [rowState, setRows] = useState([
+  const rowState = [
     {
       id: rows[0]?.id,
       ComponentName: rows[0]?.name,
       L10: "",
       L90: "",
     },
-  ]);
+  ]
 
 
   const updateFinalRowData = (allRows) => {
@@ -116,6 +116,7 @@ const OEM = (props) => {
       if (!columnDefs.some((e) => e.props.headerName === c)) {
         return <AgGridColumn field={c} headerName={c} editable={true} />;
       }
+      return null;
     });
 
     setColumnDefs((prevState) => {

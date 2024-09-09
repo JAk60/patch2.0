@@ -8,7 +8,6 @@ import CustomSelect from "../../ui/Form/CustomSelect";
 import { components } from "../../ui/userSelection/userSelectionData";
 function ConfigureHistory() {
   const [gridApi, setGridApi] = useState(null);
-  const detailRowAutoHeight = true;
   let finalTableData = [];
   const setFinalTableData = (d) => {
     finalTableData = d;
@@ -87,7 +86,7 @@ function ConfigureHistory() {
           ></Table>
         </div>
         <div className={classes.img}>
-          <img src="/netra-logo-removebg.png" width={60} height={60} />
+          <img src="/netra-logo-removebg.png" width={60} height={60} alt="Netra Logo" />
         </div>
       </div>
     </div>

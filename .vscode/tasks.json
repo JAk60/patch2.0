@@ -1,0 +1,13 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "npm",
+			"script": "start",
+			"path": "netra",
+			"problemMatcher": [],
+			"label": "npm: start - netra",
+			"detail": "react-scripts  --openssl-legacy-provider start"
+		}
+	]
+}

@@ -93,7 +93,7 @@ function OEMExpert(props) {
     />,
   ]);
   const classes = useStyles();
-  const [rowState, setRows] = useState([]);
+  const rowState= [];
 
   const updateFinalRowData = (allRows) => {
     props.tableUpdate(allRows, "oemE");

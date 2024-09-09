@@ -1,31 +1,26 @@
-import React, { useEffect, useState } from "react";
-import CustomizedSnackbars from "../../ui/CustomSnackBar";
 import {
   Button,
+  CircularProgress,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableRow,
   TextField,
-  CircularProgress, // Import CircularProgress for the loader
 } from "@material-ui/core";
-import { Autocomplete } from "@material-ui/lab";
-import { useDispatch, useSelector } from "react-redux";
-import { userActions } from "../../store/ApplicationVariable";
-import ThumbUpIcon from "@material-ui/icons/ThumbUp";
-import ThumbDownIcon from "@material-ui/icons/ThumbDown";
 import CheckIcon from "@material-ui/icons/Check";
 import ClearIcon from "@material-ui/icons/Clear";
+import { Autocomplete } from "@material-ui/lab";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { userActions } from "../../store/ApplicationVariable";
+import CustomizedSnackbars from "../../ui/CustomSnackBar";
 
 export default function EtlEquipment({ classes }) {
   const currentSelection = useSelector(
     (state) => state.userSelection.currentSelection
   );
 
-  const componentsData = useSelector(
-    (state) => state.userSelection.componentsData
-  );
   const dispatch = useDispatch();
   const [searchKeyword, setSearchKeyword] = useState("");
   const [shipsOptions, setShipOptions] = useState([]);
@@ -77,6 +72,7 @@ export default function EtlEquipment({ classes }) {
     };
 
     fetchD();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchData = async () => {

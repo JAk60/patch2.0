@@ -1,3 +1,5 @@
+/* eslint-disable array-callback-return */
+/* eslint-disable react-hooks/exhaustive-deps */
 import {
   Button,
   FormControlLabel,
@@ -8,7 +10,7 @@ import {
   makeStyles
 } from "@material-ui/core";
 import { AgGridColumn } from "ag-grid-react";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { v4 as uuid } from "uuid";
@@ -62,12 +64,9 @@ const AssignType = (props) => {
   const [ageBasedUnit, setAgeBasedUnit] = useState(null);
   const [Rtype, setRtype] = useState("Repairable");
   const [calendarBasedUnit, setCalendarBasedUnit] = useState(null);
-  const [condition, setCondition] = useState("sensorBased");
+  const condition = "sensorBased";
   const [failureMode, setFailureMode] = useState(null);
   const [pRows, setpRows] = useState([]);
-  const [VisualWearRows, setVisualWearRows] = useState([]);
-  const [VisualCorrosionRows, setVisualCorrosionRows] = useState([]);
-  const [visualActionsRows, setVisualActionRows] = useState([]);
   const [selectedEquipment, setSelectedEquipment] = useState("");
   const fileInputRef = useRef(null);
   const classes = useStyles();
@@ -121,30 +120,10 @@ const AssignType = (props) => {
   const handleMtypeChange = (e) => {
     setType(e.target.value);
   };
-  useEffect(() => {
-    addVisualActionRows();
-  }, [VisualWearRows, VisualCorrosionRows]);
-
+  
 
   const matchingId = matchingItems[0]?.id;
-  const addVisualActionRows = () => {
-    let rows = [];
-    VisualWearRows.map((wearRow) => {
-      VisualCorrosionRows.map((corrosionRow) => {
-        rows = [
-          ...rows,
-          {
-            wear: wearRow.level,
-            corrosion: corrosionRow.level,
-            alarm: "Show on dashboard",
-            invalid: false,
-          },
-        ];
-      });
-    });
-    console.log(rows);
-    setVisualActionRows(rows);
-  };
+
   // Snackbar
   const [SnackBarMessage, setSnackBarMessage] = useState({
     severity: "error",
@@ -158,9 +137,7 @@ const AssignType = (props) => {
       showSnackBar: false,
     });
   };
-  //Condition modal
-  const [modal, setModal] = useState(false);
-  //Sensor Based Monitoring
+
   const [monitoringType, setMonitoringType] = useState("intermittent");
   const [numPara, setNumPara] = useState(0);
 
@@ -299,51 +276,8 @@ const AssignType = (props) => {
     //console.log(rows)
     setSbAlarmAtts(alarm_att);
     setSbAlarmRows(rows);
-    //get columns
-    let columns = allRows.map((data) => {
-      if (data.name !== "") {
-        return (
-          <AgGridColumn
-            field={data.name}
-            headerName={data.name}
-            headerTooltip={data.name}
-            //minWidth={100}
-            //editable={true}
-          />
-        );
-      }
-    });
-    setSbAlarmCols([
-      <AgGridColumn
-        field="alarm"
-        headerName="Alarms"
-        headerTooltip="Alarms"
-        cellEditor="agSelectCellEditor"
-        cellEditorParams={{
-          values: ["Show on dashboard", "Alarm1", "Alarm2", "Alarm3"],
-        }}
-        //minWidth={100}
-        editable={true}
-      />,
-      <AgGridColumn
-        headerName="Invalid"
-        field="invalid"
-        //editable={true}
-        cellRenderer={(params) => {
-          var input = document.createElement("input");
-          input.type = "checkbox";
-          input.checked = params.value;
-          input.addEventListener("click", function (event) {
-            params.value = !params.value;
-            params.node.data.invalid = params.value;
-          });
-          return input;
-        }}
-      />,
-      ...columns,
-    ]);
   };
-  const [sbAlarmCols, setSbAlarmCols] = useState([]);
+
   const [lvlwiseRows, setLvlwiseRows] = useState([]);
   const [sbAlarmRows, setSbAlarmRows] = useState([]);
   const [sbAlarmAtts, setSbAlarmAtts] = useState([]);
@@ -482,7 +416,7 @@ const AssignType = (props) => {
               {
                 <FormControlLabel
                   value="conditionBased"
-                  control={<Radio onClick={() => setModal(true)} />}
+                  control={<Radio />}
                   label="Condition Based Maintenance"
                 />
               }
