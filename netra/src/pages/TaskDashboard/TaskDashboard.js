@@ -1,5 +1,6 @@
 import {
 	Button,
+	CircularProgress,
 	InputLabel,
 	TextField,
 	Typography,
@@ -54,7 +55,7 @@ const TaskDashboard = () => {
 	const [gridCompApi, setGridCompApi] = useState(null);
 	const [gridTaskApi, setGriTaskdApi] = useState(null);
 	const [missionProfileData, setMissionData] = useState([]);
-	const rowState= []
+	const rowState = []
 	const [rowCompState, setCompRows] = useState([]);
 	const dispatch = useDispatch();
 	const [phasedata, setPhaseData] = useState([]);
@@ -71,7 +72,7 @@ const TaskDashboard = () => {
 	const [totalReliability, setTotalReliability] = useState(null);
 	const [showPaper, setShowPaper] = useState(false);
 	const [showInputTables, setShowInputTables] = useState(true);
-	const selectedTaskName="";
+	const selectedTaskName = "";
 	const [taskTableData, settaskTableData] = useState([]);
 	const [taskMissionTableData, settaskMissionTableData] = useState([]);
 	const [SnackBarMessage, setSnackBarMessage] = useState({
@@ -81,6 +82,7 @@ const TaskDashboard = () => {
 	});
 
 	const [entireData, setentireData] = useState(null);
+	const [isLoading, setIsLoading] = useState(false);
 
 	const currentShip = useSelector((state) => state.taskData.currentShip);
 	const currentTaskName = useSelector(
@@ -185,6 +187,7 @@ const TaskDashboard = () => {
 	};
 	// console.log("missionDurations", missionProfileData);
 	const updateCompTable = () => {
+		setIsLoading(true);
 		console.log(currentTaskName);
 		const durationNums = missionDurations.map((str) => parseFloat(str));
 		const mission_phases_data = missionProfileData.map((item, index) => ({
@@ -229,6 +232,7 @@ const TaskDashboard = () => {
 					const reliabilityValue = data.recommedation.rel;
 					setTotalReliability(reliabilityValue.toFixed(precision));
 					setRecommedation(results);
+					setIsLoading(false);
 					setShowPaper(!showPaper);
 				} else {
 					setSnackBarMessage({
@@ -240,6 +244,7 @@ const TaskDashboard = () => {
 			})
 			.catch((error) => {
 				// Handle errors here
+				setIsLoading(false);
 				console.error("Error:", error);
 			});
 
@@ -370,7 +375,7 @@ const TaskDashboard = () => {
 				settaskShipNameOption(task_ship_name);
 				dispatch(taskActions.onLoad({ taskData: data }));
 			});
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const classes = dropDownStyle();
@@ -542,63 +547,71 @@ const TaskDashboard = () => {
 				<Navigation />
 				<div className={styles.body}>
 					<div className={styles.mprofile}>
-						<div style={{ width: "300px" }}>
-							<InputLabel
-								style={{
-									fontWeight: "bold",
-									color: "black",
-									fontSize: "16px",
-									marginBottom: "10px",
-								}}
-							>
-								<Typography variant="h5">Ship Name</Typography>
-							</InputLabel>
-							<Autocomplete
-								classes={classes}
-								id="tags-standard"
-								options={taskShipNameOption}
-								getOptionLabel={(option) => option.name}
-								onChange={shipNameChange}
-								renderInput={(params) => (
-									<TextField
-										{...params}
-										InputProps={{
-											...params.InputProps,
-											disableUnderline: true,
-										}}
-										variant="standard"
-									/>
-								)}
-							/>
-						</div>
-						<div style={{ width: "300px" }}>
-							<InputLabel
-								style={{
-									fontWeight: "bold",
-									color: "black",
-									fontSize: "16px",
-									marginBottom: "10px",
-								}}
-							>
-								<Typography variant="h5">Task Name</Typography>
-							</InputLabel>
-							<Autocomplete
-								classes={classes}
-								id="tags-standard"
-								options={taskOption}
-								getOptionLabel={(option) => option.name}
-								onChange={TaskNameChange}
-								renderInput={(params) => (
-									<TextField
-										{...params}
-										InputProps={{
-											...params.InputProps,
-											disableUnderline: true,
-										}}
-										variant="standard"
-									/>
-								)}
-							/>
+						<div style={{
+							display: "flex",
+							justifyContent: "flex-start",
+							gap: "10rem",
+							width: "100%",
+							//  background: "red"
+						}}>
+							<div style={{ width: "250px" }}>
+								<InputLabel
+									style={{
+										fontWeight: "bold",
+										color: "black",
+										fontSize: "16px",
+										marginBottom: "10px",
+									}}
+								>
+									<Typography variant="h5">Ship Name</Typography>
+								</InputLabel>
+								<Autocomplete
+									classes={classes}
+									id="tags-standard"
+									options={taskShipNameOption}
+									getOptionLabel={(option) => option.name}
+									onChange={shipNameChange}
+									renderInput={(params) => (
+										<TextField
+											{...params}
+											InputProps={{
+												...params.InputProps,
+												disableUnderline: true,
+											}}
+											variant="standard"
+										/>
+									)}
+								/>
+							</div>
+							<div style={{ width: "300px" }}>
+								<InputLabel
+									style={{
+										fontWeight: "bold",
+										color: "black",
+										fontSize: "16px",
+										marginBottom: "10px",
+									}}
+								>
+									<Typography variant="h5">Task Name</Typography>
+								</InputLabel>
+								<Autocomplete
+									classes={classes}
+									id="tags-standard"
+									options={taskOption}
+									getOptionLabel={(option) => option.name}
+									onChange={TaskNameChange}
+									renderInput={(params) => (
+										<TextField
+											{...params}
+											InputProps={{
+												...params.InputProps,
+												disableUnderline: true,
+											}}
+											variant="standard"
+										/>
+									)}
+								/>
+							</div>
 						</div>
 						<Button
 							variant="contained"
@@ -662,12 +675,18 @@ const TaskDashboard = () => {
 								</div>
 
 								<div>
-									{showPaper && (
+									{isLoading ? (
+										<CircularProgress size={24} style={{
+											width: "100%",
+											display: "flex",
+											justifyContent: "center"
+										}} />
+									) : showPaper ? (
 										<PaperTable
 											response={recommedation}
 											rel={totalReliability}
 										/>
-									)}
+									) : null}
 								</div>
 
 								<div className={styles.table}>
@@ -710,7 +729,7 @@ const TaskDashboard = () => {
 										setGrid={setGriTaskdApi}
 										gridApi={gridTaskApi}
 										rowData={taskTableData}
-										tableUpdate={() => {}}
+										tableUpdate={() => { }}
 										tableSize={250}
 									/>
 								)}
@@ -720,14 +739,6 @@ const TaskDashboard = () => {
 						{!showInputTables && (
 							<div className={styles.table}>
 								{taskTableData.length > 0 && (
-									// <Table
-									//   columnDefs={taskMissionTableColumns}
-									//   setGrid={setgridMissionApi}
-									//   gridApi={gridMissionApi}
-									//   rowData={taskMissionTableData}
-									//   tableUpdate={() => {}}
-									//   tableSize={290}
-									// />
 									<CollapsibleTable
 										tableData={taskMissionTableData}
 									/>

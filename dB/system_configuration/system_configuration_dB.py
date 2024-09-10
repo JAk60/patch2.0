@@ -127,10 +127,10 @@ class System_Configuration_dB():
                 maintenance_id = d['id']
                 component_id = d['component_id']
                 repair_type = d['RepairType']
-                pm_applicable = d['PreventiveMaintenaceApplicable']
-                pm_interval = float(d['PreventiveMaintenaceInterval'])
+                pm_applicable = d['PreventiveMaintenanceApplicable']
+                pm_interval = float(d['PreventiveMaintenanceInterval'])
                 replaced_during_mission = d['ComponentsReplaced']
-                condition_monitoring_applicable = d['ConditionMonitoring']
+                condition_monitoring_applicable = d['isSystemParametersRecorded']
                 is_component_exist = check_component_exist(
                     'maintenance_configuration_data', component_id)
                 if is_component_exist:
@@ -258,10 +258,10 @@ class System_Configuration_dB():
         maintenance_id = d['id']
         component_id = d['component_id']
         repair_type = d['RepairType']
-        pm_applicable = d['PreventiveMaintenaceApplicable']
-        pm_interval = d['PreventiveMaintenaceInterval']
+        pm_applicable = d['PreventiveMaintenanceApplicable']
+        pm_interval = d['PreventiveMaintenanceInterval']
         replaced_during_mission = d['ComponentsReplaced']
-        condition_monitoring_applicable = d['ConditionMonitoring']
+        condition_monitoring_applicable = d['isSystemParametersRecorded']
         update_sql = '''update maintenance_configuration_data set repair_type  = ?, pm_applicable = ?,
          pm_interval = ?, is_system_param_recorded = ?, can_be_replaced_by_ship_staff = ?
          where component_id=?'''

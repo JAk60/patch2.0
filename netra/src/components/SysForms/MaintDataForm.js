@@ -56,7 +56,10 @@ const MaintenanceDataFormik = () => {
 			id: uuid(),
 			MaintenanceType: values.MaintenanceType,
 		};
-
+		const Postdata ={
+			data: [dataToSend],
+			dataType: "maintData", 
+		}
 		try {
 			const response = await fetch("/save_historical_data", {
 				method: "POST",
@@ -64,8 +67,7 @@ const MaintenanceDataFormik = () => {
 					"Content-Type": "application/json",
 				},
 				body: JSON.stringify({
-					flatData: [dataToSend],
-					dtype: "maintData", // Ensure dtype is correct
+					data: Postdata
 				}),
 			});
 

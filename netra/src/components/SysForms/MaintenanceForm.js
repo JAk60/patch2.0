@@ -17,6 +17,7 @@ const initialValues = {
 const repairTypeOptions = ["Replaceable", "Repairable"];
 const preventiveMaintenanceApplicableOptions = ["No", "Yes"];
 const componentsReplacedOptions = ["No", "Yes"];
+const isSystemParametersRecordedOptions = ["No", "Yes"];
 
 const MaintenanceFormikForm = () => {
 	const [SnackBarMessage, setSnackBarMessage] = useState({
@@ -54,11 +55,12 @@ const MaintenanceFormikForm = () => {
 			EquipmentName: CurrentEquipment?.equipmentName,
 			RepairType: values.RepairType,
 			PreventiveMaintenanceApplicable:
-				values.PreventiveMaintenanceApplicable, // Fixed typo
+				values.PreventiveMaintenaceApplicable, // Fixed typo
 			PreventiveMaintenanceInterval: parseInt(
 				values.PreventiveMaintenanceInterval
 			) || 0,
 			ComponentsReplaced: values.ComponentsReplaced,
+			isSystemParametersRecorded : values.isSystemParametersRecorded
 		};
 
 		console.log(values);
@@ -195,6 +197,24 @@ const MaintenanceFormikForm = () => {
 									newValue ? newValue : ""
 								);
 								setFieldTouched("ComponentsReplaced", true);
+							}}
+						/>
+						<Autocomplete
+							options={isSystemParametersRecordedOptions}
+							renderInput={(params) => (
+								<TextField
+									{...params}
+									label="is System Parameter's Recorded ?"
+									variant="outlined"
+								/>
+							)}
+							style={{ width: "400px", marginBottom: "8px" }}
+							onChange={(event, newValue) => {
+								setFieldValue(
+									"isSystemParametersRecorded",
+									newValue ? newValue : ""
+								);
+								setFieldTouched("isSystemParametersRecorded", true);
 							}}
 						/>
 

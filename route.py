@@ -279,12 +279,13 @@ def update_parameters():
 def save_historical_data():
     if request.method == "POST":
         data = request.get_json(force=True)
+        print("data",data)
         if data and "data" in data:
             data = data["data"]
             d_inst = Data_Manager()
             res = d_inst.insert_data(data)
             print(res)
-            return jsonify({"code": 1, "result": res})
+            return jsonify({"code": 1, "message": "Data Saved Successfully", "result": res})
         else:
             return jsonify({"code": 0, "message": "Invalid data format"}), 400
 
@@ -888,4 +889,4 @@ if __name__ == "__main__":
     app.secret_key = os.urandom(32)
     app.wsgi_app = middleware.TaskMiddleWare(app.wsgi_app, APP_ROOT)
     scheduler.start()
-    app.run(debug=True)
+    app.run(debug=False)
