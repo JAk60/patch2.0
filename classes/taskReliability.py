@@ -77,7 +77,7 @@ class TaskReliability:
             beta = lmu[2]
             rel_num = np.exp(-((c_age + float(total_dur)) / eta) ** beta)
             rel_deno = np.exp(-(c_age / eta) ** beta)
-            rel = rel_num / rel_deno
+            rel = float(rel_num) / float(rel_deno)
             lmus_rel.append(
                 {'name': lmu[6], 'id': lmu[5], 'rel': rel, 'parent_name': lmu[10], 'parent_id': lmu[7]})
         if len(eta_beta_data) == 0:
@@ -309,6 +309,16 @@ class TaskReliability:
 
         sum_of_average_running = result2[0]
         return sum_of_average_running, None    
+    
+    def get_default_currage(self,component_id):
+        query = '''
+            SELECT COALESCE(SUM(average_running), 0) AS sum_of_average_running
+            FROM operational_data
+            WHERE component_id = ?;
+        '''
+        cursor.execute(query, component_id)
+        result = cursor.fetchone()
+        return result[0]
 
     def estimate_alpha_beta(self, component_id,component_name):
         '''CODE TO RE-ESTIMATE ALPHA BETA'''
@@ -819,6 +829,9 @@ class TaskReliability:
                             print("sjdkhaidhiadijasdja",equipment_id)
                             equipment_ids[label] = self.fetch_alpha_beta(equipment_id)
                             running_ages[label] = self.get_curr_age(equipment_id)
+                            if running_ages[label] == 0:
+                                running_ages[label] = self.get_default_currage(equipment_id)
+                            
                 
                 response_data = {
                     "data": data_list,

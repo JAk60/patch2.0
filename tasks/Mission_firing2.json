@@ -1,0 +1,1012 @@
+[
+    {
+        "data": {
+            "label": "Mission_firing2"
+        },
+        "dtype": "node",
+        "id": "41d01c16-89a1-4ccd-be44-11645436da7f",
+        "position": {
+            "x": 86,
+            "y": 1996
+        },
+        "shipName": "INS TWO",
+        "sourcePosition": "right",
+        "targetPosition": "left",
+        "type": "systemNode"
+    },
+    {
+        "animated": false,
+        "dtype": "edge",
+        "id": "41f0f06e-a6e3-4841-bab3-041002e2e800",
+        "source": "41d01c16-89a1-4ccd-be44-11645436da7f",
+        "style": {
+            "stroke": "rgb(132, 211, 14)"
+        },
+        "target": "37946a8b-1d9b-47f7-bdff-87caf04e59f3",
+        "type": "smoothstep"
+    },
+    {
+        "animated": false,
+        "dtype": "edge",
+        "id": "0f1f2df6-7d4f-4f1b-bb95-9f52735a1e05",
+        "source": "41d01c16-89a1-4ccd-be44-11645436da7f",
+        "style": {
+            "stroke": "rgb(132, 211, 14)"
+        },
+        "target": "5ac490fc-f96a-428e-88fc-9a2ef952429f",
+        "type": "smoothstep"
+    },
+    {
+        "animated": false,
+        "dtype": "edge",
+        "id": "180ef39b-ce54-43a0-9095-89ec192ff956",
+        "source": "41d01c16-89a1-4ccd-be44-11645436da7f",
+        "style": {
+            "stroke": "rgb(132, 211, 14)"
+        },
+        "target": "2b6588dd-79d5-4b68-9bb9-583eb6a3c823",
+        "type": "smoothstep"
+    },
+    {
+        "animated": false,
+        "dtype": "edge",
+        "id": "643ff315-8adb-4081-a353-4dbae742ba6b",
+        "source": "41d01c16-89a1-4ccd-be44-11645436da7f",
+        "style": {
+            "stroke": "rgb(132, 211, 14)"
+        },
+        "target": "21b9e19d-74ab-4eaa-a745-e388b07c7d69",
+        "type": "smoothstep"
+    },
+    {
+        "animated": false,
+        "dtype": "edge",
+        "id": "608a3840-7a06-41d8-9d74-e4c3ed8a8048",
+        "source": "41d01c16-89a1-4ccd-be44-11645436da7f",
+        "style": {
+            "stroke": "rgb(99, 221, 138)"
+        },
+        "target": "697d30e3-5a7e-434a-9062-ad0b5b0ace6c",
+        "type": "smoothstep"
+    },
+    {
+        "animated": false,
+        "dtype": "edge",
+        "id": "072cff1c-6615-468e-b4eb-9335d81eeac6",
+        "source": "41d01c16-89a1-4ccd-be44-11645436da7f",
+        "style": {
+            "stroke": "rgb(99, 221, 138)"
+        },
+        "target": "fab0ffaf-582c-4bc7-9e30-18e4454a09fc",
+        "type": "smoothstep"
+    },
+    {
+        "animated": false,
+        "dtype": "edge",
+        "id": "f5affae4-a213-419d-86bc-77acf42f4615",
+        "source": "41d01c16-89a1-4ccd-be44-11645436da7f",
+        "style": {
+            "stroke": "rgb(99, 221, 138)"
+        },
+        "target": "115838fa-39c0-431b-a633-751dd4035ddf",
+        "type": "smoothstep"
+    },
+    {
+        "animated": false,
+        "dtype": "edge",
+        "id": "e1ad249f-aa24-424c-a5ce-30301829e838",
+        "source": "41d01c16-89a1-4ccd-be44-11645436da7f",
+        "style": {
+            "stroke": "rgb(99, 221, 138)"
+        },
+        "target": "ea03e9a6-f1ff-4c29-9d15-d16b9af97160",
+        "type": "smoothstep"
+    },
+    {
+        "animated": false,
+        "dtype": "edge",
+        "id": "4289f505-51ca-44e3-8d73-c76a8f065e5c",
+        "source": "41d01c16-89a1-4ccd-be44-11645436da7f",
+        "style": {
+            "stroke": "rgb(52, 193, 82)"
+        },
+        "target": "bdad8ff1-0f94-4d0b-bd1e-6d39bb7a714f",
+        "type": "smoothstep"
+    },
+    {
+        "animated": false,
+        "dtype": "edge",
+        "id": "3e3e7332-25df-486e-ab5b-71be9f30ab62",
+        "source": "41d01c16-89a1-4ccd-be44-11645436da7f",
+        "style": {
+            "stroke": "rgb(52, 193, 82)"
+        },
+        "target": "a7a265c1-d03a-4b2d-bfe4-e5213c8425da",
+        "type": "smoothstep"
+    },
+    {
+        "animated": false,
+        "dtype": "edge",
+        "id": "65af23bf-7a3f-42d6-be17-e40e09004d55",
+        "source": "41d01c16-89a1-4ccd-be44-11645436da7f",
+        "style": {
+            "stroke": "rgb(52, 193, 82)"
+        },
+        "target": "0b1debed-1367-4112-8093-2de6fd2f8508",
+        "type": "smoothstep"
+    },
+    {
+        "animated": false,
+        "dtype": "edge",
+        "id": "2b32749f-aed5-43b3-936d-20961b787f44",
+        "source": "41d01c16-89a1-4ccd-be44-11645436da7f",
+        "style": {
+            "stroke": "rgb(52, 193, 82)"
+        },
+        "target": "fb82237f-80aa-40fb-ba62-4f4af0b18aa1",
+        "type": "smoothstep"
+    },
+    {
+        "animated": false,
+        "dtype": "edge",
+        "id": "90744ff2-ea5f-4021-bfa8-9fb3fb83a4f6",
+        "source": "41d01c16-89a1-4ccd-be44-11645436da7f",
+        "style": {
+            "stroke": "rgb(52, 193, 82)"
+        },
+        "target": "3c83b691-6089-4cdd-8d56-ddaf96abe89e",
+        "type": "smoothstep"
+    },
+    {
+        "animated": false,
+        "dtype": "edge",
+        "id": "dff61f85-7ebe-4ca3-afee-5d6965ad3c17",
+        "source": "41d01c16-89a1-4ccd-be44-11645436da7f",
+        "style": {
+            "stroke": "rgb(52, 193, 82)"
+        },
+        "target": "7defce0b-fb95-4111-a54d-a20dac07a1b0",
+        "type": "smoothstep"
+    },
+    {
+        "animated": false,
+        "dtype": "edge",
+        "id": "413f15b2-c65b-4f9a-8321-69de44bc24a9",
+        "source": "41d01c16-89a1-4ccd-be44-11645436da7f",
+        "style": {
+            "stroke": "rgb(79, 122, 0)"
+        },
+        "target": "607b52e6-e8c4-42e2-9d64-60f1d9786c01",
+        "type": "smoothstep"
+    },
+    {
+        "data": {
+            "k": 4,
+            "k_as": 4,
+            "k_c": 3,
+            "k_ds": 4,
+            "k_elh": 2,
+            "label": "GT 1",
+            "n": 4,
+            "parallel_comp": [
+                {
+                    "label": "GT 2",
+                    "value": "5ac490fc-f96a-428e-88fc-9a2ef952429f"
+                },
+                {
+                    "label": "GT 3",
+                    "value": "2b6588dd-79d5-4b68-9bb9-583eb6a3c823"
+                },
+                {
+                    "label": "GT 4",
+                    "value": "21b9e19d-74ab-4eaa-a745-e388b07c7d69"
+                }
+            ]
+        },
+        "dtype": "node",
+        "equipementId": "44EB6741-A89B-4D32-B239-2FE1E89118D0",
+        "id": "37946a8b-1d9b-47f7-bdff-87caf04e59f3",
+        "metaData": {
+            "command": "Western Naval Command",
+            "department": "Engineering",
+            "equipmentCode": "",
+            "equipmentName": "",
+            "nomenclature": "",
+            "shipCategory": "DESTROYER AND FRIGATES",
+            "shipClass": "KOLKATA (P-15A)",
+            "shipName": "INS TWO"
+        },
+        "position": {
+            "x": 308,
+            "y": 1394
+        },
+        "shipName": "INS TWO",
+        "sourcePosition": "right",
+        "style": {
+            "background": "rgb(132, 211, 14)",
+            "border": "1px solid black",
+            "borderColor": "black",
+            "borderRadius": "5px",
+            "padding": "20px"
+        },
+        "targetPosition": "left",
+        "type": "component"
+    },
+    {
+        "data": {
+            "k": 4,
+            "k_as": 4,
+            "k_c": 3,
+            "k_ds": 4,
+            "k_elh": 2,
+            "label": "GT 2",
+            "n": 4,
+            "parallel_comp": [
+                {
+                    "label": "GT 3",
+                    "value": "2b6588dd-79d5-4b68-9bb9-583eb6a3c823"
+                },
+                {
+                    "label": "GT 4",
+                    "value": "21b9e19d-74ab-4eaa-a745-e388b07c7d69"
+                },
+                {
+                    "label": "GT 1",
+                    "value": "37946a8b-1d9b-47f7-bdff-87caf04e59f3"
+                }
+            ]
+        },
+        "dtype": "node",
+        "equipementId": "3298EA4B-6768-4116-BFBC-F9749D8BECB7",
+        "id": "5ac490fc-f96a-428e-88fc-9a2ef952429f",
+        "metaData": {
+            "command": "Western Naval Command",
+            "department": "Engineering",
+            "equipmentCode": "",
+            "equipmentName": "",
+            "nomenclature": "",
+            "shipCategory": "DESTROYER AND FRIGATES",
+            "shipClass": "KOLKATA (P-15A)",
+            "shipName": "INS TWO"
+        },
+        "position": {
+            "x": 308,
+            "y": 1480
+        },
+        "shipName": "INS TWO",
+        "sourcePosition": "right",
+        "style": {
+            "background": "rgb(132, 211, 14)",
+            "border": "1px solid black",
+            "borderColor": "black",
+            "borderRadius": "5px",
+            "padding": "20px"
+        },
+        "targetPosition": "left",
+        "type": "component"
+    },
+    {
+        "data": {
+            "k": 4,
+            "k_as": 4,
+            "k_c": 3,
+            "k_ds": 4,
+            "k_elh": 2,
+            "label": "GT 3",
+            "n": 4,
+            "parallel_comp": [
+                {
+                    "label": "GT 2",
+                    "value": "5ac490fc-f96a-428e-88fc-9a2ef952429f"
+                },
+                {
+                    "label": "GT 4",
+                    "value": "21b9e19d-74ab-4eaa-a745-e388b07c7d69"
+                },
+                {
+                    "label": "GT 1",
+                    "value": "37946a8b-1d9b-47f7-bdff-87caf04e59f3"
+                }
+            ]
+        },
+        "dtype": "node",
+        "equipementId": "5E6D8941-99EC-4692-827B-B504C9820CDC",
+        "id": "2b6588dd-79d5-4b68-9bb9-583eb6a3c823",
+        "metaData": {
+            "command": "Western Naval Command",
+            "department": "Engineering",
+            "equipmentCode": "",
+            "equipmentName": "",
+            "nomenclature": "",
+            "shipCategory": "DESTROYER AND FRIGATES",
+            "shipClass": "KOLKATA (P-15A)",
+            "shipName": "INS TWO"
+        },
+        "position": {
+            "x": 308,
+            "y": 1566
+        },
+        "shipName": "INS TWO",
+        "sourcePosition": "right",
+        "style": {
+            "background": "rgb(132, 211, 14)",
+            "border": "1px solid black",
+            "borderColor": "black",
+            "borderRadius": "5px",
+            "padding": "20px"
+        },
+        "targetPosition": "left",
+        "type": "component"
+    },
+    {
+        "data": {
+            "k": 4,
+            "k_as": 4,
+            "k_c": 3,
+            "k_ds": 4,
+            "k_elh": 2,
+            "label": "GT 4",
+            "n": 4,
+            "parallel_comp": [
+                {
+                    "label": "GT 2",
+                    "value": "5ac490fc-f96a-428e-88fc-9a2ef952429f"
+                },
+                {
+                    "label": "GT 3",
+                    "value": "2b6588dd-79d5-4b68-9bb9-583eb6a3c823"
+                },
+                {
+                    "label": "GT 1",
+                    "value": "37946a8b-1d9b-47f7-bdff-87caf04e59f3"
+                }
+            ]
+        },
+        "dtype": "node",
+        "equipementId": "0D2CA676-745E-4ACD-AEB1-D792759CB977",
+        "id": "21b9e19d-74ab-4eaa-a745-e388b07c7d69",
+        "metaData": {
+            "command": "Western Naval Command",
+            "department": "Engineering",
+            "equipmentCode": "",
+            "equipmentName": "",
+            "nomenclature": "",
+            "shipCategory": "DESTROYER AND FRIGATES",
+            "shipClass": "KOLKATA (P-15A)",
+            "shipName": "INS TWO"
+        },
+        "position": {
+            "x": 308,
+            "y": 1652
+        },
+        "shipName": "INS TWO",
+        "sourcePosition": "right",
+        "style": {
+            "background": "rgb(132, 211, 14)",
+            "border": "1px solid black",
+            "borderColor": "black",
+            "borderRadius": "5px",
+            "padding": "20px"
+        },
+        "targetPosition": "left",
+        "type": "component"
+    },
+    {
+        "data": {
+            "k": 4,
+            "k_as": 4,
+            "k_c": 3,
+            "k_ds": 4,
+            "k_elh": 2,
+            "label": "GTG 1",
+            "n": 4,
+            "parallel_comp": [
+                {
+                    "label": "GTG 2",
+                    "value": "fab0ffaf-582c-4bc7-9e30-18e4454a09fc"
+                },
+                {
+                    "label": "GTG 3",
+                    "value": "115838fa-39c0-431b-a633-751dd4035ddf"
+                },
+                {
+                    "label": "GTG 4",
+                    "value": "ea03e9a6-f1ff-4c29-9d15-d16b9af97160"
+                }
+            ]
+        },
+        "dtype": "node",
+        "equipementId": "0E8E0B68-04E9-46B8-9F68-4DD0AC75138A",
+        "id": "697d30e3-5a7e-434a-9062-ad0b5b0ace6c",
+        "metaData": {
+            "command": "Western Naval Command",
+            "department": "Engineering",
+            "equipmentCode": "",
+            "equipmentName": "",
+            "nomenclature": "",
+            "shipCategory": "DESTROYER AND FRIGATES",
+            "shipClass": "KOLKATA (P-15A)",
+            "shipName": "INS TWO"
+        },
+        "position": {
+            "x": 308,
+            "y": 1738
+        },
+        "shipName": "INS TWO",
+        "sourcePosition": "right",
+        "style": {
+            "background": "rgb(99, 221, 138)",
+            "border": "1px solid black",
+            "borderColor": "black",
+            "borderRadius": "5px",
+            "padding": "20px"
+        },
+        "targetPosition": "left",
+        "type": "component"
+    },
+    {
+        "data": {
+            "k": 4,
+            "k_as": 4,
+            "k_c": 3,
+            "k_ds": 4,
+            "k_elh": 2,
+            "label": "GTG 2",
+            "n": 4,
+            "parallel_comp": [
+                {
+                    "label": "GTG 3",
+                    "value": "115838fa-39c0-431b-a633-751dd4035ddf"
+                },
+                {
+                    "label": "GTG 4",
+                    "value": "ea03e9a6-f1ff-4c29-9d15-d16b9af97160"
+                },
+                {
+                    "label": "GTG 1",
+                    "value": "697d30e3-5a7e-434a-9062-ad0b5b0ace6c"
+                }
+            ]
+        },
+        "dtype": "node",
+        "equipementId": "45707722-2775-4227-BD94-71943606AD49",
+        "id": "fab0ffaf-582c-4bc7-9e30-18e4454a09fc",
+        "metaData": {
+            "command": "Western Naval Command",
+            "department": "Engineering",
+            "equipmentCode": "",
+            "equipmentName": "",
+            "nomenclature": "",
+            "shipCategory": "DESTROYER AND FRIGATES",
+            "shipClass": "KOLKATA (P-15A)",
+            "shipName": "INS TWO"
+        },
+        "position": {
+            "x": 308,
+            "y": 1824
+        },
+        "shipName": "INS TWO",
+        "sourcePosition": "right",
+        "style": {
+            "background": "rgb(99, 221, 138)",
+            "border": "1px solid black",
+            "borderColor": "black",
+            "borderRadius": "5px",
+            "padding": "20px"
+        },
+        "targetPosition": "left",
+        "type": "component"
+    },
+    {
+        "data": {
+            "k": 4,
+            "k_as": 4,
+            "k_c": 3,
+            "k_ds": 4,
+            "k_elh": 2,
+            "label": "GTG 3",
+            "n": 4,
+            "parallel_comp": [
+                {
+                    "label": "GTG 2",
+                    "value": "fab0ffaf-582c-4bc7-9e30-18e4454a09fc"
+                },
+                {
+                    "label": "GTG 4",
+                    "value": "ea03e9a6-f1ff-4c29-9d15-d16b9af97160"
+                },
+                {
+                    "label": "GTG 1",
+                    "value": "697d30e3-5a7e-434a-9062-ad0b5b0ace6c"
+                }
+            ]
+        },
+        "dtype": "node",
+        "equipementId": "81E6317A-69C2-4622-9ECC-EA43D9826C9A",
+        "id": "115838fa-39c0-431b-a633-751dd4035ddf",
+        "metaData": {
+            "command": "Western Naval Command",
+            "department": "Engineering",
+            "equipmentCode": "",
+            "equipmentName": "",
+            "nomenclature": "",
+            "shipCategory": "DESTROYER AND FRIGATES",
+            "shipClass": "KOLKATA (P-15A)",
+            "shipName": "INS TWO"
+        },
+        "position": {
+            "x": 308,
+            "y": 1910
+        },
+        "shipName": "INS TWO",
+        "sourcePosition": "right",
+        "style": {
+            "background": "rgb(99, 221, 138)",
+            "border": "1px solid black",
+            "borderColor": "black",
+            "borderRadius": "5px",
+            "padding": "20px"
+        },
+        "targetPosition": "left",
+        "type": "component"
+    },
+    {
+        "data": {
+            "k": 4,
+            "k_as": 4,
+            "k_c": 3,
+            "k_ds": 4,
+            "k_elh": 2,
+            "label": "GTG 4",
+            "n": 4,
+            "parallel_comp": [
+                {
+                    "label": "GTG 2",
+                    "value": "fab0ffaf-582c-4bc7-9e30-18e4454a09fc"
+                },
+                {
+                    "label": "GTG 3",
+                    "value": "115838fa-39c0-431b-a633-751dd4035ddf"
+                },
+                {
+                    "label": "GTG 1",
+                    "value": "697d30e3-5a7e-434a-9062-ad0b5b0ace6c"
+                }
+            ]
+        },
+        "dtype": "node",
+        "equipementId": "C6FE6AEA-0EA2-4617-AA2A-3A236E6268DB",
+        "id": "ea03e9a6-f1ff-4c29-9d15-d16b9af97160",
+        "metaData": {
+            "command": "Western Naval Command",
+            "department": "Engineering",
+            "equipmentCode": "",
+            "equipmentName": "",
+            "nomenclature": "",
+            "shipCategory": "DESTROYER AND FRIGATES",
+            "shipClass": "KOLKATA (P-15A)",
+            "shipName": "INS TWO"
+        },
+        "position": {
+            "x": 308,
+            "y": 1996
+        },
+        "shipName": "INS TWO",
+        "sourcePosition": "right",
+        "style": {
+            "background": "rgb(99, 221, 138)",
+            "border": "1px solid black",
+            "borderColor": "black",
+            "borderRadius": "5px",
+            "padding": "20px"
+        },
+        "targetPosition": "left",
+        "type": "component"
+    },
+    {
+        "data": {
+            "k": 6,
+            "k_as": 6,
+            "k_c": 4,
+            "k_ds": 6,
+            "k_elh": 3,
+            "label": "AC 1",
+            "n": 6,
+            "parallel_comp": [
+                {
+                    "label": "AC 2",
+                    "value": "a7a265c1-d03a-4b2d-bfe4-e5213c8425da"
+                },
+                {
+                    "label": "AC 3",
+                    "value": "0b1debed-1367-4112-8093-2de6fd2f8508"
+                },
+                {
+                    "label": "AC 4",
+                    "value": "fb82237f-80aa-40fb-ba62-4f4af0b18aa1"
+                },
+                {
+                    "label": "AC 5",
+                    "value": "3c83b691-6089-4cdd-8d56-ddaf96abe89e"
+                },
+                {
+                    "label": "AC 6",
+                    "value": "7defce0b-fb95-4111-a54d-a20dac07a1b0"
+                }
+            ]
+        },
+        "dtype": "node",
+        "equipementId": "3FAC2127-1CB2-4027-A618-67C6BF98836B",
+        "id": "bdad8ff1-0f94-4d0b-bd1e-6d39bb7a714f",
+        "metaData": {
+            "command": "Western Naval Command",
+            "department": "Electrical",
+            "equipmentCode": "",
+            "equipmentName": "",
+            "nomenclature": "",
+            "shipCategory": "DESTROYER AND FRIGATES",
+            "shipClass": "KOLKATA (P-15A)",
+            "shipName": "INS TWO"
+        },
+        "position": {
+            "x": 308,
+            "y": 2082
+        },
+        "shipName": "INS TWO",
+        "sourcePosition": "right",
+        "style": {
+            "background": "rgb(52, 193, 82)",
+            "border": "1px solid black",
+            "borderColor": "black",
+            "borderRadius": "5px",
+            "padding": "20px"
+        },
+        "targetPosition": "left",
+        "type": "component"
+    },
+    {
+        "data": {
+            "k": 6,
+            "k_as": 6,
+            "k_c": 4,
+            "k_ds": 6,
+            "k_elh": 3,
+            "label": "AC 2",
+            "n": 6,
+            "parallel_comp": [
+                {
+                    "label": "AC 3",
+                    "value": "0b1debed-1367-4112-8093-2de6fd2f8508"
+                },
+                {
+                    "label": "AC 4",
+                    "value": "fb82237f-80aa-40fb-ba62-4f4af0b18aa1"
+                },
+                {
+                    "label": "AC 5",
+                    "value": "3c83b691-6089-4cdd-8d56-ddaf96abe89e"
+                },
+                {
+                    "label": "AC 6",
+                    "value": "7defce0b-fb95-4111-a54d-a20dac07a1b0"
+                },
+                {
+                    "label": "AC 1",
+                    "value": "bdad8ff1-0f94-4d0b-bd1e-6d39bb7a714f"
+                }
+            ]
+        },
+        "dtype": "node",
+        "equipementId": "937F619F-6063-4916-8D2D-A149FB8D37BC",
+        "id": "a7a265c1-d03a-4b2d-bfe4-e5213c8425da",
+        "metaData": {
+            "command": "Western Naval Command",
+            "department": "Electrical",
+            "equipmentCode": "",
+            "equipmentName": "",
+            "nomenclature": "",
+            "shipCategory": "DESTROYER AND FRIGATES",
+            "shipClass": "KOLKATA (P-15A)",
+            "shipName": "INS TWO"
+        },
+        "position": {
+            "x": 308,
+            "y": 2168
+        },
+        "shipName": "INS TWO",
+        "sourcePosition": "right",
+        "style": {
+            "background": "rgb(52, 193, 82)",
+            "border": "1px solid black",
+            "borderColor": "black",
+            "borderRadius": "5px",
+            "padding": "20px"
+        },
+        "targetPosition": "left",
+        "type": "component"
+    },
+    {
+        "data": {
+            "k": 6,
+            "k_as": 6,
+            "k_c": 4,
+            "k_ds": 6,
+            "k_elh": 3,
+            "label": "AC 3",
+            "n": 6,
+            "parallel_comp": [
+                {
+                    "label": "AC 2",
+                    "value": "a7a265c1-d03a-4b2d-bfe4-e5213c8425da"
+                },
+                {
+                    "label": "AC 4",
+                    "value": "fb82237f-80aa-40fb-ba62-4f4af0b18aa1"
+                },
+                {
+                    "label": "AC 5",
+                    "value": "3c83b691-6089-4cdd-8d56-ddaf96abe89e"
+                },
+                {
+                    "label": "AC 6",
+                    "value": "7defce0b-fb95-4111-a54d-a20dac07a1b0"
+                },
+                {
+                    "label": "AC 1",
+                    "value": "bdad8ff1-0f94-4d0b-bd1e-6d39bb7a714f"
+                }
+            ]
+        },
+        "dtype": "node",
+        "equipementId": "1EC92735-F442-422B-B64E-D91E0F39AA70",
+        "id": "0b1debed-1367-4112-8093-2de6fd2f8508",
+        "metaData": {
+            "command": "Western Naval Command",
+            "department": "Electrical",
+            "equipmentCode": "",
+            "equipmentName": "",
+            "nomenclature": "",
+            "shipCategory": "DESTROYER AND FRIGATES",
+            "shipClass": "KOLKATA (P-15A)",
+            "shipName": "INS TWO"
+        },
+        "position": {
+            "x": 308,
+            "y": 2254
+        },
+        "shipName": "INS TWO",
+        "sourcePosition": "right",
+        "style": {
+            "background": "rgb(52, 193, 82)",
+            "border": "1px solid black",
+            "borderColor": "black",
+            "borderRadius": "5px",
+            "padding": "20px"
+        },
+        "targetPosition": "left",
+        "type": "component"
+    },
+    {
+        "data": {
+            "k": 6,
+            "k_as": 6,
+            "k_c": 4,
+            "k_ds": 6,
+            "k_elh": 3,
+            "label": "AC 4",
+            "n": 6,
+            "parallel_comp": [
+                {
+                    "label": "AC 2",
+                    "value": "a7a265c1-d03a-4b2d-bfe4-e5213c8425da"
+                },
+                {
+                    "label": "AC 3",
+                    "value": "0b1debed-1367-4112-8093-2de6fd2f8508"
+                },
+                {
+                    "label": "AC 5",
+                    "value": "3c83b691-6089-4cdd-8d56-ddaf96abe89e"
+                },
+                {
+                    "label": "AC 6",
+                    "value": "7defce0b-fb95-4111-a54d-a20dac07a1b0"
+                },
+                {
+                    "label": "AC 1",
+                    "value": "bdad8ff1-0f94-4d0b-bd1e-6d39bb7a714f"
+                }
+            ]
+        },
+        "dtype": "node",
+        "equipementId": "4F8FAF11-E22D-4F09-A985-A935E5D462A3",
+        "id": "fb82237f-80aa-40fb-ba62-4f4af0b18aa1",
+        "metaData": {
+            "command": "Western Naval Command",
+            "department": "Electrical",
+            "equipmentCode": "",
+            "equipmentName": "",
+            "nomenclature": "",
+            "shipCategory": "DESTROYER AND FRIGATES",
+            "shipClass": "KOLKATA (P-15A)",
+            "shipName": "INS TWO"
+        },
+        "position": {
+            "x": 308,
+            "y": 2340
+        },
+        "shipName": "INS TWO",
+        "sourcePosition": "right",
+        "style": {
+            "background": "rgb(52, 193, 82)",
+            "border": "1px solid black",
+            "borderColor": "black",
+            "borderRadius": "5px",
+            "padding": "20px"
+        },
+        "targetPosition": "left",
+        "type": "component"
+    },
+    {
+        "data": {
+            "k": 6,
+            "k_as": 6,
+            "k_c": 4,
+            "k_ds": 6,
+            "k_elh": 3,
+            "label": "AC 5",
+            "n": 6,
+            "parallel_comp": [
+                {
+                    "label": "AC 2",
+                    "value": "a7a265c1-d03a-4b2d-bfe4-e5213c8425da"
+                },
+                {
+                    "label": "AC 3",
+                    "value": "0b1debed-1367-4112-8093-2de6fd2f8508"
+                },
+                {
+                    "label": "AC 4",
+                    "value": "fb82237f-80aa-40fb-ba62-4f4af0b18aa1"
+                },
+                {
+                    "label": "AC 6",
+                    "value": "7defce0b-fb95-4111-a54d-a20dac07a1b0"
+                },
+                {
+                    "label": "AC 1",
+                    "value": "bdad8ff1-0f94-4d0b-bd1e-6d39bb7a714f"
+                }
+            ]
+        },
+        "dtype": "node",
+        "equipementId": "39C2CC08-E7B5-4F81-A3C8-887CD862980E",
+        "id": "3c83b691-6089-4cdd-8d56-ddaf96abe89e",
+        "metaData": {
+            "command": "Western Naval Command",
+            "department": "Electrical",
+            "equipmentCode": "",
+            "equipmentName": "",
+            "nomenclature": "",
+            "shipCategory": "DESTROYER AND FRIGATES",
+            "shipClass": "KOLKATA (P-15A)",
+            "shipName": "INS TWO"
+        },
+        "position": {
+            "x": 308,
+            "y": 2426
+        },
+        "shipName": "INS TWO",
+        "sourcePosition": "right",
+        "style": {
+            "background": "rgb(52, 193, 82)",
+            "border": "1px solid black",
+            "borderColor": "black",
+            "borderRadius": "5px",
+            "padding": "20px"
+        },
+        "targetPosition": "left",
+        "type": "component"
+    },
+    {
+        "data": {
+            "k": 6,
+            "k_as": 6,
+            "k_c": 4,
+            "k_ds": 6,
+            "k_elh": 3,
+            "label": "AC 6",
+            "n": 6,
+            "parallel_comp": [
+                {
+                    "label": "AC 2",
+                    "value": "a7a265c1-d03a-4b2d-bfe4-e5213c8425da"
+                },
+                {
+                    "label": "AC 3",
+                    "value": "0b1debed-1367-4112-8093-2de6fd2f8508"
+                },
+                {
+                    "label": "AC 4",
+                    "value": "fb82237f-80aa-40fb-ba62-4f4af0b18aa1"
+                },
+                {
+                    "label": "AC 5",
+                    "value": "3c83b691-6089-4cdd-8d56-ddaf96abe89e"
+                },
+                {
+                    "label": "AC 1",
+                    "value": "bdad8ff1-0f94-4d0b-bd1e-6d39bb7a714f"
+                }
+            ]
+        },
+        "dtype": "node",
+        "equipementId": "44B57C90-8CF1-4B5B-B474-7C3BED53EAEE",
+        "id": "7defce0b-fb95-4111-a54d-a20dac07a1b0",
+        "metaData": {
+            "command": "Western Naval Command",
+            "department": "Electrical",
+            "equipmentCode": "",
+            "equipmentName": "",
+            "nomenclature": "",
+            "shipCategory": "DESTROYER AND FRIGATES",
+            "shipClass": "KOLKATA (P-15A)",
+            "shipName": "INS TWO"
+        },
+        "position": {
+            "x": 308,
+            "y": 2512
+        },
+        "shipName": "INS TWO",
+        "sourcePosition": "right",
+        "style": {
+            "background": "rgb(52, 193, 82)",
+            "border": "1px solid black",
+            "borderColor": "black",
+            "borderRadius": "5px",
+            "padding": "20px"
+        },
+        "targetPosition": "left",
+        "type": "component"
+    },
+    {
+        "data": {
+            "k": 0,
+            "k_as": 1,
+            "k_c": 0,
+            "k_ds": 1,
+            "k_elh": 0,
+            "label": "BrahMos",
+            "n": 1,
+            "parallel_comp": []
+        },
+        "dtype": "node",
+        "equipementId": "2EB6611F-9706-4DB0-B730-A02147B8CEC7",
+        "id": "607b52e6-e8c4-42e2-9d64-60f1d9786c01",
+        "metaData": {
+            "command": "Western Naval Command",
+            "department": "Electrical",
+            "equipmentCode": "",
+            "equipmentName": "",
+            "nomenclature": "",
+            "shipCategory": "DESTROYER AND FRIGATES",
+            "shipClass": "KOLKATA (P-15A)",
+            "shipName": "INS TWO"
+        },
+        "position": {
+            "x": 308,
+            "y": 2598
+        },
+        "shipName": "INS TWO",
+        "sourcePosition": "right",
+        "style": {
+            "background": "rgb(79, 122, 0)",
+            "border": "1px solid black",
+            "borderColor": "black",
+            "borderRadius": "5px",
+            "padding": "20px"
+        },
+        "targetPosition": "left",
+        "type": "component"
+    }
+]

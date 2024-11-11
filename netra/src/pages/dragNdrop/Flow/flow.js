@@ -117,13 +117,13 @@ const Flow = ({
 	setValue,
 	setSelectAllNomenclature,
 	setSelectAllEquipments,
-	kValues
 }) => {
 	const classes = useStyles();
 	const [isSnackbarOpen, setIsSnackbarOpen] = useState(false);
 	const [activeButton, setActiveButton] = useState("LR");
 	const dispatch = useDispatch();
 	const ielements = useSelector((state) => state.elements.elements);
+	const currentShipName = useSelector((state) => state.userSelection.currentSelection.shipName);
 	useEffect(() => {
 		// Set the default layout to "LR" (left to right)
 		const defaultLayoutDirection = "LR";
@@ -226,29 +226,24 @@ const Flow = ({
 	
 
 	const onHoverBegin = (event, node) => {
+		debugger
 		if ("parallel_comp" in node.data) {
-			console.log(kValues, "kvalues");
-			// Filter kValues to include only those with candidates containing the node's label
-			const filteredKValues = Object.keys(kValues).filter(key =>
-				kValues[key].components.includes(node.data.label)
-			).map((key) => (
-				`<div key=${key}>
-					<h3>${key} K/N Configuration</h3>
-					<div style="display: flex; flex-direction: column;">
-					<Typography variant="h5">HARBOUR: ${kValues[key].k}</Typography>
-					<Typography variant="h5">ACTION STATION: ${kValues[key].k_as}</Typography>
-					<Typography variant="h5">CRUISE: ${kValues[key].k_c}</Typography>
-					<Typography variant="h5">DEFENSE STATION: ${kValues[key].k_ds}</Typography>
-					<Typography variant="h5">ENTRY LEAVING HARBOUR: ${kValues[key].k_elh}</Typography>
-					</div>
-					<p>Parallel Components: ${kValues[key].components.join(', ')}</p>
-					<hr />
-				</div>`
-			)).join('');
 
 			document.getElementById("tooltip").innerHTML =
-				`<h4>${node.data.label}</h4>
-				<div>${filteredKValues}</div>`;
+			`<h4>ship name: ${currentShipName}</h4>
+			<h4>${node.data.label}</h4>
+			<div>
+				<h3>K/N Configuration</h3>
+				<div style="display: flex; flex-direction: column;">
+				  <Typography variant="h5">HARBOUR: ${node.data.k} / ${node.data.n}</Typography>
+				  <Typography variant="h5">ACTION STATION: ${node.data.k_as} / ${node.data.n}</Typography>
+				  <Typography variant="h5">CRUISE: ${node.data.k_c} / ${node.data.n}</Typography>
+				  <Typography variant="h5">DEFENSE STATION: ${node.data.k_ds} / ${node.data.n}</Typography>
+				  <Typography variant="h5">ENTRY LEAVING HARBOUR: ${node.data.k_elh} / ${node.data.n}</Typography>
+				</div>
+				<p>Parallel Components: ${node.data.parallel_comp.map((item)=>item.label)}</p>
+				<hr />
+			  </div>`;
 
 			document.getElementById("tooltip").style.opacity = 1;
 		}

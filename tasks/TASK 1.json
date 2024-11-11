@@ -1,10 +1,10 @@
 [
     {
         "data": {
-            "label": "TASK 1"
+            "label": "task 1"
         },
         "dtype": "node",
-        "id": "6e7f12a5-5c93-45e6-8051-36f0366ecd2b",
+        "id": "f7b56102-51c4-44c0-9377-ea6c4306b1f5",
         "position": {
             "x": 86,
             "y": 319
@@ -17,89 +17,89 @@
     {
         "animated": false,
         "dtype": "edge",
-        "id": "0a037551-2780-4023-b871-1b8dc772b532",
-        "source": "6e7f12a5-5c93-45e6-8051-36f0366ecd2b",
+        "id": "890b8870-6655-46c6-a72f-e991c4414739",
+        "source": "f7b56102-51c4-44c0-9377-ea6c4306b1f5",
         "style": {
-            "stroke": "rgb(27, 148, 247)"
+            "stroke": "rgb(202, 226, 63)"
         },
-        "target": "f546a8ae-eaa6-49da-bcea-43c052bf24a4",
+        "target": "1c2ca35b-b357-47e8-9df9-0d4fde550cba",
         "type": "smoothstep"
     },
     {
         "animated": false,
         "dtype": "edge",
-        "id": "2f2e456f-853b-40de-acd9-f8393d67839b",
-        "source": "6e7f12a5-5c93-45e6-8051-36f0366ecd2b",
+        "id": "65327c44-4d62-4617-8fbf-f4e8f7eb5a94",
+        "source": "f7b56102-51c4-44c0-9377-ea6c4306b1f5",
         "style": {
-            "stroke": "rgb(27, 148, 247)"
+            "stroke": "rgb(202, 226, 63)"
         },
-        "target": "4ffb44aa-2a4e-4929-8c80-5f7e72406ed8",
+        "target": "8a780da7-60a6-4ce5-890f-09befb89d9d2",
         "type": "smoothstep"
     },
     {
         "animated": false,
         "dtype": "edge",
-        "id": "b95abe74-3308-4015-864c-0f81ab95ed9e",
-        "source": "6e7f12a5-5c93-45e6-8051-36f0366ecd2b",
+        "id": "8f2529b9-5f8c-47b9-ab3e-75385955c3bd",
+        "source": "f7b56102-51c4-44c0-9377-ea6c4306b1f5",
         "style": {
-            "stroke": "rgb(27, 148, 247)"
+            "stroke": "rgb(202, 226, 63)"
         },
-        "target": "271f78df-6802-4ae1-84f9-fb3cce6e85e6",
+        "target": "590d1ce7-2a99-4bfe-ae8b-790d65db1461",
         "type": "smoothstep"
     },
     {
         "animated": false,
         "dtype": "edge",
-        "id": "cb6e8901-762f-4b83-abe9-dce684032a1d",
-        "source": "6e7f12a5-5c93-45e6-8051-36f0366ecd2b",
+        "id": "1f8cf2af-8b3a-429c-9e5e-b728a755c597",
+        "source": "f7b56102-51c4-44c0-9377-ea6c4306b1f5",
         "style": {
-            "stroke": "rgb(27, 148, 247)"
+            "stroke": "rgb(202, 226, 63)"
         },
-        "target": "8d5219bd-3307-40d3-840f-1c57cba8181c",
+        "target": "f9db2935-4426-4666-b0c6-275b0415ec61",
         "type": "smoothstep"
     },
     {
         "animated": false,
         "dtype": "edge",
-        "id": "93f8f073-5c83-468a-b0fa-27aa0f2f32e1",
-        "source": "6e7f12a5-5c93-45e6-8051-36f0366ecd2b",
+        "id": "9c8e51e3-eb01-49f3-a44e-f1dfa7bb9745",
+        "source": "f7b56102-51c4-44c0-9377-ea6c4306b1f5",
         "style": {
-            "stroke": "rgb(156, 226, 81)"
+            "stroke": "rgb(24, 150, 47)"
         },
-        "target": "ca1b742f-87a2-4767-8816-6ac73bf6d109",
+        "target": "bff2d447-fa04-429a-9e28-2754422f6a4b",
         "type": "smoothstep"
     },
     {
         "animated": false,
         "dtype": "edge",
-        "id": "a3371f20-4856-4796-b3c7-dce716dee4d2",
-        "source": "6e7f12a5-5c93-45e6-8051-36f0366ecd2b",
+        "id": "420e4aa4-4e9f-43dc-9c8c-d9fa4442229d",
+        "source": "f7b56102-51c4-44c0-9377-ea6c4306b1f5",
         "style": {
-            "stroke": "rgb(156, 226, 81)"
+            "stroke": "rgb(24, 150, 47)"
         },
-        "target": "3a5f7629-b7a3-4457-a686-fb097574dd64",
+        "target": "75e752ae-6859-4d3d-a00a-0616dbe3029d",
         "type": "smoothstep"
     },
     {
         "animated": false,
         "dtype": "edge",
-        "id": "f67514e0-5b8c-42c8-bf54-8510e148910a",
-        "source": "6e7f12a5-5c93-45e6-8051-36f0366ecd2b",
+        "id": "1ed05175-6d03-4d42-a5de-14bee140da1a",
+        "source": "f7b56102-51c4-44c0-9377-ea6c4306b1f5",
         "style": {
-            "stroke": "rgb(156, 226, 81)"
+            "stroke": "rgb(24, 150, 47)"
         },
-        "target": "dd8437ee-d894-460c-bed6-689ab51c5171",
+        "target": "7f4db758-f956-42c9-8cde-32425e600adc",
         "type": "smoothstep"
     },
     {
         "animated": false,
         "dtype": "edge",
-        "id": "92bde1f5-fc17-42c8-94a2-5539d1ae5557",
-        "source": "6e7f12a5-5c93-45e6-8051-36f0366ecd2b",
+        "id": "ebcfea3c-4e07-436d-97ad-6073588d4c7f",
+        "source": "f7b56102-51c4-44c0-9377-ea6c4306b1f5",
         "style": {
-            "stroke": "rgb(156, 226, 81)"
+            "stroke": "rgb(24, 150, 47)"
         },
-        "target": "1d13c48e-fad7-49e8-8b8e-b7e7e230fa68",
+        "target": "57cb0a1c-8e90-4a71-8ce2-422bf5fde9ca",
         "type": "smoothstep"
     },
     {
@@ -114,21 +114,21 @@
             "parallel_comp": [
                 {
                     "label": "GT 2",
-                    "value": "4ffb44aa-2a4e-4929-8c80-5f7e72406ed8"
+                    "value": "8a780da7-60a6-4ce5-890f-09befb89d9d2"
                 },
                 {
                     "label": "GT 3",
-                    "value": "271f78df-6802-4ae1-84f9-fb3cce6e85e6"
+                    "value": "590d1ce7-2a99-4bfe-ae8b-790d65db1461"
                 },
                 {
                     "label": "GT 4",
-                    "value": "8d5219bd-3307-40d3-840f-1c57cba8181c"
+                    "value": "f9db2935-4426-4666-b0c6-275b0415ec61"
                 }
             ]
         },
         "dtype": "node",
-        "equipementId": "2C93C834-ADA7-4875-894D-B5D9EF7DDDF6",
-        "id": "f546a8ae-eaa6-49da-bcea-43c052bf24a4",
+        "equipementId": "5358D044-9F4F-44CF-A975-341221F7189D",
+        "id": "1c2ca35b-b357-47e8-9df9-0d4fde550cba",
         "metaData": {
             "command": "Western Naval Command",
             "department": "Engineering",
@@ -137,16 +137,16 @@
             "nomenclature": "",
             "shipCategory": "DESTROYER AND FRIGATES",
             "shipClass": "KOLKATA (P-15A)",
-            "shipName": "INS THREE"
+            "shipName": "INS ONE"
         },
         "position": {
             "x": 308,
             "y": 18
         },
-        "shipName": "INS THREE",
+        "shipName": "INS ONE",
         "sourcePosition": "right",
         "style": {
-            "background": "rgb(27, 148, 247)",
+            "background": "rgb(202, 226, 63)",
             "border": "1px solid black",
             "borderColor": "black",
             "borderRadius": "5px",
@@ -167,21 +167,21 @@
             "parallel_comp": [
                 {
                     "label": "GT 3",
-                    "value": "271f78df-6802-4ae1-84f9-fb3cce6e85e6"
+                    "value": "590d1ce7-2a99-4bfe-ae8b-790d65db1461"
                 },
                 {
                     "label": "GT 4",
-                    "value": "8d5219bd-3307-40d3-840f-1c57cba8181c"
+                    "value": "f9db2935-4426-4666-b0c6-275b0415ec61"
                 },
                 {
                     "label": "GT 1",
-                    "value": "f546a8ae-eaa6-49da-bcea-43c052bf24a4"
+                    "value": "1c2ca35b-b357-47e8-9df9-0d4fde550cba"
                 }
             ]
         },
         "dtype": "node",
-        "equipementId": "7AB66DAB-0582-44AC-9557-917EAC6D230B",
-        "id": "4ffb44aa-2a4e-4929-8c80-5f7e72406ed8",
+        "equipementId": "DA570729-9A1E-4FA1-8399-E21C93C46E8F",
+        "id": "8a780da7-60a6-4ce5-890f-09befb89d9d2",
         "metaData": {
             "command": "Western Naval Command",
             "department": "Engineering",
@@ -190,16 +190,16 @@
             "nomenclature": "",
             "shipCategory": "DESTROYER AND FRIGATES",
             "shipClass": "KOLKATA (P-15A)",
-            "shipName": "INS THREE"
+            "shipName": "INS ONE"
         },
         "position": {
             "x": 308,
             "y": 104
         },
-        "shipName": "INS THREE",
+        "shipName": "INS ONE",
         "sourcePosition": "right",
         "style": {
-            "background": "rgb(27, 148, 247)",
+            "background": "rgb(202, 226, 63)",
             "border": "1px solid black",
             "borderColor": "black",
             "borderRadius": "5px",
@@ -220,21 +220,21 @@
             "parallel_comp": [
                 {
                     "label": "GT 2",
-                    "value": "4ffb44aa-2a4e-4929-8c80-5f7e72406ed8"
+                    "value": "8a780da7-60a6-4ce5-890f-09befb89d9d2"
                 },
                 {
                     "label": "GT 4",
-                    "value": "8d5219bd-3307-40d3-840f-1c57cba8181c"
+                    "value": "f9db2935-4426-4666-b0c6-275b0415ec61"
                 },
                 {
                     "label": "GT 1",
-                    "value": "f546a8ae-eaa6-49da-bcea-43c052bf24a4"
+                    "value": "1c2ca35b-b357-47e8-9df9-0d4fde550cba"
                 }
             ]
         },
         "dtype": "node",
-        "equipementId": "F8C58C2F-EC51-4942-898A-0912A5B9DD5F",
-        "id": "271f78df-6802-4ae1-84f9-fb3cce6e85e6",
+        "equipementId": "AB055CA1-2AA1-4C55-A1B1-39EAD450A131",
+        "id": "590d1ce7-2a99-4bfe-ae8b-790d65db1461",
         "metaData": {
             "command": "Western Naval Command",
             "department": "Engineering",
@@ -243,16 +243,16 @@
             "nomenclature": "",
             "shipCategory": "DESTROYER AND FRIGATES",
             "shipClass": "KOLKATA (P-15A)",
-            "shipName": "INS THREE"
+            "shipName": "INS ONE"
         },
         "position": {
             "x": 308,
             "y": 190
         },
-        "shipName": "INS THREE",
+        "shipName": "INS ONE",
         "sourcePosition": "right",
         "style": {
-            "background": "rgb(27, 148, 247)",
+            "background": "rgb(202, 226, 63)",
             "border": "1px solid black",
             "borderColor": "black",
             "borderRadius": "5px",
@@ -273,21 +273,21 @@
             "parallel_comp": [
                 {
                     "label": "GT 2",
-                    "value": "4ffb44aa-2a4e-4929-8c80-5f7e72406ed8"
+                    "value": "8a780da7-60a6-4ce5-890f-09befb89d9d2"
                 },
                 {
                     "label": "GT 3",
-                    "value": "271f78df-6802-4ae1-84f9-fb3cce6e85e6"
+                    "value": "590d1ce7-2a99-4bfe-ae8b-790d65db1461"
                 },
                 {
                     "label": "GT 1",
-                    "value": "f546a8ae-eaa6-49da-bcea-43c052bf24a4"
+                    "value": "1c2ca35b-b357-47e8-9df9-0d4fde550cba"
                 }
             ]
         },
         "dtype": "node",
-        "equipementId": "AAD219F3-69A9-4E30-B5FD-4167B75F0F7C",
-        "id": "8d5219bd-3307-40d3-840f-1c57cba8181c",
+        "equipementId": "8E7C0C15-F44E-42BE-BBF4-E04A62FC242E",
+        "id": "f9db2935-4426-4666-b0c6-275b0415ec61",
         "metaData": {
             "command": "Western Naval Command",
             "department": "Engineering",
@@ -296,16 +296,16 @@
             "nomenclature": "",
             "shipCategory": "DESTROYER AND FRIGATES",
             "shipClass": "KOLKATA (P-15A)",
-            "shipName": "INS THREE"
+            "shipName": "INS ONE"
         },
         "position": {
             "x": 308,
             "y": 276
         },
-        "shipName": "INS THREE",
+        "shipName": "INS ONE",
         "sourcePosition": "right",
         "style": {
-            "background": "rgb(27, 148, 247)",
+            "background": "rgb(202, 226, 63)",
             "border": "1px solid black",
             "borderColor": "black",
             "borderRadius": "5px",
@@ -326,21 +326,21 @@
             "parallel_comp": [
                 {
                     "label": "GTG 2",
-                    "value": "3a5f7629-b7a3-4457-a686-fb097574dd64"
+                    "value": "75e752ae-6859-4d3d-a00a-0616dbe3029d"
                 },
                 {
                     "label": "GTG 3",
-                    "value": "dd8437ee-d894-460c-bed6-689ab51c5171"
+                    "value": "7f4db758-f956-42c9-8cde-32425e600adc"
                 },
                 {
                     "label": "GTG 4",
-                    "value": "1d13c48e-fad7-49e8-8b8e-b7e7e230fa68"
+                    "value": "57cb0a1c-8e90-4a71-8ce2-422bf5fde9ca"
                 }
             ]
         },
         "dtype": "node",
-        "equipementId": "6C208047-163A-4DD2-8C27-9B3AFE85193A",
-        "id": "ca1b742f-87a2-4767-8816-6ac73bf6d109",
+        "equipementId": "443360A0-6218-486B-A34C-1813963177B7",
+        "id": "bff2d447-fa04-429a-9e28-2754422f6a4b",
         "metaData": {
             "command": "Western Naval Command",
             "department": "Engineering",
@@ -349,16 +349,16 @@
             "nomenclature": "",
             "shipCategory": "DESTROYER AND FRIGATES",
             "shipClass": "KOLKATA (P-15A)",
-            "shipName": "INS THREE"
+            "shipName": "INS ONE"
         },
         "position": {
             "x": 308,
             "y": 362
         },
-        "shipName": "INS THREE",
+        "shipName": "INS ONE",
         "sourcePosition": "right",
         "style": {
-            "background": "rgb(156, 226, 81)",
+            "background": "rgb(24, 150, 47)",
             "border": "1px solid black",
             "borderColor": "black",
             "borderRadius": "5px",
@@ -379,21 +379,21 @@
             "parallel_comp": [
                 {
                     "label": "GTG 3",
-                    "value": "dd8437ee-d894-460c-bed6-689ab51c5171"
+                    "value": "7f4db758-f956-42c9-8cde-32425e600adc"
                 },
                 {
                     "label": "GTG 4",
-                    "value": "1d13c48e-fad7-49e8-8b8e-b7e7e230fa68"
+                    "value": "57cb0a1c-8e90-4a71-8ce2-422bf5fde9ca"
                 },
                 {
                     "label": "GTG 1",
-                    "value": "ca1b742f-87a2-4767-8816-6ac73bf6d109"
+                    "value": "bff2d447-fa04-429a-9e28-2754422f6a4b"
                 }
             ]
         },
         "dtype": "node",
-        "equipementId": "E6D24AC5-4C91-4DCB-9DBB-11098954FAF1",
-        "id": "3a5f7629-b7a3-4457-a686-fb097574dd64",
+        "equipementId": "C652B6B3-9D13-4E4D-833E-DD71AECD102B",
+        "id": "75e752ae-6859-4d3d-a00a-0616dbe3029d",
         "metaData": {
             "command": "Western Naval Command",
             "department": "Engineering",
@@ -402,16 +402,16 @@
             "nomenclature": "",
             "shipCategory": "DESTROYER AND FRIGATES",
             "shipClass": "KOLKATA (P-15A)",
-            "shipName": "INS THREE"
+            "shipName": "INS ONE"
         },
         "position": {
             "x": 308,
             "y": 448
         },
-        "shipName": "INS THREE",
+        "shipName": "INS ONE",
         "sourcePosition": "right",
         "style": {
-            "background": "rgb(156, 226, 81)",
+            "background": "rgb(24, 150, 47)",
             "border": "1px solid black",
             "borderColor": "black",
             "borderRadius": "5px",
@@ -432,21 +432,21 @@
             "parallel_comp": [
                 {
                     "label": "GTG 2",
-                    "value": "3a5f7629-b7a3-4457-a686-fb097574dd64"
+                    "value": "75e752ae-6859-4d3d-a00a-0616dbe3029d"
                 },
                 {
                     "label": "GTG 4",
-                    "value": "1d13c48e-fad7-49e8-8b8e-b7e7e230fa68"
+                    "value": "57cb0a1c-8e90-4a71-8ce2-422bf5fde9ca"
                 },
                 {
                     "label": "GTG 1",
-                    "value": "ca1b742f-87a2-4767-8816-6ac73bf6d109"
+                    "value": "bff2d447-fa04-429a-9e28-2754422f6a4b"
                 }
             ]
         },
         "dtype": "node",
-        "equipementId": "2E97D772-C12E-48D7-B950-99DC31411839",
-        "id": "dd8437ee-d894-460c-bed6-689ab51c5171",
+        "equipementId": "5EEFD3C9-CBE0-48DB-A43D-89247F46ED8A",
+        "id": "7f4db758-f956-42c9-8cde-32425e600adc",
         "metaData": {
             "command": "Western Naval Command",
             "department": "Engineering",
@@ -455,16 +455,16 @@
             "nomenclature": "",
             "shipCategory": "DESTROYER AND FRIGATES",
             "shipClass": "KOLKATA (P-15A)",
-            "shipName": "INS THREE"
+            "shipName": "INS ONE"
         },
         "position": {
             "x": 308,
             "y": 534
         },
-        "shipName": "INS THREE",
+        "shipName": "INS ONE",
         "sourcePosition": "right",
         "style": {
-            "background": "rgb(156, 226, 81)",
+            "background": "rgb(24, 150, 47)",
             "border": "1px solid black",
             "borderColor": "black",
             "borderRadius": "5px",
@@ -485,21 +485,21 @@
             "parallel_comp": [
                 {
                     "label": "GTG 2",
-                    "value": "3a5f7629-b7a3-4457-a686-fb097574dd64"
+                    "value": "75e752ae-6859-4d3d-a00a-0616dbe3029d"
                 },
                 {
                     "label": "GTG 3",
-                    "value": "dd8437ee-d894-460c-bed6-689ab51c5171"
+                    "value": "7f4db758-f956-42c9-8cde-32425e600adc"
                 },
                 {
                     "label": "GTG 1",
-                    "value": "ca1b742f-87a2-4767-8816-6ac73bf6d109"
+                    "value": "bff2d447-fa04-429a-9e28-2754422f6a4b"
                 }
             ]
         },
         "dtype": "node",
-        "equipementId": "4C5F2B39-B4C2-43F7-9B88-5E3F1CC05A24",
-        "id": "1d13c48e-fad7-49e8-8b8e-b7e7e230fa68",
+        "equipementId": "1872DFB4-58F9-48D4-A713-953CD7E1048A",
+        "id": "57cb0a1c-8e90-4a71-8ce2-422bf5fde9ca",
         "metaData": {
             "command": "Western Naval Command",
             "department": "Engineering",
@@ -508,16 +508,16 @@
             "nomenclature": "",
             "shipCategory": "DESTROYER AND FRIGATES",
             "shipClass": "KOLKATA (P-15A)",
-            "shipName": "INS THREE"
+            "shipName": "INS ONE"
         },
         "position": {
             "x": 308,
             "y": 620
         },
-        "shipName": "INS THREE",
+        "shipName": "INS ONE",
         "sourcePosition": "right",
         "style": {
-            "background": "rgb(156, 226, 81)",
+            "background": "rgb(24, 150, 47)",
             "border": "1px solid black",
             "borderColor": "black",
             "borderRadius": "5px",

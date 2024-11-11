@@ -170,7 +170,8 @@ export default function DelSpecific() {
         setColumns(filteredColumns);
         setSnackBarMessage({
           severity: "success",
-          message: data.message,
+          message: 
+          'Data loaded successfully.',
           showSnackBar: true,
         });
       } else {

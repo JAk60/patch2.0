@@ -67,7 +67,8 @@ const CDashboard = () => {
 				);
 			});
 	}, [nomenclatureData]);
-	console.log(selectedEqName, selectedParameterName);
+	debugger
+	console.log(paramOptions);
 	const customSelectData = useSelector(
 		(state) => state.userSelection.userSelection
 	);

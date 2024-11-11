@@ -364,45 +364,48 @@ class Data_Administrator:
         cursor.execute(delete_query, (component_id,))
         cursor.commit()
         try:
-            fetch_query = '''
-                SELECT
-                    ? AS component_id,
-                    CONVERT(VARCHAR, T_Dart.DefectDate, 23) AS date
-                FROM
-                    t_DART WITH (NOLOCK)
-                    INNER JOIN T_EquipmentShipDetail (NOLOCK) ON T_Dart.Universal_ID_T_EquipmentShipDetail = T_EquipmentShipDetail.Universal_ID_T_EquipmentShipDetail
-                    INNER JOIN M_Ship WITH (NOLOCK) ON T_EquipmentShipDetail.Universal_ID_M_Ship = M_Ship.Universal_ID_M_Ship
-                WHERE
-                    T_EquipmentShipDetail.Nomenclature = ?
-                    AND M_Ship.ShipName = ?
-                    AND T_Dart.Active = 1
-                    AND T_EquipmentShipDetail.Active = 1
-                    AND T_Dart.Is_Defect = 1
-                    AND T_Dart.RoutineDefect = 2;
-            '''
-            cursor.execute(
-                fetch_query, (component_id, nomenclature, ship_name))
-            fetched_data = cursor.fetchall()
+            # fetch_query = '''
+            #     SELECT
+            #         ? AS component_id,
+            #         CONVERT(VARCHAR, T_Dart.DefectDate, 23) AS date
+            #     FROM
+            #         t_DART WITH (NOLOCK)
+            #         INNER JOIN T_EquipmentShipDetail (NOLOCK) ON T_Dart.Universal_ID_T_EquipmentShipDetail = T_EquipmentShipDetail.Universal_ID_T_EquipmentShipDetail
+            #         INNER JOIN M_Ship WITH (NOLOCK) ON T_EquipmentShipDetail.Universal_ID_M_Ship = M_Ship.Universal_ID_M_Ship
+            #     WHERE
+            #         T_EquipmentShipDetail.Nomenclature = ?
+            #         AND M_Ship.ShipName = ?
+            #         AND T_Dart.Active = 1
+            #         AND T_EquipmentShipDetail.Active = 1
+            #         AND T_Dart.Is_Defect = 1
+            #         AND T_Dart.RoutineDefect = 2;
+            # '''
+            # cursor.execute(
+            #     fetch_query, (component_id, nomenclature, ship_name))
+            # fetched_data = cursor.fetchall()
+            # print()
+            fetch_query='''select * from DefectData'''
+            pointer.execute(fetch_query)
+            fetched_data = pointer.fetchall()
             print()
-
             overhaul_id = uuid.uuid4()
             maintenance_type = 'Corrective Maintenance'
 
             for data_point in fetched_data:
                 component_id, date = data_point
-
+                generated_id = uuid.uuid4()
                 merge_query = """
-                MERGE INTO data_manager_overhaul_maint_data AS target
-                USING (VALUES (?, ?, ?, ?, ?, NULL, ?, NULL)) AS source (id, component_id, overhaul_id, date, maintenance_type, running_age, associated_sub_system, cmms_running_age)
-                ON target.component_id = source.component_id
-                AND target.date = source.date
-                WHEN NOT MATCHED THEN
-                INSERT (id, component_id, overhaul_id, date, maintenance_type, running_age, associated_sub_system, cmms_running_age)
-                VALUES (?, ?, ?, ?, ?, NULL, ?, NULL);
-                """
+                    MERGE INTO data_manager_overhaul_maint_data AS target
+                    USING (VALUES (?, ?, ?, ?, ?,NULL, ?, NULL)) AS source (id, component_id, overhaul_id, date, maintenance_type, running_age, associated_sub_system, cmms_running_age)
+                    ON target.id = source.id
+                    WHEN NOT MATCHED THEN
+                    INSERT (id, component_id, overhaul_id, date, maintenance_type, running_age, associated_sub_system, cmms_running_age)
+                    VALUES (?, ?, ?, ?, ?,NULL, ?, NULL);
+                    """
 
-                cursor.execute(merge_query, (uuid.uuid4(), component_id, overhaul_id, date, maintenance_type,
-                                             uuid.uuid4(), component_id, overhaul_id, date, maintenance_type, component_id))
+                cursor.execute(merge_query, (generated_id, component_id, overhaul_id,date,maintenance_type,
+                                                component_id,generated_id, component_id, overhaul_id, date,maintenance_type,
+                                            component_id,))
 
             cursor.commit()
 

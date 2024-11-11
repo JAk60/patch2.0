@@ -72,7 +72,6 @@ function UserSelection(props) {
     const filteredData = userSelectionData.filter(
       (x) => x.shipName === shipName
     );
-
     const uniqueCategories = [
       ...new Set(filteredData.map((x) => x.shipCategory)),
     ];
@@ -81,6 +80,7 @@ function UserSelection(props) {
     const uniqueDepartments = [
       ...new Set(filteredData.map((x) => x.department)),
     ];
+    debugger
 
     const d = {
       shipCategory: uniqueCategories,
@@ -126,8 +126,9 @@ function UserSelection(props) {
           x.shipName === currentSelection.shipName &&
           x.shipClass === currentSelection.shipClass
       )
-      .map((x) => x.equipmentName);
+      eqData=eqData.map((x) => x.equipmentName);
 
+      console.log("eqData",eqData)
     let normData = userSelectionEqData
       .filter(
         (x) =>

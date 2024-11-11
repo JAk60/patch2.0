@@ -131,14 +131,11 @@ class ETL():
                 pointer.execute(fetch_query, (component_id,nomenclature,ship_name))
                 fetched_data = pointer.fetchall()
                 print(fetched_data)
-                # fetched_data_dict_list=[{"component_id":row.component_id,"date":row.date}for row in fetched_data]
-                # return fetched_data_dict_list
                 overhaul_id=uuid.uuid4()
                 maintenance_type='Corrective Maintainance'
                 for data_point in fetched_data:
                     # Extract data from the second query result
                     component_id, date = data_point
-                    # print(f"Committing data: ID={generated_id}, Component ID={component_id}, Overhaul ID={overhaul_id}, Date={date}")
                     # Generate a new UUID for each iteration
                     generated_id = uuid.uuid4()
 

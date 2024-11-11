@@ -1,7 +1,7 @@
 import io
 import os
 from datetime import datetime
-from os import listdir
+from os import listdir 
 from os.path import isfile, join
 
 import requests
@@ -349,16 +349,53 @@ def fetch_cmdata():
 
 
 # TASK CONFIGURATION
+# @app.route("/fetch_tasks", methods=["GET", "POST"])
+# def fetch_tasks():
+#     if request.method == "GET":
+#         path = "./tasks"
+#         taskfiles = [f for f in listdir(path) if isfile(join(path, f))]
+#         tasknames = []
+#         for file in taskfiles:
+#             tasknames.append(file.split(".")[0])
+#         t_data = {"tasks": tasknames}
+#         return jsonify(t_data)
+import json
+from flask import jsonify, request
+from os import listdir
+from os.path import isfile, join
+
 @app.route("/fetch_tasks", methods=["GET", "POST"])
 def fetch_tasks():
     if request.method == "GET":
         path = "./tasks"
         taskfiles = [f for f in listdir(path) if isfile(join(path, f))]
-        tasknames = []
+        
+        # Initialize an empty list for the output
+        tasks_info = []
+
+        # Process each task file
         for file in taskfiles:
-            tasknames.append(file.split(".")[0])
-        t_data = {"tasks": tasknames}
-        return jsonify(t_data)
+            task_name = file.split(".")[0]  # Get the task name without the extension
+            
+            # Read the contents of the task file
+            with open(join(path, file), 'r') as f:
+                task_data = json.load(f)  # Load the JSON data
+                
+                # Ensure task_data is a list and get the last object
+                if isinstance(task_data, list) and task_data:
+                    last_object = task_data[-1]  # Get the last object in the array
+                    author_name = last_object.get("shipName")  # Get the author's name from the key 'name'
+                    
+                    # Create a dictionary for the current task
+                    task_info = {
+                        "taskname": task_name,
+                        "ship_name": author_name
+                    }
+                    
+                    # Add the task info to the list
+                    tasks_info.append(task_info)
+        return jsonify(tasks_info)
+
 
 
 @app.route("/save_task_configuration", methods=["POST"])

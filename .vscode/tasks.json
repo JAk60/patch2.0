@@ -1,13 +1,50 @@
 {
-	"version": "2.0.0",
-	"tasks": [
-		{
-			"type": "npm",
-			"script": "start",
-			"path": "netra",
-			"problemMatcher": [],
-			"label": "npm: start - netra",
-			"detail": "react-scripts  --openssl-legacy-provider start"
-		}
-	]
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "npm: start - netra",
+            "type": "shell",
+            "command": "cd ${workspaceFolder}\\netra && npm start",
+            "windows": {
+                "command": "cd /d \"${workspaceFolder}\\netra\" && npm start"
+            },
+            "options": {
+                "shell": {
+                    "executable": "cmd.exe",
+                    "args": ["/d", "/c"]
+                }
+            },
+            "isBackground": true,
+            "presentation": {
+                "reveal": "always",
+                "panel": "new",
+                "clear": true
+            }
+        },
+        {
+            "label": "Start Python App",
+            "type": "shell",
+            "command": "cd /d \"${workspaceFolder}\" && .\\venv\\Scripts\\activate.bat && python route.py",
+            "options": {
+                "shell": {
+                    "executable": "cmd.exe",
+                    "args": ["/d", "/c"]
+                }
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "new",
+                "clear": true
+            }
+        },
+        {
+            "label": "Start Both Apps",
+            "dependsOn": ["npm: start - netra", "Start Python App"],
+            "dependsOrder": "parallel",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ]
 }

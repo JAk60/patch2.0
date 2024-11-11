@@ -9,6 +9,7 @@ import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { v4 as uuid } from "uuid";
 import BackToHomeFab from "../../../components/navigation/MuiFap";
+import { userActions } from "../../../store/ApplicationVariable";
 import { elementActions } from "../../../store/elements";
 import CustomizedSnackbars from "../../../ui/CustomSnackBar";
 import UserSelection from "../../../ui/userSelection/userSelection";
@@ -37,6 +38,7 @@ const Layout = (props) => {
   const [nomenclature, setNomenclature] = useState([]);
   const [boolcanvas, setBoolCanvas] = useState(false);
   const [clearcanvas, setClearCanvas] = useState(false);
+  const [taskNames, setTaskNames] = useState([]);
   useEffect(() => {
     fetch("/fetch_tasks", {
       method: "GET",
@@ -49,12 +51,24 @@ const Layout = (props) => {
         return res.json();
       })
       .then((data) => {
-        setTaskNames(data["tasks"]);
-        console.log(data["tasks"]);
+        debugger
+        setTaskNames(data);
+        console.log(data);
       });
   }, []);
-  const [taskNames, setTaskNames] = useState([]);
-  const [kValues, setKValues] = useState({});
+  const groupedTasks = taskNames.reduce((acc, task) => {
+    const group = acc[task.ship_name] || [];
+    group.push(task);
+    acc[task.ship_name] = group;
+    return acc;
+}, {});
+const tasksoptions = Object.entries(groupedTasks).flatMap(([shipName, tasks]) => 
+  tasks.map(task => ({
+      ...task,         // Include all task properties
+      ship_name: shipName // Add the ship name for grouping
+  }))
+);
+
   const [SnackBarMessage, setSnackBarMessage] = useState({
     severity: "error",
     message: "This is awesome",
@@ -142,37 +156,11 @@ const Layout = (props) => {
       .then((data) => {
         console.log(data);
         dispatch(elementActions.onRestoreHandler({ elements: data }));
-        const kValues = {};
-
-        data.forEach(item => {
-          if (item.dtype === 'node' && item.data && item.data.label) {
-            const label = item.data.label;
-            const groupType = label.substring(0, 3); // GT or GTG
-
-            if (!kValues[groupType]) {
-              kValues[groupType] = {
-                k: item.data.k,
-                k_as: item.data.k_as,
-                k_c: item.data.k_c,
-                k_ds: item.data.k_ds,
-                k_elh: item.data.k_elh,
-                components: []
-              };
-            }
-
-            kValues[groupType].components.push(label);
-          }
-        });
-
-        // Remove any group that doesn't have k values (like TASK)
-        Object.keys(kValues).forEach(key => {
-          if (kValues[key].k === undefined) {
-            delete kValues[key];
-          }
-        });
-
-        console.log({ kValues });
-        setKValues(kValues)
+        const ship_name=data[data.length - 1].shipName;
+        dispatch(
+          userActions.onChangeLoad({
+            currentShipName: { shipName: ship_name },
+          }))
         setSnackBarMessage({
           severity: "success",
           message: "Data loaded successfully",
@@ -382,7 +370,6 @@ const Layout = (props) => {
           setValue={setValue}
           setSelectAllNomenclature={setSelectAllNomenclature}
           setSelectAllEquipments={setSelectAllEquipments}
-          kValues={kValues}
         ></Flow>
       </div>
 
@@ -465,8 +452,10 @@ const Layout = (props) => {
               <DialogContent dividers>
                 <Autocomplete
                   value={loadname}
-                  options={taskNames}
-                  onChange={(value, newValue) => setLoadName(newValue)}
+                  options={tasksoptions}
+                  getOptionLabel={(option) => option.taskname}
+                  groupBy={(option) => option.ship_name}
+                  onChange={(value, newValue) => setLoadName(newValue?.taskname)}
                   renderInput={(params) => (
                     <TextField {...params} variant="standard" />
                   )}

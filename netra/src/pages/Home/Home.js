@@ -210,7 +210,7 @@ const Home = (props) => {
           alt="Netra Logo"
           className={classes.logoImg}
         />
-        <div className={styles.logotxt}>NETRA v2.0</div>
+        <div className={styles.logotxt}>NETRA v2.5</div>
       </div>
     </div>
   );

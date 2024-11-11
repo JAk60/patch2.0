@@ -80,7 +80,7 @@ const ViewData = (props) => {
         </div>
         <div className={styles.netra}>
           <img src="/netra-logo-removebg.png" alt="Netra Logo" className={classes.logoImg} />
-          <div className={styles.logotxt}>NETRA v2.0</div>
+          <div className={styles.logotxt}>NETRA v2.5</div>
         </div>
       </div>
     </AccessControl>
