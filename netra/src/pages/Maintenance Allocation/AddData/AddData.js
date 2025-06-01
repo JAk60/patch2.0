@@ -115,7 +115,7 @@ const AddData = (props) => {
 
 	const currentNomenclature = currentSelection["nomenclature"];
 	const matchingItems = sData.filter(
-		(item) => item.nomenclature === currentNomenclature
+		(item) => item.nomenclature === currentNomenclature && item.ship_name === currentSelection["shipName"]
 	);
 
 	const matchingId = matchingItems[0]?.id;

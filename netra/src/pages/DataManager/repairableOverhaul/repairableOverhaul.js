@@ -10,10 +10,10 @@ import { makeStyles } from "@material-ui/core/styles";
 import Tooltip from "@material-ui/core/Tooltip";
 import InfoIcon from "@material-ui/icons/Info";
 import React, { useState } from "react";
-import OverhaulTable from "../../../ui/Table/OverhaulTable";
-import Custom from "./custom";
 import OverhaulEntryTable from "./OverhaulEntryTable";
 import RepairableSubTableMaual from "./RepairableSubTableMaual";
+import OverhaulTable from "../../../ui/Table/OverhaulTable";
+import Custom from "./custom";
 
 const useStyles = makeStyles((theme) => ({
 	infoButton: {
@@ -32,11 +32,12 @@ const RepairableOverhaul = (props) => {
 		console.log(data);
 		setSecondTableData(data);
 	};
-
+	const userLevel = JSON.parse(localStorage.getItem("userData"))
+	console.log(userLevel);
 	const mainTableUpdate = (data) => {
 		console.log(data);
 		if (
-			data.mainTable.length == 0 &&
+			data.mainTable.length === 0 &&
 			data.subTable[0].hasOwnProperty("nomenclature")
 		) {
 			props?.tableUpdate(data, "overhaul_age");
@@ -69,21 +70,23 @@ const RepairableOverhaul = (props) => {
 					}}
 					onChange={(e) => setSelectedOption(e.target.value)}
 				>
-					<FormControlLabel
-						value="manual"
-						control={<Radio />}
-						label="Manual Data Entry"
-					/>
+					{userLevel.level === 'L0' &&
+						<FormControlLabel
+							value="manual"
+							control={<Radio />}
+							label="Manual Data Entry"
+						/>}
 					<FormControlLabel
 						value="ship"
 						control={<Radio />}
 						label="Insert From another ship"
 					/>
-					<FormControlLabel
-						value="overhaul_hours"
-						control={<Radio />}
-						label="Insert Overhaul Hours"
-					/>
+					{userLevel.level === 'L0' &&
+						<FormControlLabel
+							value="overhaul_hours"
+							control={<Radio />}
+							label="Insert Overhaul Hours"
+						/>}
 					<Tooltip title="Click for more information">
 						<Button
 							style={{
@@ -97,7 +100,7 @@ const RepairableOverhaul = (props) => {
 						</Button>
 					</Tooltip>
 				</RadioGroup>
-				{selectedOption === "manual" && (
+				{selectedOption === "manual" && userLevel.level === 'L0' && (
 					<div style={{ height: "100%" }}>
 						<RepairableSubTableMaual
 							secondTableDataUpdate={secondTableDataUpdate}
@@ -109,7 +112,7 @@ const RepairableOverhaul = (props) => {
 					</div>
 				)}
 				{selectedOption === "ship" && <Custom />}
-				{selectedOption === "overhaul_hours" && (
+				{selectedOption === "overhaul_hours" && userLevel.level === 'L0' && (
 					<OverhaulEntryTable
 						secondTableDataUpdate={secondTableDataUpdate}
 						tableUpdate={mainTableUpdate}
@@ -119,10 +122,12 @@ const RepairableOverhaul = (props) => {
 			<Dialog open={openDialog} onClose={handleCloseDialog}>
 				<DialogTitle>Information</DialogTitle>
 				<DialogContent>
-					<p>
-						<strong>Manual Data Entry:</strong> Use it to
-						manually enter corrective maintenance data. (Optional)
-					</p>
+					{userLevel.level === 'L0' &&
+						<p>
+							<strong>Manual Data Entry:</strong> Use it to
+							manually enter corrective maintenance data. (Optional)
+						</p>
+					}
 					<p>
 						<strong>Insert From another ship:</strong> If
 						historical data for an equipment is not available
@@ -131,10 +136,11 @@ const RepairableOverhaul = (props) => {
 						"import from another equipment" option can be used
 						to copy the parameter values.
 					</p>
-					<p>
-						<strong>Insert Overhaul Hours:</strong> Use it to
-						enter Time between two overhaul. (Compulsory)
-					</p>
+					{userLevel.level === 'L0' &&
+						<p>
+							<strong>Insert Overhaul Hours:</strong> Use it to
+							enter Time between two overhaul. (Compulsory)
+						</p>}
 				</DialogContent>
 				<DialogActions>
 					<Button onClick={handleCloseDialog} color="primary">

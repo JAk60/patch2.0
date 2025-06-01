@@ -396,7 +396,7 @@ const SystemConfiguration = (props) => {
 
   return (
     <React.Fragment>
-      <AccessControl allowedLevels={['L1', 'L5', 'L6']}>
+      <AccessControl allowedLevels={['L0','L1', 'L5', 'L6']}>
         <Navigation />
         {/* <NewModule /> */}
         <StageSlider marks={marks} default={marks[Stage]["value"]} />

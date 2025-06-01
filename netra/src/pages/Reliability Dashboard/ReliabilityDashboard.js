@@ -241,7 +241,7 @@ const ReliabilityDashboard = () => {
 	};
 
 	return (
-		<AccessControl allowedLevels={["L1", "L2", "L3", "L4", "L5"]}>
+		<AccessControl allowedLevels={['L0',"L1", "L2", "L3", "L4", "L5"]}>
 			<MuiPickersUtilsProvider utils={MomentUtils}>
 				{/* <Navigation /> */}
 				<div>

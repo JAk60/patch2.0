@@ -10,7 +10,7 @@ import Help from "./pages/Help/Help";
 import MainHistoryView from "./pages/Historical Data/MainHistoryView";
 import Home from "./pages/Home/Home";
 import MaintenanceAllocation from "./pages/Maintenance Allocation/MaintenanceAllocation";
-import PM from "./pages/PM OPTIM/pm";
+import PMmain from "./pages/PM OPTIM/PMmain";
 import RulLife from './pages/RUL/RulLife';
 import MainRel from "./pages/Reliability Dashboard/MainRel";
 import ForgotPass from "./pages/Settings/ForgotPassword/Forgot_Password";
@@ -159,7 +159,7 @@ function App() {
           render={(props) => <DragNDrop {...props} settings={settings} />} />
         <Route
           path="/optimize"
-          render={() => <PM />} />
+          render={() => <PMmain />} />
         <Route
           path="/rul"
           render={() => <RulLife />} />

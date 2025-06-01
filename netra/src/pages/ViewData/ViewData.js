@@ -1,9 +1,8 @@
 import { Button, Typography, makeStyles } from "@material-ui/core";
 import CreateIcon from '@material-ui/icons/Create';
 import HourglassEmptyIcon from '@material-ui/icons/HourglassEmpty';
-import SaveAltIcon from '@material-ui/icons/SaveAlt';
 import StorageIcon from '@material-ui/icons/Storage';
-import WifiTetheringIcon from '@material-ui/icons/WifiTethering';
+import SystemUpdateAltIcon from '@material-ui/icons/SystemUpdateAlt';
 import React from "react";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
@@ -11,7 +10,6 @@ import BackToHomeFab from "../../components/navigation/MuiFap";
 import { userActions } from "../../store/ApplicationVariable";
 import AccessControl from "../Home/AccessControl";
 import styles from "./ViewData.module.css";
-import SystemUpdateAltIcon from '@material-ui/icons/SystemUpdateAlt';
 
 const ViewData = (props) => {
   const useStyles = makeStyles((theme) => ({
@@ -41,8 +39,8 @@ const ViewData = (props) => {
     { name: "Data Manager", path: "/data_manager", icon: <StorageIcon /> },
     { name: "Historical Data", path: "/historical_data", icon: <HourglassEmptyIcon /> },
     { name: "Add New Ship", path: "/user_selection_config", icon: <CreateIcon /> },
-    { name: "Add System Doc", path: "/add_system_doc", icon: <SaveAltIcon /> },
-    { name: "Add Sensor Data", path: "/maintenance_allocation/add_data", icon: <WifiTetheringIcon /> },
+    // { name: "Add System Doc", path: "/add_system_doc", icon: <SaveAltIcon /> },
+    // { name: "Add Sensor Data", path: "/maintenance_allocation/add_data", icon: <WifiTetheringIcon /> },
     { name: "CMMS To NETRA", path: "/administrator", icon: <SystemUpdateAltIcon /> },
   ];
 
@@ -56,7 +54,7 @@ const ViewData = (props) => {
   };
   const classes=useStyles();
   return (
-    <AccessControl allowedLevels={["L1", "L5", "L6"]}>
+    <AccessControl allowedLevels={['L0',"L1", "L5", "L6"]}>
       <div className={styles.container}>
       <BackToHomeFab />
         <div className={styles.viewDataLinks}>
@@ -80,7 +78,7 @@ const ViewData = (props) => {
         </div>
         <div className={styles.netra}>
           <img src="/netra-logo-removebg.png" alt="Netra Logo" className={classes.logoImg} />
-          <div className={styles.logotxt}>NETRA v2.5</div>
+          <div className={styles.logotxt}>NETRA v2.6</div>
         </div>
       </div>
     </AccessControl>

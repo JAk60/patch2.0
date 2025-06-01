@@ -65,17 +65,17 @@ const Home = (props) => {
   const level = useSelector((state) => state.LevelsData);
   const trueLevels = Object.keys(level).filter((key) => level[key] === true);
   const featureAccess = [
-    { feature: "SystemConfiguration", levels: ["L1", "L5", "L6"] },
-    { feature: "MissionConfiguration", levels: ["L1", "L5"] },
-    { feature: "MaintenanceAllocation", levels: ["L1", "L5", "L6"] },
-    { feature: "ViewOrUpdateData", levels: ["L1", "L5", "L6"] },
-    { feature: "ReliabilityDashboard", levels: ["L1", "L2", "L3", "L4", "L5"] },
-    { feature: "MonitoringDashboard", levels: ["L1", "L2", "L5"] },
+    { feature: "SystemConfiguration", levels: ["L0"] },
+    { feature: "MissionConfiguration", levels: ["L0","L1", "L5"] },
+    { feature: "MaintenanceAllocation", levels: ["L0"] },
+    { feature: "ViewOrUpdateData", levels: ["L0","L1", "L5", "L6"] },
+    { feature: "ReliabilityDashboard", levels: ["L0","L1", "L2", "L3", "L4", "L5"] },
+    { feature: "MonitoringDashboard", levels: ["L0"] },
     {
       feature: "MissionReliabilityDashboard",
-      levels: ["L1", "L2", "L4", "L3", "L5"],
+      levels: ["L0","L1", "L2", "L4", "L3", "L5"],
     },
-    { feature: "TimeToFailureRUL", levels: ["L1", "L5"] },
+    { feature: "TimeToFailureRUL", levels: ["L0"] },
   ];
 
   const speedDialActions = [
@@ -93,7 +93,7 @@ const Home = (props) => {
   ];
 
 
-  if (trueLevels.includes("L5")) {
+  if (trueLevels.includes("L0") || trueLevels.includes("L5")) {
     speedDialActions.push({
       icon: <VpnKey />,
       name: "Admin",
@@ -131,6 +131,7 @@ const Home = (props) => {
     props.history.push("/sign_in");
     dispatch(
       resetLevels({
+        L0: false,
         L1: false,
         L2: false,
         L3: false,
@@ -210,7 +211,7 @@ const Home = (props) => {
           alt="Netra Logo"
           className={classes.logoImg}
         />
-        <div className={styles.logotxt}>NETRA v2.5</div>
+        <div className={styles.logotxt}>NETRA v2.6</div>
       </div>
     </div>
   );

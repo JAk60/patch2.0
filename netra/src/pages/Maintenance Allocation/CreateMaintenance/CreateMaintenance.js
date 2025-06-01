@@ -22,7 +22,7 @@ const CreateMaintenance = (props) => {
 
   const currentNomenclature = currentSelection["nomenclature"];
   const matchingItems = sData.filter(
-    (item) => item.nomenclature === currentNomenclature
+    (item) => item.nomenclature === currentNomenclature && item.ship_name === currentSelection["shipName"]
   );
   const [SnackBarMessage, setSnackBarMessage] = useState({
     severity: "error",

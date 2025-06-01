@@ -100,23 +100,45 @@ const AccCreate = () => {
     };
 
     fetch("/insert_user", {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json'
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify(data)
     })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.code) {
-          history.push("/sign_in", { message: data.message });
-        } else {
+      .then(res => res.json())
+      .then(data => {
+        if (data.code === 1) {
+          setSnackBarMessage({
+            severity: "success",
+            message: data.message,
+            showSnackBar: true,
+          });
+          setTimeout(() => {
+            history.push('/sign_in', { message: data.message });
+          }, 2000); // 2000 milliseconds = 2 seconds
+        } else if (data.code === 0 || data.code === 400 || data.code === 409) {
           setSnackBarMessage({
             severity: "error",
             message: data.message,
             showSnackBar: true,
           });
+        } else {
+          // Catch-all for unexpected codes
+          setSnackBarMessage({
+            severity: "warning",
+            message: "Unexpected response from server.",
+            showSnackBar: true,
+          });
         }
+      })
+      .catch(error => {
+        console.error("Error creating account:", error);
+        setSnackBarMessage({
+          severity: "error",
+          message: "An error occurred while creating the account. Please try again later.",
+          showSnackBar: true,
+        });
       });
   };
 
@@ -186,6 +208,9 @@ const AccCreate = () => {
               variant="outlined"
               className={classes.level}
             >
+              <option value="L0" className={classes.option}>
+                Developer Mode
+              </option>
               <option value="L1" className={classes.option}>
                 Ship HoD
               </option>

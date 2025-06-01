@@ -194,7 +194,7 @@ const CDashboard = () => {
 	}, [selectedEqName, selectedShipName]);
 
 	return (
-		<AccessControl allowedLevels={["L1", "L2", "L5"]}>
+		<AccessControl allowedLevels={['L0',"L1", "L2", "L5"]}>
 			<MuiPickersUtilsProvider utils={MomentUtils}>
 				<Navigation />
 				<div className={styles.body}>

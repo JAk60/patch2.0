@@ -205,7 +205,7 @@ debugger;
 console.log("WWWWWWWWWWWWWWW",mps);
   return (
     <>
-      <AccessControl allowedLevels={["L1", "L5"]}>
+      <AccessControl allowedLevels={["L0"]}>
         <Navigation />
         <div className={styles.body}>
           <div

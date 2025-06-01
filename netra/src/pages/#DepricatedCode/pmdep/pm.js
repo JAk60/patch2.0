@@ -3,11 +3,11 @@ import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import styles from "./pm.module.css";
-import OptiQ from "./OptiQ";
+import OptiQ from "../../PM OPTIM/OptiQ";
 import { getQuestions } from "./Data";
-import Navigation from "../../components/navigation/Navigation";
+import Navigation from "../../../components/navigation/Navigation";
 import { Button, Grid, Typography } from "@material-ui/core";
-import UserSelection from "../../ui/userSelection/userSelection";
+import UserSelection from "../../../ui/userSelection/userSelection";
 import { useSelector } from "react-redux";
 
 const PM = () => {
@@ -95,12 +95,8 @@ const PM = () => {
 
   return (
     <>
-      <Navigation />
-      <div style={{marginLeft: "8%",width: "88vw"}}>
-        <div className={styles.userSelect}>
-          <UserSelection />
-          <Button variant="contained" color="primary" onClick={HandleSubmit}>Submit</Button>
-        </div>
+      {/* <Navigation /> */}
+      <div>
         <div className={styles.flex}>
           {/* Use Grid to organize the radio buttons in three columns */}
           <Grid container spacing={2} className={styles.userSelection}>
@@ -166,6 +162,7 @@ const PM = () => {
                   name="AgeBasedReplacementDowntime"
                 />
               </RadioGroup>
+              <Button variant="contained" color="primary" onClick={HandleSubmit}>Submit</Button>
             </Grid>
           </Grid>
 
@@ -175,7 +172,7 @@ const PM = () => {
               <OptiQ
                 option={selectedOption}
                 currQ={currQ}
-                name={currQ?.name ||  "risk_target"}
+                name={currQ?.name || "risk_target"}
                 questions={getQuestions(selectedOption)}
                 eta={eta}
                 beta={beta}

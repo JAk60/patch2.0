@@ -19,6 +19,7 @@ import {
 } from "@material-ui/core";
 import { Autocomplete } from "@material-ui/lab";
 import { useFormik } from "formik";
+import CustomizedSnackbars from "../../ui/CustomSnackBar";
 
 const useStyles = makeStyles({
   root: {
@@ -47,8 +48,22 @@ export default function ManageUser() {
   const [passwordsMatchError, setPasswordsMatchError] = useState(false);
   const [deleteConfirmationDialogOpen, setDeleteConfirmationDialogOpen] = useState(false);
   const [deleteUserIdToDelete, setDeleteUserIdToDelete] = useState(null);
+  const [SnackBarMessage, setSnackBarMessage] = useState({
+    severity: "error",
+    message: "",
+    showSnackBar: false,
+  });
+
+  const onHandleSnackClose = () => {
+    setSnackBarMessage({
+      severity: "error",
+      message: "",
+      showSnackBar: false,
+    });
+  };
 
   const AccountTypes = [
+    "Developer Mode",
     "Ship HoD",
     "Ship Co",
     "Fleet/ Command HQ",
@@ -85,6 +100,19 @@ export default function ManageUser() {
         .then((response) => response.json())
         .then((data) => {
           console.log(data);
+          if (data.code === 200) {
+            setSnackBarMessage({
+              severity: "success",
+              message: data.message,
+              showSnackBar: true,
+            });
+          } else if (data.code !== 200) {
+            setSnackBarMessage({
+              severity: "error",
+              message: data.message,
+              showSnackBar: true,
+            });
+          }
         })
         .catch((error) => console.error("Error updating user:", error));
 
@@ -97,6 +125,9 @@ export default function ManageUser() {
   const handleAutocompleteChange = (event, value) => {
     setSelectedAccountType(value);
     switch (value) {
+      case "Developer Mode":
+        setSelectedLevel("L0");
+        break;
       case "Ship HoD":
         setSelectedLevel("L1");
         break;
@@ -130,7 +161,20 @@ export default function ManageUser() {
     })
       .then((response) => response.json())
       .then((data) => {
-        setUserData(data);
+        if (data.code === 200) {
+          setSnackBarMessage({
+            severity: "success",
+            message: data.message,
+            showSnackBar: true,
+          });
+          setUserData(data.users);
+        } else if (data.code === 404 || 500) {
+          setSnackBarMessage({
+            severity: "error",
+            message: data.message,
+            showSnackBar: true,
+          });
+        }
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -156,16 +200,34 @@ export default function ManageUser() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ userId: deleteUserIdToDelete }),
+        body: JSON.stringify(user),
       })
         .then((response) => response.json())
         .then((data) => {
           console.log(data);
+          if (data.code === 200) {
+            setSnackBarMessage({
+              severity: "success",
+              message: data.message,
+              showSnackBar: true,
+            });
+          } else if (data.code === 404 || 500) {
+            setSnackBarMessage({
+              severity: "error",
+              message: data.message,
+              showSnackBar: true,
+            });
+          }
           const updatedUserList = userData.filter((u) => u.id !== deleteUserIdToDelete);
           setUserData(updatedUserList);
         })
         .catch((error) => {
           console.error("Error:", error);
+          setSnackBarMessage({
+            severity: "error",
+            message: error,
+            showSnackBar: true,
+          });
         });
 
       setDeleteUserIdToDelete(null);
@@ -192,133 +254,141 @@ export default function ManageUser() {
   };
 
   return (
-    <Container>
-      <Typography variant="h4" style={{ margin: "20px" }}>
-        Manage Users
-      </Typography>
-      <div style={{ display: "flex", justifyContent: "center" }}>
-        <Autocomplete
-          className={classes.autocomplete}
-          options={AccountTypes}
-          getOptionLabel={(option) => option}
-          value={selectedAccountType}
-          onChange={handleAutocompleteChange}
-          renderInput={(params) => (
-            <TextField {...params} label="Account Type" variant="outlined" />
-          )}
-        />
-        <Button
-          className={classes.deleteButton}
-          variant="contained"
-          color="secondary"
-          onClick={handleFormSubmit}
-        >
-          Submit
-        </Button>
-      </div>
-      <TextField
-        label="Search by Username"
-        variant="outlined"
-        fullWidth
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        style={{ marginTop: "20px" }}
-      />
-
-      <TableContainer component={Paper} style={{ marginTop: "10px" }}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell></TableCell>
-              <TableCell>Username</TableCell>
-              <TableCell>Level</TableCell>
-              <TableCell>Action</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {filteredUsers.map((user) => (
-              <TableRow key={user.id}>
-                <TableCell></TableCell>
-                <TableCell>{user.username}</TableCell>
-                <TableCell>{user.level}</TableCell>
-                <TableCell>
-                  <Button
-                    onClick={() => handleDeleteUser(user)}
-                    variant="contained"
-                    color="secondary"
-                    style={{ margin: "10px" }}
-                  >
-                    Delete
-                  </Button>
-                  <Button
-                    onClick={() => handleOpenDialog(user)}
-                    variant="contained"
-                    color="secondary"
-                  >
-                    Change Password
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-
-      {/* Delete Confirmation Dialog */}
-      <Dialog open={deleteConfirmationDialogOpen} onClose={handleDeleteConfirmationCancel}>
-        <DialogTitle>Confirm Delete</DialogTitle>
-        <DialogContent>
-          <Typography variant="body1">Are you sure you want to delete {selectedUser} user?</Typography>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleDeleteConfirmationCancel} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={handleDeleteConfirmation} color="primary">
-            Confirm
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      {/* Change Password Dialog */}
-      <Dialog open={openDialog} onClose={handleCloseDialog}>
-        <DialogTitle>Change Password</DialogTitle>
-        <DialogContent>
-          <Typography variant="body1">Username: {selectedUser}</Typography>
-          <TextField
-            label="New Password"
-            variant="outlined"
-            fullWidth
-            type="password"
-            name="newPassword"
-            value={formik.values.newPassword}
-            onChange={formik.handleChange}
-            error={passwordsMatchError}
-            helperText={passwordsMatchError && "Passwords do not match"}
-            style={{ marginTop: "10px" }}
+    <>
+      <Container>
+        <Typography variant="h4" style={{ margin: "20px" }}>
+          Manage Users
+        </Typography>
+        <div style={{ display: "flex", justifyContent: "center" }}>
+          <Autocomplete
+            className={classes.autocomplete}
+            options={AccountTypes}
+            getOptionLabel={(option) => option}
+            value={selectedAccountType}
+            onChange={handleAutocompleteChange}
+            renderInput={(params) => (
+              <TextField {...params} label="Account Type" variant="outlined" />
+            )}
           />
-          <TextField
-            label="Confirm Password"
-            variant="outlined"
-            fullWidth
-            type="password"
-            name="confirmPassword"
-            value={formik.values.confirmPassword}
-            onChange={formik.handleChange}
-            error={passwordsMatchError}
-            helperText={passwordsMatchError && "Passwords do not match"}
-            style={{ marginTop: "10px" }}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDialog} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={formik.handleSubmit} color="primary">
+          <Button
+            className={classes.deleteButton}
+            variant="contained"
+            color="secondary"
+            onClick={handleFormSubmit}
+          >
             Submit
           </Button>
-        </DialogActions>
-      </Dialog>
-    </Container>
+        </div>
+        <TextField
+          label="Search by Username"
+          variant="outlined"
+          fullWidth
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          style={{ marginTop: "20px" }}
+        />
+
+        <TableContainer component={Paper} style={{ marginTop: "10px" }}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell></TableCell>
+                <TableCell>Username</TableCell>
+                <TableCell>Level</TableCell>
+                <TableCell>Action</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {filteredUsers.map((user) => (
+                <TableRow key={user.id}>
+                  <TableCell></TableCell>
+                  <TableCell>{user.username}</TableCell>
+                  <TableCell>{user.level}</TableCell>
+                  <TableCell>
+                    <Button
+                      onClick={() => handleDeleteUser(user)}
+                      variant="contained"
+                      color="secondary"
+                      style={{ margin: "10px" }}
+                    >
+                      Delete
+                    </Button>
+                    <Button
+                      onClick={() => handleOpenDialog(user)}
+                      variant="contained"
+                      color="secondary"
+                    >
+                      Change Password
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+
+        {/* Delete Confirmation Dialog */}
+        <Dialog open={deleteConfirmationDialogOpen} onClose={handleDeleteConfirmationCancel}>
+          <DialogTitle>Confirm Delete</DialogTitle>
+          <DialogContent>
+            <Typography variant="body1">Are you sure you want to delete {selectedUser} user?</Typography>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleDeleteConfirmationCancel} color="primary">
+              Cancel
+            </Button>
+            <Button onClick={handleDeleteConfirmation} color="primary">
+              Confirm
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        {/* Change Password Dialog */}
+        <Dialog open={openDialog} onClose={handleCloseDialog}>
+          <DialogTitle>Change Password</DialogTitle>
+          <DialogContent>
+            <Typography variant="body1">Username: {selectedUser}</Typography>
+            <TextField
+              label="New Password"
+              variant="outlined"
+              fullWidth
+              type="password"
+              name="newPassword"
+              value={formik.values.newPassword}
+              onChange={formik.handleChange}
+              error={passwordsMatchError}
+              helperText={passwordsMatchError && "Passwords do not match"}
+              style={{ marginTop: "10px" }}
+            />
+            <TextField
+              label="Confirm Password"
+              variant="outlined"
+              fullWidth
+              type="password"
+              name="confirmPassword"
+              value={formik.values.confirmPassword}
+              onChange={formik.handleChange}
+              error={passwordsMatchError}
+              helperText={passwordsMatchError && "Passwords do not match"}
+              style={{ marginTop: "10px" }}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseDialog} color="primary">
+              Cancel
+            </Button>
+            <Button onClick={formik.handleSubmit} color="primary">
+              Submit
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </Container>
+      {SnackBarMessage.showSnackBar && (
+        <CustomizedSnackbars
+          message={SnackBarMessage}
+          onHandleClose={onHandleSnackClose}
+        />
+      )}
+    </>
   );
 }

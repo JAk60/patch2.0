@@ -1,35 +1,57 @@
 import { AppBar, Button, makeStyles, Tab, Tabs } from "@material-ui/core";
 import React, { useState } from "react";
-import Navigation from "../../components/navigation/Navigation";
-import MonthlyUtilization from "./monthlyUtilization/MonthlyUtilization";
-import UserSelection from "../../ui/userSelection/userSelection";
-import styles from "./DataManager.module.css";
-import { v4 as uuid } from "uuid";
 import { useDispatch, useSelector } from "react-redux";
+import { v4 as uuid } from "uuid";
+import Navigation from "../../components/navigation/Navigation";
 import { treeDataActions } from "../../store/TreeDataStore";
 import CustomizedSnackbars from "../../ui/CustomSnackBar";
+import UserSelection from "../../ui/userSelection/userSelection";
+import styles from "./DataManager.module.css";
+import MonthlyUtilization from "./monthlyUtilization/MonthlyUtilization";
 import ParameterEstimation from "./parameterEstimation/parameterEstimation";
+
 const useStyles = makeStyles((theme) => ({
 	transparentTab: {
 		backgroundColor: "#1976d4",
 		color: theme.palette.text.white,
+		flexGrow: 1,
+		maxWidth: "none",
+		width: "50%",
 	},
 	coloredTab: {
 		backgroundColor: "#1976d2",
 		color: theme.palette.common.white,
+		flexGrow: 1,
+		maxWidth: "none",
+		width: "50%",
+	},
+	singleTab: {
+		backgroundColor: "#1976d2",
+		color: theme.palette.common.white,
+		flexGrow: 1,
+		maxWidth: "none",
+		width: "100%",
 	},
 	content: {
 		paddingTop: theme.spacing(4),
 		gridRow: "2",
 		gridColumn: "2 / span 13",
 	},
+	tabsContainer: {
+		width: "100%",
+	},
 }));
 
 export default function DataManagerView(props) {
-	const [selectedTab, setSelectedTab] = useState(0);
-	const [tableRows, setTableRows] = useState([]);
 	const classes = useStyles();
 	const dispatch = useDispatch();
+	const userLevel = JSON.parse(localStorage.getItem("userData"));
+
+	const [selectedTab, setSelectedTab] = useState(() => {
+		return userLevel.level === "L0" ? 0 : 0;
+	});
+
+	const [tableRows, setTableRows] = useState([]);
 	const systemConfigurationTreeData = useSelector(
 		(state) => state.treeData.treeData
 	);
@@ -42,13 +64,24 @@ export default function DataManagerView(props) {
 		showSnackBar: false,
 	});
 
+	const sData = useSelector((state) => state.userSelection.componentsData);
+	const currentNomenclature = currentSelection["nomenclature"];
+	const matchingItems = sData.filter(
+		(item) => item.nomenclature === currentNomenclature && item.ship_name === currentSelection["shipName"]
+	);
+	const matchingId = matchingItems[0]?.id;
+
 	const handleChange = (event, newValue) => {
-		setSelectedTab(newValue);
+		if (userLevel.level === "L0" || newValue === 0) {
+			setSelectedTab(newValue);
+			console.log("Tab changed to:", newValue);
+		}
 	};
+
 	const handleTableUpdatedRows = (allRows, dataType) => {
 		setTableRows(allRows);
 	};
-	console.log(tableRows);
+
 	const handleSave = () => {
 		let d = [];
 		d = tableRows.map((x) => {
@@ -60,16 +93,15 @@ export default function DataManagerView(props) {
 			};
 		});
 		d = d.filter((x) => x !== undefined);
-		const data={
+		const data = {
 			data: d,
 			dataType: "insertOpData",
-		}
-		// Filter out any undefined data, though it's not needed here as there's only one case
-		console.log('data', data)
-		// Call the save function
+		};
+		console.log("data", data);
+
 		fetch("/save_historical_data", {
 			method: "POST",
-			body: JSON.stringify({data}),
+			body: JSON.stringify({ data }),
 			headers: {
 				"Content-Type": "application/json",
 				Accept: "application/json",
@@ -95,14 +127,6 @@ export default function DataManagerView(props) {
 			});
 	};
 
-	const sData = useSelector((state) => state.userSelection.componentsData);
-
-	const currentNomenclature = currentSelection["nomenclature"];
-	const matchingItems = sData.filter(
-		(item) => item.nomenclature === currentNomenclature
-	);
-
-	const matchingId = matchingItems[0]?.id;
 	const handleOnLoadSystem = () => {
 		const payload = {
 			nomenclature: currentSelection["nomenclature"],
@@ -135,10 +159,35 @@ export default function DataManagerView(props) {
 	const onHandleSnackClose = () => {
 		setSnackBarMessage({
 			severity: "error",
-			message: "Please Add Systemss",
+			message: "Please Add Systems",
 			showSnackBar: false,
 		});
 	};
+
+	const renderContent = () => {
+		if (userLevel.level === "L0") {
+			return selectedTab === 0 ? (
+				<MonthlyUtilization tableUpdate={handleTableUpdatedRows} />
+			) : (
+				<ParameterEstimation
+					list={systemConfigurationTreeData.filter(
+						(x) => x.lmu === 1 || x.parent_id == null
+					)}
+					rope={true}
+				/>
+			);
+		} else {
+			return (
+				<ParameterEstimation
+					list={systemConfigurationTreeData.filter(
+						(x) => x.lmu === 1 || x.parent_id == null
+					)}
+					rope={true}
+				/>
+			);
+		}
+	};
+
 	return (
 		<>
 			<div style={{ display: "flex", flexDirection: "row" }}>
@@ -147,30 +196,50 @@ export default function DataManagerView(props) {
 					style={{
 						zIndex: "10",
 						marginLeft: "20px",
+						width: "calc(100% - 20px)", // Adjusted width to account for margin
 					}}
 				>
-					<Tabs
-						value={selectedTab}
-						onChange={handleChange}
-						variant="fullWidth"
-					>
-						<Tab
-							label="Monthly Utilization"
-							className={
-								selectedTab === 0
-									? classes.coloredTab
-									: classes.transparentTab
-							}
-						/>
-						<Tab
-							label="Parameter Estimation"
-							className={
-								selectedTab === 1
-									? classes.coloredTab
-									: classes.transparentTab
-							}
-						/>
-					</Tabs>
+					{userLevel.level === "L0" ? (
+						<>
+							<Tabs
+								value={selectedTab}
+								onChange={handleChange}
+								variant="fullWidth"
+								className={classes.tabsContainer}
+								indicatorColor="primary"
+							>
+								<Tab
+									label="Monthly Utilization"
+									className={
+										selectedTab === 0
+											? classes.coloredTab
+											: classes.transparentTab
+									}
+								/>
+								<Tab
+									label="Parameter Estimation"
+									className={
+										selectedTab === 1
+											? classes.coloredTab
+											: classes.transparentTab
+									}
+								/>
+							</Tabs>
+						</>
+					) : (
+						<Tabs
+							value={selectedTab}
+							onChange={handleChange}
+							variant="fullWidth"
+							className={classes.tabsContainer}
+							indicatorColor="primary"
+						>
+							<Tab
+								label="Parameter Estimation"
+								className={classes.singleTab}
+							/>
+						</Tabs>
+					)}
 				</AppBar>
 			</div>
 			<div className={classes.content}>
@@ -202,21 +271,7 @@ export default function DataManagerView(props) {
 						</Button>
 					</div>
 				</div>
-				{selectedTab === 0 && (
-					<div>
-						<MonthlyUtilization
-							tableUpdate={handleTableUpdatedRows}
-						/>
-					</div>
-				)}
-				{selectedTab === 1 && (
-					<ParameterEstimation
-						list={systemConfigurationTreeData.filter(
-							(x) => x.lmu === 1 || x.parent_id == null
-						)}
-						rope={true}
-					/>
-				)}
+				{renderContent()}
 			</div>
 			{SnackBarMessage.showSnackBar && (
 				<CustomizedSnackbars

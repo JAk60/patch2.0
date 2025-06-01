@@ -31,8 +31,7 @@ export default function MainHistoryView() {
 
 	const currentNomenclature = currentSelection["nomenclature"];
 	const matchingItems = sData.filter(
-		(item) => item.nomenclature === currentNomenclature
-	);
+		(item) => item.nomenclature === currentNomenclature && item.ship_name === currentSelection["shipName"]);
 
 	const matchingId = matchingItems[0]?.id;
 	const handleOnLoadSystem = () => {
@@ -52,9 +51,9 @@ export default function MainHistoryView() {
 				"Content-Type": "application/json",
 				Accept: "application/json",
 			},
-		})
-			.then((res) => res.json())
+		}).then((res) => res.json())
 			.then((d) => {
+				console.log("data>>>>>", d);
 				const equipment = d.treeD.filter((x) => x.parentId === null)[0];
 				if (equipment.repairType === "Replaceable") {
 					history.push("/historical_data");
@@ -197,7 +196,7 @@ export default function MainHistoryView() {
 						beta: x.ShapeParameter,
 					};
 				}
-				return null
+				return null;
 			});
 			console.log("");
 		} else if (dataType === "insertOpData") {
@@ -251,7 +250,7 @@ export default function MainHistoryView() {
 							subSystemId: subSystemId,
 						};
 					}
-					return null
+					return null;
 				});
 				data = [{ mainData: mainFinalData, subData: subFinalData }];
 			} catch {

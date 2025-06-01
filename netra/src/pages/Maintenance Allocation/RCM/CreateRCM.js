@@ -25,7 +25,7 @@ const CreateRCM = (props) => {
   const sData = useSelector((state) => state.userSelection.componentsData);
 
   const currentNomenclature = currentSelection["nomenclature"];
-  const matchingItems = sData.filter(item => item.nomenclature === currentNomenclature);
+  const matchingItems = sData.filter(item => item.nomenclature === currentNomenclature && item.ship_name === currentSelection["shipName"]);
   const [SnackBarMessage, setSnackBarMessage] = useState({
     severity: "error",
     message: "This is awesome",

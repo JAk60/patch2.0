@@ -156,7 +156,7 @@ const SystemConfiguration = (props) => {
 
 	return (
 		<>
-			<AccessControl allowedLevels={["L1", "L5", "L6"]}>
+			<AccessControl allowedLevels={["L0"]}>
 				<div className={styles.flex}>
 					<div className={styles.user}>
 						<UserSelection />
