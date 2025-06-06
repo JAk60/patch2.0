@@ -721,7 +721,14 @@ const TaskDashboard = () => {
 							</>
 						)}
 
-						{!showInputTables && (
+						{!showInputTables ? (
+										<CircularProgress size={40} style={{
+											marginTop: "15rem",
+											width: "100%",
+											display: "flex",
+											justifyContent: "center"
+										}} />
+									) : (
 							<div className={styles.table}>
 								{taskTableData.length > 0 && (
 									<Table

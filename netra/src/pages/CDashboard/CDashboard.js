@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from "react";
-
 import {
 	InputLabel,
 	TextField,
 	makeStyles,
 	Button,
 	Typography,
+	CircularProgress,
 } from "@material-ui/core";
 import styles from "./CDashboard.module.css";
-// import { arr,arr2 } from "./data";
 import { MuiPickersUtilsProvider } from "@material-ui/pickers";
 import MomentUtils from "@date-io/moment";
 import Navigation from "../../components/navigation/Navigation";
@@ -32,6 +31,9 @@ const CDashboard = () => {
 	const [nomenclatureDataOption, setNomenclatureDataOption] = useState([]);
 	const [nomenclatureData, setNomenclatureData] = useState([]);
 	const [graphData, setGraphData] = useState([]);
+	const [showGraph, setShowGraph] = useState(false);
+	const [loading, setLoading] = useState(false); // <-- loading state
+
 	useEffect(() => {
 		fetch("/cm_dashboard", {
 			method: "GET",
@@ -40,18 +42,14 @@ const CDashboard = () => {
 				Accept: "application/json",
 			},
 		})
-			.then((res) => {
-				return res.json();
-			})
+			.then((res) => res.json())
 			.then((data) => {
 				const params = data["parameters"];
-				console.log("hello:", params);
 				const filteredData = params.filter((item) =>
 					nomenclatureData.includes(item.nomenclature)
 				);
-				console.log(filteredData);
 				setParamOptions(filteredData);
-				debugger;
+
 				const user_selection = data["user_selection"]["data"];
 				const eqData = data["user_selection"]["eqData"];
 				const eqIds = data["user_selection"]["uniq_eq_data"];
@@ -67,8 +65,7 @@ const CDashboard = () => {
 				);
 			});
 	}, [nomenclatureData]);
-	debugger
-	console.log(paramOptions);
+
 	const customSelectData = useSelector(
 		(state) => state.userSelection.userSelection
 	);
@@ -87,14 +84,14 @@ const CDashboard = () => {
 		},
 	});
 	const classes = dropDownStyle();
-	const [showGraph, setShowGraph] = useState(false);
 
 	const uniqueEquipmentIds = [
 		...new Set(paramOptions.map((item) => item.equipment_id)),
 	];
+
 	const onSubmitHandler = () => {
-		console.log(uniqueEquipmentIds);
-		debugger;
+		setLoading(true);
+		setShowGraph(false);
 		fetch("/cgraph", {
 			method: "POST",
 			body: JSON.stringify({
@@ -105,10 +102,9 @@ const CDashboard = () => {
 				Accept: "application/json",
 			},
 		})
-			.then((res) => {
-				return res.json();
-			})
+			.then((res) => res.json())
 			.then((data) => {
+				setLoading(false);
 				if (data.code) {
 					setSnackBarMessage({
 						severity: "success",
@@ -126,16 +122,15 @@ const CDashboard = () => {
 				}
 			})
 			.catch((error) => {
+				setLoading(false);
 				setSnackBarMessage({
 					severity: "error",
-					message: "Some Error Occured. " + error,
+					message: "Some Error Occurred. " + error,
 					showSnackBar: true,
 				});
 			});
 	};
 
-	// Snackbar
-	console.log("graphData", graphData);
 	const [SnackBarMessage, setSnackBarMessage] = useState({
 		severity: "error",
 		message: "This is awesome",
@@ -144,7 +139,7 @@ const CDashboard = () => {
 	const onHandleSnackClose = () => {
 		setSnackBarMessage({
 			severity: "error",
-			message: "Please Add Systemss",
+			message: "Please Add Systems",
 			showSnackBar: false,
 		});
 	};
@@ -156,36 +151,27 @@ const CDashboard = () => {
 				const id = uniqueEqIds.find(
 					(y) => y.nomenclature === x.nomenclature
 				);
-				return id ? id : null; // Return null if id is not found
+				return id ? id : null;
 			})
-			.filter((id) => id !== null); // Remove null values
-		const uniqueEqNames = [
-			...new Set(filteredEqData.map((item) => item.name)),
-		];
-		// const uniqueNomNames = [...new Set(filteredEqData.map(item => item.nomenclature))];
-		// console.log(uniqueNomNames);
+			.filter((id) => id !== null);
+		const uniqueEqNames = [...new Set(filteredEqData.map((item) => item.name))];
 		const filteredNomenclatures = filteredEqData
 			.filter((item) => selectedEqName.includes(item.name))
 			.map((item) => item.nomenclature);
-		console.log(selectedEqName);
-		console.log(filteredNomenclatures);
-		console.log(filteredEqData);
 		setEqDataOption(uniqueEqNames);
 		setShipName(e.target.value);
 	};
 
 	useEffect(() => {
-		debugger;
 		const filteredEqData = userSelectionData
 			.filter((x) => x.shipName === selectedShipName)
 			.map((x) => {
 				const id = uniqueEqIds.find(
 					(y) => y.nomenclature === x.nomenclature
 				);
-				return id ? id : null; // Return null if id is not found
+				return id ? id : null;
 			})
-			.filter((id) => id !== null); // Remove null values
-		console.log(filteredEqData);
+			.filter((id) => id !== null);
 		let filteredNomenclatures = filteredEqData
 			.filter((item) => selectedEqName.includes(item.name))
 			.map((item) => item.nomenclature);
@@ -194,19 +180,14 @@ const CDashboard = () => {
 	}, [selectedEqName, selectedShipName]);
 
 	return (
-		<AccessControl allowedLevels={['L0',"L1", "L2", "L5"]}>
+		<AccessControl allowedLevels={['L0', 'L1', 'L2', 'L5']}>
 			<MuiPickersUtilsProvider utils={MomentUtils}>
 				<Navigation />
 				<div className={styles.body}>
 					<div className={styles.mprofile}>
+						{/* Ship Name */}
 						<div>
-							<InputLabel
-								style={{
-									fontWeight: "bold",
-									color: "black",
-									fontSize: "16px",
-								}}
-							>
+							<InputLabel style={{ fontWeight: "bold", color: "black", fontSize: "16px" }}>
 								<Typography variant="h5">Ship Name</Typography>
 							</InputLabel>
 							<CustomSelect
@@ -215,94 +196,56 @@ const CDashboard = () => {
 								value={selectedShipName}
 							/>
 						</div>
-						<div>
-							<InputLabel
-								style={{
-									fontWeight: "bold",
-									color: "black",
-									fontSize: "16px",
-								}}
-							>
-								<Typography variant="h5">
-									Equipment Name
-								</Typography>
-							</InputLabel>
 
+						{/* Equipment Name */}
+						<div>
+							<InputLabel style={{ fontWeight: "bold", color: "black", fontSize: "16px" }}>
+								<Typography variant="h5">Equipment Name</Typography>
+							</InputLabel>
 							<Autocomplete
 								classes={classes}
 								multiple
-								id="tags-standard"
+								id="equipment-select"
 								options={eqDataOption}
 								getOptionLabel={(option) => option}
 								value={selectedEqName}
 								style={{ width: "250px" }}
 								onChange={(e, value) => setEquipmentName(value)}
 								renderInput={(params) => (
-									<TextField
-										{...params}
-										InputProps={{
-											...params.InputProps,
-											disableUnderline: true,
-										}}
-										variant="standard"
-									/>
+									<TextField {...params} InputProps={{ ...params.InputProps, disableUnderline: true }} variant="standard" />
 								)}
 							/>
 						</div>
-						<div>
-							<InputLabel
-								style={{
-									fontWeight: "bold",
-									color: "black",
-									fontSize: "16px",
-								}}
-							>
-								<Typography variant="h5">
-									Select Nomenclature
-								</Typography>
-							</InputLabel>
 
+						{/* Nomenclature */}
+						<div>
+							<InputLabel style={{ fontWeight: "bold", color: "black", fontSize: "16px" }}>
+								<Typography variant="h5">Select Nomenclature</Typography>
+							</InputLabel>
 							<Autocomplete
 								classes={classes}
 								multiple
-								id="tags-standard"
+								id="nomenclature-select"
 								options={nomenclatureDataOption}
 								getOptionLabel={(option) => option}
 								value={nomenclatureData}
 								style={{ width: "250px" }}
-								onChange={(e, value) =>
-									setNomenclatureData(value)
-								}
+								onChange={(e, value) => setNomenclatureData(value)}
 								renderInput={(params) => (
-									<TextField
-										{...params}
-										InputProps={{
-											...params.InputProps,
-											disableUnderline: true,
-										}}
-										variant="standard"
-									/>
+									<TextField {...params} InputProps={{ ...params.InputProps, disableUnderline: true }} variant="standard" />
 								)}
 							/>
 						</div>
 
+						{/* Parameter */}
 						<div>
-							<InputLabel
-								style={{
-									fontWeight: "bold",
-									color: "black",
-									fontSize: "16px",
-								}}
-							>
-								<Typography variant="h5">
-									Select Parameter
-								</Typography>
+							<InputLabel style={{ fontWeight: "bold", color: "black", fontSize: "16px" }}>
+								<Typography variant="h5">Select Parameter</Typography>
 							</InputLabel>
-
 							<Autocomplete
 								classes={classes}
 								multiple
-								id="tags-standard"
+								id="parameter-select"
 								options={paramOptions}
 								getOptionLabel={(option) => option.name}
 								groupBy={(option) => option.nomenclature}
@@ -310,62 +253,58 @@ const CDashboard = () => {
 								style={{ width: "250px" }}
 								onChange={(e, value) => setParameterName(value)}
 								renderInput={(params) => (
-									<TextField
-										{...params}
-										InputProps={{
-											...params.InputProps,
-											disableUnderline: true,
-										}}
-										variant="standard"
-									/>
+									<TextField {...params} InputProps={{ ...params.InputProps, disableUnderline: true }} variant="standard" />
 								)}
 							/>
 						</div>
 
+						{/* Submit */}
 						<Button
 							variant="contained"
 							color="primary"
-							style={{
-								marginTop: "2rem",
-							}}
+							style={{ marginTop: "2rem" }}
 							onClick={onSubmitHandler}
 						>
 							Submit
 						</Button>
 					</div>
 
-					{showGraph ? (
+					{/* Graph or Loading */}
+					{loading ? (
+						<div style={{ display: "flex", justifyContent: "center", marginTop: "15rem" }}>
+							<CircularProgress size={40} />
+						</div>
+					) : showGraph ? (
 						<CGraph
 							graphData={graphData}
 							selectedParameterNames={selectedParameterName}
 							nomenclatureData={nomenclatureData}
 						/>
 					) : (
-						<>
-							<Typography
-								style={{
-									display: "flex",
-									flexDirection: "column",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  maxHeight: "75%",
-                  height: "100%"
-								}}
-                variant="h4"
-							>
-								Please fill the above fields to see the graph..
-							</Typography>
-						</>
+						<Typography
+							style={{
+								display: "flex",
+								flexDirection: "column",
+								alignItems: "center",
+								justifyContent: "center",
+								maxHeight: "75%",
+								height: "100%",
+								marginTop: "2rem",
+							}}
+							variant="h4"
+						>
+							Please fill the above fields to see the graph..
+						</Typography>
 					)}
 				</div>
+
+				{/* Snackbar */}
 				{SnackBarMessage.showSnackBar && (
-					<CustomizedSnackbars
-						message={SnackBarMessage}
-						onHandleClose={onHandleSnackClose}
-					/>
+					<CustomizedSnackbars message={SnackBarMessage} onHandleClose={onHandleSnackClose} />
 				)}
 			</MuiPickersUtilsProvider>
 		</AccessControl>
 	);
 };
+
 export default CDashboard;

@@ -1,5 +1,11 @@
 import MomentUtils from "@date-io/moment";
-import { Button, InputLabel, TextField, Typography } from "@material-ui/core";
+import {
+	Button,
+	InputLabel,
+	TextField,
+	Typography,
+	CircularProgress,
+} from "@material-ui/core";
 import { MuiPickersUtilsProvider } from "@material-ui/pickers";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -11,16 +17,14 @@ import ReliabilityChart from "./ReliabilityChart";
 import styles from "./rDashboard.module.css";
 
 const ReliabilityDashboard = () => {
-
 	const [eqDataOption, setEqDataOption] = useState([]);
 	const [nomenclatureDataOption, setNomenclatureDataOption] = useState([]);
-
 	const [selectedEqName, setEquipmentName] = useState(null);
 	const [nomenclature, setNomenclature] = useState(null);
 	const [selectedShipName, setShipName] = useState([]);
 	const [selectedMissionName, setMissionName] = useState([]);
-
 	const [graphData, setGraphData] = useState([]);
+	const [isLoading, setIsLoading] = useState(false);
 
 	const [SnackBarMessage, setSnackBarMessage] = useState({
 		severity: "error",
@@ -41,6 +45,7 @@ const ReliabilityDashboard = () => {
 	const customSelectData = useSelector(
 		(state) => state.userSelection.userSelection
 	);
+
 	useEffect(() => {
 		fetch("/rel_dashboard", {
 			method: "GET",
@@ -49,9 +54,7 @@ const ReliabilityDashboard = () => {
 				Accept: "application/json",
 			},
 		})
-			.then((res) => {
-				return res.json();
-			})
+			.then((res) => res.json())
 			.then((data) => {
 				const user_selection = data["user_selection"]["data"];
 				const eqData = data["user_selection"]["eqData"];
@@ -64,15 +67,11 @@ const ReliabilityDashboard = () => {
 					})
 				);
 			});
-	}, [dispatch, setUserSelectionData]);
+	}, [dispatch]);
 
-	console.log(userSelectionData);
 	const getSelectedValues = (d, selectType) => {
 		if (selectType === "equipmentName") {
-			console.log("the D value", d);
-
 			const uniqueNomenData = new Set();
-
 			d.forEach((element) => {
 				const filteredItems = userSelectionData
 					.filter(
@@ -82,43 +81,20 @@ const ReliabilityDashboard = () => {
 					)
 					.map((x) => ({
 						equipmentName: x.equipmentName,
-						parent: element.parent, // Include parent information
+						parent: element.parent,
 						nomenclature: x.nomenclature,
 					}));
-
 				filteredItems.forEach((item) => {
 					uniqueNomenData.add(JSON.stringify(item));
 				});
-
-				console.log("uniqueEqData", filteredItems);
 			});
-
-			let uniqueNomArray = Array.from(uniqueNomenData).map((item) =>
+			const uniqueNomsArray = Array.from(uniqueNomenData).map((item) =>
 				JSON.parse(item)
 			);
-
-			const uniqueNomSet = new Set(
-				uniqueNomArray.map((item) =>
-					JSON.stringify({
-						equipmentName: item.equipmentName,
-						parent: item.parent,
-						nomenclature: item.nomenclature,
-					})
-				)
-			);
-
-			const uniqueNomsArray = Array.from(uniqueNomSet).map((item) =>
-				JSON.parse(item)
-			);
-
-			console.log("uniqueNomsArray", uniqueNomsArray);
-
 			setNomenclatureDataOption(uniqueNomsArray);
 			setEquipmentName(d);
-			debugger;
 		} else if (selectType === "shipName") {
 			const uniqueEqData = new Set();
-
 			d.forEach((element) => {
 				const filteredItems = userSelectionData
 					.filter((x) => x.shipName === element)
@@ -127,61 +103,46 @@ const ReliabilityDashboard = () => {
 						parent: element,
 						nomenclature: x.nomenclature,
 					}));
-
 				filteredItems.forEach((item) => {
 					uniqueEqData.add(JSON.stringify(item));
 				});
-
-				console.log("uniqueEqData", uniqueEqData);
 			});
-
-			let uniqueArray = Array.from(uniqueEqData).map((item) =>
+			const uniqueNamesArray = Array.from(uniqueEqData).map((item) =>
 				JSON.parse(item)
 			);
-
-			const uniqueNamesSet = new Set(
-				uniqueArray.map((item) =>
-					JSON.stringify({
-						equipmentName: item.equipmentName,
-						parent: item.parent,
-					})
-				)
+			setEqDataOption(
+				Array.from(
+					new Set(
+						uniqueNamesArray.map((item) =>
+							JSON.stringify({
+								equipmentName: item.equipmentName,
+								parent: item.parent,
+							})
+						)
+					)
+				).map((item) => JSON.parse(item))
 			);
-
-			const uniqueNamesArray = Array.from(uniqueNamesSet).map((item) =>
-				JSON.parse(item)
-			);
-
-			console.log("Flagggist", typeof uniqueArray);
-
-			setEqDataOption(uniqueNamesArray);
-			debugger;
 			setShipName(d);
 		} else if (selectType === "nomenclature") {
 			setNomenclature(d);
 		}
 	};
 
-	console.log("EQuip", selectedEqName);
-	console.log("EQuip", eqDataOption);
-	console.log("graphData", graphData);
-
-	console.log(selectedEqName, selectedMissionName, selectedShipName);
-
 	const handleChange = (event) => {
 		setMissionName(event.target.value);
 	};
+
 	const onSubmitHandler = () => {
 		setGraphData([]);
+		setIsLoading(true);
 
 		const data = {
-			missions: [selectedMissionName], /// its duration not the missioncardD
+			missions: [selectedMissionName],
 			equipments: selectedEqName,
 			nomenclature: nomenclature,
 			shipClass: selectedShipName,
 			tempMissions: [],
 		};
-		console.log(data, "tooltip");
 
 		fetch("/rel_estimate_EQ", {
 			method: "POST",
@@ -193,38 +154,30 @@ const ReliabilityDashboard = () => {
 		})
 			.then((res) => res.json())
 			.then((res) => {
-				console.log("res", res);
-				// debugger;
 				if (res.code) {
 					const d = res.results;
 					const reliabilityDataArray = [];
+
 					d.forEach((missionData) => {
-						Object.keys(missionData["Temp Mission"]).forEach(
-							(ship) => {
-								const shipData =
-									missionData["Temp Mission"][ship];
+						Object.keys(missionData["Temp Mission"]).forEach((ship) => {
+							const shipData = missionData["Temp Mission"][ship];
+							shipData.forEach((data) => {
+								Object.keys(data).forEach((name) => {
+									const equipment = data[name].equipment;
+									const relValue = data[name].rel;
 
-								shipData.forEach((data) => {
-									Object.keys(data).forEach((name) => {
-										const equipment = data[name].equipment;
-										const relValue = data[name].rel;
-
-										reliabilityDataArray.push({
-											ship,
-											equipment,
-											name,
-											reliability: 100 * relValue,
-										});
+									reliabilityDataArray.push({
+										ship,
+										equipment,
+										name,
+										reliability: 100 * relValue,
 									});
 								});
-							}
-						);
+							});
+						});
 					});
 
-					console.log("---------------->>>>>", reliabilityDataArray);
-
 					setGraphData(reliabilityDataArray);
-
 					setSnackBarMessage({
 						severity: "success",
 						message: res.message,
@@ -237,24 +190,25 @@ const ReliabilityDashboard = () => {
 						showSnackBar: true,
 					});
 				}
-			});
+			})
+			.catch((err) => {
+				console.error(err);
+				setSnackBarMessage({
+					severity: "error",
+					message: "Something went wrong!",
+					showSnackBar: true,
+				});
+			})
+			.finally(() => setIsLoading(false));
 	};
 
 	return (
-		<AccessControl allowedLevels={['L0',"L1", "L2", "L3", "L4", "L5"]}>
+		<AccessControl allowedLevels={["L0", "L1", "L2", "L3", "L4", "L5"]}>
 			<MuiPickersUtilsProvider utils={MomentUtils}>
-				{/* <Navigation /> */}
 				<div>
 					<div className={styles.mprofile}>
 						<div style={{ width: "300px", padding: "20px" }}>
-							<InputLabel
-								style={{
-									fontWeight: "bold",
-									color: "black",
-									fontSize: "16px",
-									marginBottom: "10px",
-								}}
-							>
+							<InputLabel style={{ fontWeight: "bold", color: "black", fontSize: "16px", marginBottom: "10px" }}>
 								<Typography variant="h5">Ship Name</Typography>
 							</InputLabel>
 							<SelectWithLimit
@@ -265,17 +219,8 @@ const ReliabilityDashboard = () => {
 							/>
 						</div>
 						<div style={{ width: "300px" }}>
-							<InputLabel
-								style={{
-									fontWeight: "bold",
-									color: "black",
-									fontSize: "16px",
-									marginBottom: "10px",
-								}}
-							>
-								<Typography variant="h5">
-									Equipment Name
-								</Typography>
+							<InputLabel style={{ fontWeight: "bold", color: "black", fontSize: "16px", marginBottom: "10px" }}>
+								<Typography variant="h5">Equipment Name</Typography>
 							</InputLabel>
 							<SelectWithLimit
 								limit={100}
@@ -285,17 +230,8 @@ const ReliabilityDashboard = () => {
 							/>
 						</div>
 						<div style={{ width: "300px" }}>
-							<InputLabel
-								style={{
-									fontWeight: "bold",
-									color: "black",
-									fontSize: "16px",
-									marginBottom: "10px",
-								}}
-							>
-								<Typography variant="h5">
-									Equipment Nomenclature
-								</Typography>
+							<InputLabel style={{ fontWeight: "bold", color: "black", fontSize: "16px", marginBottom: "10px" }}>
+								<Typography variant="h5">Equipment Nomenclature</Typography>
 							</InputLabel>
 							<SelectWithLimit
 								limit={100}
@@ -305,17 +241,8 @@ const ReliabilityDashboard = () => {
 							/>
 						</div>
 						<div style={{ width: "250px" }}>
-							<InputLabel
-								style={{
-									fontWeight: "bold",
-									color: "black",
-									fontSize: "16px",
-									marginBottom: "10px",
-								}}
-							>
-								<Typography variant="h5">
-									Duration(Hours)
-								</Typography>
+							<InputLabel style={{ fontWeight: "bold", color: "black", fontSize: "16px", marginBottom: "10px" }}>
+								<Typography variant="h5">Duration(Hours)</Typography>
 							</InputLabel>
 							<TextField
 								variant="outlined"
@@ -328,23 +255,22 @@ const ReliabilityDashboard = () => {
 						<Button
 							variant="contained"
 							color="primary"
-							style={{
-								marginTop: "2rem",
-								marginRight: "1rem",
-							}}
+							style={{ marginTop: "2rem", marginRight: "1rem" }}
 							onClick={onSubmitHandler}
 						>
 							Submit
 						</Button>
 					</div>
-					{graphData.length ? (
-						<>
-							<div className={styles.content}>
-								{graphData && (
-									<ReliabilityChart data={graphData} />
-								)}
-							</div>
-						</>
+
+					{/* Chart or Loading or Message */}
+					{isLoading ? (
+						<div style={{ marginTop: "15rem", display: "flex", justifyContent: "center" }}>
+							<CircularProgress size={40} />
+						</div>
+					) : graphData.length ? (
+						<div className={styles.content}>
+							<ReliabilityChart data={graphData} />
+						</div>
 					) : (
 						<Typography
 							variant="h4"
@@ -359,6 +285,7 @@ const ReliabilityDashboard = () => {
 						</Typography>
 					)}
 				</div>
+
 				{SnackBarMessage.showSnackBar && (
 					<CustomizedSnackbars
 						message={SnackBarMessage}
