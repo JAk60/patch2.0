@@ -239,7 +239,7 @@ export default function CmmsSysConfig() {
 				getOptionLabel={getOptionLabel}
 				getOptionDisabled={getOptionDisabled}
 				selectedValues={selectedOptions}
-				label="Select complex values"
+				label="Select Nomenclature"
 				placeholder="select nomenclature"
 				selectAllLabel="Select all"
 				onToggleOption={handleToggleOption}

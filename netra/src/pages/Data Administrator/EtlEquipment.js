@@ -72,7 +72,7 @@ export default function EtlEquipment({ classes }) {
     };
 
     fetchD();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchData = async () => {
@@ -95,7 +95,7 @@ export default function EtlEquipment({ classes }) {
         setTableData(data.equipments);
       } else {
         setSnackBarMessage({
-          severity: "error",
+          severity: "success",
           message: data.message,
           showSnackBar: true,
         });
@@ -132,7 +132,7 @@ export default function EtlEquipment({ classes }) {
         setTableData(data.equipments);
       } else {
         setSnackBarMessage({
-          severity: "error",
+          severity: "success",
           message: data.message,
           showSnackBar: true,
         });
@@ -191,25 +191,34 @@ export default function EtlEquipment({ classes }) {
   const handleSearchChange = (event) => {
     setSearchKeyword(event.target.value);
   };
-  
-  const filteredTableData = tableData
-  // Remove duplicate entries
-  .filter((row, index, self) => 
-    index === self.findIndex((r) => (
-      r.component_name === row.component_name && r.nomenclature === row.nomenclature
-    ))
-  )
-  // Apply search filter
-  .filter((row) => {
-    const searchString = searchKeyword.toLowerCase();
-    const matchesComponentName = row.component_name.toLowerCase().includes(searchString);
-    const matchesNomenclature = row.nomenclature.toLowerCase().includes(searchString);
-    
-    // Filter based on component name, then only apply nomenclature filter if necessary
-    return matchesComponentName || (!matchesComponentName && matchesNomenclature);
-  });
 
-  
+  const filteredTableData = tableData
+    // Remove duplicate entries
+    .filter(
+      (row, index, self) =>
+        index ===
+        self.findIndex(
+          (r) =>
+            r.component_name === row.component_name &&
+            r.nomenclature === row.nomenclature
+        )
+    )
+    // Apply search filter
+    .filter((row) => {
+      const searchString = searchKeyword.toLowerCase();
+      const matchesComponentName = row.component_name
+        .toLowerCase()
+        .includes(searchString);
+      const matchesNomenclature = row.nomenclature
+        .toLowerCase()
+        .includes(searchString);
+
+      // Filter based on component name, then only apply nomenclature filter if necessary
+      return (
+        matchesComponentName || (!matchesComponentName && matchesNomenclature)
+      );
+    });
+
   const ShipChange = (e, value) => {
     const data = { shipName: value };
     dispatch(userActions.onChangeCurrentSelection({ selectedData: data }));
@@ -308,9 +317,7 @@ export default function EtlEquipment({ classes }) {
                   {row.etl === true ? (
                     <CheckIcon style={{ color: "green" }} />
                   ) : (
-                    row.etl === false && (
-                      <ClearIcon style={{ color: "red" }} />
-                    )
+                    row.etl === false && <ClearIcon style={{ color: "red" }} />
                   )}
                 </TableCell>
                 <TableCell style={{ display: "flex" }}>
@@ -337,11 +344,11 @@ export default function EtlEquipment({ classes }) {
           </TableBody>
         </Table>
         {SnackBarMessage.showSnackBar && (
-        <CustomizedSnackbars
-          message={SnackBarMessage}
-          onHandleClose={onHandleSnackClose}
-        />
-      )}
+          <CustomizedSnackbars
+            message={SnackBarMessage}
+            onHandleClose={onHandleSnackClose}
+          />
+        )}
       </container>
     </div>
   );

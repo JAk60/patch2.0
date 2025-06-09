@@ -323,7 +323,7 @@ console.log("WWWWWWWWWWWWWWW",mps);
               <TableHead>
                 <TableRow>
                   <TableCell>Confidence</TableCell>
-                  <TableCell>Remaining Life</TableCell>
+                  <TableCell>Remaining Life (Hours)</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
