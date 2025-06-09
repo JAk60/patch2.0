@@ -3,7 +3,7 @@ import os
 from datetime import datetime
 from os import listdir 
 from os.path import isfile, join
-
+from waitress import serve
 import requests
 from flask import (Flask, json, jsonify, request, send_file,
                    send_from_directory, session)
@@ -719,6 +719,7 @@ def insert_new_user():
 def fetch_eta_beta():
     data = request.json
     component_id = data["component_id"]
+    print("component_id",component_id)
     inst = Data_Manager()
     return inst.fetch_eeta_beta(component_id)
 
@@ -923,7 +924,8 @@ def fetch_cmms_selection():
 
 
 if __name__ == "__main__":
+    app.debug = True
     app.secret_key = os.urandom(32)
     app.wsgi_app = middleware.TaskMiddleWare(app.wsgi_app, APP_ROOT)
     scheduler.start()
-    app.run(debug=False)
+    serve(app, host="0.0.0.0", port=5000)
