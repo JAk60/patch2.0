@@ -1,3 +1,5 @@
+import pyodbc
+import logging
 from os import execlp
 from depricated_stuff.MLE import Mle
 from dB.dB_connection import cursor, cnxn
@@ -21,13 +23,67 @@ from flask import jsonify
 
 class Data_Manager:
     def __init__(self):
-        DataManagerDB()
-        self.success_return = {"message": "Data Saved Successfully.", "code": 1}
+        DataManagerDB()  # Assuming this initializes DB connection
+        self.success_return = {
+            "message": "Data Saved Successfully.", "code": 1}
         self.error_return = {
-            "message": "Some Error Occured, Please try agian.",
+            "message": "Some Error Occurred, Please try again.",
             "code": 0,
         }
         self.overhaul_id = ""
+
+    @staticmethod
+    def save_eta_beta(eta: float, beta: float, component_id: str, priority: int) -> dict:
+        """
+        Inserts or updates eta/beta based on unique (component_id, priority) combination.
+
+        Args:
+            conn: Active pyodbc connection.
+            eta: Estimated Time of Arrival.
+            beta: Beta value.
+            component_id: ID of the component.
+            priority: Priority level (1–7).
+
+        Returns:
+            dict: Success or error response.
+        """
+        row_id = str(uuid.uuid4())
+
+        sql = """
+        MERGE dbo.eta_beta AS target
+        USING (VALUES (?, ?, ?, ?, ?)) AS source (id, eta, beta, component_id, priority)
+            ON target.component_id = source.component_id AND target.priority = source.priority
+        WHEN MATCHED THEN
+            UPDATE SET eta = source.eta, beta = source.beta
+        WHEN NOT MATCHED THEN
+            INSERT (id, eta, beta, component_id, priority)
+            VALUES (source.id, source.eta, source.beta, source.component_id, source.priority);
+        """
+
+        try:
+            cursor.execute(sql, row_id, eta, beta, component_id, priority)
+            cursor.commit()
+            # cursor.close()
+            return {
+                "message": "ETA/BETA saved successfully.",
+                "code": 1,
+                "component_id": component_id,
+                "priority": priority
+            }
+        except pyodbc.Error as db_err:
+            logging.error(f"Database error while saving ETA/BETA: {db_err}")
+            cursor.rollback()
+            return {
+                "message": f"Database error: {str(db_err)}",
+                "code": 0
+            }
+        except Exception as e:
+            logging.exception(f"Unexpected error in save_eta_beta: {e}")
+            cursor.rollback()
+            return {
+                "message": f"Unexpected error: {str(e)}",
+                "code": 0
+            }
 
     def update_parameters(self, data):
         systemType_replaceable = data["isReplacable"]
@@ -68,7 +124,8 @@ class Data_Manager:
                             "component_id": item[1],
                         }
                         subData.append(formatted_item)
-                    run_age_value = list(map(lambda item: item["runAge"], subData))[0]
+                    run_age_value = list(
+                        map(lambda item: item["runAge"], subData))[0]
                     instance.insert_overhauls_data(
                         equipment_id=component_id,
                         run_age_component=float(run_age_value),
@@ -110,7 +167,8 @@ class Data_Manager:
                         )
                     else:
                         final_data.append(
-                            {"EquipmentName": name, "id": id, "alpha": "-", "beta": "-"}
+                            {"EquipmentName": name, "id": id,
+                                "alpha": "-", "beta": "-"}
                         )
                     return final_data
         except Exception as e:
@@ -121,7 +179,8 @@ class Data_Manager:
             rows = rows[-1]
             if rows:
                 final_data.append(
-                    {"EquipmentName": name, "id": id, "alpha": rows[1], "beta": rows[2]}
+                    {"EquipmentName": name, "id": id,
+                        "alpha": rows[1], "beta": rows[2]}
                 )
             else:
                 final_data.append(
@@ -130,8 +189,8 @@ class Data_Manager:
             return final_data
 
     def insert_data(self, data_obj):
-        print(data_obj,"data_obj")
-        print(data_obj,"data_obj")
+        print(data_obj, "data_obj")
+        print(data_obj, "data_obj")
         data = data_obj["data"]
         dt = data_obj["dataType"]
         res = {}
@@ -162,9 +221,6 @@ class Data_Manager:
         cnxn.commit()
         return res
 
-    def update_data(self, data):
-        pass
-
     def oem_save(self, data):
         insert_sql = """insert into data_manager_oem (id, life_estimate1_name, 
         life_estimate1_val, life_estimate2_name, life_estimate2_val,
@@ -192,6 +248,7 @@ class Data_Manager:
                     life_estimate1,
                     life_estimate2,
                 )
+                self.save_eta_beta(n, b, component_id, 3)
                 self.check_TTF_num_priority_wise(n, b, component_id, 3)
             except Exception as e:
                 pass
@@ -233,6 +290,7 @@ class Data_Manager:
                     componentFailure,
                     time_wo_failure,
                 )
+                self.save_eta_beta(n, b, component_id, 4)
                 self.check_TTF_num_priority_wise(n, b, component_id, 4)
             except Exception as e:
                 pass
@@ -269,6 +327,7 @@ class Data_Manager:
                     componentFailure,
                     time_wo_failure,
                 )
+                self.save_eta_beta(n, b, component_id, 5)
                 self.check_TTF_num_priority_wise(n, b, component_id, 5)
             except Exception as e:
                 pass
@@ -285,6 +344,7 @@ class Data_Manager:
                 n, b = self.solve_failure_prob([d])
                 print(n, b)
                 cursor.execute(insert_sql, id, time_, f_prob, component_id)
+                self.save_eta_beta(n, b, component_id, 6)
                 self.check_TTF_num_priority_wise(n, b, component_id, 6)
             except Exception as e:
                 pass
@@ -300,6 +360,7 @@ class Data_Manager:
             try:
                 n, b = self.solve_eta_beta_nprd(d)
                 cursor.execute(insert_sql, id, f_rate, beta, component_id)
+                self.save_eta_beta(n, b, component_id, 7)
                 self.check_TTF_num_priority_wise(n, b, component_id, 7)
             except Exception as e:
                 pass
@@ -313,7 +374,8 @@ class Data_Manager:
             eta = d["eta"]
             beta = d["beta"]
             try:
-                is_exist = self.check_component_exists(component_id, "eta_beta")
+                is_exist = self.check_component_exists(
+                    component_id, "eta_beta")
                 if is_exist:
                     update_sql = (
                         """update eta_beta set eta=?, beta=? where component_id=?"""
@@ -352,7 +414,8 @@ class Data_Manager:
                 component_id = d["component_id"]
                 # TTF Data
                 date_i_now = datetime.strptime(str(install_s_date), "%d/%m/%Y")
-                date_r_now = datetime.strptime(str(install_end_date), "%d/%m/%Y")
+                date_r_now = datetime.strptime(
+                    str(install_end_date), "%d/%m/%Y")
 
                 parent_system_id = get_parentId(component_id)
                 average_running_hours_sql = """select num_cycle_or_runtime from system_config_additional_info where component_id = ?"""
@@ -387,16 +450,21 @@ class Data_Manager:
                 remove_start_date = d["removalStartDate"]
                 remove_end_date = d["removalEndDate"]
                 f_s = d["interval_failure"]
-                print(id, component_id, install_start_date, install_end_date, f_s)
+                print(id, component_id, install_start_date,
+                      install_end_date, f_s)
                 # TTF logic
-                i_startDate = datetime.strptime(str(install_start_date), "%d/%m/%Y")
-                i_endDate = datetime.strptime(str(install_end_date), "%d/%m/%Y")
+                i_startDate = datetime.strptime(
+                    str(install_start_date), "%d/%m/%Y")
+                i_endDate = datetime.strptime(
+                    str(install_end_date), "%d/%m/%Y")
                 meanDate_install_date = i_startDate + timedelta(
                     (i_endDate - i_startDate).days / 2
                 )
 
-                r_startDate = str(datetime.strptime(str(remove_start_date), "%d/%m/%Y"))
-                r_endDate = str(datetime.strptime(str(remove_end_date), "%d/%m/%Y"))
+                r_startDate = str(datetime.strptime(
+                    str(remove_start_date), "%d/%m/%Y"))
+                r_endDate = str(datetime.strptime(
+                    str(remove_end_date), "%d/%m/%Y"))
                 meanDate_end_date = r_startDate + timedelta(
                     (r_endDate - r_startDate).days / 2
                 )
@@ -604,7 +672,8 @@ class Data_Manager:
                 dps.append(r[1])
         if len(dps) >= 15:
             mle_inst = Mle()
-            n, b = mle_inst.twoParamWeibullEstimationForNRSEqForming(dps, len(dps))
+            n, b = mle_inst.twoParamWeibullEstimationForNRSEqForming(
+                dps, len(dps))
             print(f"MLE nvalue {n}  b value {b}")
 
             update_sql = """update eta_beta set eta=?, beta=? where component_id=?"""
@@ -632,13 +701,13 @@ class Data_Manager:
                         VALUES (?, ?, ?, ?);
                 """
 
-                cursor.execute(merge_opdata, (id, component_id, date_, average_running, average_running, id, component_id, date_, average_running))
+                cursor.execute(merge_opdata, (id, component_id, date_, average_running,
+                               average_running, id, component_id, date_, average_running))
             cnxn.commit()
             return self.success_return
         except Exception as e:
             self.error_return["message"] = str(e)
             return self.error_return
-
 
     def insert_maintenance_data(self, data):
         insert_sql = """insert into data_manager_maintenance_data (id, component_id, event_type, maint_date, maintenance_type,
@@ -695,7 +764,8 @@ class Data_Manager:
         date_ = str(d["Date"])
         date_ = datetime.strptime(str(date_), "%d/%m/%Y")
 
-        cursor.execute(parent_system_id, component_id, component_id, component_id)
+        cursor.execute(parent_system_id, component_id,
+                       component_id, component_id)
         parent_id = cursor.fetchone()
         parent_id = parent_id[0]
         TTF = 0
@@ -878,8 +948,6 @@ class Data_Manager:
         except Exception as e:
             return jsonify({"error": str(e)})
 
-
-
     def update_alpha_beta(self, ship_name, component_name, alpha, beta):
         try:
             # Assuming you have a valid connection and cursor setup
@@ -904,7 +972,8 @@ class Data_Manager:
                 component_id = cursor.fetchone()[0]
 
             # Check if the record already exists in alpha_beta table
-            cursor.execute("SELECT * FROM alpha_beta WHERE component_id=?", (component_id,))
+            cursor.execute(
+                "SELECT * FROM alpha_beta WHERE component_id=?", (component_id,))
             existing_record = cursor.fetchone()
 
             if existing_record:
@@ -919,13 +988,13 @@ class Data_Manager:
 
                 # Insert new record into alpha_beta table
                 insert_query = "INSERT INTO alpha_beta (id, component_id, alpha, beta) VALUES (?, ?, ?, ?)"
-                cursor.execute(insert_query, (record_id, component_id, alpha, beta))
+                cursor.execute(
+                    insert_query, (record_id, component_id, alpha, beta))
                 cnxn.commit()
                 return jsonify({"message": f"Alpha beta for component {component_name} is inserted"})
 
         except Exception as e:
             return jsonify({"error": str(e)})
-
 
     def set_component_overhaul_age(self, ship_name, component_name, age):
         age = int(age)
@@ -939,7 +1008,6 @@ class Data_Manager:
         cmms_running_age = int(data[0])
         nums = math.floor(cmms_running_age / age)
         return jsonify({"overhaul_nums": nums})
-
 
     def insert_overhaul_age(self, data):
         try:
@@ -968,13 +1036,12 @@ class Data_Manager:
                             INSERT (id, component_id, overhaul_num, running_age, num_maintenance_event)
                             VALUES (source.id, source.component_id, source.overhaul_num, source.running_age, source.num_maintenance_event);
                     '''
-                    cursor.execute(insert_sql, uid, equipment_id, "1", overhaul_age, "1")
+                    cursor.execute(insert_sql, uid, equipment_id,
+                                   "1", overhaul_age, "1")
             return self.success_return
         except Exception as e:
             self.error_return["message"] = str(e)
             return self.error_return
-
-
 
     def get_component_overhaul_hours(self, data):
         try:
