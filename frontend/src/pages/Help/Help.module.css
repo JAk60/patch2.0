@@ -1,0 +1,78 @@
+.background {
+  grid-row: 1/6;
+  grid-column: 1/13;
+  background-repeat: no-repeat;
+  /* background: hsla(210, 100%, 50%, 1);
+  background: linear-gradient(0deg, hsla(210, 100%, 50%, 1) 0%, hsla(210, 100%, 73%, 1) 36%, hsla(210, 100%, 81%, 1) 54%, hsla(210, 96%, 90%, 1) 78%, hsla(0, 0%, 99%, 1) 100%); */
+
+}
+
+.text_heading{
+  width: 100%;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 35px;
+  font-weight: normal;
+  margin-bottom: 30px;
+  color: #fff;
+}
+
+.flex {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  height: 100%;
+  width: 100%;
+}
+
+
+.img {
+  float: right;
+  margin-top: 3%;
+  margin-right: 40px;
+}
+
+.heading {
+  font-size: 20px;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.accordion {
+  padding: 15px;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  padding: 30px;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.button {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  color: blue;
+  /* Link color */
+  text-decoration: underline;
+  /* Underline for link effect */
+  cursor: pointer;
+}
+
+.content {
+  width:55%;
+  /* height: 100%; */
+  margin: 80px auto;
+  /* Center content horizontally */
+
+}
+
+.typo {
+  color: white;
+  padding-bottom: 50px;
+}

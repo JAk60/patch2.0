@@ -1,0 +1,289 @@
+.userSelection{
+    grid-row: 2/3;
+    grid-column: 2/13;
+    margin: 10px 20px 0 4%;
+    display: flex;
+    align-items:center;
+    justify-content: space-around;
+    height: fit-content;
+    box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+    border-radius: 10px;
+    padding: 20px 10px;
+}
+.btn{
+    height: fit-content;
+    margin: 20px;
+}
+
+.content{
+    display: flex;
+    grid-row: 4/5;
+    grid-column: 2/13; 
+    margin: 20px 20px 0 4%; 
+    box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+    overflow-y: auto;
+    border-radius: 10px;
+}
+.assignDiv{
+  grid-row: 3/5;
+  grid-column: 2/13; 
+  display: flex;
+  flex-direction: column;
+}
+.assignContent{
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    margin: 30px 20px 0 4%; 
+    box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+    height: fit-content;
+    border-radius: 10px;
+    margin-top: 150px;
+    align-items: center;
+}
+.tree {
+    display: flex;
+    flex-direction: column;
+    background-image: linear-gradient(10deg, #2a2a72, #498fe8);
+    /* margin-top: 50px; */
+    /* margin-left: 20px; */
+    width: 30%;
+    border-radius: 10px;
+    overflow: hidden;
+    /* overflow: auto; */
+  }
+  .treeChild {
+    margin-top: 40px;
+    margin-left: 40px;
+    height: fit-content;
+  }
+  .rightSection{
+    width: 70%;
+    height: 50%;
+    padding: 20px;
+  }
+  .rightSectionCrit{
+    width: 100%;
+    padding: 20px;
+    display: grid;
+  }
+  .selectComponent{
+      font-size: 20px;
+      font-weight: 700;
+      width: 40%;
+      margin: 30px 0 0 30px;
+  }
+  .radio{
+    font-size: 20px;
+    font-weight: 700;
+    width: 40%;
+    margin: 20px 0 0 30px;
+}
+
+/* .btnDiv{
+  padding: 20px;
+  display: flex;
+  gap: 20px;
+} */
+.nextbtn{
+  float: right;
+  /* margin-right: 3em; */
+}
+
+
+.flex{
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+.btns{
+  display: flex;
+  flex-direction: column;
+}
+.btns button{
+  margin: 5px;
+}
+.MTypeContent{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 20px;
+  grid-row: 4/5;
+  grid-column: 2/13; 
+  margin: 30px 20px 0 4%; 
+  box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+  height: fit-content;
+  border-radius: 10px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+.formField{
+  display: flex;
+  width: 100%;
+  align-items: center;
+  margin: 10px;
+}
+.formField label{
+  min-width: 220px;
+  margin-right: 20px;
+}
+.input{
+  height: 30px;
+  width: 70%;
+  border: 1px solid black;
+  background-color: white;
+  border-radius:5px;
+  padding-left: 20px;
+  font-size: 18px;
+}
+.mtypeRadio{
+  position: relative;
+  width: 100%;
+  justify-content: space-around;
+}
+.cbOptions{
+  border: 1px solid black;
+  position: absolute;
+  top: 50px;
+  right:0;
+  background-color: rgb(235,235,238);
+  padding: 5px;
+  z-index: 5;
+}
+
+.levels{
+  display: flex;
+  border: 1px solid cyan;
+  border-radius: 10px;
+  margin-top: 30px;
+}
+.levelCol{
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid cyan;
+  justify-content: space-between;
+  width: 100%;
+  padding: 5px;
+}
+.sectionHead{
+  background-color: #498fe8;
+  color: white;
+  margin: 5px;
+  min-width: 200px;
+  border-radius: 5px;
+  padding: 5px;
+  text-align: center;
+}
+.levelCol .formField label{
+  min-width: 0px;
+}
+.levelCol .formField .input{
+  width: 50%;
+}
+.sensorRadio{
+  width: 100%;
+  justify-content: space-around;
+  margin-top: 30px;
+}
+.parameters{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 20px;
+  margin: 30px 20px 0 20px; 
+  box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+  height: fit-content;
+  border-radius: 10px;
+}
+.levelwise{
+  display: flex;
+  justify-content: space-between;
+  padding: 20px;
+  margin: 30px 20px 0 20px; 
+  box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+  height: fit-content;
+  border-radius: 10px;
+}
+.lwCol{
+  display: flex;
+  flex-direction: column;
+  height: fit-content;
+  width: 49%;
+  border-radius: 10px;
+}
+.parameters .formField{
+  align-items: baseline;
+}
+.modal{
+  padding: 20px;
+  width: 350px;
+}
+
+
+
+.tableContainer {
+  margin-top: 16px;
+
+}
+
+.table {
+  min-width: 650px;
+}
+
+.tableHeadCell {
+  font-size: 18px !important;
+  font-weight: bold !important;
+  background-color: #1976d2;
+  color: #fff !important;
+}
+
+.tableRow {
+  background-color: #f5f5f5;
+  font-size: 17px !important;
+}
+
+.tableTotalRow {
+  background-color: #2a2a70;
+  
+}
+
+.tableTotalCell {
+  padding: 8px;
+  color: #fff !important;
+  font-size: 17px !important;
+  font-weight: bold !important;
+}
+
+
+/* Add the following styles to your existing CSS file */
+.horizontalTable {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+  gap: 4px;
+  background-color: #f0f0f0;
+  padding: 10px;
+  margin: 40px 0;
+}
+
+.horizontalTableCell {
+  flex: 1;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 1px;
+  border: 1px solid #2a2a70;
+}
+
+.horizontalTableCell p {
+  margin: 0;
+}
+
+.horizontalTableCell strong {
+  font-weight: bold;
+}
+
+.footerClass{
+  display: flex;
+  justify-content: center;
+}

@@ -1,0 +1,12 @@
+Generalized Category Discovery (GCD) tackles the practical challenge of clustering an
+unlabeled set of images into potential known and novel categories, given a labeled set of known
+class images. This is a challenging task as it requires identifying transferable features across
+labeled and unlabeled data, which can be hindered by the model bias towards the known classes,
+impeding discriminative feature learning. To overcome this limitation, we propose a novel approach to harness the power of CLIP, a generalizable vision-language model, for the first time
+in GCD. Our approach entails employing a graph convnet (GCN) on top of CLIP’s frozen text
+encoder, which preserves the class neighborhood structure, and a lightweight visual projector for the frozen image branch, ensuring discriminativeness through margin-based contrastive
+losses for image-text mapping and in the visual domain. The preservation of neighbors criterion effectively regulates the semantic space, making it less susceptible to labeled classes. We
+represent the unlabeled samples through semantic distance distributions based on their similarity to the class prompts obtained through the GCN, allowing for semi-supervised clustering for
+class discovery while minimizing errors. Our extensive experiments on five benchmark datasets
+unequivocally confirm the superiority of GLIP-GCD over other approaches when implemented
+in conjunction with the CLIP backbone

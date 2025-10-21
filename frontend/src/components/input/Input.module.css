@@ -1,0 +1,55 @@
+.input {
+  background-color: white;
+  grid-column: 2/13;
+  grid-row: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.parent {
+  height: 95%;
+  display: flex;
+  width: 98%;
+  background: white;
+  justify-content: center;
+  border-radius: 5px;
+  -webkit-box-shadow: 7px 13px 14px -15px #777;
+  -moz-box-shadow: 7px 13px 14px -15px #777;
+  box-shadow: 7px 13px 14px -15px #777;
+  flex-direction: column;
+}
+
+.buttonp {
+  height: 50%;
+  display: flex;
+  align-items: center;
+  flex-direction: row-reverse;
+  justify-content: space-between;
+}
+.inputf {
+  /* border: 2px springgreen solid; */
+  height: 60%;
+  display: grid;
+  grid-auto-flow: column;
+}
+
+.inputcomponent {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+.inputfbutton {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.platform_text {
+  display: flex;
+  margin-left: 3.4rem;
+  font-size: x-large;
+  font-weight: 500;
+  text-transform: uppercase;
+  color: linear-gradient(180deg, #264c99, #292972);
+}

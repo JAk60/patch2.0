@@ -1,0 +1,25 @@
+.body{
+    grid-column: 2/13;
+    grid-row: 1/5;
+    overflow-y: scroll;
+    overflow-x: hidden;
+  }
+  .module{
+    margin:1% 0 1% 1%;
+  }
+  .user{
+      margin-left: 1%;
+    }
+    
+    .table{
+        width: 98%;
+        margin: 40px 0 0 1%;
+        justify-self: center;
+        align-self: center;
+    }
+  
+    .tableFooter{
+      float: right;
+    }
+
+    

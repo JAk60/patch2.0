@@ -23,12 +23,27 @@ class TaskMiddleWare(object):
         files = os.listdir(target_path)
         for t in files:
             target = os.path.join(self.app_route, 'tasks/' + t)
-            task = json.load(open(target))
+            
+            # FIX: Add encoding='utf-8' and use context manager
+            try:
+                with open(target, 'r', encoding='utf-8') as f:
+                    task = json.load(f)
+            except UnicodeDecodeError:
+                # Fallback encoding if UTF-8 fails
+                with open(target, 'r', encoding='latin-1') as f:
+                    task = json.load(f)
+            except json.JSONDecodeError:
+                print(f"Error: Invalid JSON in file {target}")
+                continue
+            except Exception as e:
+                print(f"Error loading {target}: {e}")
+                continue
+            
             for item in task:
                 ship_name = item.get("shipName")
                 if ship_name:
                     check_sql = "SELECT COUNT(*) FROM user_selection WHERE ship_name = ?"
-                    cursor.execute(check_sql, ship_name)
+                    cursor.execute(check_sql, (ship_name,))  # FIX: tuple parameter
                     count = cursor.fetchone()[0]
                     if count == 0:
                         self.ship_names_to_remove.add(target)

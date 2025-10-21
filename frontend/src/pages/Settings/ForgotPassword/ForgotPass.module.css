@@ -1,0 +1,84 @@
+.container {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    grid-row: 1/13;
+    grid-column: 1/5;
+    background: linear-gradient(210deg, rgba(41, 41, 113, 0.85) 0%, rgba(4, 142, 231, 0.85) 100%), url(https://www.joinindiannavy.gov.in/images/home_banner/home_banner_1.jpg);
+    background-size: cover;
+}
+
+.SignUpPaper {
+    width: 70%;
+    height: 80%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 0;
+}
+
+.welcome_text {
+    width: 35%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.input_fields{
+    width: 35%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.netra {
+    letter-spacing: 1px;
+    color: #1c4199;
+    font-size:40px;
+}
+
+.subheading{
+    font-weight: bold;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.links {
+    /* color:#1c4199; */
+    text-decoration: none;
+}
+
+.flex {
+    display: flex;
+    font-size: 18px;
+    gap: 3px;
+}
+
+/* .flex div {
+    margin: 5px;
+} */
+
+/* #signUpForm{
+    width: 90%;
+} */
+
+
+.inputField {
+    width: 100% !important;
+}
+
+.accessLevelInput {
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.createAccountButton {
+    margin-top: 20px;
+    width: 100%;
+}

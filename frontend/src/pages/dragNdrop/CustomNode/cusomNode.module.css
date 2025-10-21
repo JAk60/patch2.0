@@ -1,0 +1,15 @@
+.customnode {
+  width: 10rem;
+  height: 2.5rem;
+  background: aliceblue;
+  padding: 1rem;
+  color: black;
+  text-align: center;
+  font-size: large;
+  font-weight: 600;
+  border: 1px solid black;
+}
+
+/* .customnode:hover {
+  box-shadow: 0 0 0 10px #480032;
+} */

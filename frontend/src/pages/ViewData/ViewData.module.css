@@ -1,0 +1,82 @@
+.container{
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    grid-row: 1/13;
+    grid-column: 1/5;
+    background:url(Homewave.svg),linear-gradient(100deg, rgba(12, 90, 235, 0.5) 50%, rgba(91, 114, 129, 0.6) 100%), url('./20240312_110932.jpg');
+
+    /* background:url(viewDatawave.svg),linear-gradient(210deg, rgba(41,41,113,0.6) 0%, rgba(91, 114, 129, 0.6) 100%), url(https://wallpaperaccess.com/full/2579311.jpg); */
+    /* background-blend-mode: ; */
+    background-size:cover;
+}
+
+.viewDataNav{
+    position: absolute;
+    top: 40px;
+    right: 10px;
+}
+
+.viewDataNav i{
+    margin-right: 10px;
+}
+
+.viewDataNav a{
+    color:white;
+    text-decoration: none;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    margin-right: 35px;
+    font-size: 30px;
+}
+
+.viewDataLinks{
+    position: absolute;
+    right: 100px;
+    display: flex;
+    flex-direction: column;
+    height: 80%;
+    justify-content: space-evenly;
+    font-size: 30px;
+}
+.viewDataLinks a{
+    display: flex;
+    align-items: center;
+    color:white;
+    text-decoration: none;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+}
+.circleIcon{
+    display: inline-block;
+    background-color: #ffffff;
+    border-radius: 50%;
+    box-shadow: 2px 2px 7px 0px rgba(0,0,0,0.5);
+    text-align: center;
+    margin-right: 30px;
+  }
+  .circleIcon i{
+    color:#004d90;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; 
+    text-align: center;
+    text-decoration: none;
+    height: 80px;
+    width: 80px; 
+    font-size: 35px; 
+  }
+  .netra{
+      position: absolute;
+      left:20%;
+      font-size: 65px;
+      letter-spacing: 1px;
+      color: white;
+  }
+  .logotxt{
+    position: relative;
+    right: -4%;
+    top: -29px;
+  }

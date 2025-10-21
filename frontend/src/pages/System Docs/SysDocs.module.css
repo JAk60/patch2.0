@@ -1,0 +1,62 @@
+.body{
+    grid-column: 2/13;
+    grid-row: 1/5;
+    overflow-y: scroll;
+    overflow-x: hidden;
+  }
+  .module{
+    margin:1% 0 1% 1%;
+  }
+  .flex {
+    grid-row: 3/4;
+    grid-column: 2/13;
+    height: fit-content;
+    width: 95%;
+    margin-left: 4%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 20px 20px 30px 20px;
+    border-radius: 10px;
+    margin-top: 30px;
+    box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+  }
+  
+  .user{
+      margin-left: 1%;
+    }
+    
+    .table{
+        width: 98%;
+        margin: 40px 0 0 1%;
+        justify-self: center;
+        align-self: center;
+    }
+  
+    .tableFooter{
+      float: right;
+    }
+    input[type=file] {
+      width: 350px;
+      max-width: 100%;
+      color: #444;
+      padding: 5px;
+      background: #fff;
+      border-radius: 10px;
+      border: 1px solid #555;
+    }
+    
+    input[type=file]::file-selector-button {
+      margin-right: 20px;
+      border: none;
+      background: #084cdf;
+      padding: 10px 20px;
+      border-radius: 10px;
+      color: #fff;
+      cursor: pointer;
+      transition: background .2s ease-in-out;
+    }
+    
+    input[type=file]::file-selector-button:hover {
+      background: #0d45a5;
+    }

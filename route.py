@@ -1,8 +1,12 @@
+from os import listdir
+from flask import jsonify, request
+import json
 import io
 import os
 from datetime import datetime
-from os import listdir 
+from os import listdir
 from os.path import isfile, join
+from flask_talisman import Talisman
 from waitress import serve
 import requests
 from flask import (Flask, json, jsonify, request, send_file,
@@ -48,7 +52,6 @@ scheduler = APScheduler()
 # Configuring the Flask app to use the scheduler
 app.config['SCHEDULER_API_ENABLED'] = True
 scheduler.init_app(app)
-
 # Configure Flask-Mail
 app.config['MAIL_SERVER'] = 'smtp.ethereal.email'
 app.config['MAIL_PORT'] = 587
@@ -58,6 +61,39 @@ app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USE_SSL'] = False
 
 mail = Mail(app)
+csp = {
+    'default-src': "'self'",
+    'script-src': "'self'",
+    'style-src': "'self'",
+    'img-src': "'self' data:",
+    'font-src': "'self'",
+    'connect-src': "'self'",
+    'frame-src': "'none'",
+    'object-src': "'none'",
+    'base-uri': "'self'",
+    'form-action': "'self'",
+    'frame-ancestors': "'none'"
+}
+
+# Apply Talisman
+Talisman(
+    app,
+    content_security_policy=csp,
+    force_https=False,  # Change to True in production
+    frame_options='DENY',
+    x_content_type_options=True,
+    x_xss_protection=True,
+    referrer_policy='strict-origin-when-cross-origin'
+)
+
+
+@app.after_request
+def security_headers(response):
+    response.headers.pop('Server', None)
+    response.headers.pop('X-Powered-By', None)
+    return response
+
+
 with app.open_resource("./dB/password_reset/netra.png") as fp:
     logo_data = fp.read()
 
@@ -279,7 +315,7 @@ def update_parameters():
 def save_historical_data():
     if request.method == "POST":
         data = request.get_json(force=True)
-        print("data",data)
+        print("data", data)
         if data and "data" in data:
             data = data["data"]
             d_inst = Data_Manager()
@@ -359,43 +395,42 @@ def fetch_cmdata():
 #             tasknames.append(file.split(".")[0])
 #         t_data = {"tasks": tasknames}
 #         return jsonify(t_data)
-import json
-from flask import jsonify, request
-from os import listdir
-from os.path import isfile, join
+
 
 @app.route("/fetch_tasks", methods=["GET", "POST"])
 def fetch_tasks():
     if request.method == "GET":
         path = "./tasks"
         taskfiles = [f for f in listdir(path) if isfile(join(path, f))]
-        
+
         # Initialize an empty list for the output
         tasks_info = []
 
         # Process each task file
         for file in taskfiles:
-            task_name = file.split(".")[0]  # Get the task name without the extension
-            
+            # Get the task name without the extension
+            task_name = file.split(".")[0]
+
             # Read the contents of the task file
             with open(join(path, file), 'r') as f:
                 task_data = json.load(f)  # Load the JSON data
-                
+
                 # Ensure task_data is a list and get the last object
                 if isinstance(task_data, list) and task_data:
-                    last_object = task_data[-1]  # Get the last object in the array
-                    author_name = last_object.get("shipName")  # Get the author's name from the key 'name'
-                    
+                    # Get the last object in the array
+                    last_object = task_data[-1]
+                    # Get the author's name from the key 'name'
+                    author_name = last_object.get("shipName")
+
                     # Create a dictionary for the current task
                     task_info = {
                         "taskname": task_name,
                         "ship_name": author_name
                     }
-                    
+
                     # Add the task info to the list
                     tasks_info.append(task_info)
         return jsonify(tasks_info)
-
 
 
 @app.route("/save_task_configuration", methods=["POST"])
@@ -620,13 +655,6 @@ def optimize():
         return optimizer()
 
 
-# @app.route('/rul', methods=['POST'])
-# def rul():
-#     if request.method== 'POST':
-#         file_path = os.path.join(app.config['UPLOAD_FOLDER'], 'uploaded_data.csv')
-#         return rul_code(file_path)
-
-
 @app.route("/rul", methods=["POST"])
 def rul():
     if request.method == "POST":
@@ -719,7 +747,7 @@ def insert_new_user():
 def fetch_eta_beta():
     data = request.json
     component_id = data["component_id"]
-    print("component_id",component_id)
+    print("component_id", component_id)
     inst = Data_Manager()
     return inst.fetch_eeta_beta(component_id)
 
@@ -923,9 +951,14 @@ def fetch_cmms_selection():
     return data
 
 
+@app.before_request
+def log_request():
+    print(f"[REQ] {request.method} {request.path} (endpoint={request.endpoint})")
+
+
 if __name__ == "__main__":
     app.debug = True
     app.secret_key = os.urandom(32)
     app.wsgi_app = middleware.TaskMiddleWare(app.wsgi_app, APP_ROOT)
     scheduler.start()
-    serve(app, host="0.0.0.0", port=5000)
+    serve(app, host="0.0.0.0", port=5000, ident=None)

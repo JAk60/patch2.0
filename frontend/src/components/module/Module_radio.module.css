@@ -1,0 +1,36 @@
+.module {
+  background-color: white;
+  grid-column: 2/13;
+  grid-row: 1;
+  display: flex;
+  justify-self: center;
+  align-items: center;
+  justify-content: center;
+  width: 98%;
+}
+
+.radioparent {
+  height: 60%;
+  display: flex;
+  width: 98%;
+  background: rgb(234, 234, 237);
+  justify-content: center;
+  border-radius: 5px;
+  -webkit-box-shadow: 7px 13px 14px -8px #777;
+  -moz-box-shadow: 7px 13px 14px -8px #777;
+  box-shadow: 7px 13px 14px -8px #777;
+}
+
+.radiogrp {
+  width: 100%;
+  justify-content: space-around;
+}
+
+.Mui-checked {
+  color: green;
+}
+
+
+.boldLabel {
+  font-size: 30px;
+}
