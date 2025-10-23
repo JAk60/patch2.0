@@ -1,5 +1,7 @@
-from os import listdir
-from flask import jsonify, request
+import base64
+import hashlib
+from os import abort, listdir
+from flask import Blueprint, jsonify, request
 import json
 import io
 import os
@@ -44,14 +46,57 @@ from dB.system_configuration.system_configurationdB_table import \
     SystemConfigurationdBTable
 from dB.task_configuration.task_configuration import taskConfiguration_dB
 
+
+class RemoveTimestampHeadersMiddleware:
+    def __init__(self, app):
+        self.app = app
+
+    def __call__(self, environ, start_response):
+        def custom_start_response(status, headers, exc_info=None):
+            # Remove ALL timestamp and server metadata headers
+            timestamp_headers = {
+                'date', 'last-modified', 'etag', 'age', 'expires',
+                'server', 'x-powered-by', 'x-runtime', 'x-request-id',
+                'x-generator', 'x-aspnet-version', 'x-aspnetmvc-version'
+            }
+
+            filtered_headers = [
+                (name, value) for name, value in headers
+                if name.lower() not in timestamp_headers
+            ]
+
+            # Add security headers
+            filtered_headers.extend([
+                ('X-Content-Type-Options', 'nosniff'),
+                ('X-Frame-Options', 'DENY'),
+                ('X-XSS-Protection', '1; mode=block'),
+                ('Referrer-Policy', 'strict-origin-when-cross-origin'),
+            ])
+
+            return start_response(status, filtered_headers, exc_info)
+
+        return self.app(environ, custom_start_response)
+
+
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
-app = Flask(__name__)
+app = Flask(__name__, static_folder='./frontend/build', static_url_path='')
+api = Blueprint('api', __name__, url_prefix='/api')
+
+# Block sensitive files
+
+
+@app.before_request
+def block_sensitive_files():
+    blocked = ['/.git', '/.env', '/.DS_Store', '/.htaccess',
+               '/web.config', '/.vscode', '/package.json']
+    if any(pattern in request.path.lower() for pattern in blocked):
+        abort(404)
+
 
 scheduler = APScheduler()
-
-# Configuring the Flask app to use the scheduler
 app.config['SCHEDULER_API_ENABLED'] = True
 scheduler.init_app(app)
+
 # Configure Flask-Mail
 app.config['MAIL_SERVER'] = 'smtp.ethereal.email'
 app.config['MAIL_PORT'] = 587
@@ -61,39 +106,41 @@ app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USE_SSL'] = False
 
 mail = Mail(app)
+
+
+# Strict CSP - no wildcards
+# Updated CSP for Flask - More permissive for Vite bundles
 csp = {
     'default-src': "'self'",
-    'script-src': "'self'",
-    'style-src': "'self'",
-    'img-src': "'self' data:",
-    'font-src': "'self'",
+    # Added 'unsafe-inline'
+    'script-src': ["'self'"],
+    'style-src': ["'self'"],
+    'img-src': ["'self'", "data:", "blob:"],
+    'font-src': ["'self'"],
     'connect-src': "'self'",
     'frame-src': "'none'",
     'object-src': "'none'",
     'base-uri': "'self'",
     'form-action': "'self'",
-    'frame-ancestors': "'none'"
+    'frame-ancestors': "'none'",
 }
 
 # Apply Talisman
 Talisman(
     app,
     content_security_policy=csp,
-    force_https=False,  # Change to True in production
+    force_https=False,  # Set to False for local development
+    force_https_permanent=False,
+    strict_transport_security=True,
+    strict_transport_security_max_age=31536000,
     frame_options='DENY',
     x_content_type_options=True,
     x_xss_protection=True,
-    referrer_policy='strict-origin-when-cross-origin'
+    referrer_policy='strict-origin-when-cross-origin',
+    session_cookie_secure=False,  # Set to False for local development
+    session_cookie_samesite='Lax'
 )
-
-
-@app.after_request
-def security_headers(response):
-    response.headers.pop('Server', None)
-    response.headers.pop('X-Powered-By', None)
-    return response
-
-
+app.wsgi_app = RemoveTimestampHeadersMiddleware(app.wsgi_app)
 with app.open_resource("./dB/password_reset/netra.png") as fp:
     logo_data = fp.read()
 
@@ -101,6 +148,126 @@ UPLOAD_FOLDER = "uploads"
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
 res = SystemConfigurationdBTable()
+
+# ============= SERVE REACT APP =============
+
+
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def serve_react(path):
+    if path.startswith('api/'):
+        return {'error': 'API endpoint not found'}, 404
+
+    if path and os.path.exists(os.path.join(app.static_folder, path)):
+        file_path = os.path.join(app.static_folder, path)
+        if os.path.isfile(file_path):
+            # Read file manually to avoid automatic headers
+            with open(file_path, 'rb') as f:
+                file_data = f.read()
+
+            # Determine MIME type
+            import mimetypes
+            mimetype = mimetypes.guess_type(
+                file_path)[0] or 'application/octet-stream'
+
+            # Create clean response
+            response = app.response_class(
+                file_data,
+                mimetype=mimetype
+            )
+
+            # Set cache headers based on path
+            if path.startswith('assets/'):
+                response.headers['Cache-Control'] = 'public, max-age=31536000, immutable'
+            else:
+                response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+                response.headers['Pragma'] = 'no-cache'
+                response.headers['Expires'] = '0'
+
+            return response
+
+    # Serve index.html for all other routes
+    index_path = os.path.join(app.static_folder, 'index.html')
+    with open(index_path, 'rb') as f:
+        index_data = f.read()
+
+    response = app.response_class(
+        index_data,
+        mimetype='text/html'
+    )
+    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '0'
+
+    return response
+
+# CONSOLIDATED after_request handler
+
+
+@app.after_request
+def apply_security_headers(response):
+    # Aggressively remove timestamp and metadata headers
+    headers_to_remove = [
+        'Last-Modified', 'ETag', 'Date', 'Server', 'X-Powered-By',
+        'Age', 'Content-Disposition'
+    ]
+
+    for header in headers_to_remove:
+        response.headers.pop(header, None)
+
+    # Set security headers
+    response.headers.setdefault('X-Content-Type-Options', 'nosniff')
+    response.headers.setdefault('X-Frame-Options', 'DENY')
+    response.headers.setdefault('X-XSS-Protection', '1; mode=block')
+    response.headers.setdefault(
+        'Referrer-Policy', 'strict-origin-when-cross-origin')
+    response.headers.setdefault(
+        'Permissions-Policy', 'geolocation=(), microphone=(), camera=()')
+
+    # Enhanced cache control to prevent timestamp alerts
+    path = request.path.lower()
+
+    # JavaScript, CSS, images, fonts - immutable cache
+    if any(path.endswith(ext) for ext in ['.js', '.css', '.png', '.jpg', '.jpeg', '.gif', '.svg', '.woff', '.woff2', '.ttf', '.eot']):
+        response.headers['Cache-Control'] = 'public, max-age=31536000, immutable'
+
+    # HTML files - no cache
+    elif path.endswith('.html') or path == '/':
+        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+        response.headers['Pragma'] = 'no-cache'
+        response.headers['Expires'] = '0'
+
+    # API routes - no cache
+    elif '/api/' in path:
+        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+        response.headers['Pragma'] = 'no-cache'
+        response.headers['Expires'] = '0'
+
+    # Default for other static assets
+    elif '/assets/' in path or '/static/' in path:
+        response.headers['Cache-Control'] = 'public, max-age=31536000, immutable'
+
+    # Everything else - no cache
+    else:
+        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+        response.headers['Pragma'] = 'no-cache'
+        response.headers['Expires'] = '0'
+    import re
+
+    if response.content_type in ['application/xml', 'text/xml', 'application/zip']:
+        # Remove XML declarations with timestamps
+        content = response.get_data(as_text=True)
+
+        # Remove XML declarations
+        content = re.sub(r'<\?xml[^?>]*\?>', '', content)
+
+        # Remove other timestamp patterns
+        content = re.sub(r'created="[^"]*"', 'created=""', content)
+        content = re.sub(r'timestamp="[^"]*"', 'timestamp=""', content)
+        content = re.sub(r'datetime="[^"]*"', 'datetime=""', content)
+
+        response.set_data(content)
+    return response
 
 
 def hit_srcetl_endpoint():
@@ -116,12 +283,12 @@ def scheduled_task():
     hit_srcetl_endpoint()
 
 
-@app.route("/home")
+@api.route("/home")
 def home():
     return jsonify("Hello, This is new. We have connected ports!!")
 
 
-@app.route("/save_system", methods=["POST", "GET"])
+@api.route("/save_system", methods=["POST", "GET"])
 def save_system():
     if request.method == "POST":
         sys_inst = System_Configuration_N()
@@ -135,7 +302,7 @@ def save_system():
     return jsonify(res)
 
 
-@app.route("/save_phase", methods=["POST", "GET"])
+@api.route("/save_phase", methods=["POST", "GET"])
 def save_phase():
     if request.method == "POST":
         phase_inst = Phase_Manager_dB()
@@ -148,7 +315,7 @@ def save_phase():
     return jsonify(res)
 
 
-@app.route("/save_hep", methods=["POST", "GET"])
+@api.route("/save_hep", methods=["POST", "GET"])
 def save_hep():
     if request.method == "POST":
         hep_inst = Hep_dB()
@@ -161,7 +328,7 @@ def save_hep():
     return jsonify(res)
 
 
-@app.route("/fetch_system", methods=["POST", "GET"])
+@api.route("/fetch_system", methods=["POST", "GET"])
 def fetch_system():
     if request.method == "POST":
         data = request.get_json(force=True)
@@ -184,7 +351,7 @@ def fetch_system():
     return jsonify(res)
 
 
-@app.route("/fmodes", methods=["POST"])  # Update the method to 'POST'
+@api.route("/fmodes", methods=["POST"])  # Update the method to 'POST'
 def fetch_failure_modes():
     if request.method == "POST":
         data = request.json  # Assuming the request body contains JSON data
@@ -199,7 +366,7 @@ def fetch_failure_modes():
         return jsonify(res)
 
 
-@app.route("/save_system_redundancy", methods=["POST", "GET"])
+@api.route("/save_system_redundancy", methods=["POST", "GET"])
 def save_system_redundancy():
     if request.method == "POST":
         sys_inst = System_Configuration_N()
@@ -212,7 +379,7 @@ def save_system_redundancy():
     return jsonify(res)
 
 
-@app.route("/save_data_manager", methods=["POST", "GET"])
+@api.route("/save_data_manager", methods=["POST", "GET"])
 def save_data_manager():
     if request.method == "POST":
         d_inst = Data_Manager()
@@ -225,7 +392,7 @@ def save_data_manager():
     return jsonify(res)
 
 
-@app.route("/mission_data", methods=["GET", "POST"])
+@api.route("/mission_data", methods=["GET", "POST"])
 def mission_data():
     mission = MissionProfile()
     if request.method == "POST":
@@ -237,14 +404,14 @@ def mission_data():
     return data
 
 
-@app.route("/fetch_user_selection", methods=["GET"])
+@api.route("/fetch_user_selection", methods=["GET"])
 def fetch_user_selection():
     custom = Custom_Settings()
     data = custom.fetch_user_selection()
     return data
 
 
-@app.route("/rel_dashboard", methods=["GET", "POST"])
+@api.route("/rel_dashboard", methods=["GET", "POST"])
 def rel_dashboard():
     if request.method == "GET":
         custom = Custom_Settings()
@@ -255,7 +422,7 @@ def rel_dashboard():
         return jsonify(f_data)
 
 
-@app.route("/fetch_sensors", methods=["POST"])
+@api.route("/fetch_sensors", methods=["POST"])
 def fetch_sensors():
     data = request.get_json()
     inst = RUL_dB()
@@ -263,7 +430,7 @@ def fetch_sensors():
     return response
 
 
-@app.route("/cm_dashboard", methods=["GET", "POST"])
+@api.route("/cm_dashboard", methods=["GET", "POST"])
 def cm_dashboard():
     if request.method == "GET":
         custom = Custom_Settings()
@@ -274,7 +441,7 @@ def cm_dashboard():
         return jsonify(f_data)
 
 
-@app.route("/rel_estimate", methods=["POST"])
+@api.route("/rel_estimate", methods=["POST"])
 def rel_estimate():
     if request.method == "POST":
         data = request.get_json(force=True)
@@ -286,7 +453,7 @@ def rel_estimate():
         return jsonify(res)
 
 
-@app.route("/rel_estimate_EQ", methods=["POST"])
+@api.route("/rel_estimate_EQ", methods=["POST"])
 def rel_estimateEQ():
     if request.method == "POST":
         data = request.get_json(force=True)
@@ -302,7 +469,7 @@ def rel_estimateEQ():
         return jsonify(res)
 
 
-@app.route("/update_parameters", methods=["POST"])
+@api.route("/update_parameters", methods=["POST"])
 def update_parameters():
     if request.method == "POST":
         data = request.get_json(force=True)
@@ -311,7 +478,7 @@ def update_parameters():
         return jsonify(res)
 
 
-@app.route("/save_historical_data", methods=["POST"])
+@api.route("/save_historical_data", methods=["POST"])
 def save_historical_data():
     if request.method == "POST":
         data = request.get_json(force=True)
@@ -326,7 +493,7 @@ def save_historical_data():
             return jsonify({"code": 0, "message": "Invalid data format"}), 400
 
 
-@app.route("/add_data", methods=["POST"])
+@api.route("/add_data", methods=["POST"])
 def add_data():
     if request.method == "POST":
         try:
@@ -340,7 +507,7 @@ def add_data():
         # return jsonify(res)
 
 
-@app.route("/change", methods=["GET", "POST"])
+@api.route("/change", methods=["GET", "POST"])
 def trial():
     data = Reliability()
     d = [{"platform": "Talwar 1", "system": "DA2"}]
@@ -350,7 +517,7 @@ def trial():
 
 
 # Condition Monitoring Routes
-@app.route("/save_condition_monitoring", methods=["POST", "GET"])
+@api.route("/save_condition_monitoring", methods=["POST", "GET"])
 def save_condition_monitoring():
     if request.method == "POST":
         cm_inst = conditionMonitoring_dB()
@@ -361,7 +528,7 @@ def save_condition_monitoring():
     return res
 
 
-@app.route("/fetch_params", methods=["POST", "GET"])
+@api.route("/fetch_params", methods=["POST", "GET"])
 def fetch_parameters():
     if request.method == "POST":
         cm_inst = conditionMonitoring_dB()
@@ -373,7 +540,7 @@ def fetch_parameters():
     return jsonify(res)
 
 
-@app.route("/fetch_cmdata", methods=["POST", "GET"])
+@api.route("/fetch_cmdata", methods=["POST", "GET"])
 def fetch_cmdata():
     if request.method == "POST":
         cm_inst = conditionMonitoring_dB()
@@ -385,7 +552,7 @@ def fetch_cmdata():
 
 
 # TASK CONFIGURATION
-# @app.route("/fetch_tasks", methods=["GET", "POST"])
+# @api.route("/fetch_tasks", methods=["GET", "POST"])
 # def fetch_tasks():
 #     if request.method == "GET":
 #         path = "./tasks"
@@ -397,7 +564,7 @@ def fetch_cmdata():
 #         return jsonify(t_data)
 
 
-@app.route("/fetch_tasks", methods=["GET", "POST"])
+@api.route("/fetch_tasks", methods=["GET", "POST"])
 def fetch_tasks():
     if request.method == "GET":
         path = "./tasks"
@@ -433,7 +600,7 @@ def fetch_tasks():
         return jsonify(tasks_info)
 
 
-@app.route("/save_task_configuration", methods=["POST"])
+@api.route("/save_task_configuration", methods=["POST"])
 def save_task_configuration():
     if request.method == "POST":
         tc_inst = TaskReliability()
@@ -485,7 +652,7 @@ def save_task_configuration():
     return jsonify(res)
 
 
-@app.route("/load_task_configuration", methods=["POST", "GET"])
+@api.route("/load_task_configuration", methods=["POST", "GET"])
 def load_task_configuration():
     if request.method == "POST":
         # tc_inst = taskConfiguration_dB()
@@ -496,7 +663,7 @@ def load_task_configuration():
         return jsonify(json.load(file))
 
 
-@app.route("/task_rel", methods=["POST", "GET"])
+@api.route("/task_rel", methods=["POST", "GET"])
 def task_rel():
     data = request.get_json(force=True)
     tasks = []
@@ -530,21 +697,21 @@ def task_rel():
     return jsonify(final_return_data)
 
 
-@app.route("/task_dash_populate", methods=["POST", "GET"])
+@api.route("/task_dash_populate", methods=["POST", "GET"])
 def task_dash_populate():
     trel_inst = TaskReliability()
     data = trel_inst.get_task_dropdown_data(APP_ROOT)
     return jsonify(data)
 
 
-@app.route("/addUserSelectionData", methods=["POST", "GET"])
+@api.route("/addUserSelectionData", methods=["POST", "GET"])
 def addUserSelectionData():
     data = request.get_json(force=True)
     response = add_user_selection_data(data)
     return response
 
 
-@app.route("/fetch_condition_monitoring", methods=["POST"])
+@api.route("/fetch_condition_monitoring", methods=["POST"])
 def fetch_condition_monitoring():
     data = request.get_json(force=True)
     req_type = data["type"]
@@ -558,7 +725,7 @@ def fetch_condition_monitoring():
 
 
 ###### RCM Routes ######
-@app.route("/save_assembly_rcm", methods=["POST"])
+@api.route("/save_assembly_rcm", methods=["POST"])
 def save_assembly_rcm():
     data = request.get_json(force=True)
     rcm = RCMDB()
@@ -566,7 +733,7 @@ def save_assembly_rcm():
     return res
 
 
-@app.route("/fetch_assembly_rcm", methods=["POST"])
+@api.route("/fetch_assembly_rcm", methods=["POST"])
 def fetch_assembly_rcm():
     data = request.get_json(force=True)
     sys_inst = System_Configuration_N()
@@ -579,7 +746,7 @@ def fetch_assembly_rcm():
     return res
 
 
-@app.route("/save_rcm", methods=["POST"])
+@api.route("/save_rcm", methods=["POST"])
 def save_rcm():
     # data = request.get_json(force=True)
     # sys_inst = System_Configuration_N()
@@ -590,7 +757,7 @@ def save_rcm():
     return res_r
 
 
-@app.route("/rcm_report", methods=["POST", "GET"])
+@api.route("/rcm_report", methods=["POST", "GET"])
 def rcm_report():
     # data = request.get_json(force=True)
     # sys_inst = System_Configuration_N()
@@ -609,7 +776,7 @@ def rcm_report():
     return jsonify({"res": res_r, "system": system, "ship_name": ship_name})
 
 
-@app.route("/upload", methods=["POST", "GET"])
+@api.route("/upload", methods=["POST", "GET"])
 def fileUpload():
     if request.method == "POST":
         file = request.files.getlist("file")
@@ -630,7 +797,7 @@ def fileUpload():
         return jsonify({"status": "failed"})
 
 
-@app.route("/fetch_system_files", methods=["POST", "GET"])
+@api.route("/fetch_system_files", methods=["POST", "GET"])
 def fetch_system_files():
     if request.method == "POST":
         data = request.get_json(force=True)
@@ -647,7 +814,7 @@ def fetch_system_files():
         return jsonify({"status": "failed"})
 
 
-@app.route("/optimize", methods=["POST"])
+@api.route("/optimize", methods=["POST"])
 def optimize():
     if request.method == "POST":
         data = request.json
@@ -655,7 +822,7 @@ def optimize():
         return optimizer()
 
 
-@app.route("/rul", methods=["POST"])
+@api.route("/rul", methods=["POST"])
 def rul():
     if request.method == "POST":
         req_data = request.get_json()
@@ -665,14 +832,14 @@ def rul():
         return inst.rul_code(equipment_id, parameter)
 
 
-@app.route("/rul_equipment", methods=["POST"])
+@api.route("/rul_equipment", methods=["POST"])
 def rul_equipment():
     if request.method == "POST":
         inst = RUL_dB()
         return inst.rul_equipment_level()
 
 
-# @app.route('/prev_rul', methods=['POST'])
+# @api.route('/prev_rul', methods=['POST'])
 # def prev_rul():
 #     try:
 #         data = request.get_json()
@@ -688,7 +855,7 @@ def rul_equipment():
 #         return jsonify({"message": "Invalid request format."}), 400
 
 
-# @app.route('/csv_upload', methods=['POST'])
+# @api.route('/csv_upload', methods=['POST'])
 # def predict_rul():
 #     if 'file' in request.files:
 #         file = request.files['file']
@@ -704,7 +871,7 @@ def rul_equipment():
 #         return "file is not provided"
 
 
-@app.route("/cgraph", methods=["POST"])
+@api.route("/cgraph", methods=["POST"])
 def cgraph():
     data = request.get_json()
     equipment_ids = data.get("equipment_id")
@@ -712,7 +879,7 @@ def cgraph():
     return graph.graph_c(equipment_ids)
 
 
-@app.route("/get_pf", methods=["POST"])
+@api.route("/get_pf", methods=["POST"])
 def pf():
     data = request.get_json()
     # equipment_id = data.get('equipment_id')
@@ -722,7 +889,7 @@ def pf():
     return rul_class.fetch_PF(name, equipment_id)
 
 
-@app.route("/get_credentials", methods=["POST"])
+@api.route("/get_credentials", methods=["POST"])
 def get_credentials():
     data = request.json  # Assuming you send a JSON object in the request body
     if "username" in data and "password" in data:
@@ -732,7 +899,7 @@ def get_credentials():
         return inst.sign_in(username, password)
 
 
-@app.route("/insert_user", methods=["POST"])
+@api.route("/insert_user", methods=["POST"])
 def insert_new_user():
     data = request.json  # Assuming you send a JSON object in the request body
     if "username" in data and "password" in data and "level" in data:
@@ -743,7 +910,7 @@ def insert_new_user():
         return inst.sign_up(username, password, level)
 
 
-@app.route("/fetch_eta_beta", methods=["POST"])
+@api.route("/fetch_eta_beta", methods=["POST"])
 def fetch_eta_beta():
     data = request.json
     component_id = data["component_id"]
@@ -752,7 +919,7 @@ def fetch_eta_beta():
     return inst.fetch_eeta_beta(component_id)
 
 
-@app.route("/phase_json", methods=["POST"])
+@api.route("/phase_json", methods=["POST"])
 def phasejson():
     data = request.json
     phases = data["phases"]
@@ -761,7 +928,7 @@ def phasejson():
     return inst.json_paraser(APP_ROOT, phases, curr_task)
 
 
-@app.route("/get_ship_alpha_beta", methods=["POST"])
+@api.route("/get_ship_alpha_beta", methods=["POST"])
 def fetch_equipment_alpha_betas():
     data = request.json
     ship_name = data["ship_name"]
@@ -770,7 +937,7 @@ def fetch_equipment_alpha_betas():
     return inst.fetch_alpha_beta(components=components)
 
 
-@app.route("/update_alpha_beta", methods=["POST"])
+@api.route("/update_alpha_beta", methods=["POST"])
 def update_alpha_beta():
     data = request.json
     ship_name = data["ship_name"]
@@ -783,7 +950,7 @@ def update_alpha_beta():
     )
 
 
-@app.route("/component_overhaul_age", methods=["POST"])
+@api.route("/component_overhaul_age", methods=["POST"])
 def set_component_overhaul_age():
     data = request.json
     age = data["age"]
@@ -793,20 +960,20 @@ def set_component_overhaul_age():
     return inst.set_component_overhaul_age(ship_name, component_name, age)
 
 
-@app.route('/pdf/<path:filename>', methods=["GET"])
+@api.route('/pdf/<path:filename>', methods=["GET"])
 def download_pdf(filename):
     print(filename)
     return send_from_directory('static/pdf', filename, as_attachment=True, mimetype='application/pdf')
 
 
-@app.route('/get_overhaul_hours', methods=["POST"])
+@api.route('/get_overhaul_hours', methods=["POST"])
 def get_overhaul_hours():
     data = request.json
     inst = Data_Manager()
     return inst.get_component_overhaul_hours(data)
 
 
-@app.route('/reset_password', methods=["POST"])
+@api.route('/reset_password', methods=["POST"])
 def reset_password():
     data = request.json
     username = data["username"]
@@ -814,34 +981,34 @@ def reset_password():
     return inst.send_notification_email(username, logo_data)
 
 
-@app.route('/get_users', methods=['POST'])
+@api.route('/get_users', methods=['POST'])
 def get_users():
     data = request.json
     inst = DashBoard()
     return inst.fetch_users(data)
 
 
-@app.route('/update_user', methods=['PUT'])
+@api.route('/update_user', methods=['PUT'])
 def update_user_endpoint():
     data = request.json
     inst = DashBoard()
     return inst.update_user(data)
 
 
-@app.route('/delete_user', methods=['POST'])
+@api.route('/delete_user', methods=['POST'])
 def delete_user():
     data = request.json
     inst = DashBoard()
     return inst.delete_user(data)
 
 
-@app.route('/card_counts', methods=['GET'])
+@api.route('/card_counts', methods=['GET'])
 def card_counts():
     inst = DashBoard()
     return inst.card_counts()
 
 
-@app.route('/srcetl', methods=['GET'])
+@api.route('/srcetl', methods=['GET'])
 def srcetl():
     inst = ETL()
     value = inst.operational_data_etl()
@@ -852,7 +1019,7 @@ def srcetl():
     })
 
 
-@app.route('/set_equip_etl', methods=['POST'])
+@api.route('/set_equip_etl', methods=['POST'])
 def set_equip_etl():
     data = request.json
     print(data)
@@ -864,28 +1031,28 @@ def set_equip_etl():
     return jsonify({'message': 'ETL flag set successfully'})
 
 
-@app.route('/unregister_equipment', methods=['POST'])
+@api.route('/unregister_equipment', methods=['POST'])
 def unregister_equipment():
     data = request.get_json(force=True)
     inst = Data_Administrator()
     return inst.delete_data_for_component(data)
 
 
-@app.route('/sysmetl', methods=['POST'])
+@api.route('/sysmetl', methods=['POST'])
 def sysmetl():
     data = request.get_json(force=True)
     inst = Data_Administrator()
     return inst.register_equipment(data)
 
 
-@app.route('/equipment_onship', methods=['POST'])
+@api.route('/equipment_onship', methods=['POST'])
 def equipment_onship():
     data = request.get_json(force=True)
     inst = Data_Administrator()
     return inst.get_equipments_onship(data)
 
 
-@app.route('/delspecific', methods=['POST'])
+@api.route('/delspecific', methods=['POST'])
 def delspecific():
     try:
         data = request.get_json(force=True)
@@ -897,7 +1064,7 @@ def delspecific():
         return jsonify({"error": str(e)}), 500
 
 
-@app.route('/getspecific_data', methods=['POST'])
+@api.route('/getspecific_data', methods=['POST'])
 def getspecific_data():
     data = request.get_json(force=True)
     print(data)
@@ -905,7 +1072,7 @@ def getspecific_data():
     return inst.specific_data(data)
 
 
-@app.route("/upload_oem_data", methods=["POST"])
+@api.route("/upload_oem_data", methods=["POST"])
 def oem_data():
     data = request.json["data"]
     inst = OEMData()
@@ -915,7 +1082,7 @@ def oem_data():
     })
 
 
-@app.route('/del_task', methods=['POST'])
+@api.route('/del_task', methods=['POST'])
 def delete_file():
     # Get the filename from the request
     filename = request.json.get('filename')
@@ -944,7 +1111,7 @@ def delete_file():
         return jsonify({'error': str(e)}), 500
 
 
-@app.route("/fetch_cmms_selection", methods=["GET"])
+@api.route("/fetch_cmms_selection", methods=["GET"])
 def fetch_cmms_selection():
     custom = Custom_Settings()
     data = custom.fetch_cmms_selection()
@@ -956,9 +1123,12 @@ def log_request():
     print(f"[REQ] {request.method} {request.path} (endpoint={request.endpoint})")
 
 
+# Register blueprint
+app.register_blueprint(api)
+
 if __name__ == "__main__":
-    app.debug = True
+    app.debug = False
     app.secret_key = os.urandom(32)
     app.wsgi_app = middleware.TaskMiddleWare(app.wsgi_app, APP_ROOT)
     scheduler.start()
-    serve(app, host="0.0.0.0", port=5000, ident=None)
+    serve(app, host="0.0.0.0", port=5000, ident=None, expose_tracebacks=False,)
