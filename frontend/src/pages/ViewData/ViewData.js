@@ -1,6 +1,7 @@
 import { Button, Typography, makeStyles } from "@material-ui/core";
 import CreateIcon from '@material-ui/icons/Create';
 import HourglassEmptyIcon from '@material-ui/icons/HourglassEmpty';
+import WifiTetheringIcon from '@material-ui/icons/HourglassEmpty';
 import StorageIcon from '@material-ui/icons/Storage';
 import SystemUpdateAltIcon from '@material-ui/icons/SystemUpdateAlt';
 import React from "react";
@@ -40,7 +41,7 @@ const ViewData = (props) => {
     { name: "Historical Data", path: "/historical_data", icon: <HourglassEmptyIcon /> },
     { name: "Add New Ship", path: "/user_selection_config", icon: <CreateIcon /> },
     // { name: "Add System Doc", path: "/add_system_doc", icon: <SaveAltIcon /> },
-    // { name: "Add Sensor Data", path: "/maintenance_allocation/add_data", icon: <WifiTetheringIcon /> },
+    { name: "Add Sensor Data", path: "/maintenance_allocation/add_data", icon: <WifiTetheringIcon /> },
     { name: "CMMS To NETRA", path: "/administrator", icon: <SystemUpdateAltIcon /> },
   ];
 

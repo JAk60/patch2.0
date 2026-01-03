@@ -47,64 +47,83 @@ function downloadBlankCSV() {
 const AddData = (props) => {
 	const dispatch = useDispatch();
 	const fileInputRef = useRef(null);
-	const handleFileUpload = (file) => {
-		if (file) {
-			setLoading(true);
+const handleFileUpload = (file) => {
+    if (file) {
+        setLoading(true);
 
-			const reader = new FileReader();
-			reader.onload = (event) => {
-				const csvData = event.target.result;
-				const rows = csvData.split("\n");
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            const csvData = event.target.result;
+            console.log("Raw CSV Data:", csvData);
+            
+            const rows = csvData.split("\n");
+            console.log("Total rows:", rows.length);
 
-				// Assuming the first row contains column headers
-				const headers = rows[0]
-					.split(",")
-					.map((header) => header.trim());
-				console.log(headers);
-				const parsedData = [];
-				for (let i = 1; i < rows.length; i++) {
-					const rowData = rows[i].split(",");
+            // Get headers from CSV
+            const headers = rows[0]
+                .split(",")
+                .map((header) => header.trim());
+            console.log("CSV Headers:", headers);
+            
+            const parsedData = [];
+            
+            for (let i = 1; i < rows.length; i++) {
+                const row = rows[i].trim();
+                if (!row) {
+                    console.log(`Row ${i} is empty, skipping`);
+                    continue;
+                }
+                
+                // Use regex to properly split CSV, handling quoted values
+                const rowData = row.match(/(".*?"|[^,]+)(?=\s*,|\s*$)/g)
+                    .map(val => val.trim().replace(/^"|"$/g, ''));
+                
+                console.log(`Row ${i} data:`, rowData);
+                
+                const rowObject = {
+                    id: uuid(),
+                    componentId: selectedComponent.id,
+                    date: "",
+                    parameterName: "",
+                    paramId: "",
+                    value: "",
+                    operatingHours: "",
+                };
+                
+                // Map CSV columns to rowObject based on header names
+                headers.forEach((header, index) => {
+                    const value = rowData[index] || "";
+                    console.log(`Header: ${header}, Index: ${index}, Value: ${value}`);
+                    
+                    if (header === "parameterName") {
+                        rowObject["parameterName"] = value;
+                        // Find matching parameter ID
+                        let parameter = paramData.find(
+                            (d) => d.name === value
+                        );
+                        rowObject["paramId"] = parameter?.id || "";
+                    } else if (header === "value") {
+                        rowObject["value"] = value;
+                    } else if (header === "date") {
+                        rowObject["date"] = value;
+                    } else if (header === "operatingHours") {
+                        // Store as plain number, not formatted time
+                        rowObject["operatingHours"] = value;
+                    }
+                });
+                
+                console.log("Created rowObject:", rowObject);
+                parsedData.push(rowObject);
+            }
+            
+            console.log("Final Parsed Data:", parsedData);
+            setDataRows(parsedData);
+            setLoading(false);
+        };
 
-					if (rowData.length === headers.length + 1) {
-						// Adjusted the condition here
-						const rowObject = {};
-						let j = 0,
-							i = 0;
-						while (j < headers.length + 1) {
-							let value = rowData[j].trim();
-							if (headers[j] === "date") {
-								// Extract date and time parts
-								let date = value;
-								let time = rowData[j + 1].trim(); // Split by ', ' instead of just ','
-								value = `${date.replace(
-									/"/g,
-									""
-								)}, ${time.replace(/"/g, "")}`;
-								j += 1;
-							}
-							console.log(value);
-							rowObject[headers[i]] = value;
-							j += 1;
-							i += 1;
-						}
-						rowObject["id"] = uuid();
-						rowObject["componentId"] = selectedComponent.id;
-						// let parameter = paramData.filter(
-						//   (d) => d.name === params.data.parameterName
-						// );
-						// params.data.paramId = parameter[0]?.id;
-						parsedData.push(rowObject);
-					}
-				}
-				// Now it's parsedData, not paramData
-				// Here, you can dispatch or do something else with the parsed data
-				setDataRows(parsedData);
-				setLoading(false);
-			};
-
-			reader.readAsText(file);
-		}
-	};
+        reader.readAsText(file);
+    }
+};
 
 	const currentSelection = useSelector(
 		(state) => state.userSelection.currentSelection
@@ -211,68 +230,70 @@ const AddData = (props) => {
 	};
 
 	const DataColumnDefs = [
-		<AgGridColumn
-			field="date"
-			headerName="DateTime"
-			headerTooltip="DateTime"
-			editable={true}
-			cellEditorFramework={(params) => (
-				<MuiPickersUtilsProvider utils={MomentUtils}>
-					<DateTimePicker
-						value={moment(
-							params.value,
+	<AgGridColumn
+		field="date"
+		headerName="DateTime"
+		headerTooltip="DateTime"
+		editable={true}
+		cellEditorFramework={(params) => (
+			<MuiPickersUtilsProvider utils={MomentUtils}>
+				<DateTimePicker
+					value={moment(
+						params.value,
+						"DD/MM/YYYY, HH:mm:ss"
+					).toDate()}
+					onChange={(date) => {
+						const formattedDate = moment(date).format(
 							"DD/MM/YYYY, HH:mm:ss"
-						).toDate()} // Parse the date when displaying
-						onChange={(date) => {
-							const formattedDate = moment(date).format(
-								"DD/MM/YYYY, HH:mm:ss"
-							);
-							const newValue = {
-								...params.data,
-								date: formattedDate,
-							};
-							const updatedDataRows = dataRows.map((row) => {
-								if (row.id === newValue.id) {
-									return newValue;
-								}
-								return row;
-							});
-							setDataRows(updatedDataRows);
-						}}
-						format="DD/MM/YYYY, HH:mm:ss" // Format for display
-					/>
-				</MuiPickersUtilsProvider>
-			)}
-		/>,
-		<AgGridColumn
-			field="parameterName"
-			headerName="Channel/Parameter Name"
-			headerTooltip="Channel/Parameter Name"
-			cellEditor="agSelectCellEditor"
-			cellEditorParams={{
-				values: paramData.map((data) => data.name),
-			}}
-			editable={true}
-			onCellValueChanged={(params) => {
-				let parameter = paramData.filter(
-					(d) => d.name === params.data.parameterName
-				);
-				params.data.paramId = parameter[0]?.id;
-			}}
-		/>,
-		<AgGridColumn
-			field="value"
-			headerName="Value"
-			headerTooltip="Value"
-			editable={true}
-		/>,
-		<AgGridColumn
-			headerName="Operating Hours"
-			field="operatingHours"
-			headerTooltip="Operating Hours"
-			editable={true}
-		/>,
-	];
+						);
+						const newValue = {
+							...params.data,
+							date: formattedDate,
+						};
+						const updatedDataRows = dataRows.map((row) => {
+							if (row.id === newValue.id) {
+								return newValue;
+							}
+							return row;
+						});
+						setDataRows(updatedDataRows);
+					}}
+					format="DD/MM/YYYY, HH:mm:ss"
+				/>
+			</MuiPickersUtilsProvider>
+		)}
+	/>,
+	<AgGridColumn
+		field="parameterName"
+		headerName="Channel/Parameter Name"
+		headerTooltip="Channel/Parameter Name"
+		cellEditor="agSelectCellEditor"
+		cellEditorParams={{
+			values: paramData.map((data) => data.name),
+		}}
+		editable={true}
+		onCellValueChanged={(params) => {
+			let parameter = paramData.filter(
+				(d) => d.name === params.data.parameterName
+			);
+			params.data.paramId = parameter[0]?.id;
+		}}
+	/>,
+	<AgGridColumn
+		field="value"
+		headerName="Value"
+		headerTooltip="Value"
+		editable={true}
+	/>,
+<AgGridColumn
+	headerName="Operating Hours"
+	field="operatingHours"
+	headerTooltip="Operating Hours"
+	editable={true}
+	valueFormatter={(params) => params.value}
+	cellClass="ag-right-aligned-cell"
+/>,
+];
 
 	const addRow = () => {
 		let newRow = {

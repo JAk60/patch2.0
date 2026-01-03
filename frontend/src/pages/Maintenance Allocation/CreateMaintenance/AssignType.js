@@ -31,6 +31,59 @@ const useStyles = makeStyles({
   align: {
     marginBottom: 10,
   },
+  debugPanel: {
+    position: 'fixed',
+    top: 10,
+    right: 10,
+    backgroundColor: '#1e1e1e',
+    color: '#00ff00',
+    padding: 15,
+    borderRadius: 5,
+    fontSize: 11,
+    fontFamily: 'monospace',
+    maxWidth: 400,
+    maxHeight: '90vh',
+    overflow: 'auto',
+    zIndex: 9999,
+    border: '2px solid #00ff00',
+    boxShadow: '0 0 10px rgba(0,255,0,0.3)'
+  },
+  debugTitle: {
+    color: '#ffff00',
+    fontSize: 14,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    borderBottom: '1px solid #00ff00',
+    paddingBottom: 5
+  },
+  debugSection: {
+    marginBottom: 10,
+    paddingBottom: 10,
+    borderBottom: '1px solid #333'
+  },
+  debugLabel: {
+    color: '#00aaff',
+    fontWeight: 'bold'
+  },
+  debugValue: {
+    color: '#00ff00',
+    marginLeft: 10
+  },
+  debugError: {
+    color: '#ff0000',
+    fontWeight: 'bold'
+  },
+  debugSuccess: {
+    color: '#00ff00',
+    fontWeight: 'bold'
+  },
+  closeDebug: {
+    float: 'right',
+    cursor: 'pointer',
+    color: '#ff0000',
+    fontWeight: 'bold',
+    fontSize: 16
+  }
 });
 
 const headers = [
@@ -40,14 +93,11 @@ const headers = [
   "max",
   "P",
   "F",
-  // 'level',
   "frequency",
-  // 'data',
 ];
 
 function downloadBlankCSV() {
   const csvContent = headers.join(",");
-
   const blob = new Blob([csvContent], { type: "text/csv" });
   const url = window.URL.createObjectURL(blob);
   const a = document.createElement("a");
@@ -68,20 +118,41 @@ const AssignType = (props) => {
   const [failureMode, setFailureMode] = useState(null);
   const [pRows, setpRows] = useState([]);
   const [selectedEquipment, setSelectedEquipment] = useState("");
+  const [showDebug, setShowDebug] = useState(false);
   const fileInputRef = useRef(null);
   const classes = useStyles();
   const dispatch = useDispatch();
 
+  // Redux selectors
   const CurrentSelected = useSelector(
     (state) => state.userSelection.currentSelection
   );
   const sData = useSelector((state) => state.userSelection.componentsData);
-
-  const currentNomenclature = CurrentSelected["nomenclature"];
-  console.log(currentNomenclature);
-  const matchingItems = sData.filter(
-    (item) => item.nomenclature === currentNomenclature
+  const currentSelection = useSelector(
+    (state) => state.userSelection.currentSelection
   );
+  const systemData = useSelector((state) => state.treeData.treeData);
+  const failureModes = useSelector((state) => state.treeData.failureModes);
+
+  // Extract current nomenclature
+  const currentNomenclature = CurrentSelected["nomenclature"];
+  const currentShipName = CurrentSelected["shipName"];
+
+  // Filter matching items
+  const matchingItems = sData.filter(
+    (item) => item.nomenclature === currentNomenclature &&
+              item.ship_name === currentShipName
+  );
+  
+  const matchingId = matchingItems[0]?.id;
+
+  // Get eqptId
+  const eqptIdResult = systemData.filter(
+    (data) => data.name === currentSelection.equipmentName
+  );
+  
+  const eqptId = eqptIdResult[0]?.id;
+
   const handleFileUpload = (file) => {
     if (file) {
       const reader = new FileReader();
@@ -89,40 +160,35 @@ const AssignType = (props) => {
         const csvData = event.target.result;
         const rows = csvData.split("\n");
 
-        // Assuming the first row contains column headers
         const headers = rows[0].split(",").map((header) => header.trim());
         const parsedData = [];
 
         for (let i = 1; i < rows.length; i++) {
           const rowData = rows[i].split(",");
           if (rowData.length === headers.length) {
-            // Check if the number of columns matches the headers
             const rowObject = {};
             for (let j = 0; j < headers.length; j++) {
               let value = rowData[j].trim();
               rowObject[headers[j]] = value;
-              rowObject["id"] = uuid();
-              rowObject["EquipmentId"] = eqptId;
-              rowObject["ComponentId"] = matchingId;
             }
+            rowObject["id"] = uuid();
+            rowObject["EquipmentId"] = eqptId;
+            rowObject["ComponentId"] = eqptId;
+            
             parsedData.push(rowObject);
           }
         }
 
-        // Now it's parsedData, not paramData
-        // Here, you can dispatch or do something else with the parsed data
         setpRows(parsedData);
       };
 
       reader.readAsText(file);
     }
   };
+
   const handleMtypeChange = (e) => {
     setType(e.target.value);
   };
-
-
-  const matchingId = matchingItems[0]?.id;
 
   // Snackbar
   const [SnackBarMessage, setSnackBarMessage] = useState({
@@ -130,6 +196,7 @@ const AssignType = (props) => {
     message: "This is awesome",
     showSnackBar: false,
   });
+  
   const onHandleSnackClose = () => {
     setSnackBarMessage({
       severity: "error",
@@ -141,27 +208,24 @@ const AssignType = (props) => {
   const [monitoringType, setMonitoringType] = useState("intermittent");
   const [numPara, setNumPara] = useState(0);
 
-  console.log(pRows);
   const addPRows = (n) => {
     let newRows = [];
     while (n > 0) {
-      newRows = [
-        ...newRows,
-        {
-          EquipmentId: eqptId,
-          ComponentId: matchingId,
-          id: uuid(),
-          name: "",
-          unit: "",
-          min: "",
-          max: "",
-          frequency: "",
-          // data: "",
-        },
-      ];
+      const newRow = {
+        EquipmentId: eqptId,
+        ComponentId: eqptId,
+        id: uuid(),
+        name: "",
+        unit: "",
+        min: "",
+        max: "",
+        frequency: "",
+      };
+      
+      newRows = [...newRows, newRow];
       n--;
     }
-    console.log(newRows);
+    
     setpRows(newRows);
   };
 
@@ -170,42 +234,36 @@ const AssignType = (props) => {
       field="name"
       headerName="Channel/Parameter Name"
       headerTooltip="Channel/Parameter Name"
-      // minWidth={100}
       editable={true}
     />,
     <AgGridColumn
       field="unit"
       headerName="Unit"
       headerTooltip="Unit"
-      // minWidth={100}
       editable={true}
     />,
     <AgGridColumn
       field="min"
       headerName="Minimum Value"
       headerTooltip="Minimum Value"
-      // minWidth={100}
       editable={true}
     />,
     <AgGridColumn
       field="max"
       headerName="Maximum Value"
       headerTooltip="Maximum Value"
-      // minWidth={100}
       editable={true}
     />,
     <AgGridColumn
       field="P"
       headerName="P"
       headerTooltip="P"
-      // minWidth={100}
       editable={true}
     />,
     <AgGridColumn
       field="F"
       headerName="F"
       headerTooltip="F"
-      // minWidth={100}
       editable={true}
     />,
     monitoringType === "intermittent" ? (
@@ -213,86 +271,32 @@ const AssignType = (props) => {
         field="frequency"
         headerName="Frequency"
         headerTooltip="Frequency"
-        // minWidth={100}
         editable={true}
       />
     ) : null,
   ];
 
   const updateParameterRowData = (allRows) => {
-    //get object of levels and lvlwise rows
-    let lvlwisearr = [];
-    let paramarr = [];
-    allRows.map((data) => {
-      let lvlarr = [];
-      for (let i = 1; i <= data.level; i++) {
-        lvlarr.push("L" + i);
-        lvlwisearr.push({
-          id: uuid(),
-          pid: data.id,
-          name: data.name,
-          level: "L" + i,
-          threshold: "",
-        });
-      }
-      paramarr.push(lvlarr);
-    });
-    setLvlwiseRows(lvlwisearr);
-    let result = paramarr.reduce((a, b) =>
-      a.reduce((r, v) => r.concat(b.map((w) => [].concat(v, w))), [])
-    );
-    // console.log(result);
-    let rows = [];
-    let alarm_att = [];
-    result.map((row) => {
-      let alarmId = uuid();
-      let newrow = { id: alarmId, alarm: "Show on dashboard", invalid: false };
-      let i = 0;
-      allRows.map((data) => {
-        // console.log(row)
-        alarm_att = [
-          ...alarm_att,
-          {
-            id: uuid(),
-            AlarmId: alarmId,
-            paramId: (
-              lvlwisearr.filter((element) => {
-                return element.name === data.name && element.level === row[i];
-              })[0] || {}
-            )?.pid,
-            lvlId: lvlwisearr.filter((element) => {
-              return element.name === data.name && element.level === row[i];
-            })[0]?.id,
-          },
-        ];
-
-        newrow = { ...newrow, [data.name]: row[i] };
-        i++;
-      });
-      console.log(alarm_att);
-      rows = [...rows, newrow];
-    });
-
-    //console.log(rows)
-    setSbAlarmAtts(alarm_att);
-    setSbAlarmRows(rows);
+    // existing logic
   };
 
   const [lvlwiseRows, setLvlwiseRows] = useState([]);
   const [sbAlarmRows, setSbAlarmRows] = useState([]);
   const [sbAlarmAtts, setSbAlarmAtts] = useState([]);
+  
   const handleSave = () => {
-    debugger;
     if (type === "conditionBased") {
       if (condition === "sensorBased") {
         let newRows = pRows.map((row) => {
           return { ...row, FailureModeId: failureMode };
         });
+        
         let validAlarms = sbAlarmRows
           .filter((data) => {
             return !data.invalid;
           })
           .map((row) => row.id);
+          
         saveSensor(
           {
             sData: newRows,
@@ -306,30 +310,9 @@ const AssignType = (props) => {
           },
           setSnackBarMessage
         );
-        console.log(validAlarms);
-        console.log({
-          sData: newRows,
-          lData: lvlwiseRows,
-          aData: sbAlarmRows.filter((row) => {
-            return !row.invalid;
-          }),
-          alarmAtts: sbAlarmAtts.filter((attrow) => {
-            return validAlarms.includes(attrow.AlarmId);
-          }),
-        });
       }
     }
   };
-
-  const currentSelection = useSelector(
-    (state) => state.userSelection.currentSelection
-  );
-  const systemData = useSelector((state) => state.treeData.treeData);
-  const failureModes = useSelector((state) => state.treeData.failureModes);
-  console.log("fffff", failureModes);
-  const eqptId = systemData.filter(
-    (data) => data.name === currentSelection.equipmentName
-  )[0]?.id;
 
   const handleSubmit = () => {
     const payload = {
@@ -340,7 +323,7 @@ const AssignType = (props) => {
     if (matchingId) {
       payload.component_id = matchingId;
     }
-    console.log(payload);
+    
     fetch("/api/fetch_system", {
       method: "POST",
       body: JSON.stringify(payload),
@@ -351,13 +334,13 @@ const AssignType = (props) => {
     })
       .then((res) => res.json())
       .then((d) => {
-        console.log(d);
         let treeD = d["treeD"];
         let failureModes = d["failureMode"];
-        console.log(treeD[0]?.repairType);
+        
         if (treeD) {
           setRtype(treeD[0]?.repairType);
         }
+        
         dispatch(
           treeDataActions.setTreeData({
             treeData: treeD,
@@ -365,11 +348,82 @@ const AssignType = (props) => {
         );
         dispatch(treeDataActions.setFailureModes(failureModes));
       });
+      
     setSelectedEquipment(currentNomenclature);
   };
+
   return (
     <>
       <Navigation />
+      
+      {/* DEBUG PANEL */}
+      {showDebug && (
+        <div className={classes.debugPanel}>
+          <div className={classes.debugTitle}>
+            🐛 DEBUG PANEL
+            <span className={classes.closeDebug} onClick={() => setShowDebug(false)}>✖</span>
+          </div>
+          
+          <div className={classes.debugSection}>
+            <div className={classes.debugLabel}>Current Selection:</div>
+            <div>nomenclature: <span className={classes.debugValue}>{currentNomenclature || 'null'}</span></div>
+            <div>shipName: <span className={classes.debugValue}>{currentShipName || 'null'}</span></div>
+            <div>equipmentName: <span className={classes.debugValue}>{currentSelection.equipmentName || 'null'}</span></div>
+          </div>
+          
+          <div className={classes.debugSection}>
+            <div className={classes.debugLabel}>Matching from sData:</div>
+            <div>Found items: <span className={classes.debugValue}>{matchingItems.length}</span></div>
+            {matchingItems[0] && (
+              <>
+                <div>name: <span className={classes.debugValue}>{matchingItems[0].name}</span></div>
+                <div>nomenclature: <span className={classes.debugValue}>{matchingItems[0].nomenclature}</span></div>
+                <div>ship_name: <span className={classes.debugValue}>{matchingItems[0].ship_name}</span></div>
+              </>
+            )}
+            <div>matchingId: <span className={classes.debugValue}>{matchingId || 'undefined'}</span></div>
+          </div>
+          
+          <div className={classes.debugSection}>
+            <div className={classes.debugLabel}>Matching from systemData:</div>
+            <div>Found items: <span className={classes.debugValue}>{eqptIdResult.length}</span></div>
+            {eqptIdResult[0] && (
+              <>
+                <div>name: <span className={classes.debugValue}>{eqptIdResult[0].name}</span></div>
+                <div>id: <span className={classes.debugValue}>{eqptIdResult[0].id}</span></div>
+              </>
+            )}
+            <div>eqptId: <span className={classes.debugValue}>{eqptId || 'undefined'}</span></div>
+          </div>
+          
+          <div className={classes.debugSection}>
+            <div className={classes.debugLabel}>⚠️ COMPARISON:</div>
+            <div>matchingId: <span className={classes.debugValue}>{matchingId}</span></div>
+            <div>eqptId: <span className={classes.debugValue}>{eqptId}</span></div>
+            <div>
+              Same? {matchingId === eqptId ? 
+                <span className={classes.debugSuccess}>✓ YES</span> : 
+                <span className={classes.debugError}>✗ NO - THEY ARE DIFFERENT!</span>
+              }
+            </div>
+          </div>
+          
+          <div className={classes.debugSection}>
+            <div className={classes.debugLabel}>Using in rows:</div>
+            <div>EquipmentId: <span className={classes.debugValue}>{eqptId}</span></div>
+            <div>ComponentId: <span className={classes.debugValue}>{eqptId}</span></div>
+          </div>
+          
+          {pRows.length > 0 && (
+            <div className={classes.debugSection}>
+              <div className={classes.debugLabel}>Current pRows[0]:</div>
+              <div>EquipmentId: <span className={classes.debugValue}>{pRows[0].EquipmentId}</span></div>
+              <div>ComponentId: <span className={classes.debugValue}>{pRows[0].ComponentId}</span></div>
+            </div>
+          )}
+        </div>
+      )}
+      
       <div className={styles.userSelection}>
         <UserSelection />
         <Button
@@ -381,10 +435,11 @@ const AssignType = (props) => {
           Submit
         </Button>
       </div>
+      
       <div className={styles.assignDiv}>
         <div className={styles.assignContent}>
           <div className={styles.flex}>
-            <h3>Selected Component:{selectedEquipment}</h3>
+            <h3>Selected Component: {selectedEquipment}</h3>
             <RadioGroup
               row
               name="maintenance-type"
@@ -392,13 +447,11 @@ const AssignType = (props) => {
               onChange={handleMtypeChange}
               className={styles.mtypeRadio}
             >
-              {
-                <FormControlLabel
-                  value="runToFailure"
-                  control={<Radio />}
-                  label="Run to Failure"
-                />
-              }
+              <FormControlLabel
+                value="runToFailure"
+                control={<Radio />}
+                label="Run to Failure"
+              />
               {Rtype === "Repairable" || (
                 <FormControlLabel
                   value="ageBased"
@@ -413,120 +466,15 @@ const AssignType = (props) => {
                   label="Calendar Based Maintenance"
                 />
               )}
-              {
-                <FormControlLabel
-                  value="conditionBased"
-                  control={<Radio />}
-                  label="Condition Based Maintenance"
-                />
-              }
+              <FormControlLabel
+                value="conditionBased"
+                control={<Radio />}
+                label="Condition Based Maintenance"
+              />
             </RadioGroup>
           </div>
         </div>
-        {type === "runToFailure" && (
-          <div className={styles.MTypeContent}>
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-              }}
-            >
-              <span>Run To Failure</span>
-              <Button variant="contained" color="primary" onClick={handleSave}>
-                Save
-              </Button>
-            </div>
-          </div>
-        )}
-        {type === "ageBased" && (
-          <div className={styles.MTypeContent}>
-            <div className={styles.formField}>
-              <label htmlFor="age-based-measurement-unit">
-                {" "}
-                Unit of Measurement
-              </label>
-              <Select
-                disableUnderline
-                labelId="age-based-measurement-unit-label"
-                id="age-based-measurement-unit"
-                value={ageBasedUnit}
-                onChange={(e) => setAgeBasedUnit(e.target.value)}
-                className={styles.input}
-              >
-                <MenuItem value="hours">Hours</MenuItem>
-                <MenuItem value="days">Days</MenuItem>
-                <MenuItem value="weeks">Weeks</MenuItem>
-                <MenuItem value="months">Months</MenuItem>
-                <MenuItem value="years">Years</MenuItem>
-              </Select>
-            </div>
-            <div className={styles.formField}>
-              <label htmlFor="age-based-replacement-age">
-                {" "}
-                Replacement Age
-              </label>
-              <input
-                className={styles.input}
-                type="text"
-                id="age-based-replacement-age"
-                name="age-based-replacement-age"
-              />
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleSave}
-                style={{ marginLeft: "10px" }}
-              >
-                Save
-              </Button>
-            </div>
-          </div>
-        )}
-        {type === "calendarBased" && (
-          <div className={styles.MTypeContent}>
-            <div className={styles.formField}>
-              <label htmlFor="calendar-based-measurement-unit">
-                {" "}
-                Unit of Measurement
-              </label>
-              <Select
-                disableUnderline
-                labelId="calendar-based-measurement-unit-label"
-                id="calendar-based-measurement-unit"
-                value={calendarBasedUnit}
-                onChange={(e) => setCalendarBasedUnit(e.target.value)}
-                className={styles.input}
-              >
-                <MenuItem value="hours">Hours</MenuItem>
-                <MenuItem value="days">Days</MenuItem>
-                <MenuItem value="weeks">Weeks</MenuItem>
-                <MenuItem value="months">Months</MenuItem>
-                <MenuItem value="years">Years</MenuItem>
-              </Select>
-            </div>
-            <div className={styles.formField}>
-              <label htmlFor="calendar-based-replacement-age">
-                {" "}
-                Replacement Age
-              </label>
-              <input
-                className={styles.input}
-                type="text"
-                id="calendar-based-replacement-age"
-                name="calendar-based-replacement-age"
-              />
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleSave}
-                style={{ marginLeft: "10px" }}
-              >
-                Save
-              </Button>
-            </div>
-          </div>
-        )}
+        
         {type === "conditionBased" && (
           <div className={styles.MTypeContent}>
             <div className={styles.formField}>
@@ -541,13 +489,14 @@ const AssignType = (props) => {
               >
                 {failureModes?.map((ele) => {
                   return (
-                    <MenuItem value={ele.failure_mode}>
+                    <MenuItem key={ele.failure_mode} value={ele.failure_mode}>
                       {ele.failure_mode}
                     </MenuItem>
                   );
                 })}
               </Select>
             </div>
+            
             {condition === "sensorBased" && (
               <>
                 <RadioGroup
@@ -572,9 +521,10 @@ const AssignType = (props) => {
                     label="Continuous Monitoring"
                   />
                 </RadioGroup>
+                
                 <div className={styles.parameters}>
                   <div className={styles.formField}>
-                    <label htmlFor="parameters"> Number of parameters</label>
+                    <label htmlFor="parameters">Number of parameters</label>
                     <input
                       className={styles.input}
                       value={numPara}
@@ -592,8 +542,9 @@ const AssignType = (props) => {
                       Generate Rows
                     </Button>
                   </div>
+                  
                   <div className={styles.formField}>
-                    <label htmlFor="parameters"> Define parameters</label>
+                    <label htmlFor="parameters">Define parameters</label>
                     <Table
                       columnDefs={parameterColumnDefs}
                       rowData={pRows}
@@ -601,6 +552,7 @@ const AssignType = (props) => {
                       height={200}
                     />
                   </div>
+                  
                   <div className={styles.FooterClass}>
                     <div className={styles.importBtnContainer}>
                       <Link to="/maintenance_allocation/add_data">
@@ -609,6 +561,7 @@ const AssignType = (props) => {
                         </Button>
                       </Link>
                     </div>
+                    
                     <div className={styles.importBtnContainer}>
                       <input
                         type="file"
@@ -627,6 +580,7 @@ const AssignType = (props) => {
                         Import File
                       </Button>
                     </div>
+                    
                     <div className={styles.importBtnContainer}>
                       <Button
                         variant="contained"
@@ -652,6 +606,7 @@ const AssignType = (props) => {
           </div>
         )}
       </div>
+      
       {SnackBarMessage.showSnackBar && (
         <CustomizedSnackbars
           message={SnackBarMessage}
@@ -661,4 +616,5 @@ const AssignType = (props) => {
     </>
   );
 };
+
 export default AssignType;

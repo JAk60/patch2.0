@@ -58,13 +58,15 @@ class conditionMonitoring_dB():
                 '''
 
                 cursor.execute(insert_sensor_based, sensor_id, component_id, equipment_id, name, failure_mode_id,
-                                                     frequency, unit, min_value, max_value, P, F)
+                               frequency, unit, min_value, max_value, P, F)
             cursor.commit()
-            return self.success_return  # Assuming success_return() returns the desired response for success
+            # Assuming success_return() returns the desired response for success
+            return self.success_return
         except Exception as e:
-        # Handle any exceptions that might occur during the execution or database commit
-        # You can log the error or raise an appropriate exception
-            return self.error_return  # Assuming error_return() returns the desired response for errors
+            # Handle any exceptions that might occur during the execution or database commit
+            # You can log the error or raise an appropriate exception
+            # Assuming error_return() returns the desired response for errors
+            return self.error_return
 
     def insert_sensor_param_attributes(self, data):
         # print(data)
@@ -160,7 +162,6 @@ class conditionMonitoring_dB():
     #     except Exception as e:
     #         return e
 
-
     def fetch_all_params(self):
         try:
             sql = "SELECT sbd.name, sbd.equipment_id, sbd.id, sbd.max_value, sbd.min_value,sc.component_name,sc.nomenclature FROM sensor_based_data sbd JOIN system_configuration sc ON sbd.equipment_id = sc.component_id WHERE sbd.name <> '';"
@@ -168,15 +169,16 @@ class conditionMonitoring_dB():
             rows = cursor.fetchall()
             data = []
             for row in rows:
-                data.append({'name': row[0],'equipment_id': row[1],'id': row[2], 'max_value': row[3], 'min_value': row[4], 'equipmentName': row[5],'nomenclature': row[6]})
+                data.append({'name': row[0], 'equipment_id': row[1], 'id': row[2], 'max_value': row[3],
+                            'min_value': row[4], 'equipmentName': row[5], 'nomenclature': row[6]})
             return data
         except Exception as e:
             return e
-    
-    def fetch_param_id(self, id, name):
+
+    def fetch_param_id(self, component_id, name):
         try:
-            sql= "select id from sensor_based_data where component_id =? and name=?"
-            cursor.execute(sql, id, name)
+            sql = "select id from sensor_based_data where component_id =? and name=?"
+            cursor.execute(sql, component_id, name)
             data = cursor.fetchone()[0]
             return data
         except Exception as e:
@@ -206,17 +208,17 @@ class conditionMonitoring_dB():
                                         VALUES (?, ?, ?, ?, ?, ?, ?);'''
 
                 # Execute the SQL query with the data
-                cursor.execute(insert_param_data, (id, component_id, parameter_id, name, value, date, operating_hours))
+                cursor.execute(insert_param_data, (id, component_id,
+                               parameter_id, name, value, date, operating_hours))
 
             # Commit the changes to the database
             cursor.commit()
-            
+
             # Return a success message or code
             return self.success_return
 
         except Exception as e:
             return self.error_return
-
 
     def fetch_cmdata(self, eIds, pNames):
         sql = '''select id,T1.component_id,equipment_id,name as parameter_name,
