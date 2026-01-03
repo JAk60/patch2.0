@@ -24,7 +24,7 @@ const Table = ({
 		params.api.sizeColumnsToFit();
 		const allRowData = [];
 		params.api.forEachNode((node) => allRowData.push(node.data));
-		;
+		debugger;
 		tableUpdate(allRowData);
 	};
 	const onGridSizeChanged = (params) => {
@@ -32,7 +32,7 @@ const Table = ({
 	};
 	console.log(rowData);
 	const saveModifiedRows = (params) => {
-		;
+		debugger;
 		let currentlocation = location.pathname;
 
 		const allRowData = [];

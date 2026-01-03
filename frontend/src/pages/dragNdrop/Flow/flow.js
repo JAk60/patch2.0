@@ -200,7 +200,7 @@ const Flow = ({
 	const onDrop = (event) => {
 		event.preventDefault();
 		const type = event.dataTransfer.getData("application/reactflow");
-
+	
 		// Check if a root node of type 'systemNode' already exists
 		const isRootNodeExist = ielements.some(element => element.type === "systemNode");
 		if (type === "systemNode" && isRootNodeExist) {
@@ -219,18 +219,18 @@ const Flow = ({
 				color: "white",
 			},
 		};
-
+	
 		// Dispatch action to add the new element
 		dispatch(elementActions.addElement({ ele: newNode }));
 	};
-
+	
 
 	const onHoverBegin = (event, node) => {
-
+		debugger
 		if ("parallel_comp" in node.data) {
 
 			document.getElementById("tooltip").innerHTML =
-				`<h4>ship name: ${currentShipName}</h4>
+			`<h4>ship name: ${currentShipName}</h4>
 			<h4>${node.data.label}</h4>
 			<div>
 				<h3>K/N Configuration</h3>
@@ -241,7 +241,7 @@ const Flow = ({
 				  <Typography variant="h5">DEFENSE STATION: ${node.data.k_ds} / ${node.data.n}</Typography>
 				  <Typography variant="h5">ENTRY LEAVING HARBOUR: ${node.data.k_elh} / ${node.data.n}</Typography>
 				</div>
-				<p>Parallel Components: ${node.data.parallel_comp.map((item) => item.label)}</p>
+				<p>Parallel Components: ${node.data.parallel_comp.map((item)=>item.label)}</p>
 				<hr />
 			  </div>`;
 

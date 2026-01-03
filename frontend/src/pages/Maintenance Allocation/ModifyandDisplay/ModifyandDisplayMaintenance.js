@@ -112,7 +112,7 @@ const ModifyandDisplayMaintenance = (props) => {
   };
   const [selectedComponent, setComponent] = useState(null)
   const selectOnChange = (e, value) => {
-
+    debugger
     setComponent(value)
   }
   const updateFinalRowData = (allRows) => {
@@ -157,7 +157,7 @@ const ModifyandDisplayMaintenance = (props) => {
       });
   }
   const submitForDisplay = () => {
-    ;
+    debugger;
     if (selectedComponent == null) {
       alert("Please select component")
     } else {

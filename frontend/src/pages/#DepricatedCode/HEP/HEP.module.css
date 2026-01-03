@@ -1,0 +1,84 @@
+.phaseTable {
+  grid-row: 4/5;
+  grid-column: 2/13;
+  width: 98%;
+  justify-self: center;
+  align-self: center;
+  overflow-y: scroll;
+}
+.flex,
+.flex1 {
+  width: 98%;
+  margin-left: 1%;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.flex1 {
+  grid-row: 3/4;
+  grid-column: 2/13;
+}
+.flex1{
+  margin-top: 10px;
+  height: fit-content;
+  box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+  border-radius: 10px;
+  padding: 20px 10px;
+}
+.pbuttons {
+  margin-left: 5px;
+}
+.sectionHeader,
+.QcardHeader {
+  width: fit-content;
+  background: #048ee7;
+  padding: 5px;
+  padding-left: 10px;
+  padding-right: 10px;
+  border-radius: 5px;
+  color: white;
+  box-shadow: 2px 4px 16px -3px rgba(0, 0, 0, 0.36);
+}
+.sectionHeader {
+  opacity: 0.7;
+}
+.Qcard {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  padding: 20px;
+  width: 60%;
+  border: #048ee7 1px solid;
+  border-radius: 10px;
+  box-shadow: 9px 6px 9px 7px rgba(4, 142, 231, 0.2);
+}
+.midSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top:  25vh;
+  grid-row: 3/5;
+  grid-column: 2/13;
+  width: 99%;
+  margin-left: 1%;
+  overflow-y: scroll;
+}
+
+.cardItem {
+  display: flex;
+  margin-top: 10px;
+}
+.cardItem label {
+  display: block;
+  min-width: 80px;
+  border: rgb(116, 114, 114) 1px solid;
+  border-radius: 5px;
+  text-align: center;
+  background: #ebebeb;
+}
+.cardItem input {
+  margin-left: 15px;
+  width: 80%;
+  border: rgb(116, 114, 114) 1px solid;
+  border-radius: 5px;
+}

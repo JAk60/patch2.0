@@ -70,7 +70,7 @@ const CustomIconStyles = makeStyles({
 function CustomIcon(props) {
   const classes = CustomIconStyles();
   const { active, completed } = props;
-  ;
+  debugger;
   return (
     <div
       className={classes.root}
@@ -108,7 +108,7 @@ export default function NewModule() {
   const handleReset = () => {
     setActiveStep(0);
   };
-  ;
+  debugger;
   return (
     <div className={styles.module}>
       <Stepper classes={classes} activeStep={activeStep} connector={null}>

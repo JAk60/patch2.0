@@ -25,6 +25,7 @@ class OverhaulsAlgos:
         cursor.execute(query, equipment_id)
         odata = cursor.fetchall()
         ship_name, nomenclature = odata[0]
+        
         inst= Data_Administrator()
         inst.overhaul_data_reset(component_id=equipment_id, nomenclature=nomenclature, ship_name=ship_name)
         new_data = []
@@ -309,6 +310,7 @@ class OverhaulsAlgos:
                 ALPHA = sum(Decimal(len(failures)) for failures in system_failures_list) / sum(ti ** BETA for ti in T)
 
                 return ALPHA, BETA
+            
             alpha, beta = para(failure_times)    
             a_b_id = uuid.uuid4()
             merge_query = '''
@@ -350,8 +352,46 @@ class OverhaulsAlgos:
             daily_avg = utilization / 30
         age = age + daily_avg * int(date.day)
         return age
-
-
+    
+    def _get_interpolated_age_new(self, date, component_id):
+        from datetime import datetime
+        
+        # Parse the date to get the day from original date
+        date_obj = datetime.strptime(date, '%Y-%m-%d')
+        day = date_obj.day
+        
+        # Convert date to 1st of the month for querying operational_data
+        first_of_month = date_obj.replace(day=1).strftime('%Y-%m-%d')
+        
+        # Single query: get current age, or if 0/NULL, get average of last 5 NON-ZERO months
+        query = '''
+            SELECT 
+                COALESCE(
+                    NULLIF(curr.average_running, 0),
+                    (SELECT AVG(prev.average_running) 
+                    FROM (
+                        SELECT TOP 5 average_running 
+                        FROM operational_data 
+                        WHERE component_id = ? 
+                        AND operation_date < ?
+                        AND average_running > 0
+                        ORDER BY operation_date DESC
+                    ) AS prev)
+                ) AS current_age
+            FROM operational_data curr
+            WHERE curr.component_id = ? AND curr.operation_date = ?
+        '''
+        
+        cursor.execute(query, (component_id, first_of_month, component_id, first_of_month))
+        result = cursor.fetchone()
+        
+        # Get current age, default to 0 if nothing found
+        current_age = result[0] if result and result[0] is not None else 0
+        
+        # Calculate interpolated age: current_age + (current_age / 30) * day
+        interpolated_age = current_age + (current_age / 30) * day
+        
+        return interpolated_age
     def historic_data_interpolation(self, data, component_id):
         interpolated_data = []
         for item in data:

@@ -194,6 +194,7 @@ class Data_Manager:
         data = data_obj["data"]
         dt = data_obj["dataType"]
         res = {}
+        
         if dt == "oem":
             self.oem_save(data)
         if dt == "fdp":
@@ -210,6 +211,7 @@ class Data_Manager:
             self.nprd_save(data)
         if dt == "import_replacable":
             self.import_replacable_save(data)
+            
         if dt == "insertOpData":
             res = self.insert_opdata(data)
         if dt == "maintData":

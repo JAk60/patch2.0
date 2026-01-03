@@ -33,8 +33,7 @@ from dB.dB_connection import cnxn, cursor
 from dB.dB_utility import add_user_selection_data
 from dB.ETL.sourceData import ETL
 from dB.hep.hep_dB import Hep_dB
-from dB.maintenance_allocation.maintenanceAllocation import \
-    maintenanceAllocation_dB
+from dB.maintenance_allocation.maintenanceAllocation import maintenanceAllocation_dB
 from dB.mission_profile import MissionProfile
 from dB.Oem_Upload.oem import OEMData
 from dB.password_reset.passwordReset import EmailSender
@@ -45,37 +44,6 @@ from dB.RUL.rul import RUL_dB
 from dB.system_configuration.system_configurationdB_table import \
     SystemConfigurationdBTable
 from dB.task_configuration.task_configuration import taskConfiguration_dB
-
-
-class RemoveTimestampHeadersMiddleware:
-    def __init__(self, app):
-        self.app = app
-
-    def __call__(self, environ, start_response):
-        def custom_start_response(status, headers, exc_info=None):
-            # Remove ALL timestamp and server metadata headers
-            timestamp_headers = {
-                'date', 'last-modified', 'etag', 'age', 'expires',
-                'server', 'x-powered-by', 'x-runtime', 'x-request-id',
-                'x-generator', 'x-aspnet-version', 'x-aspnetmvc-version'
-            }
-
-            filtered_headers = [
-                (name, value) for name, value in headers
-                if name.lower() not in timestamp_headers
-            ]
-
-            # Add security headers
-            filtered_headers.extend([
-                ('X-Content-Type-Options', 'nosniff'),
-                ('X-Frame-Options', 'DENY'),
-                ('X-XSS-Protection', '1; mode=block'),
-                ('Referrer-Policy', 'strict-origin-when-cross-origin'),
-            ])
-
-            return start_response(status, filtered_headers, exc_info)
-
-        return self.app(environ, custom_start_response)
 
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
@@ -108,23 +76,30 @@ app.config['MAIL_USE_SSL'] = False
 mail = Mail(app)
 
 
+with app.open_resource("./dB/password_reset/netra.png") as fp:
+    logo_data = fp.read()
+
+UPLOAD_FOLDER = "uploads"
+app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+
+res = SystemConfigurationdBTable()
 # Strict CSP - no wildcards
 # Updated CSP for Flask - More permissive for Vite bundles
 csp = {
     'default-src': "'self'",
-    # Added 'unsafe-inline'
     'script-src': ["'self'"],
-    'style-src': ["'self'"],
+    'style-src': ["'self'", "'unsafe-inline'"],
     'img-src': ["'self'", "data:", "blob:"],
-    'font-src': ["'self'"],
-    'connect-src': "'self'",
+    'font-src': ["'self'", "data:"],
+    'connect-src': ["'self'"],  # Allow API calls
+    'manifest-src': "'self'",
+    'media-src': "'self'",
     'frame-src': "'none'",
     'object-src': "'none'",
     'base-uri': "'self'",
-    'form-action': "'self'",
+    'form-action': ["'self'"],  # Ensure it's a list
     'frame-ancestors': "'none'",
 }
-
 # Apply Talisman
 Talisman(
     app,
@@ -140,14 +115,6 @@ Talisman(
     session_cookie_secure=False,  # Set to False for local development
     session_cookie_samesite='Lax'
 )
-app.wsgi_app = RemoveTimestampHeadersMiddleware(app.wsgi_app)
-with app.open_resource("./dB/password_reset/netra.png") as fp:
-    logo_data = fp.read()
-
-UPLOAD_FOLDER = "uploads"
-app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
-
-res = SystemConfigurationdBTable()
 
 # ============= SERVE REACT APP =============
 

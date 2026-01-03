@@ -282,7 +282,7 @@ const AssignType = (props) => {
   const [sbAlarmRows, setSbAlarmRows] = useState([]);
   const [sbAlarmAtts, setSbAlarmAtts] = useState([]);
   const handleSave = () => {
-    ;
+    debugger;
     if (type === "conditionBased") {
       if (condition === "sensorBased") {
         let newRows = pRows.map((row) => {

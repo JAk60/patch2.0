@@ -54,7 +54,7 @@ const Critical_RCM = (props) => {
   };
   const [tData, setTdata] = useState([]);
   const onLoadTreeStructure = () => {
-    ;
+    debugger;
     fetch("/api/fetch_assembly_rcm", {
       method: "POST",
       body: JSON.stringify({
@@ -68,7 +68,7 @@ const Critical_RCM = (props) => {
     })
       .then((res) => res.json())
       .then((d) => {
-        ;
+        debugger;
         let treeD = d["treeD"];
         let failureModes = d["failureMode"];
         setTdata(treeD)
@@ -111,7 +111,7 @@ const Critical_RCM = (props) => {
   const [selectedCriticalComponent, setCriticalComponent] = useState([]);
   const selectOnChange = (e, value) => {
     setComponent(value);
-    ;
+    debugger;
     let lmuData = [];
     let first_ele = AllData.filter((x) => x.id === value.component_id)[0];
     let pData = [first_ele];
@@ -295,7 +295,7 @@ const Critical_RCM = (props) => {
     }
   };
   const questionOnChange = (e) => {
-    ;
+    debugger;
     let data = e.target.value;
     let name = e.target.name;
     if (name === "Is is critical for safety?") {

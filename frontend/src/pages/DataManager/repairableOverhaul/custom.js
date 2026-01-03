@@ -211,7 +211,7 @@ const Custom = () => {
             .filter((id) => id !== null);
         console.log(filteredEqData)
         console.log(selectedEqName)
-
+        debugger
         // const filteredNomenclatures = selectedEqName.map((selectedItem) => {
         //     const matchingItem = filteredEqData.find((item) => item.name === selectedItem.name);
         //     return matchingItem ? matchingItem.nomenclature : null;

@@ -176,7 +176,7 @@ export default function RulLife() {
       if (!response.ok) {
         throw new Error(`Request failed with status ${response.status}`);
       }
-      ;
+      debugger;
       const data = await response.json();
       console.log("DATTTAAAAAA", data);
       if (data.code) {

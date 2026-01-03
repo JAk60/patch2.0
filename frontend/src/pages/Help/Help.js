@@ -57,7 +57,7 @@ function Help() {
     setExpanded(isExpanded ? panel : null);
   };
   const handleDownload = (moduleName) => {
-
+    debugger
     const module = modules[moduleName];
 
     if (module && module.pdfLink) {

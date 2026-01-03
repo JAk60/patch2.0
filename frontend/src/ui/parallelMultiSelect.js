@@ -35,7 +35,7 @@ export default function ParallelMultiSelect(props) {
   const [eqName, seteqName] = React.useState([]);
 
   const handleChange = (event) => {
-    ;
+    debugger;
     seteqName(event.target.value);
   };
 

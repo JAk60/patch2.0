@@ -24,7 +24,7 @@ const useStyles = makeStyles({
 });
 
 export const getDatePicker = () => {
-	// ;
+	// debugger;
 	const fillZeros = (a) => {
 		return Number(a) < 10 ? "0" + a : a;
 	};
@@ -165,7 +165,7 @@ const DataManagerTable = (props) => {
 	};
 
 	const onFirstDataRendered = (params) => {
-		;
+		debugger;
 		params.api.sizeColumnsToFit();
 		try {
 			const allRowData = [];
@@ -225,7 +225,7 @@ const DataManagerTable = (props) => {
 						allRowData.push(node.data)
 					);
 					console.log(allRowData);
-
+					
 					props.tableUpdate(allRowData);
 				}
 			} else if (currentlocation === "/system_config/failure_mode") {

@@ -73,7 +73,7 @@ const Bayesian_Inputs = (props) => {
 
   const classesButton = useStyles();
   const parentOnChange = (e, value) => {
-
+    debugger
     setParentFieldValue(value);
   };
   const clearForm = (e) => {
@@ -94,7 +94,7 @@ const Bayesian_Inputs = (props) => {
     //validationSchema: validationSchema,
     onSubmit: (values, { resetForm }) => {
       // alert(JSON.stringify(values, null, 2));
-      ;
+      debugger;
       //   const { platform, platformType, system, systemType } = values;
       console.log(values);
       fetch("/api/addUserSelectionData", {
@@ -127,7 +127,7 @@ const Bayesian_Inputs = (props) => {
       //   
       //   const platformId = uuid();
       //   const systemId = uuid();
-      //   ;
+      //   debugger;
       //   const treeNodes = [
       //     {
       //       name: system,

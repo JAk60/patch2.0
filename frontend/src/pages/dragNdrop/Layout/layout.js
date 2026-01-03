@@ -51,7 +51,7 @@ const Layout = (props) => {
         return res.json();
       })
       .then((data) => {
-
+        debugger
         setTaskNames(data);
         console.log(data);
       });

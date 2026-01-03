@@ -42,7 +42,7 @@ const UserSelectionConfiguration = (props) => {
     //validationSchema: validationSchema,
     onSubmit: (values, { resetForm }) => {
       // alert(JSON.stringify(values, null, 2));
-      ;
+      debugger;
       //   const { platform, platformType, system, systemType } = values;
       console.log(values);
       fetch("/api/addUserSelectionData", {

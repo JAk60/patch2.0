@@ -93,7 +93,7 @@ function OEMExpert(props) {
     />,
   ]);
   const classes = useStyles();
-  const rowState = [];
+  const rowState= [];
 
   const updateFinalRowData = (allRows) => {
     props.tableUpdate(allRows, "oemE");
@@ -132,7 +132,7 @@ function OEMExpert(props) {
     updateFinalRowData(allRowData);
   };
   const submitLifeEstimates = () => {
-    ;
+    debugger;
     const coldefs = [...columnDefs];
     if (columnDefs[1].props.field[0] === "L") {
       if (!coldefs.some((e) => e.props.headerName === lifeEstimateValue)) {

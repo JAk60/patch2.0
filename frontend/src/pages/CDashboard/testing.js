@@ -10,8 +10,8 @@ import {
 } from "recharts";
 import styles from "./CDashboard.module.css";
 
-const CGraph = ({ graphData, selectedParameterNames, nomenclatureData }) => {
-  console.log("selectedParameterNames", selectedParameterNames);
+const CGraph = ({ graphData, selectedParameterNames ,nomenclatureData}) => {
+  console.log("selectedParameterNames",selectedParameterNames);
   const groupedData = graphData.reduce((acc, cur) => {
     if (!acc[cur.nomenclature]) {
       acc[cur.nomenclature] = {
@@ -33,7 +33,7 @@ const CGraph = ({ graphData, selectedParameterNames, nomenclatureData }) => {
     if (groupedData.hasOwnProperty(key)) {
       const item = groupedData[key];
       const { nomenclature, data } = item;
-
+  
       if (!manipulatedData[nomenclature]) {
         manipulatedData[nomenclature] = {
           equipmentName: item.equipmentName,
@@ -41,7 +41,7 @@ const CGraph = ({ graphData, selectedParameterNames, nomenclatureData }) => {
           data: {},
         };
       }
-
+  
       data?.forEach(entry => {
         const parameterName = entry.name;
         if (!manipulatedData[nomenclature].data[parameterName]) {
@@ -51,8 +51,8 @@ const CGraph = ({ graphData, selectedParameterNames, nomenclatureData }) => {
       });
     }
   }
-
-  console.log("GG", manipulatedData);
+  
+  console.log("GG",manipulatedData);
 
 
   // console.log("paramChartData", paramChartData);
@@ -63,7 +63,7 @@ const CGraph = ({ graphData, selectedParameterNames, nomenclatureData }) => {
     );
   });
   console.log("filteredParamChartData", filteredParamChartData);
-  ;
+  debugger;
   const parseDate = (dateString) => {
     const dateParts = dateString.split(", ")[0].split("/");
     const timeParts = dateString.split(", ")[1].split(":");
@@ -118,8 +118,9 @@ const CGraph = ({ graphData, selectedParameterNames, nomenclatureData }) => {
         return (
           <div className={`${styles.rchart}`} key={param.parameterName}>
             <div
-              className={`${styles.content} ${crossingThreshold ? styles.blinkingChart : ""
-                }`}
+              className={`${styles.content} ${
+                crossingThreshold ? styles.blinkingChart : ""
+              }`}
             >
               <div>
                 {crossingThreshold}

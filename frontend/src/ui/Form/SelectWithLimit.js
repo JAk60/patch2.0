@@ -24,7 +24,7 @@ export const SelectWithLimit = ({
   const [disableInput, setDisableInput] = useState(false);
 
   const Inputclasses = InputStyles();
-  ;
+  debugger;
   if (selectType === "equipmentName") {
     return (
       <Autocomplete

@@ -6,6 +6,7 @@
 		"@babel/runtime": "^7.28.4",
 		"@date-io/date-fns": "^2.16.0",
 		"@date-io/moment": "^1.3.13",
+		"@fortawesome/fontawesome-free": "^7.1.0",
 		"@material-ui/core": "^4.11.4",
 		"@material-ui/data-grid": "^4.0.0-alpha.31",
 		"@material-ui/icons": "^4.11.2",
@@ -50,7 +51,7 @@
 	"scripts": {
 		"dev": "vite",
 		"patch": "node scripts/patch-libs.js",
-		"build": "vite build && node scripts/patch-immer.js && node scripts/remove-ts.js",
+		"build": "vite build",
 		"build:clean": "rm -rf build && npm run build",
 		"preview": "vite preview"
 	},

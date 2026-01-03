@@ -97,7 +97,7 @@ export default function AssemblyRelDash() {
 			.then((res) => res.json())
 			.then((res) => {
 				console.log("res", res);
-				// ;
+				// debugger;
 				if (res.code) {
 					const d = res.results;
 					const reliabilityDataArray = [];

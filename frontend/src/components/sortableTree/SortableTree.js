@@ -6,7 +6,7 @@ import 'react-sortable-tree/style.css';
 import { treeDataActions } from "../../store/TreeDataStore";
 
 const TreeComponent = (props) => {
-  ;
+  debugger;
   const dispatch = useDispatch();
   const tData = useSelector((state) => state.treeData.sortTreeData);
   const onChangeTree = (treeD) => {

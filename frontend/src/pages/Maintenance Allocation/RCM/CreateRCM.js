@@ -19,7 +19,7 @@ const CreateRCM = (props) => {
     (state) => state.userSelection.currentSelection
   );
   let fData = useSelector((state) => state.treeData.treeData);
-  ;
+  debugger;
   fData = fData.filter(x => x.parentName === currentSelection["nomenclature"] || x.parentId === null)
   console.log(fData);
   const sData = useSelector((state) => state.userSelection.componentsData);

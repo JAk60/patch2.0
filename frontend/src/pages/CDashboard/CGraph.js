@@ -11,7 +11,7 @@ import {
 import styles from "./CDashboard.module.css";
 
 const CGraph = ({ graphData, selectedParameterNames }) => {
-  console.log("selectedParameterNames", selectedParameterNames);
+  console.log("selectedParameterNames",selectedParameterNames);
   const groupedData = graphData.reduce((acc, cur) => {
     if (!acc[cur.nomenclature]) {
       acc[cur.nomenclature] = {
@@ -33,7 +33,7 @@ const CGraph = ({ graphData, selectedParameterNames }) => {
     if (groupedData.hasOwnProperty(key)) {
       const item = groupedData[key];
       const { nomenclature, data } = item;
-
+  
       if (!manipulatedData[nomenclature]) {
         manipulatedData[nomenclature] = {
           equipmentName: item.equipmentName,
@@ -41,7 +41,7 @@ const CGraph = ({ graphData, selectedParameterNames }) => {
           data: {},
         };
       }
-
+  
       data?.forEach(entry => {
         const parameterName = entry.name;
         if (!manipulatedData[nomenclature].data[parameterName]) {
@@ -51,11 +51,11 @@ const CGraph = ({ graphData, selectedParameterNames }) => {
       });
     }
   }
+  
+  console.log("GG",manipulatedData);
 
-  console.log("GG", manipulatedData);
 
-
-  ;
+  debugger;
   const parseDate = (dateString) => {
     const dateParts = dateString.split(", ")[0].split("/");
     const timeParts = dateString.split(", ")[1].split(":");
@@ -114,8 +114,9 @@ const CGraph = ({ graphData, selectedParameterNames }) => {
         return (
           <div className={`${styles.rchart}`} key={`${name}-${nomenclature}`}>
             <div
-              className={`${styles.content} ${crossingThreshold ? styles.blinkingChart : ""
-                }`}
+              className={`${styles.content} ${
+                crossingThreshold ? styles.blinkingChart : ""
+              }`}
             >
               <div>
                 {crossingThreshold}

@@ -38,7 +38,7 @@ const useStyles = makeStyles((theme) => ({
   },
   inRow: {
     width: "94%",
-    display: "flex",
+    display:"flex",
     justifyContent: "flex-start",
     marginLeft: "4%",
     paddingLeft: "2rem",
@@ -108,11 +108,11 @@ function HistoricalData(props) {
   configureRepairTypeOptions();
 
   const onEquipmentChange = (e, selectedoption) => {
-    ;
+    debugger;
     const filteredChild = systemDirectChildrens.filter(
       (x) => x.id === selectedoption.id
     );
-    console.log(filteredChild, "filteredChild");
+    console.log(filteredChild,"filteredChild");
     setHistoricalChildData(filteredChild);
   };
 

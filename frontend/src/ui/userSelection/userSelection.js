@@ -80,7 +80,7 @@ function UserSelection(props) {
     const uniqueDepartments = [
       ...new Set(filteredData.map((x) => x.department)),
     ];
-
+    debugger
 
     const d = {
       shipCategory: uniqueCategories,

@@ -228,7 +228,7 @@ function EqptStructuring(props) {
 		setChildInputFields(childCopy);
 	};
 	const parentOnChange = (e, value) => {
-		;
+		debugger;
 		setParentFieldValue(value);
 	};
 	const updateChildTree = (e) => {

@@ -11,7 +11,7 @@ const taskData = createSlice({
   initialState: initialState,
   reducers: {
     onLoad(state, action) {
-      ;
+      debugger;
       const data = action.payload.taskData;
       // const ship = action.payload.ship;
       state.taskData = {
@@ -19,14 +19,14 @@ const taskData = createSlice({
         ...data,
       };
     },
-    updateCurrentShip(state, action) {
-
+    updateCurrentShip(state, action){
+      debugger
       const ship = action.payload.ship;
       state.currentShip = ship
       // , "ship": setselectedShipName, "task": setselectedTaskName
     },
-    updateCurrentTask(state, action) {
-
+    updateCurrentTask(state, action){
+      debugger
       const task = action.payload.task;
       state.currentTaskName = task;
       // , "ship": setselectedShipName, "task": setselectedTaskName

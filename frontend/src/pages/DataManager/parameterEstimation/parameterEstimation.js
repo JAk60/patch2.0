@@ -119,7 +119,7 @@ function ParameterEstimation(props) {
         };
       }
     });
-
+    debugger
     setRows(rowD);
     dispatch(
       treeDataActions.setP(selectedEquipmentList)

@@ -260,13 +260,13 @@ const TaskDashboard = () => {
 		});
 		console.log(newData);
 		setCompRows(newData);
-		// ;
+		// debugger;
 	};
 
 
 	const saveTaskReset = () => {
 		console.log(totalReliability, "tOTAL rekl");
-		;
+		debugger;
 		try {
 			setShowPaper(false);
 			let allRowData = [];
@@ -333,7 +333,7 @@ const TaskDashboard = () => {
 
 	console.log("missiondata", missionProfileData);
 	const deleteRows = () => {
-		;
+		debugger;
 		const selectedRows = gridApi.getSelectedRows();
 		gridApi.applyTransaction({ remove: selectedRows });
 		let allRowData = [];
@@ -401,7 +401,7 @@ const TaskDashboard = () => {
 			settaskMissionTableData([]);
 		});
 	};
-
+const [isCalculating, setIsCalculating] = useState(false);
 	const onSubmitHandler = () => {
 		let storedData = Object.entries(localStorage);
 		console.log("Localy data", storedData);
@@ -419,6 +419,7 @@ const TaskDashboard = () => {
 		console.log(fData);
 
 		if (fData.length > 0) {
+			setIsCalculating(true);
 			fetch("/api/task_rel", {
 				method: "POST",
 				body: JSON.stringify(fData),
@@ -468,7 +469,7 @@ const TaskDashboard = () => {
 							),
 						});
 					});
-
+					setIsCalculating(false);
 					settaskTableData(taskData);
 					settaskMissionTableData(taskMissionData);
 				});
@@ -496,7 +497,7 @@ const TaskDashboard = () => {
 	};
 
 	const shipNameChange = (event, value) => {
-		;
+		debugger;
 		let tt = entireData;
 		console.log(tt);
 		console.log(value);
@@ -721,36 +722,48 @@ const TaskDashboard = () => {
 							</>
 						)}
 
-						{!showInputTables ? (
-							<CircularProgress size={40} style={{
-								marginTop: "15rem",
-								width: "100%",
-								display: "flex",
-								justifyContent: "center"
-							}} />
-						) : (
-							<div className={styles.table}>
-								{taskTableData.length > 0 && (
-									<Table
-										columnDefs={taskTableColumns}
-										setGrid={setGriTaskdApi}
-										gridApi={gridTaskApi}
-										rowData={taskTableData}
-										tableUpdate={() => { }}
-										tableSize={250}
-									/>
-								)}
-							</div>
-						)}
-
 						{!showInputTables && (
-							<div className={styles.table}>
-								{taskTableData.length > 0 && (
-									<CollapsibleTable
-										tableData={taskMissionTableData}
-									/>
+							<>
+								{isCalculating ? (
+									<div style={{
+										display: "flex",
+										flexDirection: "column",
+										alignItems: "center",
+										justifyContent: "center",
+										marginTop: "5rem",
+										gap: "1rem"
+									}}>
+										<CircularProgress size={60} />
+										<Typography variant="h6">Calculating Reliability...</Typography>
+									</div>
+								) : taskTableData.length > 0 ? (
+									<>
+										<div className={styles.table}>
+											<Table
+												columnDefs={taskTableColumns}
+												setGrid={setGriTaskdApi}
+												gridApi={gridTaskApi}
+												rowData={taskTableData}
+												tableUpdate={() => { }}
+												tableSize={250}
+											/>
+										</div>
+
+										<div className={styles.table}>
+											<CollapsibleTable
+												tableData={taskMissionTableData}
+											/>
+										</div>
+									</>
+								) : (
+									<div style={{
+										textAlign: "center",
+										marginTop: "5rem"
+									}}>
+										<Typography variant="h6">No data available</Typography>
+									</div>
 								)}
-							</div>
+							</>
 						)}
 					</div>
 

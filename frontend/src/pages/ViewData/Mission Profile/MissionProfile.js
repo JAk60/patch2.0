@@ -156,7 +156,7 @@ const MissionProfile = (props) => {
 
   //Save Button Handler
   const onSaveButtonClickHandler = () => {
-    ;
+    debugger;
     if (missionData.length > 0) {
       fetch("/api/mission_data", {
         method: "POST",

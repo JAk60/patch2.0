@@ -21,78 +21,79 @@ class Reliability:
         self.__component_id = None
         self.__rel_F =None
 
-    def lmu_rel(self, mission_name, system, platform, total_dur):
+    def lmu_rel(self, mission_name, system, platform, total_dur, c_age=0):
         sys_lmus = []
-        # mission_name = mission_data['mission_name']
-        system_config = """select * from system_configuration where ship_name=? and nomenclature=?"""
-        eta_beta = """select * from eta_beta  inner join system_configuration sc on eta_beta.component_id = sc.component_id
-                        where sc.nomenclature = ?  and sc.ship_name = ?"""
-        cursor.execute(eta_beta, system, platform)
-        eta_beta_data = cursor.fetchall()
-        alpha_beta_data = []
-        if len(eta_beta_data) == 0:
-            alpha_beta = """select * from alpha_beta  inner join system_configuration sc on 
-                        alpha_beta.component_id = sc.component_id
-                        where sc.nomenclature = ?  and sc.ship_name = ?"""
-            cursor.execute(alpha_beta, system, platform)
-            alpha_beta_data = cursor.fetchall()
+
+        system_config = '''select * from system_configuration where ship_name=? and nomenclature=?'''
+        
+        # TRY ALPHA_BETA FIRST
+        alpha_beta = '''select * from alpha_beta inner join system_configuration sc on 
+                    alpha_beta.component_id = sc.component_id
+                    where sc.nomenclature = ? and sc.ship_name = ?'''
+        cursor.execute(alpha_beta, system, platform)
+        alpha_beta_data = cursor.fetchall()
+        
+        # ONLY IF ALPHA_BETA IS EMPTY, TRY ETA_BETA
+        eta_beta_data = []
+        if len(alpha_beta_data) == 0:
+            eta_beta = '''select * from eta_beta inner join system_configuration sc on eta_beta.component_id = sc.component_id
+                            where sc.nomenclature = ? and sc.ship_name = ?'''
+            cursor.execute(eta_beta, system, platform)
+            eta_beta_data = cursor.fetchall()
+        
         cursor.execute(system_config, platform, system)
         sys_data = cursor.fetchall()
 
-        # lmus = list(filter(lambda x: x['is_lmu'] == 1), sys_data)
         lmus_rel = []
-        for lmu in eta_beta_data:
-            prev_main_data = """select maint_date from data_manager_maintenance_data where
-              component_id = ? order by CAST(maint_date as date) desc"""
-            cursor.execute(prev_main_data, lmu[5])
-            first_data = cursor.fetchone()
-            ship_id = """select component_id from system_configuration where ship_name=? and system=? and parent_id is NULL"""
-            cursor.execute(ship_id, platform, system)
-            ship_id = cursor.fetchone()[0]
-            if first_data is None:
-                opr_sql = """select avg(average_running) from operational_data where component_id = ?"""
-                cursor.execute(opr_sql, ship_id)
-                c_age = cursor.fetchone()[0]
-            else:
-                opr_sql = """select avg(average_running) from operational_data
-                  where component_id = ? and CAST(operation_date as date) > ?"""
-                cursor.execute(opr_sql, ship_id, first_data[0])
-                c_age = cursor.fetchone()[0]
-                if c_age is None:
-                    c_age = 0
-            eta = lmu[1]
-            beta = lmu[2]
-            print(f"eta {eta}, beta {beta}")
-            print(f"lmu {lmu}")
-            rel_num = np.exp(-(((0 + float(total_dur)) / eta) ** beta))
-            rel_deno = np.exp(-((0 / eta) ** beta))
-            rel = rel_num / rel_deno
-            lmus_rel.append(
-                {
-                    "name": lmu[-1],
-                    "id": lmu[5],
-                    "rel": rel,
-                    "parent_name": lmu[10],
-                    "parent_id": lmu[7],
-                }
-            )
-        if len(eta_beta_data) == 0:
+        
+        # PROCESS ALPHA_BETA DATA (IF AVAILABLE)
+        if len(alpha_beta_data) > 0:
             for lmu in alpha_beta_data:
                 alpha = lmu[1]
                 beta = lmu[2]
                 rel = self.calculate_rel_by_power_law(alpha, beta, total_dur)
                 lmus_rel.append(
-                    {
-                        "name": lmu[-1],
-                        "id": lmu[4],
-                        "rel": rel,
-                        "parent_name": lmu[9],
-                        "parent_id": lmu[6],
-                    }
+                    {'name': lmu[5], 'id': lmu[4], 'rel': rel, 'parent_name': lmu[9], 'parent_id': lmu[6]})
+        
+        # ONLY PROCESS ETA_BETA IF ALPHA_BETA WAS EMPTY
+        else:
+            for lmu in eta_beta_data:
+                prev_main_data = '''select maint_date from data_manager_maintenance_data where
+                component_id = ? order by CAST(maint_date as date) desc'''
+                cursor.execute(prev_main_data, lmu[5])
+                first_data = cursor.fetchone()
+                ship_id = '''select component_id from system_configuration where ship_name=? and nomenclature=? and parent_id is NULL'''
+                cursor.execute(ship_id, platform, system)
+                ship_id = cursor.fetchone()[0]
+                if first_data is None:
+                    opr_sql = '''select avg(average_running) from operational_data where component_id = ?'''
+                    cursor.execute(opr_sql, ship_id)
+                    c_age = cursor.fetchone()[0]
+                else:
+                    opr_sql = '''select avg(average_running) from operational_data
+                    where component_id = ? and CAST(operation_date as date) > ?'''
+                    cursor.execute(opr_sql, ship_id, first_data[0])
+                    c_age = cursor.fetchone()[0]
+                    if c_age is None:
+                        c_age = 0
+                eta = lmu[1]
+                beta = lmu[2]
+                print(
+                    "[DEBUG]",
+                    "eta =", repr(eta),
+                    "beta =", repr(beta),
+                    "type(beta) =", type(beta)
                 )
-        sys_lmus.append({system + "_" + platform: lmus_rel})
-        return sys_lmus, sys_data
 
+                rel_num = np.exp(-((c_age + float(total_dur)) / eta) ** beta)
+                rel_deno = np.exp(-(c_age / eta) ** beta)
+                rel = float(rel_num) / float(rel_deno)
+                lmus_rel.append(
+                    {'name': lmu[6], 'id': lmu[5], 'rel': rel, 'parent_name': lmu[10], 'parent_id': lmu[7]})
+        
+        sys_lmus.append({system+'_'+platform: lmus_rel})
+        return sys_lmus, sys_data
+    
     def system_rel(self, mission_name, system, platform, total_dur):
         sys_lmus, sys_data = self.lmu_rel(
             mission_name, system, platform, total_dur)

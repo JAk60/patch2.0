@@ -40,8 +40,8 @@ const ImportData = (props) => {
 
   const updateFinalRowData = (allRows) => {
     console.log(allRows);
-
-    ;
+    
+    debugger;
     props.tableUpdate(allRows, "import_replacable");
   };
   const deleteRows = () => {

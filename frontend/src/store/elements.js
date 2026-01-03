@@ -23,14 +23,14 @@ const elements = createSlice({
   initialState: initialState,
   reducers: {
     addElement(state, action) {
-      ;
+      debugger;
       let ele = action.payload.ele;
-
+    
       // Check if the added element is a component (excluding main nodes)
       if (ele.type === "component") {
         // Find the main node
         const mainNode = state.elements.find(node => node.type === "systemNode");
-
+    
         // If a main node is found, add a connection from the main node to the new component
         if (mainNode) {
           state.elements.push({
@@ -42,7 +42,7 @@ const elements = createSlice({
           });
         }
       }
-
+    
       state.elements.push(ele);
     },
     removeElement(state, action) {
@@ -115,12 +115,12 @@ const elements = createSlice({
         border: "1px solid black",
         borderRadius: "5px",
         borderColor: "black",
-        padding: '20px'
+        padding:'20px'
       };
       let edgeStyle = { stroke: color };
       //CHANGE COLOR OF SELECTED NODE
-      let selectedNodeIndex = state.elements.findIndex(data => data.id === state.node.id)
-      state.elements[selectedNodeIndex] = {
+      let selectedNodeIndex = state.elements.findIndex(data=>data.id===state.node.id)
+      state.elements[selectedNodeIndex]={
         ...state.elements[selectedNodeIndex],
         data,
         style
@@ -141,19 +141,17 @@ const elements = createSlice({
         const p_ele_index = state.elements.findIndex(
           (x) => x.id === item.value
         );
-        state.elements[p_ele_index] = {
+        state.elements[p_ele_index]={
           ...state.elements[p_ele_index],
           style,
-          data: {
-            ...state.elements[p_ele_index].data,
+          data:{...state.elements[p_ele_index].data,
             k: Number(action.payload.k),
             k_elh: Number(action.payload.k_elh),
             k_c: Number(action.payload.k_c),
             k_ds: Number(action.payload.k_ds),
             k_as: Number(action.payload.k_as),
-            n: parallel_comp.length + 1,
-            parallel_comp: [...parallel_comp.filter(pc => pc.value !== item.value), { value: state.node.id, label: data.label }]
-          }
+            n:parallel_comp.length+1,
+            parallel_comp:[...parallel_comp.filter(pc=>pc.value!==item.value),{value:state.node.id,label:data.label}]}
         };
       });
       //CHANGE EDGE COLORS
@@ -162,7 +160,7 @@ const elements = createSlice({
           (x) =>
             x.target === item.value && x.source === state.selectedNodeParent
         );
-        state.elements[edgeId] = {
+        state.elements[edgeId]= {
           ...state.elements[edgeId],
           style: edgeStyle,
           type: "smoothstep",
@@ -174,7 +172,7 @@ const elements = createSlice({
       let clickedNodeEdgeIndex = state.elements.findIndex(
         (x) => x.target === state.node.id
       );
-      if (clickedNodeEdgeIndex !== -1) {
+      if (clickedNodeEdgeIndex!==-1) {
         state.elements[clickedNodeEdgeIndex] = {
           ...state.elements[clickedNodeEdgeIndex],
           style: edgeStyle,
