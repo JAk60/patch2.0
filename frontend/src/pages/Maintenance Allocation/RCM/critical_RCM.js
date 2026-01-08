@@ -51,6 +51,9 @@ const Critical_RCM = () => {
 
   const [finalRCMAns, setFinalRCMAns] = useState(null);
   const [tData, setTdata] = useState([]);
+  
+  // Store the generated filename
+  const [generatedFilename, setGeneratedFilename] = useState(null);
 
   // Snackbar State
   const [snackBarMessage, setSnackBarMessage] = useState({
@@ -191,7 +194,11 @@ const Critical_RCM = () => {
         });
       })
       .then((res) => res.json())
-      .then(() => {
+      .then((data) => {
+        // Store the generated filename for later download
+        if (data.filename) {
+          setGeneratedFilename(data.filename);
+        }
         showSnackbar(
           "success",
           "Data saved and report generated successfully!"
@@ -203,25 +210,59 @@ const Critical_RCM = () => {
   };
 
   const handleDownload = () => {
-    const system = currentSelection["nomenclature"].replace(/\s/g, "");
-    const ship_name = currentSelection["shipName"].replace(/\s/g, "");
+    console.log("=== DOWNLOAD INITIATED ===");
+    console.log("Generated filename in state:", generatedFilename);
+    
+    if (!generatedFilename) {
+      console.error("✗ No filename available!");
+      showSnackbar("error", "Please generate a report first");
+      return;
+    }
 
-    // unique version every time
-    const version = Date.now();
+    console.log("✓ Using filename:", generatedFilename);
+    console.log("✓ Download URL:", `/api/download_rcm_report/${generatedFilename}`);
 
-    const fileName = `${ship_name}-${system}-${version}.pdf`;
-    const filePath = `/${ship_name}-${system}.pdf`;
-
-    const link = document.createElement("a");
-    link.href = `${filePath}?v=${version}`;
-    link.download = fileName;
-    link.rel = "noopener";
-
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-
-    showSnackbar("success", "Report downloaded successfully");
+    // Download via API endpoint
+    fetch(`/api/download_rcm_report/${generatedFilename}`, {
+      method: 'GET',
+      cache: 'no-cache',
+      headers: {
+        'Cache-Control': 'no-cache',
+        'Pragma': 'no-cache'
+      }
+    })
+      .then(response => {
+        console.log("Response status:", response.status);
+        if (!response.ok) {
+          throw new Error(`File not found - Status: ${response.status}`);
+        }
+        return response.blob();
+      })
+      .then(blob => {
+        console.log("✓ Blob received, size:", blob.size, "bytes");
+        
+        // Create a blob URL and download
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = generatedFilename;
+        link.rel = "noopener";
+        
+        console.log("✓ Triggering download...");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        // Clean up the blob URL
+        window.URL.revokeObjectURL(url);
+        
+        console.log("✓ Download complete!");
+        showSnackbar("success", "Report downloaded successfully");
+      })
+      .catch((error) => {
+        console.error("✗ Download error:", error);
+        showSnackbar("error", "Failed to download report. Please generate it again.");
+      });
   };
 
   const handleOptimize = () => {

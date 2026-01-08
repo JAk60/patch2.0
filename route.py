@@ -691,7 +691,9 @@ def fetch_condition_monitoring():
     return jsonify(data)
 
 
+
 ###### RCM Routes ######
+
 @api.route("/save_assembly_rcm", methods=["POST"])
 def save_assembly_rcm():
     data = request.get_json(force=True)
@@ -715,9 +717,6 @@ def fetch_assembly_rcm():
 
 @api.route("/save_rcm", methods=["POST"])
 def save_rcm():
-    # data = request.get_json(force=True)
-    # sys_inst = System_Configuration_N()
-    # res = sys_inst.fetch_system(data)
     data = request.get_json(force=True)
     rcm = RCMDB()
     res_r = rcm.save_component_rcm(data)
@@ -726,22 +725,61 @@ def save_rcm():
 
 @api.route("/rcm_report", methods=["POST", "GET"])
 def rcm_report():
-    # data = request.get_json(force=True)
-    # sys_inst = System_Configuration_N()
-    # res = sys_inst.fetch_system(data)
     data = request.get_json(force=True)
     system = data["nomenclature"]
     ship_name = data["ship_name"]
     rcm = RCMDB()
+    
+    # Generate report - now returns filename
     res_r = rcm.generate_rcm_report(APP_ROOT, system, ship_name)
-    target = os.path.join(
-        APP_ROOT,
-        "frontend\public\{0}-{1}.pdf".format(
-            ship_name.replace(" ", ""), system.replace(" ", "")
-        ),
-    )
-    return jsonify({"res": res_r, "system": system, "ship_name": ship_name})
+    
+    # Return the result with the filename
+    return jsonify({
+        "res": res_r, 
+        "system": system, 
+        "ship_name": ship_name,
+        "filename": res_r.get("filename", "")  # Include the generated filename
+    })
 
+
+@api.route("/download_rcm_report/<filename>", methods=["GET"])
+def download_rcm_report(filename):
+    """
+    Download the generated RCM report PDF
+    """
+    try:
+        print(f"\n=== DOWNLOAD REQUEST ===")
+        print(f"Requested filename: {filename}")
+        
+        # Security: Only allow specific pattern to prevent directory traversal
+        import re
+        if not re.match(r'^[\w-]+-[\w-]+-\d+\.pdf$', filename):
+            print(f"✗ Invalid filename pattern: {filename}")
+            return jsonify({"error": "Invalid filename"}), 400
+        
+        file_path = os.path.join(APP_ROOT, 'frontend', 'public', filename)
+        print(f"Full file path: {file_path}")
+        print(f"File exists: {os.path.isfile(file_path)}")
+        
+        if not os.path.isfile(file_path):
+            print(f"✗ File not found!")
+            return jsonify({"error": "File not found"}), 404
+        
+        file_size = os.path.getsize(file_path)
+        print(f"✓ File found, size: {file_size} bytes")
+        print(f"✓ Sending file...")
+        
+        return send_file(
+            file_path,
+            mimetype='application/pdf',
+            as_attachment=True,
+            download_name=filename
+        )
+    except Exception as e:
+        print(f"✗ Error serving file: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({"error": str(e)}), 500
 
 @api.route("/upload", methods=["POST", "GET"])
 def fileUpload():
