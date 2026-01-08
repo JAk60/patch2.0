@@ -60,35 +60,53 @@ class RCMDB():
             system = data["system"]
             ship_name = data["ship_name"]
             assembly = data["assembly"]
-            system_id = assembly["equipment_id"]
             component = data["component"]
             rcm_val = data["rcm_val"]
-            insert_sql = '''insert into rcm_component values(?,?,?,?,?,?,?)'''
-            update_sql = '''update rcm_component set rcm=? where component_id=?'''
-            check_sql = '''select * from rcm_component where component_id=?'''
+            
+            # First, let's check what columns actually exist in your table
+            # You can run this query once to see the column names:
+            # SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'rcm_component'
+            
+            merge_sql = '''
+                MERGE INTO rcm_component AS target
+                USING (SELECT ? AS component_id, ? AS component_name, ? AS rcm, 
+                            ? AS system, ? AS ship_name) AS source
+                ON target.component_id = source.component_id
+                WHEN MATCHED THEN
+                    UPDATE SET 
+                        component_name = source.component_name,
+                        rcm = source.rcm,
+                        system = source.system,
+                        ship_name = source.ship_name
+                WHEN NOT MATCHED THEN
+                    INSERT (component_id, component_name, rcm, system, ship_name)
+                    VALUES (source.component_id, source.component_name, source.rcm, 
+                        source.system, source.ship_name);
+            '''
             
             for comp in component:
-                comp_name = comp["name"]
-                parent_name = comp["parentName"]
                 comp_id = comp["id"]
-                parent_id = comp["parentId"]
+                comp_name = comp["name"]
                 
-                cursor.execute(check_sql, comp_id)
-                if_exists = cursor.fetchone()
-                if if_exists:
-                    cursor.execute(update_sql, rcm_val, comp_id)  # Use cursor.execute for update
-                else:
-                    cursor.execute(insert_sql, comp_id, comp_name, rcm_val, parent_id, parent_name, system, ship_name)
+                cursor.execute(merge_sql, (
+                    comp_id, 
+                    comp_name, 
+                    rcm_val, 
+                    system, 
+                    ship_name
+                ))
             
             cnxn.commit()
             return self.success_return
         except Exception as e:
+            print(f"Error saving RCM: {str(e)}")
+            cnxn.rollback()
             return self.error_return
 
 
     def generate_rcm_report(self, APP_ROOT, SYSTEM, PLATFORM):
         try:
-            target = os.path.join(APP_ROOT, 'netra\public\{0}-{1}.pdf'.format(PLATFORM.replace(' ',''), SYSTEM.replace(' ','')))
+            target = os.path.join(APP_ROOT, 'frontend\public\{0}-{1}.pdf'.format(PLATFORM.replace(' ',''), SYSTEM.replace(' ','')))
             if os.path.isfile(target):
                 os.remove(target)
             report = ReportGeneration()

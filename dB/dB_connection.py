@@ -9,12 +9,12 @@ password = 'Previtix@1324'
 
 # cnxn = pyodbc.connect(r'Driver=SQL Server;Server=localhost;Database=master;Trusted_Connection=yes;')
 
-cnxn = pyodbc.connect(driver='{SQL Server}', server='LAPTOP-AQK9NGLL', database='NetraD',               
+cnxn = pyodbc.connect(driver='{SQL Server}', server='DESKTOP-F92OJ09\MSSQLSERVER02', database='NetraD',               
                trusted_connection='yes', port=1433)
 # SELECT name FROM sys.columns WHERE object_id = OBJECT_ID('netra_indian_navy.dbo.system_configuration')
 cursor = cnxn.cursor()
 print("hello")
-src = pyodbc.connect(driver='{SQL Server}', server='LAPTOP-AQK9NGLL', database='CTEST',               
+src = pyodbc.connect(driver='{SQL Server}', server='DESKTOP-F92OJ09\MSSQLSERVER02', database='CTEST',               
                trusted_connection='yes', port=1433)
 # SELECT name FROM sys.columns WHERE object_id = OBJECT_ID('netra_indian_navy.dbo.system_configuration')
 pointer = src.cursor()

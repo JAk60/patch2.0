@@ -469,7 +469,7 @@ class Reliability:
                 final_data.append({m: data})
             self.success_return[
                 "message"
-            ] = "Reliability Of Equipments Showed Successfully"
+            ] = "Reliability displayed successfully"
             self.success_return["results"] = final_data
             return self.success_return
 

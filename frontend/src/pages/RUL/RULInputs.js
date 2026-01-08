@@ -3,7 +3,7 @@ import { Autocomplete } from "@material-ui/lab";
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { userActions } from "../../store/ApplicationVariable";
-
+import { useSelector } from "react-redux";
 const useStyles = makeStyles({
   root: {
     margin: "0 2.5em",
@@ -25,6 +25,9 @@ export default function RULInputs({ CData }) {
   const [equipmentOptions, setEquipmentOptions] = useState([]);
   const [nomenclatureOptions, setNomenclatureOptions] = useState([]);
   const [selectedShip, setSelectedShip] = useState("");
+  const currentshipName = useSelector(
+    (state) => state.userSelection.currentSelection.shipName
+  );
   console.log(allEquipmentData);
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -108,7 +111,9 @@ export default function RULInputs({ CData }) {
     const data = { nomenclature: selectedNomenclature };
     console.log(CData);
     const s = CData.filter(
-      (item) => item.nomenclature === selectedNomenclature
+      (item) =>
+        item.nomenclature === selectedNomenclature &&
+        item.ship_name === currentshipName
     )[0]?.id;
     console.log(s);
     fetch("/api/fetch_sensors", {
@@ -121,7 +126,7 @@ export default function RULInputs({ CData }) {
       .then((response) => response.json())
       .then((result) => {
         console.log(result);
-        let Eid = { equipmentCode: s }
+        let Eid = { equipmentCode: s };
         dispatch(
           userActions.onChangeCurrentSelection({
             selectedData: Eid,
@@ -132,7 +137,7 @@ export default function RULInputs({ CData }) {
             selectedData: data,
           })
         );
-        let res = { Sensor: result }
+        let res = { Sensor: result };
         dispatch(
           userActions.onChangeCurrentSelection({
             selectedData: res,

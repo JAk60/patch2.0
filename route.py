@@ -736,7 +736,7 @@ def rcm_report():
     res_r = rcm.generate_rcm_report(APP_ROOT, system, ship_name)
     target = os.path.join(
         APP_ROOT,
-        "netra\public\{0}-{1}.pdf".format(
+        "frontend\public\{0}-{1}.pdf".format(
             ship_name.replace(" ", ""), system.replace(" ", "")
         ),
     )
@@ -751,7 +751,7 @@ def fileUpload():
         pl = request.form.get("name")
         target_folder = os.path.join(
             APP_ROOT,
-            "netra\public\{0}_{1}".format(
+            "frontend\public\{0}_{1}".format(
                 pl.replace(" ", ""), ss.replace(" ", "")),
         )
         if not os.path.exists(target_folder):
@@ -772,7 +772,7 @@ def fetch_system_files():
         pl = data["ship_name"]
         target_folder = os.path.join(
             APP_ROOT,
-            "netra\public\{0}_{1}".format(
+            "frontend\public\{0}_{1}".format(
                 pl.replace(" ", ""), ss.replace(" ", "")),
         )
         files = os.listdir(target_folder)

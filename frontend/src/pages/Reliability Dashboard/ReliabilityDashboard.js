@@ -281,7 +281,7 @@ const ReliabilityDashboard = () => {
 								alignItems: "center",
 							}}
 						>
-							Please fill the above fields to see the graph..
+							Enter above values to view reliability
 						</Typography>
 					)}
 				</div>

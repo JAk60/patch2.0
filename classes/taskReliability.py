@@ -20,7 +20,7 @@ class TaskReliability:
     # Saving Reliability.
     def __init__(self):
         self.success_return = {
-            "message": "Data Saved Successfully.", "code": 1}
+            "message": "Solution Recommended", "code": 1}
         self.error_return = {
             "message": "Some Error Occured, Please try agian.",
             "code": 0,
