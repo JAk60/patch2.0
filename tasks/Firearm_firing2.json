@@ -1,7 +1,7 @@
 [
     {
         "data": {
-            "label": "Mission_firing2"
+            "label": "Firearm_firing2"
         },
         "dtype": "node",
         "id": "41d01c16-89a1-4ccd-be44-11645436da7f",
@@ -976,7 +976,7 @@
             "k_c": 0,
             "k_ds": 1,
             "k_elh": 0,
-            "label": "BrahMos",
+            "label": "FA",
             "n": 1,
             "parallel_comp": []
         },

@@ -161,23 +161,29 @@ export default function ManageUser() {
     })
       .then((response) => response.json())
       .then((data) => {
-        if (data.code === 200) {
+        // If data is an array, it's a success response
+        if (Array.isArray(data)) {
+          setUserData(data);
           setSnackBarMessage({
             severity: "success",
-            message: data.message,
+            message: "Users loaded successfully",
             showSnackBar: true,
           });
-          setUserData(data.users);
-        } else if (data.code === 404 || 500) {
+        } else if (data.code === 404 || data.code === 500) {
           setSnackBarMessage({
             severity: "error",
-            message: data.message,
+            message: data.message || "Error loading users",
             showSnackBar: true,
           });
         }
       })
       .catch((error) => {
         console.error("Error:", error);
+        setSnackBarMessage({
+          severity: "error",
+          message: "Failed to load users",
+          showSnackBar: true,
+        });
       });
   };
 

@@ -93,6 +93,68 @@ const AccCreate = () => {
   };
 
   const handleCreateAccount = () => {
+    // Validation checks
+    if (!username.trim()) {
+      setSnackBarMessage({
+        severity: "error",
+        message: "Please enter a username",
+        showSnackBar: true,
+      });
+      return;
+    }
+
+    if (!password) {
+      setSnackBarMessage({
+        severity: "error",
+        message: "Please enter a password",
+        showSnackBar: true,
+      });
+      return;
+    }
+
+    if (!confirmPassword) {
+      setSnackBarMessage({
+        severity: "error",
+        message: "Please confirm your password",
+        showSnackBar: true,
+      });
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setSnackBarMessage({
+        severity: "error",
+        message: "Passwords do not match",
+        showSnackBar: true,
+      });
+      return;
+    }
+
+    if (password.length < 6) {
+      setSnackBarMessage({
+        severity: "error",
+        message: "Password must be at least 6 characters long",
+        showSnackBar: true,
+      });
+      return;
+    }
+
+    if (!accessLevel) {
+      setSnackBarMessage({
+        severity: "error",
+        message: "Please select a level of access",
+        showSnackBar: true,
+      });
+      return;
+    }
+
+    // Show processing toast
+    setSnackBarMessage({
+      severity: "info",
+      message: "Creating account...",
+      showSnackBar: true,
+    });
+
     const data = {
       username: username,
       password: password,
@@ -116,7 +178,7 @@ const AccCreate = () => {
           });
           setTimeout(() => {
             history.push('/sign_in', { message: data.message });
-          }, 2000); // 2000 milliseconds = 2 seconds
+          }, 2000);
         } else if (data.code === 0 || data.code === 400 || data.code === 409) {
           setSnackBarMessage({
             severity: "error",
@@ -124,7 +186,6 @@ const AccCreate = () => {
             showSnackBar: true,
           });
         } else {
-          // Catch-all for unexpected codes
           setSnackBarMessage({
             severity: "warning",
             message: "Unexpected response from server.",
@@ -207,7 +268,11 @@ const AccCreate = () => {
               onChange={(e) => setAccessLevel(e.target.value)}
               variant="outlined"
               className={classes.level}
+              SelectProps={{
+                native: true,
+              }}
             >
+              <option value="">Select Level</option>
               <option value="L0" className={classes.option}>
                 Developer Mode
               </option>

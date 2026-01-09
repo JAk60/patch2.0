@@ -65,7 +65,6 @@ const CGraph = ({ graphData, selectedParameterNames }) => {
     const second = parseInt(timeParts[2], 10);
     return new Date(year, month, day, hour, minute, second);
   };
-
   const getDomainByUnit = (unit, minThreshold, maxThreshold) => {
     // Calculate padding as 20% of the range
     const range = maxThreshold - minThreshold;
@@ -74,13 +73,17 @@ const CGraph = ({ graphData, selectedParameterNames }) => {
     const adjustedMin = minThreshold - padding;
     const adjustedMax = maxThreshold + padding;
 
+    // Round to 2 decimal places to avoid floating-point precision issues
+    const roundedMin = Math.round(adjustedMin * 100) / 100;
+    const roundedMax = Math.round(adjustedMax * 100) / 100;
+
     switch (unit) {
       case "RMS":
       case "kg":
       case "deg C":
-        return [adjustedMin, adjustedMax];
+        return [roundedMin, roundedMax];
       default:
-        return [adjustedMin, adjustedMax];
+        return [roundedMin, roundedMax];
     }
   };
 
@@ -116,9 +119,8 @@ const CGraph = ({ graphData, selectedParameterNames }) => {
         return (
           <div className={`${styles.rchart}`} key={`${name}-${nomenclature}`}>
             <div
-              className={`${styles.content} ${
-                crossingThreshold ? styles.blinkingChart : ""
-              }`}
+              className={`${styles.content} ${crossingThreshold ? styles.blinkingChart : ""
+                }`}
             >
               <div>
                 {crossingThreshold}
@@ -150,6 +152,7 @@ const CGraph = ({ graphData, selectedParameterNames }) => {
                 />
                 <YAxis
                   domain={yDomain}
+                  tickFormatter={(value) => value.toFixed(2)}
                   label={{
                     value: `${name} (${unit})`,
                     angle: -90,

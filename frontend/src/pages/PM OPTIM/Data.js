@@ -1,4 +1,4 @@
-export const  getQuestions = (value) => {
+export const getQuestions = (value) => {
   let questions = [];
 
   switch (value) {
@@ -84,6 +84,18 @@ export const  getQuestions = (value) => {
           type: "text",
           required: true,
         },
+        {
+          id: "c",
+          text: "Enter cost per component",
+          type: "text",
+          required: true,
+        },
+        {
+          id: "rt",
+          text: "Enter repair time per component",
+          type: "text",
+          required: true,
+        },
       ];
       break;
     case "option4":
@@ -97,6 +109,12 @@ export const  getQuestions = (value) => {
         {
           id: "pmdt",
           text: "Enter preventive downtime for group",
+          type: "text",
+          required: true,
+        },
+        {
+          id: "rt",
+          text: "Enter repair time per component",
           type: "text",
           required: true,
         },

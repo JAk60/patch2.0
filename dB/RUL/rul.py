@@ -125,7 +125,7 @@ class RUL_dB:
 
             # # Estimate beta and eta using MLE
             if len(operating_hours_threshold_reached) == 0:
-                self.error_return["message"] = "Threshold is not reached"
+                self.error_return["message"] = "Not enough datasets"
                 return self.error_return
             params = weibull_min.fit(operating_hours_threshold_reached, floc=0)
 

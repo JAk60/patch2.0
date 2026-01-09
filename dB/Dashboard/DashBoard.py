@@ -1,14 +1,14 @@
 from dB.dB_connection import cursor, cnxn
-from flask import  jsonify
+from flask import jsonify
 import bcrypt
 
 
 class DashBoard():
-    def fetch_users(self,data):
+    def fetch_users(self, data):
         print(data)
-        level=data["selectedLevel"]
+        level = data["selectedLevel"]
         sql = '''select * from users where level=?'''
-        cursor.execute(sql,level)
+        cursor.execute(sql, level)
         users = []
         for row in cursor.fetchall():
             print(row.user_id)
@@ -19,13 +19,13 @@ class DashBoard():
             }
             users.append(user)
         return jsonify(users)
-    
+
     def make_password_hash(self, password):
-            hash = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
-            return hash.decode('utf-8')
+        hash = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+        return hash.decode('utf-8')
 
     def update_user(self, data):
-        
+
         sql = '''
                 UPDATE users
                 SET 
@@ -36,7 +36,7 @@ class DashBoard():
         password = str(data.get('newPassword', None))
         user = data.get('user', None)
         Uid = data.get('userId', None)
-        hashed_password=self.make_password_hash(password)
+        hashed_password = self.make_password_hash(password)
         # Execute the update query
         cursor.execute(sql, (hashed_password, Uid))
         cnxn.commit()
@@ -44,7 +44,7 @@ class DashBoard():
         return jsonify({'message': f'password changed for {user}'})
 
     def delete_user(self, data):
-        userId=data["userId"]
+        userId = data["id"]
         sql = '''DELETE FROM users WHERE user_id = ?'''
         cursor.execute(sql, (userId,))
         cnxn.commit()
