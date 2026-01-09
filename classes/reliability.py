@@ -334,14 +334,17 @@ class Reliability:
             pass
 
     def get_default_current_age(self):
-        query = '''
-            SELECT COALESCE(SUM(average_running), 0) AS sum_of_average_running
-            FROM operational_data
-            WHERE component_id = ?;
-        '''
-        cursor.execute(query, self.__component_id)
-        result = cursor.fetchone()
-        return result[0]
+            query = '''
+                SELECT TOP 1 default_curr_age
+                FROM data_manager_default_curr_age
+                WHERE component_id = ?
+                ORDER BY record_date DESC;
+            '''
+            cursor.execute(query, self.__component_id)
+            row = cursor.fetchone()
+
+            # If no data yet, return 0 safely
+            return row[0] if row else 0
 
     def calculate_rel_by_power_law(self, alpha, beta, duration):
         query = """

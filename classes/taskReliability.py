@@ -325,16 +325,19 @@ class TaskReliability:
 
         sum_of_average_running = result2[0]
         return sum_of_average_running, None
+    
+    def get_default_current_age(self, component_id):
+            query = '''
+                SELECT TOP 1 default_curr_age
+                FROM data_manager_default_curr_age
+                WHERE component_id = ?
+                ORDER BY record_date DESC;
+            '''
+            cursor.execute(query, component_id)
+            row = cursor.fetchone()
 
-    def get_default_currage(self, component_id):
-        query = '''
-            SELECT COALESCE(SUM(average_running), 0) AS sum_of_average_running
-            FROM operational_data
-            WHERE component_id = ?;
-        '''
-        cursor.execute(query, component_id)
-        result = cursor.fetchone()
-        return result[0]
+            # If no data yet, return 0 safely
+            return row[0] if row else 0
 
     def estimate_alpha_beta(self, component_id, component_name):
         '''CODE TO RE-ESTIMATE ALPHA BETA'''
@@ -393,15 +396,18 @@ class TaskReliability:
                 raise
             pass
 
-    def get_default_current_age(self):
-        query = '''
-            SELECT COALESCE(SUM(average_running), 0) AS sum_of_average_running
-            FROM operational_data
-            WHERE component_id = ?;
-        '''
-        cursor.execute(query, self.__component_id)
-        result = cursor.fetchone()
-        return result[0]
+    def get_default_current_age(self,component_id):
+            query = '''
+                SELECT TOP 1 default_curr_age
+                FROM data_manager_default_curr_age
+                WHERE component_id = ?
+                ORDER BY record_date DESC;
+            '''
+            cursor.execute(query,component_id)
+            row = cursor.fetchone()
+
+            # If no data yet, return 0 safely
+            return row[0] if row else 0
 
     def calculate_rel_by_power_law(self, alpha, beta, duration):
         query = '''
@@ -419,7 +425,7 @@ class TaskReliability:
         sum_of_average_running, error_message = self.get_curr_ages()
         if error_message:
             # print(error_message)
-            curr_age = self.get_default_current_age()
+            curr_age = self.get_default_current_age(self.__component_id)
         else:
             curr_age = sum_of_average_running
 
@@ -863,7 +869,7 @@ class TaskReliability:
                             running_ages[label] = self.get_curr_age(
                                 equipment_id)
                             if running_ages[label] == 0:
-                                running_ages[label] = self.get_default_currage(
+                                running_ages[label] = self.get_default_current_age(
                                     equipment_id)
 
                 response_data = {

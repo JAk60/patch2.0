@@ -450,7 +450,7 @@ const Layout = (props) => {
             >
               <DialogTitle id="form-dialog-title">Select Task</DialogTitle>
               <DialogContent dividers>
-                <Autocomplete
+                {/* <Autocomplete
                   value={loadname}
                   options={tasksoptions}
                   getOptionLabel={(option) => option.taskname}
@@ -459,7 +459,18 @@ const Layout = (props) => {
                   renderInput={(params) => (
                     <TextField {...params} variant="standard" />
                   )}
-                />
+                /> */}
+
+                <Autocomplete
+  value={loadname}
+  options={tasksoptions}
+  getOptionLabel={(option) => option.taskname}
+  groupBy={(option) => option.ship_name}
+  onChange={(event, newValue) => setLoadName(newValue)}
+  renderInput={(params) => (
+    <TextField {...params} variant="standard" />
+  )}
+/>
               </DialogContent>
               <DialogActions>
                 <Button onClick={handleLoadClose} color="primary">
