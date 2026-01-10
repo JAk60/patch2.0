@@ -272,7 +272,6 @@ const AccCreate = () => {
                 native: true,
               }}
             >
-              <option value="">Select Level</option>
               <option value="L0" className={classes.option}>
                 Developer Mode
               </option>

@@ -82,7 +82,7 @@ const SAdmin = ({ logout }) => {
         }}
       >
         <Box style={{ textAlign: "center", margin: "16px 0" }}>
-          <img src="/InsmaLogo.png" alt="Logo" style={{ width: "140px" }} />
+          <img src="/images/InsmaLogo.png" alt="Logo" style={{ width: "140px" }} />
           <Typography variant="h4" className={classes.TxtLogo}>
             NETRA
           </Typography>

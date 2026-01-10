@@ -3,6 +3,7 @@ from dB.dB_utility import check_table_exist
 import bcrypt
 import uuid
 
+
 class SignInDB:
     def __init__(self):
         self.table_init()
@@ -18,7 +19,7 @@ class SignInDB:
                 user_id VARCHAR(500) PRIMARY KEY,
                 username VARCHAR(500) UNIQUE,
                 password VARCHAR(500),
-                level NVARCHAR(2) CHECK (level IN ('L1', 'L2', 'L3', 'L4', 'L5', 'L6','S'))
+                level NVARCHAR(2) CHECK (level IN ('L0','L1', 'L2', 'L3', 'L4', 'L5', 'L6','S'))
             )
         '''
         try:
@@ -30,10 +31,11 @@ class SignInDB:
                         VALUES (?, ?, ?, ?)
                     '''
                     user_uuid = str(uuid.uuid4())
-                    username = 'Jake609'
-                    password = 'Jake@123'
+                    username = 'demo_super'
+                    password = 'Super@123'
                     hashed_default_password = self.make_password_hash(password)
-                    cursor.execute(default_user_sql, user_uuid, username, hashed_default_password, 'S')
+                    cursor.execute(default_user_sql, user_uuid,
+                                   username, hashed_default_password, 'S')
         except Exception as e:
             print(f"Error during table initialization: {e}")
             raise e  # Raising the exception for visibility

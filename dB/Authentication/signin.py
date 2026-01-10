@@ -66,7 +66,13 @@ class Authentication:
             cursor.execute(query, (user_uuid, username, hashed_password, level))
             cnxn.commit()
 
-            return f"{username}'s Account is Created. Please Login"
+            return {
+                "code": 1,
+                "message": f"{username}'s account is created. Please login."
+            }
 
         except Exception as e:
-            return "User is Already Present"
+            return {
+                "code": 409,
+                "message": "User already exists"
+            }

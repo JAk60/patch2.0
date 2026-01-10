@@ -691,7 +691,6 @@ def fetch_condition_monitoring():
     return jsonify(data)
 
 
-
 ###### RCM Routes ######
 
 @api.route("/save_assembly_rcm", methods=["POST"])
@@ -729,14 +728,14 @@ def rcm_report():
     system = data["nomenclature"]
     ship_name = data["ship_name"]
     rcm = RCMDB()
-    
+
     # Generate report - now returns filename
     res_r = rcm.generate_rcm_report(APP_ROOT, system, ship_name)
-    
+
     # Return the result with the filename
     return jsonify({
-        "res": res_r, 
-        "system": system, 
+        "res": res_r,
+        "system": system,
         "ship_name": ship_name,
         "filename": res_r.get("filename", "")  # Include the generated filename
     })
@@ -750,25 +749,25 @@ def download_rcm_report(filename):
     try:
         print(f"\n=== DOWNLOAD REQUEST ===")
         print(f"Requested filename: {filename}")
-        
+
         # Security: Only allow specific pattern to prevent directory traversal
         import re
         if not re.match(r'^[\w-]+-[\w-]+-\d+\.pdf$', filename):
             print(f"✗ Invalid filename pattern: {filename}")
             return jsonify({"error": "Invalid filename"}), 400
-        
+
         file_path = os.path.join(APP_ROOT, 'frontend', 'public', filename)
         print(f"Full file path: {file_path}")
         print(f"File exists: {os.path.isfile(file_path)}")
-        
+
         if not os.path.isfile(file_path):
             print(f"✗ File not found!")
             return jsonify({"error": "File not found"}), 404
-        
+
         file_size = os.path.getsize(file_path)
         print(f"✓ File found, size: {file_size} bytes")
         print(f"✓ Sending file...")
-        
+
         return send_file(
             file_path,
             mimetype='application/pdf',
@@ -780,6 +779,7 @@ def download_rcm_report(filename):
         import traceback
         traceback.print_exc()
         return jsonify({"error": str(e)}), 500
+
 
 @api.route("/upload", methods=["POST", "GET"])
 def fileUpload():
@@ -906,13 +906,19 @@ def get_credentials():
 
 @api.route("/insert_user", methods=["POST"])
 def insert_new_user():
-    data = request.json  # Assuming you send a JSON object in the request body
+    data = request.json
     if "username" in data and "password" in data and "level" in data:
         username = data["username"]
         password = data["password"]
         level = data["level"]
         inst = Authentication()
-        return inst.sign_up(username, password, level)
+        result = inst.sign_up(username, password, level)
+        return jsonify(result)
+    else:
+        return jsonify({
+            "code": 400,
+            "message": "Missing required fields"
+        }), 400
 
 
 @api.route("/fetch_eta_beta", methods=["POST"])
