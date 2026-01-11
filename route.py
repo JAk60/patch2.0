@@ -819,6 +819,22 @@ def fetch_system_files():
         return jsonify({"status": "failed"})
 
 
+@api.route("/download/<ship_name>/<system>/<filename>", methods=["GET"])
+def download_file(ship_name, system, filename):
+    try:
+        target_folder = os.path.join(
+            APP_ROOT,
+            "frontend\\public\\{0}_{1}".format(ship_name, system)
+        )
+        return send_from_directory(
+            target_folder,
+            filename,
+            as_attachment=True
+        )
+    except Exception as e:
+        return jsonify({"status": "failed", "error": str(e)}), 404
+
+
 @api.route("/optimize", methods=["POST"])
 def optimize():
     if request.method == "POST":

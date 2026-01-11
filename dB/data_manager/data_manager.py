@@ -86,107 +86,58 @@ class Data_Manager:
             }
 
     def update_parameters(self, data):
-        systemType_replaceable = data["isReplacable"]
         data = data["data"]
-        component_id = None
         final_data = []
+
         try:
             for d in data:
                 id = d["id"]
-                component_id = id
                 name = d["EquipmentName"]
-                if systemType_replaceable:
-                    self.update_through_MLE(id)
-                    sql = """select * from eta_beta where component_id = ?"""
-                    cursor.execute(sql, (id,))
-                    rows = cursor.fetchone()
-                    if rows:
-                        final_data.append(
-                            {
-                                "EquipmentName": name,
-                                "id": id,
-                                "eta": round(rows[1], 2),
-                                "beta": rows[2],
-                            }
-                        )
+
+                # First, try to get alpha_beta parameters
+                sql_alpha_beta = """SELECT * FROM alpha_beta WHERE component_id = ?"""
+                cursor.execute(sql_alpha_beta, (id,))
+                alpha_beta_rows = cursor.fetchall()
+
+                if alpha_beta_rows:
+                    # Alpha_beta data found
+                    row = alpha_beta_rows[-1]  # Get the latest entry
+                    final_data.append({
+                        "EquipmentName": name,
+                        "id": id,
+                        "alpha": row[1],
+                        "beta": row[2],
+                    })
                 else:
-                    instance = OverhaulsAlgos()
-                    sub_query = "select * from data_manager_overhauls_info where component_id = ?"
-                    cursor.execute(sub_query, (id,))
-                    data = cursor.fetchall()
-                    subData = []
-                    for item in data:
-                        formatted_item = {
-                            "id": item[0],
-                            "overhaulNum": item[2],
-                            "numMaint": item[4],
-                            "runAge": item[3],
-                            "component_id": item[1],
-                        }
-                        subData.append(formatted_item)
-                    run_age_value = list(
-                        map(lambda item: item["runAge"], subData))[0]
-                    instance.insert_overhauls_data(
-                        equipment_id=component_id,
-                        run_age_component=float(run_age_value),
-                    )
+                    # Try eta_beta parameters
+                    sql_eta_beta = """SELECT * FROM eta_beta WHERE component_id = ?"""
+                    cursor.execute(sql_eta_beta, (id,))
+                    eta_beta_row = cursor.fetchone()
 
-                    main_query = """SELECT * FROM data_manager_overhaul_maint_data 
-                                WHERE component_id = ?
-                        """
-                    cursor.execute(main_query, (id,))
-                    data = cursor.fetchall()
-                    mainData = []
-                    for item in data:
-                        formatted_item = {
-                            "id": item[0],
-                            "component_id": item[1],
-                            "overhaulId": item[2],
-                            "date": item[3],
-                            "maintenanceType": item[4],
-                            "totalRunAge": item[5],
-                            "subSystemId": item[6],
-                            "runningAge": item[7],
-                        }
-                        mainData.append(formatted_item)
-
-                    instance.alpha_beta_calculation(mainData, subData, id)
-
-                    sql = """select * from alpha_beta where component_id = ?"""
-                    cursor.execute(sql, (id,))
-                    rows = cursor.fetchall()
-                    rows = rows[-1]
-                    if rows:
-                        final_data.append(
-                            {
-                                "EquipmentName": name,
-                                "id": id,
-                                "alpha": rows[1],
-                                "beta": rows[2],
-                            }
-                        )
+                    if eta_beta_row:
+                        # Eta_beta data found
+                        final_data.append({
+                            "EquipmentName": name,
+                            "id": id,
+                            "eta": round(eta_beta_row[1], 2),
+                            "beta": eta_beta_row[2],
+                        })
                     else:
-                        final_data.append(
-                            {"EquipmentName": name, "id": id,
-                                "alpha": "-", "beta": "-"}
-                        )
-                    return final_data
-        except Exception as e:
-            print(e)
-            sql = """select * from alpha_beta where component_id = ?"""
-            cursor.execute(sql, (id,))
-            rows = cursor.fetchall()
-            rows = rows[-1]
-            if rows:
-                final_data.append(
-                    {"EquipmentName": name, "id": id,
-                        "alpha": rows[1], "beta": rows[2]}
-                )
-            else:
-                final_data.append(
-                    {"EquipmentName": name, "id": id, "alpha": "-", "beta": "-"}
-                )
+                        # Neither alpha_beta nor eta_beta found
+                        final_data.append({
+                            "EquipmentName": name,
+                            "id": id,
+                            "message": "No parameter data found"
+                        })
+
             return final_data
+
+        except Exception as e:
+            print(f"Error processing component {id}: {e}")
+            # In case of error, still try to return whatever data we have
+            return final_data if final_data else [{
+                "message": "Error occurred while fetching parameter data"
+            }]
 
     def insert_data(self, data_obj):
         print(data_obj, "data_obj")
@@ -194,7 +145,7 @@ class Data_Manager:
         data = data_obj["data"]
         dt = data_obj["dataType"]
         res = {}
-        
+
         if dt == "oem":
             self.oem_save(data)
         if dt == "fdp":
@@ -211,7 +162,7 @@ class Data_Manager:
             self.nprd_save(data)
         if dt == "import_replacable":
             self.import_replacable_save(data)
-            
+
         if dt == "insertOpData":
             res = self.insert_opdata(data)
         if dt == "maintData":

@@ -143,13 +143,38 @@ const SysDocs = () => {
       });
   };
 
-  const downloadFile = () => {
+  const downloadFile = async () => {
     let system = selectedInputs["equipmentName"].replace(/\s/g, "");
     let ship_name = selectedInputs["shipName"].replace(/\s/g, "");
-    const link = document.createElement("a");
-    link.download = selectedFileName;
-    link.href = `/${ship_name}_${system}/${selectedFileName}`;
-    link.click();
+
+    try {
+      const response = await fetch(`/api/download/${ship_name}/${system}/${selectedFileName}`);
+
+      if (!response.ok) {
+        throw new Error('Download failed');
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = selectedFileName;
+      link.click();
+      window.URL.revokeObjectURL(url);
+
+      setSnackBarMessage({
+        severity: "success",
+        message: "File downloaded successfully!",
+        showSnackBar: true,
+      });
+    } catch (error) {
+      setSnackBarMessage({
+        severity: "error",
+        message: "Error downloading file!",
+        showSnackBar: true,
+      });
+      console.error("Download error:", error);
+    }
   };
 
   const handleTabChange = (event, newValue) => {
