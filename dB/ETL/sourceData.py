@@ -138,7 +138,7 @@ class ETL():
                     component_id, date = data_point
                     # Generate a new UUID for each iteration
                     generated_id = uuid.uuid4()
-
+            
 
                     # Third Query: Insert or update data using the merge statements
                     merge_query = """
@@ -149,6 +149,34 @@ class ETL():
                     INSERT (id, component_id, overhaul_id, date, maintenance_type, running_age, associated_sub_system, cmms_running_age)
                     VALUES (?, ?, ?, ?, ?,NULL, ?, NULL);
                     """
+                    # merge_query = """
+                    # MERGE INTO data_manager_overhaul_maint_data AS target
+                    #     USING (VALUES (?, ?, ?, ?, ?, ?, ?, ?))
+                    #     AS source (
+                    #         id,
+                    #         component_id,
+                    #         overhaul_id,
+                    #         date,
+                    #         maintenance_type,
+                    #         running_age,
+                    #         associated_sub_system,
+                    #         cmms_running_age
+                    #     )
+                    #     ON target.component_id = source.component_id
+                    #     AND target.date = source.date
+                    #     AND target.maintenance_type = source.maintenance_type
+                    #     WHEN MATCHED THEN
+                    #         UPDATE SET
+                    #             running_age = source.running_age,
+                    #             cmms_running_age = source.cmms_running_age
+                    #     WHEN NOT MATCHED THEN
+                    #         INSERT (
+                    #             id, component_id, overhaul_id, date,
+                    #             maintenance_type, running_age,
+                    #             associated_sub_system, cmms_running_age
+                    #         )
+                    #         VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+                    # """
 
                     cursor.execute(merge_query, (generated_id, component_id, overhaul_id,date,maintenance_type,
                                                  component_id,generated_id, component_id, overhaul_id, date,maintenance_type,

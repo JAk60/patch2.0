@@ -302,7 +302,7 @@ class OverhaulsAlgos:
                     alpha,beta=i
                 return alpha,beta
             def para(system_failures_list):
-                getcontext().prec = 28  # Set precision to desired value
+                # getcontext().prec = 28  # Set precision to desired value
                 T = [Decimal(max(failures)) * Decimal('1.05') for failures in system_failures_list]
                 sum_ln_T_Xiq = [sum(Decimal(math.log(ti / Decimal(x))) for x in failures) for ti, failures in zip(T, system_failures_list)]
 

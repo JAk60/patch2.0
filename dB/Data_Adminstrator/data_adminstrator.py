@@ -364,30 +364,30 @@ class Data_Administrator:
         cursor.execute(delete_query, (component_id,))
         cursor.commit()
         try:
-            # fetch_query = '''
-            #     SELECT
-            #         ? AS component_id,
-            #         CONVERT(VARCHAR, T_Dart.DefectDate, 23) AS date
-            #     FROM
-            #         t_DART WITH (NOLOCK)
-            #         INNER JOIN T_EquipmentShipDetail (NOLOCK) ON T_Dart.Universal_ID_T_EquipmentShipDetail = T_EquipmentShipDetail.Universal_ID_T_EquipmentShipDetail
-            #         INNER JOIN M_Ship WITH (NOLOCK) ON T_EquipmentShipDetail.Universal_ID_M_Ship = M_Ship.Universal_ID_M_Ship
-            #     WHERE
-            #         T_EquipmentShipDetail.Nomenclature = ?
-            #         AND M_Ship.ShipName = ?
-            #         AND T_Dart.Active = 1
-            #         AND T_EquipmentShipDetail.Active = 1
-            #         AND T_Dart.Is_Defect = 1
-            #         AND T_Dart.RoutineDefect = 2;
-            # '''
-            # cursor.execute(
-            #     fetch_query, (component_id, nomenclature, ship_name))
-            # fetched_data = cursor.fetchall()
-            # print()
-            fetch_query='''select * from DefectData'''
-            pointer.execute(fetch_query)
+            fetch_query = '''
+                SELECT
+                    ? AS component_id,
+                    CONVERT(VARCHAR, T_Dart.DefectDate, 23) AS date
+                FROM
+                    t_DART WITH (NOLOCK)
+                    INNER JOIN T_EquipmentShipDetail (NOLOCK) ON T_Dart.Universal_ID_T_EquipmentShipDetail = T_EquipmentShipDetail.Universal_ID_T_EquipmentShipDetail
+                    INNER JOIN M_Ship WITH (NOLOCK) ON T_EquipmentShipDetail.Universal_ID_M_Ship = M_Ship.Universal_ID_M_Ship
+                WHERE
+                    T_EquipmentShipDetail.Nomenclature = ?
+                    AND M_Ship.ShipName = ?
+                    AND T_Dart.Active = 1
+                    AND T_EquipmentShipDetail.Active = 1
+                    AND T_Dart.Is_Defect = 1
+                    AND T_Dart.RoutineDefect = 2;
+            '''
+            pointer.execute(
+                fetch_query, (component_id, nomenclature, ship_name))
             fetched_data = pointer.fetchall()
-            print()
+            # print()
+            # fetch_query='''select * from DefectData'''
+            # pointer.execute(fetch_query)
+            # fetched_data = pointer.fetchall()
+            # print()
             overhaul_id = uuid.uuid4()
             maintenance_type = 'Corrective Maintenance'
 
