@@ -6,19 +6,49 @@ from decimal import Decimal, getcontext
 from dB.Data_Adminstrator.data_adminstrator import Data_Administrator
 
 
-class OverhaulsAlgos:
-   
-    def days_addition_logic(self, equipment_id):
-        query = "SELECT TOP 5 average_running FROM operational_data WHERE component_id = ? ORDER BY average_running DESC"
-        cursor.execute(query, equipment_id)
-        results = cursor.fetchall()
-        num_rows = len(results)
-        while num_rows < 5:
-            results.append((0,))
-            num_rows += 1
-        total_average = sum(row[0] for row in results)
-        days = total_average / 5 / 30
-        return days
+class OverhaulsAlgos: 
+    
+    def overhaul_date_calculation(self, component_id, overhaul_frequency_hour, previous_age, current_date,previous_date):
+        
+        """
+        Calculate overhaul date based on previous running age.
+        
+        Args:
+            previous_age: The cmms_running_age from the PREVIOUS row in the loop (pass it directly)
+        """
+        if previous_age is None:
+            return None
+        
+        remaining_hours = overhaul_frequency_hour - previous_age
+        
+        query = """SELECT AVG(average_running)
+                    FROM (
+                    SELECT TOP 5 average_running
+                    FROM operational_data
+                    WHERE component_id = ?
+                    AND operation_date <= ?
+                    AND average_running > 0
+                    ORDER BY operation_date DESC
+                ) AS TopFive;
+                """
+        cursor.execute(query, component_id, current_date)
+        results = cursor.fetchone()
+        
+        if results and results[0] is not None:
+            daily_average = results[0] / 30
+        else:
+            return None
+        
+        if daily_average == 0:
+            return None
+            
+        days_until_overhaul = remaining_hours / daily_average 
+        estimated_overhaul_date = datetime.strptime(previous_date, "%Y-%m-%d") + timedelta(days=days_until_overhaul)
+        print(f"Estimated overhaul date for component {component_id} is: {estimated_overhaul_date.strftime('%Y-%m-%d')}")
+        return estimated_overhaul_date.strftime("%Y-%m-%d")        
+    
+
+
 
     def insert_overhauls_data(self, equipment_id, run_age_component):
         query = "SELECT ship_name,nomenclature FROM system_configuration where component_id = ?"
@@ -31,9 +61,9 @@ class OverhaulsAlgos:
         new_data = []
         clk_reset = 0
         index = 0
-        empty_age_query = "UPDATE data_manager_overhaul_maint_data SET running_age=NULL, cmms_running_age=NULL"
-        cursor.execute(empty_age_query)
-        cnxn.commit()
+        # empty_age_query = "UPDATE data_manager_overhaul_maint_data SET running_age=NULL, cmms_running_age=NULL WHERE component_id = ?"
+        # cursor.execute(empty_age_query, equipment_id)
+        # cnxn.commit()
 
         query = "SELECT * FROM data_manager_overhaul_maint_data where component_id = ? AND running_age is NULL ORDER BY date"
         cursor.execute(query, equipment_id)
@@ -42,8 +72,9 @@ class OverhaulsAlgos:
             return False
         try:
             data = self.historic_data_interpolation(data=odata, component_id=equipment_id)
-            days = self.days_addition_logic(equipment_id)
+            
             prev_date = None
+            
             multiplication_factor = 1
 
             for row in data:
@@ -58,15 +89,16 @@ class OverhaulsAlgos:
                     cmms_running_age,
                 ) = row
                 cmms_running_age = float(cmms_running_age)
-                if date is None:
-                    if prev_date:
-                        date = datetime.strptime(str(prev_date), "%Y-%m-%d") + timedelta(
-                            days=days
-                        )
-                        date = date.strftime("%Y-%m-%d")
+                # if date is None:
+                #     if prev_date:
+                #         date = datetime.strptime(str(prev_date), "%Y-%m-%d") + timedelta(
+                #             days=days
+                #         )
+                        # date = date.strftime("%Y-%m-%d")
                 if clk_reset == 0:
                     if cmms_running_age < run_age_component:
                         running_age = cmms_running_age
+                        age = cmms_running_age
                         new_data.append(
                             (
                                 id,
@@ -97,17 +129,24 @@ class OverhaulsAlgos:
                         clk_reset += 1
                     else:
                         maintenance_type = "Overhaul"
+                        # In insert_overhauls_data, around line 120 and 183
+
+                        prev_row = data[index - 1]
+                        previous_cmms_age = prev_row[7]  # cmms_running_age from previous row
                         prev_date = data[index - 1][3]
-                        date = datetime.strptime(str(prev_date), "%Y-%m-%d") + timedelta(
-                            days=days
+                        overhaul_date = self.overhaul_date_calculation(
+                            component_id=component_id,
+                            overhaul_frequency_hour=run_age_component,
+                            previous_age=previous_cmms_age,  # Pass the value directly from loop
+                            current_date=date,
+                            previous_date=prev_date
                         )
-                        date = date.strftime("%Y-%m-%d")
                         new_data.append(
                             (
                                 id,
                                 component_id,
                                 overhaul_id,
-                                date,
+                                overhaul_date,
                                 maintenance_type,
                                 run_age_component,
                                 associated_sub_system,
@@ -124,7 +163,7 @@ class OverhaulsAlgos:
                                 id,
                                 component_id,
                                 overhaul_id,
-                                prev_date,
+                                date,  # FIXED: Changed from prev_date to date
                                 maintenance_type,
                                 running_age,
                                 associated_sub_system,
@@ -169,17 +208,23 @@ class OverhaulsAlgos:
                         id = uuid.uuid4()
                         running_age = age
                         multiplication_factor += 1
+                        # In insert_overhauls_data, around line 120 and 183
+                        prev_row = data[index - 1]
+                        previous_cmms_age = prev_row[7]  # cmms_running_age from previous row
                         prev_date = data[index - 1][3]
-                        date = datetime.strptime(str(prev_date), "%Y-%m-%d") + timedelta(
-                            days=days
+                        overhaul_date = self.overhaul_date_calculation(
+                            component_id=component_id,
+                            overhaul_frequency_hour=run_age_component,
+                            previous_age=previous_cmms_age,  # Pass the value directly from loop
+                            current_date=date,
+                            previous_date=prev_date
                         )
-                        date = date.strftime("%Y-%m-%d")
                         new_data.append(
                             (
                                 id,
                                 component_id,
                                 overhaul_id,
-                                date,
+                                overhaul_date,
                                 maintenance_type,
                                 run_age_component,
                                 associated_sub_system,
@@ -196,7 +241,7 @@ class OverhaulsAlgos:
                                 id,
                                 component_id,
                                 overhaul_id,
-                                prev_date,
+                                date,  # FIXED: Changed from prev_date to date
                                 maintenance_type,
                                 running_age,
                                 associated_sub_system,
@@ -329,31 +374,12 @@ class OverhaulsAlgos:
             cnxn.commit()
 
 
-    def _get_interpolated_age(self, date, component_id):
+
+    
+    def _get_interpolated_cmms_running_age(self, date, component_id):
         query = "SELECT SUM(average_running) FROM operational_data WHERE operation_date<?  AND component_id = ?"
         cursor.execute(query, date, component_id)
-        age = cursor.fetchone()[0]
-        date = datetime.strptime(str(date), '%Y-%m-%d')
-        utilization_date = f"{date.year}-{date.month}-01"
-        sql = "SELECT average_running FROM operational_data where operation_date=? and component_id=?"
-        cursor.execute(sql, utilization_date, component_id)
-        result = cursor.fetchone()
-        if result: 
-            utilization = result[0]
-        else:
-            utilization = 0
-        if utilization == 0:
-            # query = "SELECT TOP 5 average_running FROM operational_data WHERE component_id = ? ORDER BY average_running DESC"
-            # cursor.execute(query, component_id)
-            # results = sum(row[0] for row in cursor.fetchall())
-            # daily_avg = results / 5 * 30
-            return age
-        else:
-            daily_avg = utilization / 30
-        age = age + daily_avg * int(date.day)
-        return age
-    
-    def _get_interpolated_age_new(self, date, component_id):
+        cumulative_age = cursor.fetchone()[0]
         from datetime import datetime
         
         # Parse the date to get the day from original date
@@ -365,38 +391,33 @@ class OverhaulsAlgos:
         
         # Single query: get current age, or if 0/NULL, get average of last 5 NON-ZERO months
         query = '''
-            SELECT 
-                COALESCE(
-                    NULLIF(curr.average_running, 0),
-                    (SELECT AVG(prev.average_running) 
-                    FROM (
-                        SELECT TOP 5 average_running 
-                        FROM operational_data 
-                        WHERE component_id = ? 
-                        AND operation_date < ?
-                        AND average_running > 0
-                        ORDER BY operation_date DESC
-                    ) AS prev)
-                ) AS current_age
-            FROM operational_data curr
-            WHERE curr.component_id = ? AND curr.operation_date = ?
+            SELECT AVG(average_running) 
+            FROM (
+                SELECT TOP 5 average_running 
+                FROM operational_data 
+                WHERE component_id = ?
+                AND operation_date <= ?
+                AND average_running > 0
+                ORDER BY operation_date DESC
+            ) AS LastFive;
+
         '''
         
-        cursor.execute(query, (component_id, first_of_month, component_id, first_of_month))
+        cursor.execute(query, (component_id, first_of_month))
         result = cursor.fetchone()
         
         # Get current age, default to 0 if nothing found
-        current_age = result[0] if result and result[0] is not None else 0
+        monthly_average = result[0] if result and result[0] is not None else 0
         
         # Calculate interpolated age: current_age + (current_age / 30) * day
-        interpolated_age = current_age + (current_age / 30) * day
+        interpolated_age = cumulative_age + (monthly_average / 30) * day
         
         return interpolated_age
     def historic_data_interpolation(self, data, component_id):
         interpolated_data = []
         for item in data:
             if item[-1] == None or item[-1] == '0' or item[-1] == '':
-                age = self._get_interpolated_age(date=item[3], component_id=component_id)
+                age = self._get_interpolated_cmms_running_age(date=item[3], component_id=component_id)
                 item[-1] = age
             interpolated_data.append(item)
         return interpolated_data
