@@ -255,27 +255,55 @@ class Reliability:
         return final_data
 
     def get_curr_age(self):
+        query = '''
+            SELECT TOP 1 
+                maintenance_type,
+                running_age
+            FROM data_manager_overhaul_maint_data
+            WHERE component_id = ?
+            ORDER BY [date] DESC
+        '''
 
-        query1 = "SELECT MAX(date) AS last_overhaul_date FROM data_manager_overhaul_maint_data WHERE maintenance_type = 'Corrective Maintenance' and component_id= ?"
-        cursor.execute(query1, self.__component_id)
-        result1 = cursor.fetchone()
+        cursor.execute(query, self.__component_id)
+        row = cursor.fetchone()
 
-        if result1 is None or result1[0] is None:
-            return None, "No data found for the first query."
+        if row is None:
+            return None
 
-        last_overhaul_date_str = result1[0]
-        last_overhaul_date = datetime.strptime(str(last_overhaul_date_str), "%Y-%m-%d")
-        formatted_date = f"{last_overhaul_date.year}-{last_overhaul_date.month:02d}-01"
+        maintenance_type, running_age = row
 
-        query2 = "SELECT SUM(average_running) AS sum_of_average_running FROM operational_data WHERE operation_date <= ? and component_id=?"
-        cursor.execute(query2, formatted_date, self.__component_id)
-        result2 = cursor.fetchone()
+        # If latest maintenance is Overhaul → reset age
+        if maintenance_type == "Overhaul":
+            return 0.0
 
-        if result2 is None or result2[0] is None:
-            return None, "No data found for the second query."
+        if running_age is None:
+            return None ##add errror clause text ""
 
-        sum_of_average_running = result2[0]
-        return sum_of_average_running, None
+        return float(running_age)
+
+    
+    # def get_curr_age(self):
+
+    #     query1 = "SELECT MAX(date) AS last_overhaul_date FROM data_manager_overhaul_maint_data WHERE maintenance_type = 'Overhaul' and component_id= ?"
+    #     cursor.execute(query1, self.__component_id)
+    #     result1 = cursor.fetchone()
+
+    #     if result1 is None or result1[0] is None:
+    #         return None, "No data found for the first query."
+
+    #     last_overhaul_date_str = result1[0]
+    #     last_overhaul_date = datetime.strptime(str(last_overhaul_date_str), "%Y-%m-%d")
+    #     formatted_date = f"{last_overhaul_date.year}-{last_overhaul_date.month:02d}-01"
+
+    #     query2 = "SELECT SUM(average_running) AS sum_of_average_running FROM operational_data WHERE operation_date >= ? and component_id=?"
+    #     cursor.execute(query2, formatted_date, self.__component_id)
+    #     result2 = cursor.fetchone()
+
+    #     if result2 is None or result2[0] is None:
+    #         return None, "No data found for the second query."
+
+    #     sum_of_average_running = result2[0]
+    #     return sum_of_average_running, None
 
     def estimate_alpha_beta(self, component_id):
         '''CODE TO RE-ESTIMATE ALPHA BETA'''
@@ -287,7 +315,7 @@ class Reliability:
             data = cursor.fetchall()
             if not data:
                 raise ValueError(
-                    f"Time between two overhaul is not defined forgit : {self.__component_name}")
+                    f"Time between two overhaul is not defined for : {self.__component_name}")
             for item in data:
                 formatted_item = {
                     "id": item[0],
@@ -333,19 +361,6 @@ class Reliability:
                 raise
             pass
 
-    def get_default_current_age(self):
-            query = '''
-                SELECT TOP 1 default_curr_age
-                FROM data_manager_default_curr_age
-                WHERE component_id = ?
-                ORDER BY record_date DESC;
-            '''
-            cursor.execute(query, self.__component_id)
-            row = cursor.fetchone()
-
-            # If no data yet, return 0 safely
-            return row[0] if row else 0
-
     def calculate_rel_by_power_law(self, alpha, beta, duration):
         query = """
             SELECT component_id
@@ -357,11 +372,7 @@ class Reliability:
         result = cursor.fetchone()
         self.__component_id = result[0]
         # self.estimate_alpha_beta(component_id=self.__component_id)
-        sum_of_average_running, error_message = self.get_curr_age()
-        if error_message:
-            curr_age = self.get_default_current_age()
-        else:
-            curr_age = sum_of_average_running
+        curr_age = self.get_curr_age()
         print(f"CURRENT AGE: {curr_age}")
         print(f"ALPHA: {alpha}")
         print(f"BETA: {beta}")
