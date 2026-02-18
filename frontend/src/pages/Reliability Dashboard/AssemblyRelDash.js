@@ -7,7 +7,7 @@ import { userActions } from "../../store/ApplicationVariable";
 import CustomizedSnackbars from "../../ui/CustomSnackBar";
 import styles from "./rDashboard.module.css";
 import ReliabilityChart from "./ReliabilityChart";
-import { Typography } from "@material-ui/core";
+import { Typography, Checkbox } from "@material-ui/core";
 
 export default function AssemblyRelDash() {
 	const [shipName, setShipName] = useState("");
@@ -20,6 +20,7 @@ export default function AssemblyRelDash() {
 	const [selectedEqName, setEquipmentName] = useState(null);
 	const [nomenclature, setNomenclature] = useState(null);
 	const [tempMissionData, setTempMissionData] = useState([]);
+	const [selectedAssemblies, setSelectedAssemblies] = useState([]);
 	const [SnackBarMessage, setSnackBarMessage] = useState({
 		severity: "error",
 		message: "This is awesome",
@@ -156,8 +157,8 @@ export default function AssemblyRelDash() {
 		setEquipmentData(filteredEqData);
 	};
 	const OnAssemblychange = (e, value) => {
-		const currShip = value;
-		console.log(value);
+		setSelectedAssemblies(value);
+		const allSelected = assembly.length > 0 && selectedAssemblies.length === assembly.length;
 		const equipment = value.map((item) => ({
 			equipmentName: item.name,
 			parent: item.shipName,
@@ -210,7 +211,7 @@ export default function AssemblyRelDash() {
 			// Handle error state or display error to user
 		}
 	};
-	console.log(assembly);
+	const allSelected = assembly.length > 0 && selectedAssemblies.length === assembly.length;
 	return (
 		<>
 			<form onSubmit={handleSubmit}>
@@ -267,15 +268,49 @@ export default function AssemblyRelDash() {
 						multiple
 						id="assembly"
 						options={assembly}
+						value={selectedAssemblies}
 						getOptionLabel={(option) => option?.nomenclature}
 						groupBy={(option) => option?.parent}
 						style={{ width: "200px" }}
 						onChange={OnAssemblychange}
-						renderOption={(option) => (
+						renderOption={(option , { selected }) => (
 							<React.Fragment>
+								<>
+									<div
+										style={{
+											width: "100%",
+											borderBottom: "1px solid #ddd",
+											paddingBottom: "8px",
+											marginBottom: "8px",
+											cursor: "pointer",
+										}}
+										onClick={(e) => {
+											e.stopPropagation();
+											if (allSelected) {
+												setSelectedAssemblies([]);
+												OnAssemblychange(e, []);
+											} else {
+												setSelectedAssemblies(assembly);
+												OnAssemblychange(e, assembly);
+											}
+										}}
+									>
+										<Checkbox
+											checked={allSelected}
+											style={{ marginRight: 8 }}
+										/>
+										<span style={{ fontWeight: "bold" }}>
+											Select All
+										</span>
+									</div>
+								</>
+								<Checkbox
+									checked={selected}
+									style={{ marginRight: 8 }}
+								/>
 								<span>{option.name}</span>
-								{option.nomenclature && ( // Check if nomenclature exists
-									<span> ({option.nomenclature}) </span> // Display nomenclature in brackets
+								{option.nomenclature && (
+									<span> ({option.nomenclature}) </span>
 								)}
 							</React.Fragment>
 						)}

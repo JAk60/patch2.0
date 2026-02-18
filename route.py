@@ -17,9 +17,10 @@ from flask_apscheduler import APScheduler
 from flask_mail import Mail, Message
 from werkzeug.utils import secure_filename
 
+
 import middleware
 from classes.custom_settings import Custom_Settings
-from classes.reliability import Reliability
+from Reliability.reliability import Reliability
 from classes.System_Configuration_Netra import System_Configuration_N
 from classes.taskReliability import TaskReliability
 from dB.Authentication.signin import Authentication
@@ -434,6 +435,7 @@ def rel_estimateEQ():
             mission_data, eq_data, nomenclatures, temp_missions
         )
         return jsonify(res)
+    
 
 
 @api.route("/update_parameters", methods=["POST"])

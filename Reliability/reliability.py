@@ -3,9 +3,7 @@ import numpy as np
 from itertools import groupby
 from operator import itemgetter
 import pandas as pd
-import math
-from datetime import datetime
-from classes.overhaulsAlgos import OverhaulsAlgos
+from Reliability.alpha_beta import AlphaBeta
 
 
 class Reliability:
@@ -19,20 +17,68 @@ class Reliability:
         self.__ship_name = None
         self.__component_name = None
         self.__component_id = None
-        self.__rel_F =None
+        self.__rel_F = None
+
+    def get_curr_age(self):
+        query = '''
+            SELECT TOP 1 
+                maintenance_type,
+                running_age
+            FROM data_manager_overhaul_maint_data
+            WHERE component_id = ?
+            ORDER BY [date] DESC
+        '''
+        cursor.execute(query, self.__component_id)
+        row = cursor.fetchone()
+
+        if row is None:
+            return None
+
+        maintenance_type, running_age = row
+
+        if maintenance_type == "Overhaul":
+            return 0.0
+
+        if running_age is None:
+            return None
+
+        return float(running_age)
+
+    def calculate_rel_by_power_law(self, alpha, beta, duration):
+        query = """
+            SELECT component_id
+                FROM system_configuration
+                WHERE ship_name = ? COLLATE SQL_Latin1_General_CP1_CS_AS
+                AND nomenclature = ? COLLATE SQL_Latin1_General_CP1_CS_AS;
+        """
+        cursor.execute(query, self.__ship_name, self.__component_name)
+        result = cursor.fetchone()
+        self.__component_id = result[0]
+        curr_age = self.get_curr_age()
+        print(f"CURRENT AGE: {curr_age}")
+        print(f"ALPHA: {alpha}")
+        print(f"BETA: {beta}")
+        N_currentAge = alpha * (curr_age**beta)
+        missionAge = curr_age + duration
+        N_mission = alpha * (missionAge**beta)
+        N = N_mission - N_currentAge
+        rel = np.e ** (-N)
+        print(f"RELIBLITY: {rel}")
+        print("*"*100)
+        return rel
 
     def lmu_rel(self, mission_name, system, platform, total_dur, c_age=0):
         sys_lmus = []
 
         system_config = '''select * from system_configuration where ship_name=? and nomenclature=?'''
-        
+
         # TRY ALPHA_BETA FIRST
         alpha_beta = '''select * from alpha_beta inner join system_configuration sc on 
                     alpha_beta.component_id = sc.component_id
                     where sc.nomenclature = ? and sc.ship_name = ?'''
         cursor.execute(alpha_beta, system, platform)
         alpha_beta_data = cursor.fetchall()
-        
+
         # ONLY IF ALPHA_BETA IS EMPTY, TRY ETA_BETA
         eta_beta_data = []
         if len(alpha_beta_data) == 0:
@@ -40,12 +86,12 @@ class Reliability:
                             where sc.nomenclature = ? and sc.ship_name = ?'''
             cursor.execute(eta_beta, system, platform)
             eta_beta_data = cursor.fetchall()
-        
+
         cursor.execute(system_config, platform, system)
         sys_data = cursor.fetchall()
 
         lmus_rel = []
-        
+
         # PROCESS ALPHA_BETA DATA (IF AVAILABLE)
         if len(alpha_beta_data) > 0:
             for lmu in alpha_beta_data:
@@ -54,7 +100,7 @@ class Reliability:
                 rel = self.calculate_rel_by_power_law(alpha, beta, total_dur)
                 lmus_rel.append(
                     {'name': lmu[5], 'id': lmu[4], 'rel': rel, 'parent_name': lmu[9], 'parent_id': lmu[6]})
-        
+
         # ONLY PROCESS ETA_BETA IF ALPHA_BETA WAS EMPTY
         else:
             for lmu in eta_beta_data:
@@ -84,23 +130,21 @@ class Reliability:
                     "beta =", repr(beta),
                     "type(beta) =", type(beta)
                 )
-
                 rel_num = np.exp(-((c_age + float(total_dur)) / eta) ** beta)
                 rel_deno = np.exp(-(c_age / eta) ** beta)
                 rel = float(rel_num) / float(rel_deno)
                 lmus_rel.append(
                     {'name': lmu[6], 'id': lmu[5], 'rel': rel, 'parent_name': lmu[10], 'parent_id': lmu[7]})
-        
+
         sys_lmus.append({system+'_'+platform: lmus_rel})
         return sys_lmus, sys_data
-    
+
     def system_rel(self, mission_name, system, platform, total_dur):
         sys_lmus, sys_data = self.lmu_rel(
             mission_name, system, platform, total_dur)
         final_data = [] + sys_lmus[0][system + "_" + platform]
-        # all_component_ids = len(sys_data)
         print(final_data)
-        self.__rel_F=final_data[0]['rel']
+        self.__rel_F = final_data[0]['rel']
         print(self.__rel_F)
 
         def inside_func(lmus, system, platform, is_lmu=False):
@@ -126,7 +170,6 @@ class Reliability:
                             "rel": rel,
                         }
                     )
-                    # check wheter final data has that element or not
                     ele_exist = list(
                         filter(lambda e: e[1]["id"] ==
                                key, enumerate(final_data))
@@ -153,9 +196,6 @@ class Reliability:
             current_b = inside_func(current_b, system, platform)
             final_data = final_data + current_b
 
-        # Group by on final data.
-        # final_grps = groupby(final_data, lambda b: b['id'])
-        # final_gs = list(map(lambda b: b[0], final_grps))
         uniq = []
         df = pd.DataFrame(final_data)
         final_grps = df.groupby(by="id")
@@ -198,7 +238,6 @@ class Reliability:
                 cursor.execute(mission_sql, m)
                 mission = cursor.fetchone()
                 target_rel = mission[7]
-                # total_dur = 0
                 for stage in range(2, 7):
                     split_stage = mission[stage].split("-")
                     if len(split_stage) == 1:
@@ -230,7 +269,6 @@ class Reliability:
             for sys in eqData:
                 system = sys["name"]
                 platform = sys["parent"]
-                # call the method and save it to a variable
                 single_rel_duration = (min_total_durr + max_total_durr) / 2
                 rel = self.system_rel(m, system, platform, single_rel_duration)
                 estimation_ach = 0
@@ -254,140 +292,69 @@ class Reliability:
             final_data.append({m: data})
         return final_data
 
-    def get_curr_age(self):
-        query = '''
-            SELECT TOP 1 
-                maintenance_type,
-                running_age
-            FROM data_manager_overhaul_maint_data
-            WHERE component_id = ?
-            ORDER BY [date] DESC
-        '''
-
-        cursor.execute(query, self.__component_id)
-        row = cursor.fetchone()
-
-        if row is None:
-            return None
-
-        maintenance_type, running_age = row
-
-        # If latest maintenance is Overhaul → reset age
-        if maintenance_type == "Overhaul":
-            return 0.0
-
-        if running_age is None:
-            return None ##add errror clause text ""
-
-        return float(running_age)
-
-    
-    # def get_curr_age(self):
-
-    #     query1 = "SELECT MAX(date) AS last_overhaul_date FROM data_manager_overhaul_maint_data WHERE maintenance_type = 'Overhaul' and component_id= ?"
-    #     cursor.execute(query1, self.__component_id)
-    #     result1 = cursor.fetchone()
-
-    #     if result1 is None or result1[0] is None:
-    #         return None, "No data found for the first query."
-
-    #     last_overhaul_date_str = result1[0]
-    #     last_overhaul_date = datetime.strptime(str(last_overhaul_date_str), "%Y-%m-%d")
-    #     formatted_date = f"{last_overhaul_date.year}-{last_overhaul_date.month:02d}-01"
-
-    #     query2 = "SELECT SUM(average_running) AS sum_of_average_running FROM operational_data WHERE operation_date >= ? and component_id=?"
-    #     cursor.execute(query2, formatted_date, self.__component_id)
-    #     result2 = cursor.fetchone()
-
-    #     if result2 is None or result2[0] is None:
-    #         return None, "No data found for the second query."
-
-    #     sum_of_average_running = result2[0]
-    #     return sum_of_average_running, None
-
-    def estimate_alpha_beta(self, component_id):
-        '''CODE TO RE-ESTIMATE ALPHA BETA'''
-        subData = []
+    def mission_wise_rel_systemEQ(self, missions, eqData, nomenclatures, temp_missions):
         try:
-            instance = OverhaulsAlgos()
-            sub_query = "select * from data_manager_overhauls_info where component_id = ?"
-            cursor.execute(sub_query, (component_id,))
-            data = cursor.fetchall()
-            if not data:
-                raise ValueError(
-                    f"Time between two overhaul is not defined for : {self.__component_name}")
-            for item in data:
-                formatted_item = {
-                    "id": item[0],
-                    "overhaulNum": item[2],
-                    "numMaint": item[4],
-                    "runAge": item[3],
-                    "component_id": item[1],
-                }
-                subData.append(formatted_item)
-            if not subData:
-                return {"message": f"Time between two overhaul is not defined for: {self.__component_name}", "code": 0}
-            run_age_value = list(map(lambda item: item["runAge"], subData))[0]
-            success = instance.insert_overhauls_data(
-                equipment_id=component_id,
-                run_age_component=float(run_age_value),
-            )
-            # if success is False:
-            #     raise ValueError(f"corrective maintenance dates are missing for: {self.__component_name}")
-            
-            main_query = """SELECT * FROM data_manager_overhaul_maint_data 
-                        WHERE component_id = ? ORDER BY date ASC 
-                """
-            cursor.execute(main_query, (component_id,))
-            data = cursor.fetchall()
-            mainData = []
-            for item in data:
-                formatted_item = {
-                    "id": item[0],
-                    "component_id": item[1],
-                    "overhaulId": item[2],
-                    "date": item[3],
-                    "maintenanceType": item[4],
-                    "totalRunAge": item[5],
-                    "subSystemId": item[6],
-                    "runningAge": item[7],
-                }
-                mainData.append(formatted_item)
+            final_data = []
+            m = "Temp Mission"
+            target_rel = 0.9
+            ab = AlphaBeta()
+            for tm in missions:
+                data = {}
+                for sys in eqData:
+                    component = sys["equipmentName"]
+                    platform = sys["parent"]
+                    instances = [
+                        item
+                        for item in nomenclatures
+                        if item["equipmentName"] == component and item["parent"] == platform
+                    ]
+                    for e in instances:
+                        system = e["nomenclature"]
+                        print("*"*100)
+                        print(f"COMPONENT NAME: {component}")
+                        print(f"SHIP NAME: {platform}")
+                        print(f"NOMENCLATURE: {system}")
+                        self.__ship_name = platform
+                        self.__component_name = system
+                        query = """
+                                SELECT component_id
+                                    FROM system_configuration
+                                    WHERE ship_name = ? COLLATE SQL_Latin1_General_CP1_CS_AS
+                                    AND nomenclature = ? COLLATE SQL_Latin1_General_CP1_CS_AS;
+                            """
+                        cursor.execute(query, self.__ship_name,
+                                       self.__component_name)
+                        result = cursor.fetchone()
+                        self.__component_id = result[0]
+                        ab.set_component(self.__component_name, self.__component_id)
+                        ab.estimate_alpha_beta(component_id=self.__component_id)
+                        single_rel_duration = int(tm)
+                        rel = self.system_rel(
+                            m, system, platform, single_rel_duration)
+                        if rel['rel'] == 1:
+                            rel['rel'] = self.__rel_F
+                        estimation_ach = 1
+                        if rel["rel"] > target_rel:
+                            estimation_ach = 1
+                        rel["prob_ac"] = estimation_ach
+                        if platform not in data:
+                            data[platform] = []
+                        rel["equipment"] = component
+                        print(rel, "askdkanskdakska")
+                        if system not in [list(d.keys())[0] for d in data.get(platform, [])]:
+                            data.setdefault(platform, []).append({system: rel})
+                final_data.append({m: data})
+            self.success_return[
+                "message"
+            ] = "Reliability displayed successfully"
+            self.success_return["results"] = final_data
+            return self.success_return
 
-            instance.alpha_beta_calculation(mainData, subData, component_id)
         except Exception as e:
-            print(e)
-            if not subData or success is False:
-                raise
-            pass
+            self.error_return["message"] = str(e)
+            return self.error_return
 
-    def calculate_rel_by_power_law(self, alpha, beta, duration):
-        query = """
-            SELECT component_id
-                FROM system_configuration
-                WHERE ship_name = ? COLLATE SQL_Latin1_General_CP1_CS_AS
-                AND nomenclature = ? COLLATE SQL_Latin1_General_CP1_CS_AS;
-        """
-        cursor.execute(query, self.__ship_name, self.__component_name)
-        result = cursor.fetchone()
-        self.__component_id = result[0]
-        # self.estimate_alpha_beta(component_id=self.__component_id)
-        curr_age = self.get_curr_age()
-        print(f"CURRENT AGE: {curr_age}")
-        print(f"ALPHA: {alpha}")
-        print(f"BETA: {beta}")
-        N_currentAge = alpha * (curr_age**beta)
-        missionAge = curr_age + duration
-        N_mission = alpha * (missionAge**beta)
-        N = N_mission - N_currentAge
-        rel = np.e ** (-N)
-        print(f"RELIBLITY: {rel}")
-        print("*"*100)
-        return rel
-
-    def get_DC_EM(
-        self, lmuName, component_id=None, system_name=None, platform_name=None
-    ):
+    def get_DC_EM(self, lmuName, component_id=None, system_name=None, platform_name=None):
         """This returns EM and DC values for each LMU"""
         DC_val = 1
         EM_val = 1
@@ -407,7 +374,6 @@ class Reliability:
         if not dc_cycle_data[0]:
             DC_val = dc_cycle_data[0]
 
-        # Below code is for EM val calculation.
         em_sql = """select life_multiplier from phase_life_multiplier where component_id = ?"""
         if component_id:
             cursor.execute(em_sql, component_id)
@@ -428,65 +394,3 @@ class Reliability:
 
     def get_HEP(self, lmuName=None, shipName=None, systemName=None):
         pass
-
-    def mission_wise_rel_systemEQ(self, missions, eqData, nomenclatures, temp_missions):
-        try:
-            final_data = []
-            m = "Temp Mission"
-            target_rel = 0.9
-            for tm in missions:
-                data = {}
-                for sys in eqData:
-                    component = sys["equipmentName"]
-                    platform = sys["parent"]
-                    instances = [
-                        item
-                        for item in nomenclatures
-                        if item["equipmentName"] == component and item["parent"] == platform
-                    ]
-                    for e in instances:
-                        system = e["nomenclature"]
-                        print("*"*100)
-                        print(f"COMPONENT NAME: {component}")
-                        print(f"SHIP NAME: {platform}")
-                        print(f"NOMENCLATURE: {system}")
-                        self.__ship_name = platform
-                        self.__component_name = system
-                        # call the method and save it to a variable
-                        query = """
-                                SELECT component_id
-                                    FROM system_configuration
-                                    WHERE ship_name = ? COLLATE SQL_Latin1_General_CP1_CS_AS
-                                    AND nomenclature = ? COLLATE SQL_Latin1_General_CP1_CS_AS;
-                            """
-                        cursor.execute(query, self.__ship_name,
-                                       self.__component_name)
-                        result = cursor.fetchone()
-                        self.__component_id = result[0]
-                        self.estimate_alpha_beta(
-                            component_id=self.__component_id)
-                        single_rel_duration = int(tm)
-                        rel = self.system_rel(
-                            m, system, platform, single_rel_duration)
-                        if rel['rel'] == 1:
-                            rel['rel'] = self.__rel_F
-                        estimation_ach = 1
-                        if rel["rel"] > target_rel:
-                            estimation_ach = 1
-                        rel["prob_ac"] = estimation_ach 
-                        if platform not in data:
-                            data[platform] = []
-                        rel["equipment"] = component
-                        print(rel,"askdkanskdakska")
-                        if system not in [list(d.keys())[0] for d in data.get(platform, [])]:
-                            data.setdefault(platform, []).append({system: rel})
-                final_data.append({m: data})
-            self.success_return[
-                "message"
-            ] = "Reliability displayed successfully"
-            self.success_return["results"] = final_data
-            return self.success_return
-
-        except Exception as e:
-            self.error_return["message"] = str(e)
-            return self.error_return
