@@ -302,43 +302,55 @@ class TaskReliability:
         #     final_data.append({m: data})
         # return final_data
 
-    def get_curr_ages(self):
+    # def get_curr_ages(self):
 
-        query1 = "SELECT MAX(date) AS last_overhaul_date FROM data_manager_overhaul_maint_data WHERE maintenance_type = 'Corrective Maintenance' and component_id= ?"
-        cursor.execute(query1, self.__component_id)
-        result1 = cursor.fetchone()
+    #     query1 = "SELECT MAX(date) AS last_overhaul_date FROM data_manager_overhaul_maint_data WHERE maintenance_type = 'Corrective Maintenance' and component_id= ?"
+    #     cursor.execute(query1, self.__component_id)
+    #     result1 = cursor.fetchone()
 
-        if result1 is None or result1[0] is None:
-            return None, "No data found for the first query."
+    #     if result1 is None or result1[0] is None:
+    #         return None, "No data found for the first query."
 
-        last_overhaul_date_str = result1[0]
-        last_overhaul_date = datetime.strptime(
-            str(last_overhaul_date_str), '%Y-%m-%d')
-        formatted_date = f"{last_overhaul_date.year}-{last_overhaul_date.month:02d}-01"
+    #     last_overhaul_date_str = result1[0]
+    #     last_overhaul_date = datetime.strptime(
+    #         str(last_overhaul_date_str), '%Y-%m-%d')
+    #     formatted_date = f"{last_overhaul_date.year}-{last_overhaul_date.month:02d}-01"
 
-        query2 = "SELECT SUM(average_running) AS sum_of_average_running FROM operational_data WHERE operation_date <= ? and component_id=?"
-        cursor.execute(query2, formatted_date, self.__component_id)
-        result2 = cursor.fetchone()
+    #     query2 = "SELECT SUM(average_running) AS sum_of_average_running FROM operational_data WHERE operation_date <= ? and component_id=?"
+    #     cursor.execute(query2, formatted_date, self.__component_id)
+    #     result2 = cursor.fetchone()
 
-        if result2 is None or result2[0] is None:
-            return None, "No data found for the second query."
+    #     if result2 is None or result2[0] is None:
+    #         return None, "No data found for the second query."
 
-        sum_of_average_running = result2[0]
-        return sum_of_average_running, None
+    #     sum_of_average_running = result2[0]
+    #     return sum_of_average_running, None
     
-    def get_default_current_age(self, component_id):
-            query = '''
-                SELECT TOP 1 default_curr_age
-                FROM data_manager_default_curr_age
-                WHERE component_id = ?
-                ORDER BY record_date DESC;
-            '''
-            cursor.execute(query, component_id)
-            row = cursor.fetchone()
+    def get_curr_age(self, component_id):
+        query = '''
+            SELECT TOP 1 
+                maintenance_type,
+                running_age
+            FROM data_manager_overhaul_maint_data
+            WHERE component_id = ?
+            ORDER BY [date] DESC
+        '''
 
-            # If no data yet, return 0 safely
-            return row[0] if row else 0
+        cursor.execute(query, component_id)
+        row = cursor.fetchone()
 
+        if row is None:
+            return None
+
+        maintenance_type, running_age = row
+
+        # If latest maintenance is Overhaul → reset age
+        if maintenance_type == "Overhaul":
+            return 0.0
+        if running_age is None:
+            return None ##add errror clause text ""
+        return float(running_age)
+    
     def estimate_alpha_beta(self, component_id, component_name):
         '''CODE TO RE-ESTIMATE ALPHA BETA'''
         subData = []
@@ -396,18 +408,18 @@ class TaskReliability:
                 raise
             pass
 
-    def get_default_current_age(self,component_id):
-            query = '''
-                SELECT TOP 1 default_curr_age
-                FROM data_manager_default_curr_age
-                WHERE component_id = ?
-                ORDER BY record_date DESC;
-            '''
-            cursor.execute(query,component_id)
-            row = cursor.fetchone()
+    # def get_default_current_age(self,component_id):
+    #         query = '''
+    #             SELECT TOP 1 default_curr_age
+    #             FROM data_manager_default_curr_age
+    #             WHERE component_id = ?
+    #             ORDER BY record_date DESC;
+    #         '''
+    #         cursor.execute(query,component_id)
+    #         row = cursor.fetchone()
 
-            # If no data yet, return 0 safely
-            return row[0] if row else 0
+    #         # If no data yet, return 0 safely
+    #         return row[0] if row else 0
 
     def calculate_rel_by_power_law(self, alpha, beta, duration):
         query = '''
@@ -422,12 +434,13 @@ class TaskReliability:
         self.__component_id = result[0]
         self.estimate_alpha_beta(
             component_id=self.__component_id, component_name=self.__component_name)
-        sum_of_average_running, error_message = self.get_curr_ages()
-        if error_message:
-            # print(error_message)
-            curr_age = self.get_default_current_age(self.__component_id)
-        else:
-            curr_age = sum_of_average_running
+        curr_age = self.get_curr_age(component_id=self.__component_id)
+        # if error_message:
+        #     # print(error_message)
+        #     # curr_age = self.get_default_current_age(self.__component_id)
+        #     curr_age = 0
+        # else:
+        #     curr_age = sum_of_average_running
 
         if self.__component_name in self.__phase_used_components:
             duration_ = self.__phase_used_components[self.__component_name] + duration
@@ -743,28 +756,28 @@ class TaskReliability:
         result = cursor.fetchone()
         return result[0], result[1]
 
-    def get_curr_age(self, component_id):
+    # def get_curr_age(equipment_idself, component_id):
 
-        query1 = "SELECT MAX(date) AS last_overhaul_date FROM data_manager_overhaul_maint_data WHERE maintenance_type = 'Corrective Maintenance' and component_id= ?"
-        cursor.execute(query1, component_id)
-        result1 = cursor.fetchone()
+    #     query1 = "SELECT MAX(date) AS last_overhaul_date FROM data_manager_overhaul_maint_data WHERE maintenance_type = 'Corrective Maintenance' and component_id= ?"
+    #     cursor.execute(query1, component_id)
+    #     result1 = cursor.fetchone()
 
-        if result1 is None or result1[0] is None:
-            return 0
-        last_overhaul_date_str = result1[0]
-        last_overhaul_date = datetime.strptime(
-            str(last_overhaul_date_str), '%Y-%m-%d')
-        formatted_date = f"{last_overhaul_date.year}-{last_overhaul_date.month:02d}-01"
+    #     if result1 is None or result1[0] is None:
+    #         return 0
+    #     last_overhaul_date_str = result1[0]
+    #     last_overhaul_date = datetime.strptime(
+    #         str(last_overhaul_date_str), '%Y-%m-%d')
+    #     formatted_date = f"{last_overhaul_date.year}-{last_overhaul_date.month:02d}-01"
 
-        query2 = "SELECT SUM(average_running) AS sum_of_average_running FROM operational_data WHERE operation_date <= ? and component_id=?"
-        cursor.execute(query2, formatted_date, component_id)
-        result2 = cursor.fetchone()
+    #     query2 = "SELECT SUM(average_running) AS sum_of_average_running FROM operational_data WHERE operation_date <= ? and component_id=?"
+    #     cursor.execute(query2, formatted_date, component_id)
+    #     result2 = cursor.fetchone()
 
-        if result2 is None or result2[0] is None:
-            return 0
+    #     if result2 is None or result2[0] is None:
+    #         return 0
 
-        sum_of_average_running = result2[0]
-        return sum_of_average_running
+    #     sum_of_average_running = result2[0]
+    #     return sum_of_average_running
 
     def task_formatter(self, json_data):
         pass
@@ -866,11 +879,10 @@ class TaskReliability:
                             print("sjdkhaidhiadijasdja", equipment_id)
                             equipment_ids[label] = self.fetch_alpha_beta(
                                 equipment_id)
-                            running_ages[label] = self.get_curr_age(
-                                equipment_id)
-                            if running_ages[label] == 0:
-                                running_ages[label] = self.get_default_current_age(
-                                    equipment_id)
+                            running_ages[label] = self.get_curr_age(equipment_id)
+                            # if running_ages[label] == 0:
+                                # running_ages[label] = self.get_default_current_age(
+                                #     equipment_id)
 
                 response_data = {
                     "data": data_list,
@@ -979,7 +991,7 @@ class TaskReliability:
                         else:
                             phase_id = phases[idx]["id"]
                             print("----->>>>>something group t",
-                                  groups[i][j][4])
+                                  groups)
                             group_equi_rel, max_rel_equip, group_equip, Rel, max_rel_equip_index = taskrelcode.group_rel(
                                 groups[i][j][1], groups[i][j][2], groups[i][j][3], groups[i][j][4], phase_duration[idx], groups[i][j][5], groups[i][j][6])
                             if phase_id not in results:

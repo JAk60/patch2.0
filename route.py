@@ -19,10 +19,10 @@ from werkzeug.utils import secure_filename
 
 
 import middleware
-from classes.custom_settings import Custom_Settings
-from Reliability.reliability import Reliability
-from classes.System_Configuration_Netra import System_Configuration_N
-from classes.taskReliability import TaskReliability
+from backend.user_selection.user_selection import Custom_Settings
+from backend.Reliability.reliability import Reliability
+from backend.sytem_configuration.system_configuration import System_Configuration_N
+from backend.Mission_reliability_dashboard.taskReliability import TaskReliability
 from dB.Authentication.signin import Authentication
 from dB.condition_monitoring.cgraph import GraphDashBoard
 from dB.condition_monitoring.condition_monitoring import conditionMonitoring_dB
