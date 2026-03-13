@@ -118,8 +118,3 @@ GET_ETA_BETA_JOIN = """
     AND sc.ship_name = ?
 """
 
-GET_MISSION_PROFILE = """
-    SELECT *
-    FROM mission_profile
-    WHERE mission_name = ?
-"""

@@ -2,7 +2,7 @@ from dB.dB_connection import cursor, cnxn
 from datetime import datetime, timedelta
 import uuid
 from dB.Data_Adminstrator.data_adminstrator import Data_Administrator
-from Reliability import queries as q
+from backend.Reliability import query as q
 
 
 class OverhaulsAlgos:
@@ -237,23 +237,27 @@ class OverhaulsAlgos:
             pass
 
     def _get_interpolated_cmms_running_age(self, date, component_id):
-        cursor.execute(q.GET_CUMULATIVE_RUNNING, (date, component_id))
-        cumulative_age = cursor.fetchone()[0]
+        if isinstance(date, str):
+            date = datetime.strptime(date, "%Y-%m-%d").date()
 
-        date_obj = datetime.strptime(date, "%Y-%m-%d")
-        day = date_obj.day
-        first_of_month = date_obj.replace(day=1).strftime("%Y-%m-%d")
+        cursor.execute(q.GET_CUMULATIVE_RUNNING, (date, component_id))
+        row = cursor.fetchone()
+        cumulative_age = row[0] if row else 0
+
+        day = date.day
+        first_of_month = date.replace(day=1).strftime("%Y-%m-%d")
+
         cursor.execute(q.GET_TOP5_AVG_RUNNING, (component_id, first_of_month))
         result = cursor.fetchone()
-        
         monthly_average = result[0] if result and result[0] else 0
         interpolated_age = cumulative_age + (monthly_average / 30) * day
-        return interpolated_age
 
+        return interpolated_age
 
     def historic_data_interpolation(self, data, component_id):
         interpolated_data = []
         for item in data:
+
             item = list(item)
             if item[-1] is None or item[-1] in ("0", ""):
                 age = self._get_interpolated_cmms_running_age(

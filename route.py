@@ -42,8 +42,7 @@ from dB.phase_manager.phase_manager_dB import Phase_Manager_dB
 from dB.PM.optimize import optimizer
 from dB.RCM.rcmDB import RCMDB
 from dB.RUL.rul import RUL_dB
-from dB.system_configuration.system_configurationdB_table import \
-    SystemConfigurationdBTable
+from dB.system_configuration.system_configurationdB_table import SystemConfigurationdBTable
 from dB.task_configuration.task_configuration import taskConfiguration_dB
 
 
@@ -84,8 +83,6 @@ UPLOAD_FOLDER = "uploads"
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
 res = SystemConfigurationdBTable()
-# Strict CSP - no wildcards
-# Updated CSP for Flask - More permissive for Vite bundles
 csp = {
     'default-src': "'self'",
     'script-src': ["'self'"],
@@ -101,11 +98,10 @@ csp = {
     'form-action': ["'self'"],  # Ensure it's a list
     'frame-ancestors': "'none'",
 }
-# Apply Talisman
 Talisman(
     app,
     content_security_policy=csp,
-    force_https=False,  # Set to False for local development
+    force_https=False, 
     force_https_permanent=False,
     strict_transport_security=True,
     strict_transport_security_max_age=31536000,
@@ -113,11 +109,11 @@ Talisman(
     x_content_type_options=True,
     x_xss_protection=True,
     referrer_policy='strict-origin-when-cross-origin',
-    session_cookie_secure=False,  # Set to False for local development
+    session_cookie_secure=False, 
     session_cookie_samesite='Lax'
 )
 
-# ============= SERVE REACT APP =============
+
 
 
 @app.route('/', defaults={'path': ''})
@@ -129,22 +125,15 @@ def serve_react(path):
     if path and os.path.exists(os.path.join(app.static_folder, path)):
         file_path = os.path.join(app.static_folder, path)
         if os.path.isfile(file_path):
-            # Read file manually to avoid automatic headers
             with open(file_path, 'rb') as f:
                 file_data = f.read()
-
-            # Determine MIME type
             import mimetypes
             mimetype = mimetypes.guess_type(
                 file_path)[0] or 'application/octet-stream'
-
-            # Create clean response
             response = app.response_class(
                 file_data,
                 mimetype=mimetype
             )
-
-            # Set cache headers based on path
             if path.startswith('assets/'):
                 response.headers['Cache-Control'] = 'public, max-age=31536000, immutable'
             else:
@@ -153,8 +142,6 @@ def serve_react(path):
                 response.headers['Expires'] = '0'
 
             return response
-
-    # Serve index.html for all other routes
     index_path = os.path.join(app.static_folder, 'index.html')
     with open(index_path, 'rb') as f:
         index_data = f.read()
@@ -169,12 +156,10 @@ def serve_react(path):
 
     return response
 
-# CONSOLIDATED after_request handler
 
 
 @app.after_request
 def apply_security_headers(response):
-    # Aggressively remove timestamp and metadata headers
     headers_to_remove = [
         'Last-Modified', 'ETag', 'Date', 'Server', 'X-Powered-By',
         'Age', 'Content-Disposition'
@@ -183,7 +168,6 @@ def apply_security_headers(response):
     for header in headers_to_remove:
         response.headers.pop(header, None)
 
-    # Set security headers
     response.headers.setdefault('X-Content-Type-Options', 'nosniff')
     response.headers.setdefault('X-Frame-Options', 'DENY')
     response.headers.setdefault('X-XSS-Protection', '1; mode=block')
@@ -192,30 +176,27 @@ def apply_security_headers(response):
     response.headers.setdefault(
         'Permissions-Policy', 'geolocation=(), microphone=(), camera=()')
 
-    # Enhanced cache control to prevent timestamp alerts
+
     path = request.path.lower()
 
-    # JavaScript, CSS, images, fonts - immutable cache
     if any(path.endswith(ext) for ext in ['.js', '.css', '.png', '.jpg', '.jpeg', '.gif', '.svg', '.woff', '.woff2', '.ttf', '.eot']):
         response.headers['Cache-Control'] = 'public, max-age=31536000, immutable'
 
-    # HTML files - no cache
+
     elif path.endswith('.html') or path == '/':
         response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
         response.headers['Pragma'] = 'no-cache'
         response.headers['Expires'] = '0'
 
-    # API routes - no cache
     elif '/api/' in path:
         response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
         response.headers['Pragma'] = 'no-cache'
         response.headers['Expires'] = '0'
 
-    # Default for other static assets
+
     elif '/assets/' in path or '/static/' in path:
         response.headers['Cache-Control'] = 'public, max-age=31536000, immutable'
 
-    # Everything else - no cache
     else:
         response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
         response.headers['Pragma'] = 'no-cache'
@@ -223,13 +204,12 @@ def apply_security_headers(response):
     import re
 
     if response.content_type in ['application/xml', 'text/xml', 'application/zip']:
-        # Remove XML declarations with timestamps
+
         content = response.get_data(as_text=True)
 
-        # Remove XML declarations
+  
         content = re.sub(r'<\?xml[^?>]*\?>', '', content)
 
-        # Remove other timestamp patterns
         content = re.sub(r'created="[^"]*"', 'created=""', content)
         content = re.sub(r'timestamp="[^"]*"', 'timestamp=""', content)
         content = re.sub(r'datetime="[^"]*"', 'datetime=""', content)
@@ -239,11 +219,10 @@ def apply_security_headers(response):
 
 
 def hit_srcetl_endpoint():
-    endpoint_url = "http://127.0.0.1:5000/srcetl"  # Update with your actual URL
+    endpoint_url = "http://127.0.0.1:5000/srcetl"  
     response = requests.get(endpoint_url)
     print(f"Response from /srcetl endpoint: {response.text}")
 
-# Schedule the task to run every 5 seconds
 
 
 @scheduler.task('interval', id='hit_srcetl', days=5, misfire_grace_time=10)
@@ -319,18 +298,16 @@ def fetch_system():
     return jsonify(res)
 
 
-@api.route("/fmodes", methods=["POST"])  # Update the method to 'POST'
+@api.route("/fmodes", methods=["POST"]) 
 def fetch_failure_modes():
     if request.method == "POST":
-        data = request.json  # Assuming the request body contains JSON data
+        data = request.json  
         component_id = data.get(
             "component_id"
-        )  # Get the component_id from the request JSON
+        )  
         sys_inst = System_Configuration_N()
         res = sys_inst.fmodesData(component_id)
-        # Rest of the code to fetch failure modes based on the component_id
-        # ...
-
+     
         return jsonify(res)
 
 
@@ -426,7 +403,7 @@ def rel_estimateEQ():
     if request.method == "POST":
         data = request.get_json(force=True)
         mission_data = data["data"]["missions"]
-        # mission_data = int(mission_data)
+        #  = int()
         eq_data = data["data"]["equipments"]
         temp_missions = data["data"]["tempMissions"]
         nomenclatures = data["data"]["nomenclature"]
@@ -471,10 +448,8 @@ def add_data():
             return jsonify(data)
         except Exception as e:
             return jsonify(e)
-        # d_inst = maintenanceAllocation_dB()
-        # res = d_inst.insert_data(data)
-        # return jsonify(res)
-
+      
+ 
 
 @api.route("/change", methods=["GET", "POST"])
 def trial():
@@ -485,7 +460,7 @@ def trial():
     return str(rel_val)
 
 
-# Condition Monitoring Routes
+
 @api.route("/save_condition_monitoring", methods=["POST", "GET"])
 def save_condition_monitoring():
     if request.method == "POST":
@@ -520,18 +495,6 @@ def fetch_cmdata():
     return jsonify(res)
 
 
-# TASK CONFIGURATION
-# @api.route("/fetch_tasks", methods=["GET", "POST"])
-# def fetch_tasks():
-#     if request.method == "GET":
-#         path = "./tasks"
-#         taskfiles = [f for f in listdir(path) if isfile(join(path, f))]
-#         tasknames = []
-#         for file in taskfiles:
-#             tasknames.append(file.split(".")[0])
-#         t_data = {"tasks": tasknames}
-#         return jsonify(t_data)
-
 
 @api.route("/fetch_tasks", methods=["GET", "POST"])
 def fetch_tasks():
@@ -539,32 +502,22 @@ def fetch_tasks():
         path = "./tasks"
         taskfiles = [f for f in listdir(path) if isfile(join(path, f))]
 
-        # Initialize an empty list for the output
         tasks_info = []
 
-        # Process each task file
         for file in taskfiles:
-            # Get the task name without the extension
             task_name = file.split(".")[0]
 
-            # Read the contents of the task file
             with open(join(path, file), 'r') as f:
-                task_data = json.load(f)  # Load the JSON data
-
-                # Ensure task_data is a list and get the last object
+                task_data = json.load(f)  
                 if isinstance(task_data, list) and task_data:
-                    # Get the last object in the array
                     last_object = task_data[-1]
-                    # Get the author's name from the key 'name'
                     author_name = last_object.get("shipName")
 
-                    # Create a dictionary for the current task
                     task_info = {
                         "taskname": task_name,
                         "ship_name": author_name
                     }
 
-                    # Add the task info to the list
                     tasks_info.append(task_info)
         return jsonify(tasks_info)
 
@@ -580,7 +533,6 @@ def save_task_configuration():
         taskDataNC = filter(lambda x: x["type"] != "component", taskData)
         taskData = list(taskDataNC) + list(taskDataf)
 
-        # Check if any task has k values that exceed n
         invalid_tasks = []
         for item in taskData:
             if item["type"] == "component" and "n" in item["data"]:
@@ -602,7 +554,7 @@ def save_task_configuration():
             return jsonify({"error": res}), 400
         else:
             try:
-                # Save valid data
+               
                 json_object = json.dumps(taskData, indent=4)
                 directory = "./tasks/"
                 filename = taskData[0]["data"]["label"] + ".json"
@@ -624,7 +576,6 @@ def save_task_configuration():
 @api.route("/load_task_configuration", methods=["POST", "GET"])
 def load_task_configuration():
     if request.method == "POST":
-        # tc_inst = taskConfiguration_dB()
         data = request.get_json(force=True)
         taskName = data["taskName"]
         file_path = "./tasks/" + taskName + ".json"
@@ -650,7 +601,7 @@ def task_rel():
                 rel = trel_inst.task_new_rel(
                     taskName, missionName, missionDataDuration, APP_ROOT, shipname
                 )
-                # print(rel)
+               
                 final_return_data.append(
                     {
                         "shipName": shipname,
@@ -660,9 +611,7 @@ def task_rel():
                         "cal_rel": cal_rel,
                     }
                 )
-    # name = data["taskName"][0]["name"]
 
-    # missionDataDuration = data["missionProfileData"
     return jsonify(final_return_data)
 
 
@@ -693,7 +642,6 @@ def fetch_condition_monitoring():
     return jsonify(data)
 
 
-###### RCM Routes ######
 
 @api.route("/save_assembly_rcm", methods=["POST"])
 def save_assembly_rcm():
@@ -731,15 +679,15 @@ def rcm_report():
     ship_name = data["ship_name"]
     rcm = RCMDB()
 
-    # Generate report - now returns filename
+
     res_r = rcm.generate_rcm_report(APP_ROOT, system, ship_name)
 
-    # Return the result with the filename
+
     return jsonify({
         "res": res_r,
         "system": system,
         "ship_name": ship_name,
-        "filename": res_r.get("filename", "")  # Include the generated filename
+        "filename": res_r.get("filename", "")  
     })
 
 
@@ -752,7 +700,7 @@ def download_rcm_report(filename):
         print(f"\n=== DOWNLOAD REQUEST ===")
         print(f"Requested filename: {filename}")
 
-        # Security: Only allow specific pattern to prevent directory traversal
+        
         import re
         if not re.match(r'^[\w-]+-[\w-]+-\d+\.pdf$', filename):
             print(f"✗ Invalid filename pattern: {filename}")
@@ -862,38 +810,6 @@ def rul_equipment():
         return inst.rul_equipment_level()
 
 
-# @api.route('/prev_rul', methods=['POST'])
-# def prev_rul():
-#     try:
-#         data = request.get_json()
-#         parameter = data['parameter']
-#         equipment_id = data['equipment_id']
-#         print(parameter, equipment_id)
-#         rul_class = RUL_dB()
-#         result = rul_class.get_prev_rul(parameter, equipment_id)
-#         return result
-#     except Exception as e:
-#         # Handle any exceptions and return an error message
-#         print(e)
-#         return jsonify({"message": "Invalid request format."}), 400
-
-
-# @api.route('/csv_upload', methods=['POST'])
-# def predict_rul():
-#     if 'file' in request.files:
-#         file = request.files['file']
-#         # Assuming the uploaded file is a CSV file
-#         # You can modify the file processing based on your file format
-#         file_path = os.path.join(app.config['UPLOAD_FOLDER'], 'uploaded_data.csv')
-#         file.save(file_path)
-
-#         return "file saved"
-
-#     else:
-#         # If the file is not provided, load the previously saved CSV file
-#         return "file is not provided"
-
-
 @api.route("/cgraph", methods=["POST"])
 def cgraph():
     data = request.get_json()
@@ -905,7 +821,6 @@ def cgraph():
 @api.route("/get_pf", methods=["POST"])
 def pf():
     data = request.get_json()
-    # equipment_id = data.get('equipment_id')
     name = data.get("name")
     equipment_id = data.get("equipment_id")
     rul_class = RUL_dB()
@@ -914,7 +829,7 @@ def pf():
 
 @api.route("/get_credentials", methods=["POST"])
 def get_credentials():
-    data = request.json  # Assuming you send a JSON object in the request body
+    data = request.json  
     if "username" in data and "password" in data:
         username = data["username"]
         password = data["password"]
@@ -1052,11 +967,8 @@ def srcetl():
 def set_equip_etl():
     data = request.json
     print(data)
-
     inst = ETL()
     inst.set_for_etl(data)
-
-    # Assuming set_for_etl does not return anything, you can respond with a success message
     return jsonify({'message': 'ETL flag set successfully'})
 
 
@@ -1113,25 +1025,17 @@ def oem_data():
 
 @api.route('/del_task', methods=['POST'])
 def delete_file():
-    # Get the filename from the request
     filename = request.json.get('filename')
-
     if not filename:
         return jsonify({'error': 'Filename not provided'}), 400
 
     try:
-        # Get the directory of the current file
         current_dir = os.path.dirname(os.path.abspath(__file__))
-
-        # Construct the path to the folder
         folder_path = './tasks'
-
-        # Construct the full path to the file
         file_path = os.path.join(folder_path, filename)
 
-        # Check if the file exists
         if os.path.exists(file_path):
-            # Delete the file
+           
             os.remove(file_path)
             return jsonify({'message': f'File {filename} deleted successfully'}), 200
         else:
@@ -1151,12 +1055,10 @@ def fetch_cmms_selection():
 def log_request():
     print(f"[REQ] {request.method} {request.path} (endpoint={request.endpoint})")
 
-
-# Register blueprint
 app.register_blueprint(api)
 
 if __name__ == "__main__":
-    app.debug = False
+    app.debug = True
     app.secret_key = os.urandom(32)
     app.wsgi_app = middleware.TaskMiddleWare(app.wsgi_app, APP_ROOT)
     scheduler.start()

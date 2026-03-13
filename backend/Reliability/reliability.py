@@ -3,8 +3,8 @@ import numpy as np
 from itertools import groupby
 from operator import itemgetter
 import pandas as pd
-from Reliability.alpha_beta import AlphaBeta
-from Reliability import queries as q
+from backend.Reliability.alpha_beta import AlphaBeta
+from backend.Reliability import query as q
 
 
 class Reliability:

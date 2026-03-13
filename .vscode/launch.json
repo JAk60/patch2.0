@@ -1,39 +1,8 @@
 {
-	"version": "0.2.0",
-	"configurations": [
-		{
-			"name": "Python Debugger: Flask",
-			"type": "debugpy",
-			"request": "launch",
-			"module": "flask",
-			"env": {
-				"FLASK_APP": "route.py",
-				"FLASK_DEBUG": "1"
-			},
-			"args": [
-				"run",
-				"--no-debugger",
-				"--no-reload"
-			],
-			"jinja": true,
-			"autoStartBrowser": false
-		},
-		{
-			"name": "Python Debugger: Flask",
-			"type": "debugpy",
-			"request": "launch",
-			"module": "flask",
-			"env": {
-				"FLASK_APP": "route.py",
-				"FLASK_DEBUG": "1"
-			},
-			"args": [
-				"run",
-				"--no-debugger",
-				"--no-reload"
-			],
-			"jinja": true,
-			"autoStartBrowser": false
-		},
-	]
+    "name": "Debug taskReliability",
+    "type": "debugpy",
+    "request": "launch",
+    "module": "backend.Mission_reliability_dashboard.taskReliability",
+    "cwd": "/home/msk/IITB/patch2.0",
+    "console": "integratedTerminal"
 }

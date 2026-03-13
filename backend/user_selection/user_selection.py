@@ -92,8 +92,7 @@ class Custom_Settings():
         fetched_data = pointer.fetchall()
         print(fetched_data)
         results = []
-
-        # Iterate through the fetched data and create dictionaries
+        
         for row in fetched_data:
             result_dict = {
                 'component_name': row[0],
