@@ -3,7 +3,16 @@ GET_SYSTEM_CONFIG = """
     SELECT * FROM system_configuration
     WHERE ship_name = ? AND nomenclature = ?
 """
-
+GET_QUERY_OPS = '''
+            SELECT nomenclature, is_ops
+            FROM system_configuration
+            WHERE ship_name = ?
+        '''
+GET_EQUIPMENT_NAMES = """
+    SELECT equipment_name
+    FROM system_configuration 
+    WHERE NOMENCLATURE = ?         
+"""
 GET_COMPONENT_ID = """
     SELECT component_id
     FROM system_configuration

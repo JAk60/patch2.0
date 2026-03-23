@@ -76,6 +76,7 @@ export default function EtlEquipment({ classes }) {
   }, []);
 
   const fetchData = async () => {
+    
     try {
       const response = await fetch("/api/equipment_onship", {
         method: "POST",
@@ -148,6 +149,46 @@ export default function EtlEquipment({ classes }) {
     fetchData();
   };
 
+  const handleops = async (row, enable) => {
+    console.log(row);
+    try {
+      const response = await fetch("/api/set_equip_ops", {
+        method: "POST",
+        body: JSON.stringify({
+          shipName: currentSelection["shipName"],
+          nomenclature: row?.nomenclature,
+          enabled: enable,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      });
+
+      const data = await response.json();
+      console.log(data);
+      if (data.code === 1) {
+        setTableData(data.equipments);
+      } else {
+        setSnackBarMessage({
+          severity: "success",
+          message: data.message,
+          showSnackBar: true,
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setSnackBarMessage({
+        severity: "error",
+        message: "Error fetching data",
+        showSnackBar: true,
+      });
+    
+    }
+      fetchData();
+
+  };
+
   const handleUpdate = async () => {
     try {
       setLoading(true);
@@ -193,7 +234,7 @@ export default function EtlEquipment({ classes }) {
   };
 
   const filteredTableData = tableData
-    // Remove duplicate entries
+    
     .filter(
       (row, index, self) =>
         index ===
@@ -306,10 +347,14 @@ export default function EtlEquipment({ classes }) {
               <TableCell>Nomenclature</TableCell>
               <TableCell>Transfer Status</TableCell>
               <TableCell>Action</TableCell>
+              <TableCell>Ops Status</TableCell>
             </TableRow>
           </TableHead>
+          
           <TableBody>
-            {filteredTableData.map((row) => (
+            {filteredTableData.map((row) => {
+              const is_ops = row.is_ops === 1;
+              return (
               <TableRow key={row.component_name}>
                 <TableCell>{row.component_name}</TableCell>
                 <TableCell>{row.nomenclature}</TableCell>
@@ -339,8 +384,30 @@ export default function EtlEquipment({ classes }) {
                     Disable Transfer
                   </Button>
                 </TableCell>
+                
+                <TableCell >
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => handleops(row, true)}
+                    style={{ marginRight: "10px" }}
+                    disabled={row.is_ops}
+                  >
+                  Ops
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => handleops(row, false)}
+                    disabled={!row.is_ops}
+                  >
+                  Non_Ops
+                  </Button>
+                </TableCell>
+                
               </TableRow>
-            ))}
+              );
+            })}
           </TableBody>
         </Table>
         {SnackBarMessage.showSnackBar && (

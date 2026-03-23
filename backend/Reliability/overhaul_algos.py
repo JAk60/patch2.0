@@ -237,23 +237,25 @@ class OverhaulsAlgos:
             pass
 
     def _get_interpolated_cmms_running_age(self, date, component_id):
+
         if isinstance(date, str):
             date = datetime.strptime(date, "%Y-%m-%d").date()
 
-        cursor.execute(q.GET_CUMULATIVE_RUNNING, (date, component_id))
+        
+        date_str = date.strftime("%Y-%m-%d")
+
+        cursor.execute(q.GET_CUMULATIVE_RUNNING, (date_str, component_id))
         row = cursor.fetchone()
         cumulative_age = row[0] if row else 0
-
         day = date.day
         first_of_month = date.replace(day=1).strftime("%Y-%m-%d")
-
         cursor.execute(q.GET_TOP5_AVG_RUNNING, (component_id, first_of_month))
         result = cursor.fetchone()
         monthly_average = result[0] if result and result[0] else 0
         interpolated_age = cumulative_age + (monthly_average / 30) * day
-
+       
         return interpolated_age
-
+    
     def historic_data_interpolation(self, data, component_id):
         interpolated_data = []
         for item in data:

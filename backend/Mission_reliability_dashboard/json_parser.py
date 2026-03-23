@@ -56,7 +56,7 @@ class TaskJsonParser:
                 'Defense Station': single_object.get('k_ds'),
                 'Entry Leaving Harbour': single_object.get('k_elh')
             }
-
+            
             label = single_object.get('label')
             label_group = [label] if label else []
             parallel_comp = single_object.get('parallel_comp')

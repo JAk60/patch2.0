@@ -147,13 +147,13 @@ class Data_Administrator:
             shipName = data["shipName"]
             department = data["department"]
             print(shipName)
-            equpQ = '''SELECT component_name, nomenclature,etl
+            equpQ = '''SELECT component_name, nomenclature,etl,is_ops
                         FROM system_configuration 
                         WHERE ship_name = ? and department= ?'''
             cursor.execute(equpQ, (shipName, department))
             result = cursor.fetchall()
             equipments = [{"component_name": row[0],
-                           "nomenclature": row[1], "etl": row[2]} for row in result]
+                           "nomenclature": row[1], "etl": row[2], "is_ops": row[3]} for row in result]
             return {"code": 1, "equipments": equipments}
 
         except KeyError:

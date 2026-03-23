@@ -14,19 +14,28 @@ class ETL():
             WHERE ship_name = ? AND nomenclature = ?
         '''
 
-        # Extract data
         ship_name = data['shipName']
         nomenclature = data['nomenclature']
-        # Convert True to 1, False to 0
         enabled = 1 if data.get('enabled', False) else 0
         print(ship_name, nomenclature, enabled)
-
-        # Execute the UPDATE query
         cursor.execute(etl_flag_query, (enabled, ship_name, nomenclature))
-
-        # Commit the changes to the database
         cursor.commit()
         return {"code": 1, "message": f"ETL was Successfully enabled for {nomenclature}"}
+
+    def set_for_ops(self, data):
+        ops_flag_query = '''
+            UPDATE system_configuration
+            SET is_ops = ?
+            WHERE ship_name = ? AND nomenclature = ?
+        '''
+        
+        ship_name = data['shipName']
+        nomenclature = data['nomenclature']
+        enabled = 1 if data.get('enabled', False) else 0
+        print(ship_name, nomenclature, enabled)
+        cursor.execute(ops_flag_query, (enabled, ship_name, nomenclature))
+        cursor.commit()
+        return {"code": 1, "message": f"Operations flag set successfully for {nomenclature}"}
 
     def operational_data_etl(self):
         try:

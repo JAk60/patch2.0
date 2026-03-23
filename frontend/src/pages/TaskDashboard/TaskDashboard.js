@@ -43,13 +43,13 @@ const TaskDashboard = () => {
     },
     uiContainer: {},
     closeButton: {
-      // Styles for the close button
       display: "block",
       float: "right",
-      marginTop: "10px", // Add margin or adjust as needed
-      marginRight: "10px", // Add margin or adjust as needed
+      marginTop: "10px",
+      marginRight: "10px",
     },
   });
+
   const precision = 10;
   const [gridApi, setGridApi] = useState(null);
   const [gridCompApi, setGridCompApi] = useState(null);
@@ -84,11 +84,13 @@ const TaskDashboard = () => {
   const [entireData, setentireData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
+  // ✅ CHANGE 1: Add opsEquipment state — populated from /api/phase_json response
+  const [opsEquipment, setOpsEquipment] = useState([]);
+
   const currentShip = useSelector((state) => state.taskData.currentShip);
   const currentTaskName = useSelector(
     (state) => state.taskData.currentTaskName
   );
-  ///point1
 
   const onCellValueChanged = (params) => {
     console.table(phasedata, "phase data");
@@ -102,6 +104,7 @@ const TaskDashboard = () => {
       setMissionDurations(updatedDurations);
     }
   };
+
   const ImportColumns = [
     <AgGridColumn
       field="missionType"
@@ -163,6 +166,7 @@ const TaskDashboard = () => {
         label: "Select Component for Phase",
         isMultiple: true,
         currentTask: selectedTaskName,
+        opsEquipment: opsEquipment, // ✅ CHANGE 2: pass ops equipment to filter dropdown
       }}
       width="300"
       editable={true}
@@ -185,16 +189,33 @@ const TaskDashboard = () => {
       add: defaultRow,
     });
   };
-  // console.log("missionDurations", missionProfileData);
+
+  // ✅ FIX 1: Read directly from gridApi instead of stale missionProfileData state
   const updateCompTable = () => {
     setIsLoading(true);
     console.log(currentTaskName);
-    const durationNums = missionDurations.map((str) => parseFloat(str));
-    const mission_phases_data = missionProfileData.map((item, index) => ({
+
+    // Read current grid rows directly — avoids stale state issue
+    let allRowData = [];
+    gridApi.forEachNode((node) => allRowData.push(node.data));
+
+    if (allRowData.length === 0) {
+      setSnackBarMessage({
+        severity: "error",
+        message: "Please add mission phases before recommending a solution.",
+        showSnackBar: true,
+      });
+      setIsLoading(false);
+      return;
+    }
+
+    const mission_phases_data = allRowData.map((item) => ({
       ...item,
-      duration: durationNums[index],
+      duration: parseFloat(item.duration) || 0,
     }));
-    console.log(mission_phases_data);
+
+    console.log("Sending phases:", mission_phases_data);
+
     fetch("/api/phase_json", {
       method: "POST",
       headers: {
@@ -202,33 +223,53 @@ const TaskDashboard = () => {
       },
       body: JSON.stringify({
         phases: mission_phases_data,
-        // "duration": durationNums,
+        shipName: currentShip,
         task_name: currentTaskName,
       }),
     })
       .then((response) => response.json())
       .then((data) => {
-        // Handle the response data here
-        console.log(data);
+        console.log("API response:", data);
+
         if (data.code) {
-          const recommendation_array = data.recommedation.results;
+          // ✅ FIX 2: Guard against missing recommedation key
+          const rec = data.recommedation;
+          if (!rec) {
+            console.error("No recommedation field in response:", data);
+            setSnackBarMessage({
+              severity: "error",
+              message: "Unexpected response from server. Missing recommendation data.",
+              showSnackBar: true,
+            });
+            setIsLoading(false);
+            return;
+          }
+
+          // ✅ CHANGE 3: Store ops equipment from response to filter component selector
+          if (data.ops_equipment) {
+            setOpsEquipment(data.ops_equipment);
+          }
+
+          const recommendation_array = rec.results;
           const results = mission_phases_data.map((item) => {
             if (recommendation_array.hasOwnProperty(item["id"])) {
               return {
                 ...item,
-                // eslint-disable-next-line no-useless-computed-key
                 ["components"]: recommendation_array[item["id"]],
               };
             }
             return item;
           });
-          console.log(results);
+
+          console.log("Mapped results:", results);
+
           setSnackBarMessage({
             severity: "Success",
             message: data.message,
             showSnackBar: true,
           });
-          const reliabilityValue = data.recommedation.rel;
+
+          const reliabilityValue = rec.rel;
           setTotalReliability(reliabilityValue.toFixed(precision));
           setRecommedation(results);
           setIsLoading(false);
@@ -239,16 +280,21 @@ const TaskDashboard = () => {
             message: data.message,
             showSnackBar: true,
           });
+          // ✅ FIX 3: Always stop loading on error path
+          setIsLoading(false);
         }
       })
       .catch((error) => {
-        // Handle errors here
         setIsLoading(false);
         console.error("Error:", error);
+        setSnackBarMessage({
+          severity: "error",
+          message: "Network error: " + error.message,
+          showSnackBar: true,
+        });
       });
 
-    let allRowData = [];
-    gridApi.forEachNode((node) => allRowData.push(node.data));
+    // Update comp table rows from grid data
     let newData = [];
     allRowData.forEach((d) => {
       newData.push({
@@ -257,9 +303,8 @@ const TaskDashboard = () => {
         id: d["id"],
       });
     });
-    console.log(newData);
+    console.log("Comp rows:", newData);
     setCompRows(newData);
-    // debugger;
   };
 
   const saveTaskReset = () => {
@@ -272,7 +317,6 @@ const TaskDashboard = () => {
       let allRowCData = [];
       gridCompApi.forEachNode((node) => allRowCData.push(node.data));
 
-      //logic for saving it to local data
       let mainData = [];
       allRowData.forEach((d, index) => {
         mainData.push({
@@ -283,7 +327,6 @@ const TaskDashboard = () => {
         });
       });
 
-      // Add a suffix to the task key
       const suffixedTaskName = currentTaskName + "_Netra";
 
       let localData = {
@@ -296,7 +339,6 @@ const TaskDashboard = () => {
       console.log(localData, "local Data");
       setPhaseData(mainData);
 
-      // Use suffixed task name when storing in local storage
       localStorage.setItem(
         `${currentShip}_${suffixedTaskName}`,
         JSON.stringify(localData)
@@ -330,6 +372,7 @@ const TaskDashboard = () => {
   };
 
   console.log("missiondata", missionProfileData);
+
   const deleteRows = () => {
     debugger;
     const selectedRows = gridApi.getSelectedRows();
@@ -337,25 +380,21 @@ const TaskDashboard = () => {
     let allRowData = [];
     gridApi.forEachNode((node) => allRowData.push(node.data));
     setMissionData(allRowData);
-    // console.log(selectedRows);
   };
 
   const resetGrids = () => {
-    // Reset the main grid
     if (gridApi) {
-      gridApi.setRowData([]); // Clear the row data
-      gridApi.refreshCells(); // Refresh the grid to clear any cell changes
+      gridApi.setRowData([]);
+      gridApi.refreshCells();
     }
-
-    // Reset the component grid
     if (gridCompApi) {
-      gridCompApi.setRowData([]); // Clear the row data
-      gridCompApi.refreshCells(); // Refresh the grid to clear any cell changes
+      gridCompApi.setRowData([]);
+      gridCompApi.refreshCells();
     }
-
-    // You can add similar logic for other grids if needed
   };
+
   console.log(taskMissionTableData, "taskMissionTableData");
+
   useEffect(() => {
     fetch("/api/task_dash_populate", {
       method: "GET",
@@ -364,9 +403,7 @@ const TaskDashboard = () => {
         Accept: "application/json",
       },
     })
-      .then((res) => {
-        return res.json();
-      })
+      .then((res) => res.json())
       .then((data) => {
         const task_ship_name = data["ship_name"];
         setentireData(data);
@@ -385,7 +422,6 @@ const TaskDashboard = () => {
     let storedData = Object.entries(localStorage);
     storedData.forEach((ele) => {
       let key = ele[0];
-
       if (key !== "settings" && key !== "login" && key !== "userData") {
         localStorage.removeItem(key);
       }
@@ -394,12 +430,13 @@ const TaskDashboard = () => {
         message: "Data Cleared",
         showSnackBar: true,
       });
-
       settaskTableData([]);
       settaskMissionTableData([]);
     });
   };
+
   const [isCalculating, setIsCalculating] = useState(false);
+
   const onSubmitHandler = () => {
     let storedData = Object.entries(localStorage);
     console.log("Localy data", storedData);
@@ -407,8 +444,6 @@ const TaskDashboard = () => {
     let fData = [];
     storedData.forEach((ele) => {
       let name = ele[0];
-
-      // Check if the key has the specified suffix
       if (name.includes("_Netra")) {
         fData.push(JSON.parse(ele[1]));
       }
@@ -444,7 +479,6 @@ const TaskDashboard = () => {
               });
 
               let componentRelData = pTD["comp_rel"];
-
               componentRelData.forEach((cTD) => {
                 taskMissionData.push({
                   shipName: tData["shipName"],
@@ -463,6 +497,7 @@ const TaskDashboard = () => {
               cal_rel: parseFloat(tData["cal_rel"]).toFixed(precision),
             });
           });
+
           setIsCalculating(false);
           settaskTableData(taskData);
           settaskMissionTableData(taskMissionData);
@@ -485,6 +520,7 @@ const TaskDashboard = () => {
       showSnackBar: false,
     });
   };
+
   const updateFinalRowData = (d) => {
     console.log(d);
     setMissionData(d);
@@ -510,12 +546,9 @@ const TaskDashboard = () => {
         const sNames = tt["task_ship_name"][selectedShipName];
         const fNames = sNames.map((s) => ({ name: s }));
         settaskOption(fNames);
-
         dispatch(taskActions.updateCurrentShip({ ship: selectedShipName }));
       } else {
-        console.log(
-          `No task_ship_name data found for ship: ${selectedShipName}`
-        );
+        console.log(`No task_ship_name data found for ship: ${selectedShipName}`);
       }
     } else {
       console.log("Invalid data or value array in shipNameChange function.");
@@ -530,6 +563,7 @@ const TaskDashboard = () => {
   };
 
   console.log(taskOption);
+
   return (
     <AccessControl allowedLevels={["L0", "L1", "L2", "L3", "L4", "L5"]}>
       <MuiPickersUtilsProvider utils={MomentUtils}>
@@ -542,7 +576,6 @@ const TaskDashboard = () => {
                 justifyContent: "flex-start",
                 gap: "10rem",
                 width: "100%",
-                //  background: "red"
               }}
             >
               <div style={{ width: "250px" }}>
@@ -607,14 +640,13 @@ const TaskDashboard = () => {
             <Button
               variant="contained"
               color="primary"
-              style={{
-                marginTop: "2rem",
-              }}
+              style={{ marginTop: "2rem" }}
               onClick={onResetMissionHandler}
             >
               Reset Screen
             </Button>
           </div>
+
           {!showInputTables && (
             <Button
               variant="contained"
@@ -625,6 +657,7 @@ const TaskDashboard = () => {
               X
             </Button>
           )}
+
           <div className={classes.uiContainer}>
             {showInputTables && (
               <>
@@ -703,7 +736,6 @@ const TaskDashboard = () => {
                   >
                     Add this Task for Comparison
                   </Button>
-
                   <Button
                     variant="contained"
                     color="secondary"
@@ -745,18 +777,12 @@ const TaskDashboard = () => {
                         tableSize={250}
                       />
                     </div>
-
                     <div className={styles.table}>
                       <CollapsibleTable tableData={taskMissionTableData} />
                     </div>
                   </>
                 ) : (
-                  <div
-                    style={{
-                      textAlign: "center",
-                      marginTop: "5rem",
-                    }}
-                  >
+                  <div style={{ textAlign: "center", marginTop: "5rem" }}>
                     <Typography variant="h6">No data available</Typography>
                   </div>
                 )}
@@ -775,4 +801,5 @@ const TaskDashboard = () => {
     </AccessControl>
   );
 };
+
 export default TaskDashboard;

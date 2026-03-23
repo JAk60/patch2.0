@@ -15,19 +15,26 @@ import pandas as pd
 import math
 from backend.Mission_reliability_dashboard.taskRelcode import TaskRelCode
 from backend.Mission_reliability_dashboard import query
-# from backend.Reliability.overhaul_algos import OverhaulsAlgos
 from backend.Mission_reliability_dashboard.json_parser import TaskJsonParser
+
 
 class TaskReliability:
 
     def __init__(self):
-        self.success_return = {"message": "Solution Recommended", "code": 1}
-        self.error_return = {"message": "Some Error Occured, Please try again.", "code": 0}
+        # ✅ FIX 3: Use fresh dicts every time, not shared mutable defaults
         self.__ship_name = None
         self.__component_name = None
         self.__component_id = None
         self.__rel_F = None
         self.__phase_used_components = {}
+
+    def _fresh_success(self):
+        """✅ FIX 3: Always return a fresh dict — never mutate a shared instance-level dict."""
+        return {"message": "Solution Recommended", "code": 1}
+
+    def _fresh_error(self):
+        """✅ FIX 3: Always return a fresh dict."""
+        return {"message": "Some Error Occurred, Please try again.", "code": 0}
 
     def lmu_rel(self, mission_name, system, platform, total_dur, c_age=0):
 
@@ -45,18 +52,13 @@ class TaskReliability:
         lmus_rel = []
 
         if len(alpha_beta_data) > 0:
-
             for lmu in alpha_beta_data:
                 alpha = lmu[1]
                 beta = lmu[2]
                 self.__ship_name = platform
                 self.__component_name = system
 
-                rel = self.calculate_rel_by_power_law(
-                    alpha,
-                    beta,
-                    total_dur
-                )
+                rel = self.calculate_rel_by_power_law(alpha, beta, total_dur)
 
                 lmus_rel.append({
                     "name": lmu[5],
@@ -67,7 +69,6 @@ class TaskReliability:
                 })
 
         else:
-
             for lmu in eta_beta_data:
                 cursor.execute(query.GET_LAST_MAINT_DATE, (lmu[5],))
                 first_data = cursor.fetchone()
@@ -78,10 +79,7 @@ class TaskReliability:
                     cursor.execute(query.GET_AVG_RUNNING, (ship_id,))
                     c_age = cursor.fetchone()[0] or 0
                 else:
-                    cursor.execute(
-                        query.GET_AVG_RUNNING_AFTER_DATE,
-                        (ship_id, first_data[0])
-                    )
+                    cursor.execute(query.GET_AVG_RUNNING_AFTER_DATE, (ship_id, first_data[0]))
                     c_age = cursor.fetchone()[0] or 0
 
                 eta = lmu[1]
@@ -97,25 +95,24 @@ class TaskReliability:
                     "parent_name": lmu[10],
                     "parent_id": lmu[7]
                 })
+
         sys_lmus.append({system + "_" + platform: lmus_rel})
         return sys_lmus, sys_data
 
-
     def get_curr_age(self, component_id):
-
         cursor.execute(query.GET_LATEST_RUNNING_AGE, (component_id,))
         row = cursor.fetchone()
         if row is None:
             return None
         maintenance_type, running_age = row
         if maintenance_type == "Overhaul":
-            return 0.0        
+            return 0.0
         return float(running_age) if running_age else 0.0
 
     def fetch_equipment_parameters(self, json_data):
         equipment_ids = {}
         running_ages = {}
-        
+
         for item in json_data:
             if 'data' in item and 'label' in item['data']:
                 label = item['data']['label']
@@ -123,22 +120,17 @@ class TaskReliability:
                     equipment_id = item['equipementId']
                     equipment_ids[label] = self.fetch_alpha_beta(equipment_id)
                     running_ages[label] = self.get_curr_age(equipment_id)
-        
+
         return equipment_ids, running_ages
 
     def calculate_rel_by_power_law(self, alpha, beta, duration):
         instance = AlphaBeta()
-        cursor.execute(
-            query.GET_COMPONENT_ID,
-            (self.__ship_name, self.__component_name)
-        )
+        cursor.execute(query.GET_COMPONENT_ID, (self.__ship_name, self.__component_name))
         result = cursor.fetchone()
         if not result:
             return 0
         self.__component_id = result[0]
-        instance.estimate_alpha_beta(
-            component_id=self.__component_id,
-        )
+        instance.estimate_alpha_beta(component_id=self.__component_id)
         curr_age = self.get_curr_age(self.__component_id) or 0
 
         if self.__component_name in self.__phase_used_components:
@@ -159,61 +151,48 @@ class TaskReliability:
 
         return rel
 
-
     def fetch_alpha_beta(self, component_id):
         instance = AlphaBeta()
         cursor.execute(query.GET_NOMENCLATURE_BY_ID, (component_id,))
         component_name_tuple = cursor.fetchone()
         if component_name_tuple:
             self.__component_name = component_name_tuple[0]
-        instance.estimate_alpha_beta(
-            component_id,
-        )
+        instance.estimate_alpha_beta(component_id)
         cursor.execute(query.GET_ALPHA_BETA, (component_id,))
         result = cursor.fetchone()
         if result:
             return result[0], result[1]
         return None, None
-    
+
     def task_formatter(self, json_data):
         pass
 
-    def fetch_equipment_parameters(self, json_data):
+    def get_ops_map(self, ship_name):
+        cursor.execute(query.GET_QUERY_OPS, (ship_name,))
+        rows = cursor.fetchall()
+        return {row[0]: row[1] for row in rows}
 
-        equipment_ids = {}
-        running_ages = {}
-
-        for item in json_data:
-            if 'data' in item and 'label' in item['data']:
-                label = item['data']['label']
-                if 'equipementId' in item:
-                    equipment_id = item['equipementId']
-                    equipment_ids[label] = self.fetch_alpha_beta(equipment_id)
-                    running_ages[label] = self.get_curr_age(equipment_id)
-
-        return equipment_ids, running_ages
-
-    def json_paraser(self, APP_ROOT, phases, curr_task):
+    def json_parser(self, APP_ROOT, phases, curr_task, ship_name):
         Taskjson = TaskJsonParser()
+        self.__phase_used_components = {}
+
         try:
             json_data = Taskjson.load_json(APP_ROOT, curr_task)
             objects_array = Taskjson.extract_components(json_data)
             data = Taskjson.build_label_groups(objects_array)
             data_list = Taskjson.convert_dataframe_to_list(data)
             equipment_ids, running_ages = self.fetch_equipment_parameters(json_data)
-            group_inputs = Taskjson.prepare_group_inputs(data_list, equipment_ids, running_ages)
+            group_inputs = Taskjson.prepare_group_inputs(
+                data_list,
+                equipment_ids,
+                running_ages
+            )
 
             grouped_result = {}
-
             for sublist in group_inputs:
                 label_group = tuple(sublist[1])
-                if label_group in grouped_result:
-                    grouped_result[label_group].append(sublist)
-                else:
-                    grouped_result[label_group] = [sublist]
-
+                grouped_result.setdefault(label_group, []).append(sublist)
             final_result = list(grouped_result.values())
-            sorted_data = []
             phase_array = [
                 "Harbour",
                 "Entry Leaving Harbour",
@@ -222,130 +201,237 @@ class TaskReliability:
                 "Action Station"
             ]
 
+            phase_index_map = {name: i for i, name in enumerate(phase_array)}
+            sorted_data = []
             for sublist in final_result:
                 sorted_sublist = sorted(
                     sublist,
-                    key=lambda x: phase_array.index(x[0])
+                    key=lambda x: phase_index_map.get(x[0], 0)
                 )
                 sorted_data.append(sorted_sublist)
-
             groups = sorted_data
             phase_duration = [duration["duration"] for duration in phases]
-            phase_seq = []
 
+            phase_seq = []
             for phase in phases:
                 for idx, j in enumerate(phase_array):
                     if j == phase["missionType"]:
                         phase_seq.append(idx)
 
-            total_phase = len(phases)
-            taskrelcode = TaskRelCode()
+            print("phase_seq:", phase_seq)
+            print("groups length:", len(groups))
+            print("ship_name:", ship_name)
 
+            ops_map = self.get_ops_map(ship_name)
+            print("ops_map loaded")
+
+            active_set = {k for k, v in ops_map.items() if v is not False}
+            has_any_true = any(v is True or v == 1 for v in ops_map.values())
+            if not has_any_true:
+                active_set = set(ops_map.keys())
+
+            taskrelcode = TaskRelCode()
             results = {}
             rel = 1
 
             for i in range(len(groups)):
                 for idx, j in enumerate(phase_seq):
-                    if groups[i][j][5] == 0:
-                        pass
+                    if j >= len(groups[i]):
+                        continue
+                    k_val = groups[i][j][5]
+                    if k_val == 0:
+                        continue
+                    components = groups[i][j][1]
+                    alpha_beta = groups[i][j][2]
+                    running_age = groups[i][j][3]
+                    extra_data = groups[i][j][4]
+                    original_k = groups[i][j][5]
+                    phase_name = groups[i][j][0] if groups[i][j][0] else phase_array[j]
+
+                    active_components = []
+                    active_alpha_beta = []
+                    active_running_age = []
+                    active_indices = []
+
+                    for idx_c, comp in enumerate(components):
+                        if comp in active_set:
+                            active_indices.append(idx_c)
+                            active_components.append(comp)
+                            active_alpha_beta.append(alpha_beta[idx_c])
+                            active_running_age.append(running_age[idx_c])
+
+                    if len(active_components) == 0:
+                        continue
+
+                    new_n = len(active_components)
+                    original_n = len(components)
+
+                    if original_n > 0:
+                        ratio = original_k / original_n
+                        new_k = max(1, round(ratio * new_n))
                     else:
-                        phase_id = phases[idx]["id"]
+                        new_k = new_n
+
+                    new_k = min(new_k, new_n)
+                    n_ops = new_n
+
+                    if active_alpha_beta and isinstance(active_alpha_beta[0], (list, tuple)):
+                        active_alpha = [ab[0] if ab[0] is not None else 0.0 for ab in active_alpha_beta]
+                        active_beta  = [ab[1] if ab[1] is not None else 1.0 for ab in active_alpha_beta]
+                    else:
+                        active_alpha = [a if a is not None else 0.0 for a in active_alpha_beta]
+                        active_beta  = [b if b is not None else 1.0 for b in active_running_age]
+                        active_running_age = [extra_data[idx_c] if idx_c < len(extra_data) else 0.0
+                                              for idx_c in active_indices]
+                    
+                    print(f"\n  Phase: {phase_name}")
+                    print(f"  Nomenclature (all):   {components}")
+                    print(f"  Nomenclature (ops):   {active_components}")
+                    print(f"  original_n={original_n}, new_n={new_n}, original_k={original_k}, new_k={new_k}")
+
+                    if idx >= len(phases):
+                        print(f" Skipping: idx={idx} out of range for phases")
+                        continue
+
+                    phase_id = phases[idx]["id"]
+
+                    try: 
                         group_equi_rel, max_rel_equip, group_equip, Rel, max_rel_equip_index = taskrelcode.group_rel(
-                            groups[i][j][1],
-                            groups[i][j][2],
-                            groups[i][j][3],
-                            groups[i][j][4],
-                            phase_duration[idx],
-                            groups[i][j][5],
-                            groups[i][j][6]
+                            active_components,   
+                            active_alpha,        
+                            active_beta,         
+                            active_running_age,  
+                            phase_duration[idx], 
+                            new_k,              
+                            n_ops                
                         )
+                    except Exception as e:
+                        print(f" group_rel failed for group {i}, phase_seq {j}: {e}")
+                        continue
 
-                        if phase_id not in results:
-                            results[phase_id] = list(set(group_equip))
-                        else:
-                            results[phase_id].extend(set(group_equip))
+                    
+                    if group_equip is None:
+                        print(f" group_equip is None for group {i}, skipping")
+                        continue
 
-                        rel = rel * Rel
+                    rel *= Rel
 
-                        try:
-                            for k in max_rel_equip_index:
-                                for l in range(total_phase):
-                                    groups[i][l][4][k] += phase_duration[j]
-                        except:
-                            pass
+                    if phase_id not in results:
+                        results[phase_id] = set()
+                    results[phase_id].update(group_equip)
 
-            self.success_return["recommedation"] = {
-                "results": {phase_id: sorted(group_equip)
-                            for phase_id, group_equip in results.items()},
-                "rel": rel
-            }
-            return self.success_return
-        except Exception as e:
-            self.error_return["message"] = str(e)
-            return self.error_return
+                    try:
+                        for k in max_rel_equip_index:
+                            if k >= len(active_indices):
+                                continue
+                            original_k_index = active_indices[k]
 
-    def system_rel(self, mission_name, system, platform, total_dur, c_age=0):
-            sys_lmus, sys_data = self.lmu_rel(
-                mission_name, system, platform, total_dur, c_age)
-            final_data = [] + sys_lmus[0][system + '_' + platform]
-            self.__rel_F = final_data[0]['rel']
-            print("----------------------------------->>>>>>>>", final_data)
+                            for l in range(len(groups[i])):
+                                if original_k_index < len(groups[i][l][4]):
+                                    groups[i][l][4][original_k_index] += phase_duration[idx]
+
+                    except Exception as e:
+                        print(" Error in update block:", e)
+
             
 
-            def inside_func(lmus, system, platform, is_lmu=False):
-                current_batch = []
-                if is_lmu:
-                    lmus = list(
-                        filter(lambda x: x[system + '_' + platform], lmus))
-                    lmus = lmus[0][system + '_' + platform]
-                parent_grps = groupby(lmus, key=itemgetter('parent_id'))
-                parent_grps = set(list(map(lambda b: b[0], parent_grps)))
-                for key in parent_grps:
-                    grp = list(filter(lambda rel: rel["parent_id"] == key, lmus))
-                    rel = 1
-                    for r in grp:
-                        rel = rel*r['rel']
-                    if key is not None:
-                        parent = list(
-                            filter(lambda x: x[0] == key, sys_data))[0]
-                        current_batch.append({'name': parent[1], 'id': key, 'parent_name': parent[5],
-                                            'parent_id': parent[2], 'rel': rel})
-                        
-                        ele_exist = list(
-                            filter(lambda e: e[1]['id'] == key, enumerate(final_data)))
-                        if len(ele_exist) > 0:
-                            ele_index = ele_exist[0][0]
-                            final_data[ele_index]['rel'] = final_data[ele_index]['rel'] * rel
-                        else:
-                            final_data.append({'name': parent[1], 'id': key, 'parent_name': parent[5],
-                                            'parent_id': parent[2], 'rel': rel})
+            success_response = {
+                "message": "Solution Recommended",
+                "code": 1,
+                "ops_equipment": sorted(list(active_set)),  
+                "recommedation": {
+                    "results": {
+                        pid: sorted(list(equip_set))
+                        for pid, equip_set in results.items()
+                    },
+                    "rel": float(rel)
+                }
+            }
 
-                return current_batch
-            current_b = inside_func(sys_lmus, system, platform, True)
-            while len(current_b) > 0:
-                current_b = inside_func(current_b, system, platform)
-                final_data = final_data + current_b
-            uniq = []
-            df = pd.DataFrame(final_data)
-            final_grps = df.groupby(by='id')
-            return_final_child_data = []
-            final_system_rel = {'rel': 1, 'child': []}
-            for index, gs in final_grps:
-                rel = np.prod(gs['rel'].values)
-                name = gs.iloc[0]['name']
-                id = gs.iloc[0]['id']
-                parent_name = gs.iloc[0]['parent_name']
-                parent_id = gs.iloc[0]['parent_id']
-                if parent_name == system:
-                    return_final_child_data.append({'name': name, 'id': id, 'rel': rel,
-                                                    'parent_name': parent_name, 'parent_id': parent_id})
+            print("Returning success response with rel:", rel)
+            return success_response
 
-                final_system_rel['rel'] = rel
-                if len(gs) > 1:
-                    pass
-            final_system_rel['child'] = return_final_child_data
-            return final_system_rel
+        
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
+            print("ERROR:", str(e))
+            return {
+                "message": str(e),
+                "code": 0
+            }
 
+    def system_rel(self, mission_name, system, platform, total_dur, c_age=0):
+        sys_lmus, sys_data = self.lmu_rel(mission_name, system, platform, total_dur, c_age)
+        final_data = [] + sys_lmus[0][system + '_' + platform]
+        self.__rel_F = final_data[0]['rel']
+        print("----------------------------------->>>>>>>>", final_data)
+
+        def inside_func(lmus, system, platform, is_lmu=False):
+            current_batch = []
+            if is_lmu:
+                lmus = list(filter(lambda x: x[system + '_' + platform], lmus))
+                lmus = lmus[0][system + '_' + platform]
+            parent_grps = groupby(lmus, key=itemgetter('parent_id'))
+            parent_grps = set(list(map(lambda b: b[0], parent_grps)))
+            for key in parent_grps:
+                grp = list(filter(lambda rel: rel["parent_id"] == key, lmus))
+                rel = 1
+                for r in grp:
+                    rel = rel * r['rel']
+                if key is not None:
+                    parent = list(filter(lambda x: x[0] == key, sys_data))[0]
+                    current_batch.append({
+                        'name': parent[1],
+                        'id': key,
+                        'parent_name': parent[5],
+                        'parent_id': parent[2],
+                        'rel': rel
+                    })
+                    ele_exist = list(filter(lambda e: e[1]['id'] == key, enumerate(final_data)))
+                    if len(ele_exist) > 0:
+                        ele_index = ele_exist[0][0]
+                        final_data[ele_index]['rel'] = final_data[ele_index]['rel'] * rel
+                    else:
+                        final_data.append({
+                            'name': parent[1],
+                            'id': key,
+                            'parent_name': parent[5],
+                            'parent_id': parent[2],
+                            'rel': rel
+                        })
+            return current_batch
+
+        current_b = inside_func(sys_lmus, system, platform, True)
+        while len(current_b) > 0:
+            current_b = inside_func(current_b, system, platform)
+            final_data = final_data + current_b
+
+        uniq = []
+        df = pd.DataFrame(final_data)
+        final_grps = df.groupby(by='id')
+        return_final_child_data = []
+        final_system_rel = {'rel': 1, 'child': []}
+        for index, gs in final_grps:
+            rel = np.prod(gs['rel'].values)
+            name = gs.iloc[0]['name']
+            id = gs.iloc[0]['id']
+            parent_name = gs.iloc[0]['parent_name']
+            parent_id = gs.iloc[0]['parent_id']
+            if parent_name == system:
+                return_final_child_data.append({
+                    'name': name,
+                    'id': id,
+                    'rel': rel,
+                    'parent_name': parent_name,
+                    'parent_id': parent_id
+                })
+            final_system_rel['rel'] = rel
+            if len(gs) > 1:
+                pass
+
+        final_system_rel['child'] = return_final_child_data
+        return final_system_rel
 
     def mission_wise_rel_new(self, missionDataDuration, missionName, eq_data, duration):
         final_data = []
@@ -358,15 +444,19 @@ class TaskReliability:
         for mission_phase in missionDataDuration:
             missionTypeNmae = mission_phase["missionType"]
             duration = float(mission_phase["duration"])
-            rel = self.system_rel(missionName, system,
-                                  platform, duration, curr_age)
+            rel = self.system_rel(missionName, system, platform, duration, curr_age)
             if rel['rel'] == 1:
                 rel['rel'] = self.__rel_F
             print(rel)
             total_rel *= rel["rel"]
-            final_data.append({"system": system, "missionTypeName": missionTypeNmae,
-                              "platform": platform, "rel": rel["rel"]*100})
+            final_data.append({
+                "system": system,
+                "missionTypeName": missionTypeNmae,
+                "platform": platform,
+                "rel": rel["rel"] * 100
+            })
             curr_age += duration
+
         if platform not in f_data:
             f_data[platform] = []
         f_data[platform].append({system: total_rel})
@@ -375,10 +465,8 @@ class TaskReliability:
     def mission_wise_rel_new_dash(self, missionName, eq_data, curr_age, duration):
         system = eq_data[0]["name"]
         platform = eq_data[0]["parent"]
-        rel = self.system_rel(missionName, system,
-                              platform, duration, curr_age)
+        rel = self.system_rel(missionName, system, platform, duration, curr_age)
         return rel
-    
 
     def task_new_rel(self, task_name, missionName, missionDataDuration, APP_ROOT, parent):
         curr_age = 0
@@ -396,8 +484,7 @@ class TaskReliability:
                 self.__component_id = comp["EquipmentId"]
                 eq_data = [{'name': compName, 'parent': parent}]
                 if index == 0:
-                    Lrel = self.mission_wise_rel_new_dash(
-                        missionTypeName, eq_data, curr_age, duration)
+                    Lrel = self.mission_wise_rel_new_dash(missionTypeName, eq_data, curr_age, duration)
                 else:
                     prev_missionDurr = missionDataDuration[index - 1]
                     prev_missionDurrComp = prev_missionDurr["components"]
@@ -406,14 +493,21 @@ class TaskReliability:
                         filter(lambda x: x["EquipmentId"] == comp["EquipmentId"], prev_missionDurrComp))
                     if len(prev_is_exist) == 0:
                         curr_age = curr_age - prevDur
-                    Lrel = self.mission_wise_rel_new_dash(
-                        missionTypeName, eq_data, curr_age, duration)
-                
-                rel_final.append({"child": [], "prob_ac": 0,
-                                 "rel": Lrel["rel"], "compName": compName})
+                    Lrel = self.mission_wise_rel_new_dash(missionTypeName, eq_data, curr_age, duration)
+
+                rel_final.append({
+                    "child": [],
+                    "prob_ac": 0,
+                    "rel": Lrel["rel"],
+                    "compName": compName
+                })
                 missionRel = missionRel * Lrel["rel"]
-            all_mission_rel.append(
-                {"missionName": missionTypeName, "rel": missionRel, "comp_rel": rel_final})
+
+            all_mission_rel.append({
+                "missionName": missionTypeName,
+                "rel": missionRel,
+                "comp_rel": rel_final
+            })
             curr_age += duration
 
         fRel = 1
@@ -423,7 +517,6 @@ class TaskReliability:
         return {"task_rel": fRel, "all_missionRel": all_mission_rel}
 
     def get_task_dropdown_data(self, APP_ROOT):
-
         target_path = os.path.join(APP_ROOT, 'tasks/')
         files = os.listdir(target_path)
         task_names = []
@@ -437,17 +530,22 @@ class TaskReliability:
                 task_ship_names[ship_name] = []
             task_ship_names[ship_name].append(text)
             task_names.append({"name": text})
-            taskData.append(
-                {"task_name": text, "task_data": tData, "ship_name": ship_name})
+            taskData.append({"task_name": text, "task_data": tData, "ship_name": ship_name})
+
         mission = MissionProfile()
         data_m = mission.select_mission(toJson=False)
         ship_names = list(task_ship_names.keys())
         f_ship_name = []
         for sN in ship_names:
             f_ship_name.append({"name": sN})
-        main_data = {"tasks": task_names, "missionData": data_m, "tasks_data": taskData,
-                     "task_ship_name": task_ship_names, 'ship_name': f_ship_name}
 
+        main_data = {
+            "tasks": task_names,
+            "missionData": data_m,
+            "tasks_data": taskData,
+            "task_ship_name": task_ship_names,
+            'ship_name': f_ship_name
+        }
         return main_data
 
     def task_data(self, file_name_path):
@@ -466,12 +564,10 @@ class TaskReliability:
         ship_name = data["shipName"]
         eq_name = data["data"]["label"]
         print(eq_name)
-        select = '''select component_id from system_configuration where ship_name=? and nomenclature = ?'''
-        cursor.execute(select, ship_name, eq_name)
+        cursor.execute(query.GET_COMPONENT_ID, ship_name, eq_name)
         id_ = cursor.fetchone()[0]
         data["equipementId"] = id_
         return data
-
 
     def task_multiply_rel(self, data):
         total = 1
@@ -487,38 +583,44 @@ class TaskReliability:
                 only_parallel.append(comp)
         for l in only_series:
             total = total * l["rel"]
-        
+
         paralel_comp = []
         for comp in only_parallel:
             temp_arr = []
             par_comp = comp["data"]["parallel_comp"]
-
             for pc in par_comp:
                 temp_arr.append({'name': pc["label"], 'id': pc["value"]})
-            paralel_comp.append(
-                {'name': comp["data"]['label'], "par_comp": temp_arr, "id": comp["id"], "k": comp["data"]['k'], "n": comp["data"]['n']})
+            paralel_comp.append({
+                'name': comp["data"]['label'],
+                "par_comp": temp_arr,
+                "id": comp["id"],
+                "k": comp["data"]['k'],
+                "n": comp["data"]['n']
+            })
 
-        while (len(paralel_comp) > 0):
+        while len(paralel_comp) > 0:
             first_item_arr = paralel_comp[0]
-            if parentK == None:
-                rel_firat_comp = 1 - list(filter(lambda r: r["id"] == first_item_arr['id'], only_parallel))[0][
-                    "rel"]
+            if parentK is None:
+                rel_firat_comp = 1 - list(
+                    filter(lambda r: r["id"] == first_item_arr['id'], only_parallel)
+                )[0]["rel"]
                 for p in first_item_arr["par_comp"]:
-                    par_comp_rel = list(filter(lambda r: r["id"] == p['id'], only_parallel))[
-                        0]["rel"]
+                    par_comp_rel = list(
+                        filter(lambda r: r["id"] == p['id'], only_parallel)
+                    )[0]["rel"]
                     rel_firat_comp = rel_firat_comp * (1 - par_comp_rel)
                     to_be_remove = list(
-                        filter(lambda r: r["id"] == p['id'], paralel_comp))[0]
+                        filter(lambda r: r["id"] == p['id'], paralel_comp)
+                    )[0]
                     paralel_comp.remove(to_be_remove)
                 to_be_remove = list(
-                    filter(lambda r: r["id"] == first_item_arr['id'], paralel_comp))[0]
+                    filter(lambda r: r["id"] == first_item_arr['id'], paralel_comp)
+                )[0]
                 paralel_comp.remove(to_be_remove)
                 total = total * (1 - rel_firat_comp)
-
             else:
                 truth_table = list(np.product([0, 1], repeat=int(parentN)))
-                truth_table = list(
-                    filter(lambda b: b.count(1) >= int(parentK), truth_table))
+                truth_table = list(filter(lambda b: b.count(1) >= int(parentK), truth_table))
                 add_local_total = 0
                 to_be_remove_arr = []
                 for main_index, t in enumerate(truth_table):
@@ -526,36 +628,39 @@ class TaskReliability:
                     for index, it in enumerate(t):
                         if index == 0:
                             comp_t = list(
-                                filter(lambda r: r["id"] == first_item_arr['id'], only_parallel))[0]
-                            if (it == 0):
-                                multiply_local_total = multiply_local_total * \
-                                    (1 - comp_t['rel'])
+                                filter(lambda r: r["id"] == first_item_arr['id'], only_parallel)
+                            )[0]
+                            if it == 0:
+                                multiply_local_total = multiply_local_total * (1 - comp_t['rel'])
                             else:
-                                multiply_local_total = multiply_local_total * \
-                                    comp_t["rel"]
+                                multiply_local_total = multiply_local_total * comp_t["rel"]
                             if main_index == 0:
                                 to_be_remove = list(
-                                    filter(lambda r: r["id"] == first_item_arr['id'], paralel_comp))[0]
+                                    filter(lambda r: r["id"] == first_item_arr['id'], paralel_comp)
+                                )[0]
                                 to_be_remove_arr.append(to_be_remove)
                         else:
-                            comp_t = list(filter(lambda r: r["id"] == first_item_arr['par_comp'][index - 1]['id'],
-                                                 only_parallel))[0]
-                            if (it == 0):
-                                multiply_local_total = multiply_local_total * \
-                                    (1 - comp_t['rel'])
+                            comp_t = list(
+                                filter(
+                                    lambda r: r["id"] == first_item_arr['par_comp'][index - 1]['id'],
+                                    only_parallel
+                                )
+                            )[0]
+                            if it == 0:
+                                multiply_local_total = multiply_local_total * (1 - comp_t['rel'])
                             else:
-                                multiply_local_total = multiply_local_total * \
-                                    comp_t["rel"]
+                                multiply_local_total = multiply_local_total * comp_t["rel"]
                             if main_index == 0:
                                 to_be_remove = list(
-                                    filter(lambda r: r["id"] == first_item_arr['par_comp'][index - 1]['id'],
-                                           paralel_comp))[0]
+                                    filter(
+                                        lambda r: r["id"] == first_item_arr['par_comp'][index - 1]['id'],
+                                        paralel_comp
+                                    )
+                                )[0]
                                 to_be_remove_arr.append(to_be_remove)
                     add_local_total += multiply_local_total
                 total = total * add_local_total
                 for r in to_be_remove_arr:
                     paralel_comp.remove(r)
+
         return total
-
-
-    

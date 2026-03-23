@@ -866,10 +866,28 @@ def fetch_eta_beta():
 @api.route("/phase_json", methods=["POST"])
 def phasejson():
     data = request.json
+    print("data", data)
     phases = data["phases"]
-    curr_task = data["task_name"]
+    curr_task = data.get("task_name")
+    ship_name = data.get("shipName")
     inst = TaskReliability()
-    return inst.json_paraser(APP_ROOT, phases, curr_task)
+    
+    try:
+        result = inst.json_parser(APP_ROOT, phases, curr_task, ship_name)
+        print("RESULT:", result)
+        
+        # Test JSON serializability before returning
+        import json as json_lib
+        serialized = json_lib.dumps(result)
+        print("SERIALIZED OK, length:", len(serialized))
+        
+        from flask import jsonify
+        return jsonify(result), 200
+        
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return jsonify({"error": str(e)}), 500
 
 
 @api.route("/get_ship_alpha_beta", methods=["POST"])
@@ -971,6 +989,13 @@ def set_equip_etl():
     inst.set_for_etl(data)
     return jsonify({'message': 'ETL flag set successfully'})
 
+@api.route('/set_equip_ops', methods=['POST'])
+def set_equip_ops():
+    data = request.json
+    print(data)
+    inst = ETL()
+    inst.set_for_ops(data)
+    return jsonify({'message': 'equipment status set successfully'})
 
 @api.route('/unregister_equipment', methods=['POST'])
 def unregister_equipment():

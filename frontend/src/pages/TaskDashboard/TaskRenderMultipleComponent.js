@@ -8,11 +8,22 @@ const RenderMultipleComponent = forwardRef((props, ref) => {
   const currentShip = useSelector((state) => state.taskData.currentShip);
   const currentTaskName = useSelector((state) => state.taskData.currentTaskName);
   const taskData = useSelector((state) => state.taskData.taskData);
-  
+
   const filteredData = taskData?.tasks_data.filter(
     (x) => x.ship_name === currentShip && x.task_name === currentTaskName
   );
+
   const selectedEquipmentId = props.data.id;
+
+  // ✅ Filter task_data to only show ops-active equipment
+  // props.opsEquipment is a Set or array of active nomenclature names passed from TaskDashboard
+  const allEquipment = filteredData[0]?.task_data || [];
+  const opsEquipment = props.opsEquipment;
+
+  const availableEquipment =
+    opsEquipment && opsEquipment.length > 0
+      ? allEquipment.filter((eq) => opsEquipment.includes(eq.name))
+      : allEquipment; // fallback: show all if ops list not loaded yet
 
   useImperativeHandle(ref, () => ({
     getValue() {
@@ -38,7 +49,7 @@ const RenderMultipleComponent = forwardRef((props, ref) => {
   const handleChange = (e, selectedOptions) => {
     if (selectedOptions && selectedOptions.length > 0) {
       if (selectedOptions[selectedOptions.length - 1].name === "Select All") {
-        setValue(filteredData[0]?.task_data || []);
+        setValue(availableEquipment);
       } else {
         setValue(selectedOptions);
       }
@@ -47,7 +58,7 @@ const RenderMultipleComponent = forwardRef((props, ref) => {
 
   const optionsWithSelectAll = [
     { name: "Select All", EquipmentId: "selectAll" },
-    ...(filteredData[0]?.task_data || [])
+    ...availableEquipment,
   ];
 
   return (
