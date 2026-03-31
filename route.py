@@ -614,7 +614,6 @@ def task_rel():
 
     return jsonify(final_return_data)
 
-
 @api.route("/task_dash_populate", methods=["POST", "GET"])
 def task_dash_populate():
     trel_inst = TaskReliability()

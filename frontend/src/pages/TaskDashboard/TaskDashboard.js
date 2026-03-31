@@ -80,11 +80,10 @@ const TaskDashboard = () => {
     message: "This is awesome",
     showSnackBar: false,
   });
-
+  
   const [entireData, setentireData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  // ✅ CHANGE 1: Add opsEquipment state — populated from /api/phase_json response
   const [opsEquipment, setOpsEquipment] = useState([]);
 
   const currentShip = useSelector((state) => state.taskData.currentShip);
@@ -166,7 +165,7 @@ const TaskDashboard = () => {
         label: "Select Component for Phase",
         isMultiple: true,
         currentTask: selectedTaskName,
-        opsEquipment: opsEquipment, // ✅ CHANGE 2: pass ops equipment to filter dropdown
+        opsEquipment: opsEquipment,
       }}
       width="300"
       editable={true}
@@ -190,12 +189,10 @@ const TaskDashboard = () => {
     });
   };
 
-  // ✅ FIX 1: Read directly from gridApi instead of stale missionProfileData state
   const updateCompTable = () => {
     setIsLoading(true);
     console.log(currentTaskName);
 
-    // Read current grid rows directly — avoids stale state issue
     let allRowData = [];
     gridApi.forEachNode((node) => allRowData.push(node.data));
 
@@ -232,7 +229,6 @@ const TaskDashboard = () => {
         console.log("API response:", data);
 
         if (data.code) {
-          // ✅ FIX 2: Guard against missing recommedation key
           const rec = data.recommedation;
           if (!rec) {
             console.error("No recommedation field in response:", data);
@@ -245,7 +241,6 @@ const TaskDashboard = () => {
             return;
           }
 
-          // ✅ CHANGE 3: Store ops equipment from response to filter component selector
           if (data.ops_equipment) {
             setOpsEquipment(data.ops_equipment);
           }
@@ -253,16 +248,31 @@ const TaskDashboard = () => {
           const recommendation_array = rec.results;
           const results = mission_phases_data.map((item) => {
             if (recommendation_array.hasOwnProperty(item["id"])) {
+              const recData = recommendation_array[item["id"]];
+
+              console.log("recData:", recData); 
+
               return {
                 ...item,
-                ["components"]: recommendation_array[item["id"]],
+                components: recData?.components || [],
+                ops_components: recData?.ops_components || [],
+                updated_k: recData?.updated_k ?? null,
+                updated_n: recData?.updated_n ?? null,
               };
             }
-            return item;
+
+            return {
+              ...item,
+              components: [],
+              ops_components: [],
+              updated_k: null,
+              updated_n: null,
+            };
           });
-
           console.log("Mapped results:", results);
-
+          setRecommedation(results);
+          setTotalReliability(data.recommedation.rel);
+          setOpsEquipment(data.ops_equipment);   
           setSnackBarMessage({
             severity: "Success",
             message: data.message,
@@ -280,7 +290,6 @@ const TaskDashboard = () => {
             message: data.message,
             showSnackBar: true,
           });
-          // ✅ FIX 3: Always stop loading on error path
           setIsLoading(false);
         }
       })
@@ -294,7 +303,6 @@ const TaskDashboard = () => {
         });
       });
 
-    // Update comp table rows from grid data
     let newData = [];
     allRowData.forEach((d) => {
       newData.push({
@@ -327,11 +335,10 @@ const TaskDashboard = () => {
         });
       });
 
-      const suffixedTaskName = currentTaskName + "_Netra";
-
+      // ✅ FIX: use currentTaskName directly — no _Netra suffix
       let localData = {
         shipName: currentShip,
-        taskName: suffixedTaskName,
+        taskName: currentTaskName,
         data: mainData,
         cal_rel: totalReliability,
       };
@@ -339,8 +346,9 @@ const TaskDashboard = () => {
       console.log(localData, "local Data");
       setPhaseData(mainData);
 
+      // ✅ FIX: localStorage key uses currentTaskName — no suffix
       localStorage.setItem(
-        `${currentShip}_${suffixedTaskName}`,
+        `${currentShip}_${currentTaskName}`,
         JSON.stringify(localData)
       );
 
@@ -444,7 +452,8 @@ const TaskDashboard = () => {
     let fData = [];
     storedData.forEach((ele) => {
       let name = ele[0];
-      if (name.includes("_Netra")) {
+      // ✅ FIX: filter out system keys instead of looking for _Netra suffix
+      if (name !== "settings" && name !== "login" && name !== "userData") {
         fData.push(JSON.parse(ele[1]));
       }
     });
@@ -492,7 +501,7 @@ const TaskDashboard = () => {
 
             taskData.push({
               shipName: tData["shipName"],
-              taskName: tData["taskName"]?.replace(/_Netra$/, ""),
+              taskName: tData["taskName"],  // ✅ FIX: no _Netra to strip anymore
               rel: parseFloat(tData["rel"]).toFixed(precision),
               cal_rel: parseFloat(tData["cal_rel"]).toFixed(precision),
             });
@@ -712,6 +721,7 @@ const TaskDashboard = () => {
                     <PaperTable
                       response={recommedation}
                       rel={totalReliability}
+                      opsEquipment={opsEquipment}
                     />
                   ) : null}
                 </div>
