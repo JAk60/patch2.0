@@ -83,8 +83,8 @@ const TaskDashboard = () => {
   
   const [entireData, setentireData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-
-  const [opsEquipment, setOpsEquipment] = useState([]);
+  // ✅ CHANGED: renamed from opsEquipment → nonOpsEquipment to reflect non-ops data
+  const [nonOpsEquipment, setNonOpsEquipment] = useState([]);
 
   const currentShip = useSelector((state) => state.taskData.currentShip);
   const currentTaskName = useSelector(
@@ -165,7 +165,8 @@ const TaskDashboard = () => {
         label: "Select Component for Phase",
         isMultiple: true,
         currentTask: selectedTaskName,
-        opsEquipment: opsEquipment,
+        // ✅ CHANGED: pass nonOpsEquipment instead of opsEquipment
+        opsEquipment: nonOpsEquipment,
       }}
       width="300"
       editable={true}
@@ -241,8 +242,9 @@ const TaskDashboard = () => {
             return;
           }
 
+          // ✅ CHANGED: store ops_equipment (now non-ops) into nonOpsEquipment state
           if (data.ops_equipment) {
-            setOpsEquipment(data.ops_equipment);
+            setNonOpsEquipment(data.ops_equipment);
           }
 
           const recommendation_array = rec.results;
@@ -250,29 +252,26 @@ const TaskDashboard = () => {
             if (recommendation_array.hasOwnProperty(item["id"])) {
               const recData = recommendation_array[item["id"]];
 
-              console.log("recData:", recData); 
+              console.log("recData:", recData);
 
               return {
                 ...item,
-                components: recData?.components || [],
-                ops_components: recData?.ops_components || [],
-                updated_k: recData?.updated_k ?? null,
-                updated_n: recData?.updated_n ?? null,
+                // ✅ FIX: recData is {components, ops_components, updated_k, updated_n}
+                // extract recData.components (the array) not the whole object
+                components: Array.isArray(recData.components) ? recData.components : [],
               };
             }
 
             return {
               ...item,
               components: [],
-              ops_components: [],
-              updated_k: null,
-              updated_n: null,
             };
           });
           console.log("Mapped results:", results);
           setRecommedation(results);
           setTotalReliability(data.recommedation.rel);
-          setOpsEquipment(data.ops_equipment);   
+          // ✅ CHANGED: store into nonOpsEquipment
+          setNonOpsEquipment(data.ops_equipment);
           setSnackBarMessage({
             severity: "Success",
             message: data.message,
@@ -335,7 +334,6 @@ const TaskDashboard = () => {
         });
       });
 
-      // ✅ FIX: use currentTaskName directly — no _Netra suffix
       let localData = {
         shipName: currentShip,
         taskName: currentTaskName,
@@ -346,7 +344,6 @@ const TaskDashboard = () => {
       console.log(localData, "local Data");
       setPhaseData(mainData);
 
-      // ✅ FIX: localStorage key uses currentTaskName — no suffix
       localStorage.setItem(
         `${currentShip}_${currentTaskName}`,
         JSON.stringify(localData)
@@ -452,7 +449,6 @@ const TaskDashboard = () => {
     let fData = [];
     storedData.forEach((ele) => {
       let name = ele[0];
-      // ✅ FIX: filter out system keys instead of looking for _Netra suffix
       if (name !== "settings" && name !== "login" && name !== "userData") {
         fData.push(JSON.parse(ele[1]));
       }
@@ -501,7 +497,7 @@ const TaskDashboard = () => {
 
             taskData.push({
               shipName: tData["shipName"],
-              taskName: tData["taskName"],  // ✅ FIX: no _Netra to strip anymore
+              taskName: tData["taskName"],
               rel: parseFloat(tData["rel"]).toFixed(precision),
               cal_rel: parseFloat(tData["cal_rel"]).toFixed(precision),
             });
@@ -721,7 +717,8 @@ const TaskDashboard = () => {
                     <PaperTable
                       response={recommedation}
                       rel={totalReliability}
-                      opsEquipment={opsEquipment}
+                      // ✅ CHANGED: pass nonOpsEquipment — now contains non-ops equipment
+                      opsEquipment={nonOpsEquipment}
                     />
                   ) : null}
                 </div>

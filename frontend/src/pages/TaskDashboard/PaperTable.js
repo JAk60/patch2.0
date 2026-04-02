@@ -17,10 +17,6 @@ const PreferredEquipmentsTable = ({ response = [], rel, opsEquipment = [] }) => 
     <div>
       <Paper elevation={3} style={{ padding: '20px', margin: '80px' }}>
         <Typography variant="h5">Preferred Equipments</Typography>
-        <Typography style={{ marginTop: '10px', fontWeight: 'bold' }}>
-          OPS Equipment: {opsEquipment.length > 0 ? opsEquipment.join(', ') : '-'}
-        </Typography>
-
         <TableContainer style={{ margin: '30px 0' }}>
           <Table>
           
@@ -66,7 +62,9 @@ const PreferredEquipmentsTable = ({ response = [], rel, opsEquipment = [] }) => 
           </Table>
         </TableContainer>
 
-        {/* ================= RELIABILITY ================= */}
+        <Typography style={{ marginTop: '10px', fontWeight: 'bold' }}>
+          NON-OPS Equipment: {opsEquipment.length > 0 ? opsEquipment.join(', ') : '-'}
+        </Typography>
         <Typography variant='h6'>
           TOTAL RELIABILITY: {rel !== undefined ? rel : '-'}
         </Typography>
