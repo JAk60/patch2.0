@@ -10,7 +10,7 @@ import {
   TableRow,
 } from '@material-ui/core';
 
-const PreferredEquipmentsTable = ({ response = [], rel, opsEquipment = [] }) => {
+const PreferredEquipmentsTable = ({ response = [], rel, Non_ops_equipment = [] }) => {
   console.log("TABLE DATA:", response);
 
   return (
@@ -38,12 +38,11 @@ const PreferredEquipmentsTable = ({ response = [], rel, opsEquipment = [] }) => 
                 response.map((phase, index) => (
                   <TableRow key={phase.id || index}>
                     
-                    {/* Phase */}
+
                     <TableCell>
                       {phase.missionType || '-'}
                     </TableCell>
 
-                    {/* Preferred Components */}
                     <TableCell>
                       {Array.isArray(phase.components) && phase.components.length > 0
                         ? phase.components.join(', ')
@@ -62,8 +61,8 @@ const PreferredEquipmentsTable = ({ response = [], rel, opsEquipment = [] }) => 
           </Table>
         </TableContainer>
 
-        <Typography style={{ marginTop: '10px', fontWeight: 'bold' }}>
-          NON-OPS Equipment: {opsEquipment.length > 0 ? opsEquipment.join(', ') : '-'}
+        <Typography style={{ marginTop: '10px', variant: 'h6' }}>
+          NON-OPS Equipment: {Non_ops_equipment.length > 0 ? Non_ops_equipment.join(', ') : 'No Equipment Is Set As Non-Ops'}
         </Typography>
         <Typography variant='h6'>
           TOTAL RELIABILITY: {rel !== undefined ? rel : '-'}

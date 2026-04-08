@@ -359,7 +359,8 @@ class TaskReliability:
                 "message": "Solution Recommended",
                 "code": 1,
                 # ✅ CHANGED: now returns non-ops (inactive) equipment instead of ops equipment
-                "ops_equipment": sorted(list(non_active_set)),
+                "Non_ops_equipment": sorted(list(non_active_set)),
+                "ops_equipment": sorted(list(active_set)),
                 "recommedation": {
                     "results": {
                             pid: {

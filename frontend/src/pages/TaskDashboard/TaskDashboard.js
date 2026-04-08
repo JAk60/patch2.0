@@ -1,16 +1,27 @@
 import {
-  Button,
-  CircularProgress,
-  InputLabel,
-  TextField,
-  Typography,
-  makeStyles,
+ Button,
+ Checkbox,
+ CircularProgress,
+ Dialog,
+ DialogActions,
+ DialogContent,
+ IconButton,
+ InputLabel,
+ Table,
+ TableBody,
+ TableCell,
+ TableHead,
+ TableRow,
+ TextField,
+ Typography,
+ makeStyles,
 } from "@material-ui/core";
 import { MuiPickersUtilsProvider } from "@material-ui/pickers";
 import React, { useEffect, useState } from "react";
 
 import MomentUtils from "@date-io/moment";
 import AddIcon from "@material-ui/icons/Add";
+import CloseIcon from "@material-ui/icons/Close";
 import DeleteIcon from "@material-ui/icons/Delete";
 import { Autocomplete } from "@material-ui/lab";
 import { AgGridColumn } from "ag-grid-react";
@@ -19,7 +30,7 @@ import { v4 as uuidv4 } from "uuid";
 import Navigation from "../../components/navigation/Navigation";
 import { taskActions } from "../../store/taskStore";
 import CustomizedSnackbars from "../../ui/CustomSnackBar";
-import Table from "../../ui/Table/DataManagerTable";
+import DataManagerTable from "../../ui/Table/DataManagerTable";
 import AccessControl from "../Home/AccessControl";
 import PaperTable from "./PaperTable";
 import CollapsibleTable from "./ResTable";
@@ -27,786 +38,582 @@ import { taskTableColumns } from "./TaskGridColumns";
 import RenderMultipleComponent from "./TaskRenderMultipleComponent";
 import styles from "./tDashboard.module.css";
 
+
+const useStyles = makeStyles((theme) => ({
+ root: {
+ paddingLeft: 10,
+ background: "#fff",
+ border: "1px solid #0263a1",
+ borderRadius: "5px",
+ width: "320px",
+ minHeight: "40px",
+ boxShadow: "2px 3px 5px -1px rgba(0,0,0,0.2)",
+ },
+ inputRoot: { width: "100%" },
+ uiContainer: {},
+ closeButton: {
+ display: "block",
+ float: "right",
+ marginTop: "10px",
+ marginRight: "10px",
+ },
+ dialogPaper: {
+ minWidth: 700,
+ maxWidth: 860,
+ borderRadius: 8,
+ },
+ modalTitleBar: {
+ display: "flex",
+ alignItems: "center",
+ justifyContent: "space-between",
+ padding: "14px 20px",
+ backgroundColor: "#1976d2",
+ },
+ modalTitleText: {
+ color: "#fff",
+ fontWeight: 700,
+ fontSize: 18,
+ },
+ modalCloseBtn: {
+ color: "#fff",
+ padding: 4,
+ },
+ tableHeaderRow: {
+ backgroundColor: "#1976d2",
+ "& th": {
+ color: "#fff",
+ fontWeight: 700,
+ },
+ },
+}));
+
 const TaskDashboard = () => {
-  const dropDownStyle = makeStyles({
-    root: {
-      paddingLeft: 10,
-      background: "#fff",
-      border: "1px solid #0263a1",
-      borderRadius: "5px",
-      width: "320px",
-      minHeight: "40px",
-      boxShadow: "2px 3px 5px -1px rgba(0,0,0,0.2)",
-    },
-    inputRoot: {
-      width: "100%",
-    },
-    uiContainer: {},
-    closeButton: {
-      display: "block",
-      float: "right",
-      marginTop: "10px",
-      marginRight: "10px",
-    },
-  });
+ const classes = useStyles(); // ── called inside component, defined outside ──
 
-  const precision = 10;
-  const [gridApi, setGridApi] = useState(null);
-  const [gridCompApi, setGridCompApi] = useState(null);
-  const [gridTaskApi, setGriTaskdApi] = useState(null);
-  const [missionProfileData, setMissionData] = useState([]);
-  const rowState = [];
-  const [rowCompState, setCompRows] = useState([]);
-  const dispatch = useDispatch();
-  const [phasedata, setPhaseData] = useState([]);
-  const [missionDurations, setMissionDurations] = useState([]);
-  const setParallelIds = (d) => {
-    console.log("This is shit!!");
-    console.log(d);
-  };
-  console.log("phasedata", phasedata);
-  console.log(rowCompState, "This is shit!!");
-  const [taskOption, settaskOption] = useState([]);
-  const [taskShipNameOption, settaskShipNameOption] = useState([]);
-  const [recommedation, setRecommedation] = useState([]);
-  const [totalReliability, setTotalReliability] = useState(null);
-  const [showPaper, setShowPaper] = useState(false);
-  const [showInputTables, setShowInputTables] = useState(true);
-  const selectedTaskName = "";
-  const [taskTableData, settaskTableData] = useState([]);
-  const [taskMissionTableData, settaskMissionTableData] = useState([]);
-  const [SnackBarMessage, setSnackBarMessage] = useState({
-    severity: "error",
-    message: "This is awesome",
-    showSnackBar: false,
-  });
-  
-  const [entireData, setentireData] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  // ✅ CHANGED: renamed from opsEquipment → nonOpsEquipment to reflect non-ops data
-  const [nonOpsEquipment, setNonOpsEquipment] = useState([]);
+ const precision = 10;
+ const [gridApi, setGridApi] = useState(null);
+ const [gridCompApi, setGridCompApi] = useState(null);
+ const [gridTaskApi, setGriTaskdApi] = useState(null);
+ const [missionProfileData, setMissionData] = useState([]);
+ const rowState = [];
+ const [rowCompState, setCompRows] = useState([]);
+ const dispatch = useDispatch();
+ const [phasedata, setPhaseData] = useState([]);
+ const [missionDurations, setMissionDurations] = useState([]);
+ const setParallelIds = (d) => { console.log(d); };
+ const [taskOption, settaskOption] = useState([]);
+ const [taskShipNameOption, settaskShipNameOption] = useState([]);
+ const [recommedation, setRecommedation] = useState([]);
+ const [totalReliability, setTotalReliability] = useState(null);
+ const [showPaper, setShowPaper] = useState(false);
+ const [showInputTables, setShowInputTables] = useState(true);
+ const selectedTaskName = "";
+ const [taskTableData, settaskTableData] = useState([]);
+ const [taskMissionTableData, settaskMissionTableData] = useState([]);
+ const [SnackBarMessage, setSnackBarMessage] = useState({
+ severity: "error",
+ message: "This is awesome",
+ showSnackBar: false,
+ });
+ const [entireData, setentireData] = useState(null);
+ const [isLoading, setIsLoading] = useState(false);
+ const [nonOpsEquipment, setNonOpsEquipment] = useState([]);
+ const [opsEquipment, setOpsEquipment] = useState([])
+ // ── Ops Modal state ──
+ const [opsModalOpen, setOpsModalOpen] = useState(false);
+ const [tableData, setTableData] = useState([]);
+ const [pendingChanges, setPendingChanges] = useState({});
+ const [isSaving, setIsSaving] = useState(false);
+ const [searchKeyword, setSearchKeyword] = useState("");
+ const [equipmentLoading, setEquipmentLoading] = useState(false);
 
-  const currentShip = useSelector((state) => state.taskData.currentShip);
-  const currentTaskName = useSelector(
-    (state) => state.taskData.currentTaskName
-  );
+ const currentShip = useSelector((state) => state.taskData.currentShip);
+ const currentTaskName = useSelector((state) => state.taskData.currentTaskName);
 
-  const onCellValueChanged = (params) => {
-    console.table(phasedata, "phase data");
-    const { data } = params;
-    const { missionType } = data;
-    console.log(missionType);
-    if (params.colDef.field === "duration") {
-      const updatedDurations = missionDurations.map((duration, index) =>
-        index === params.node.rowIndex ? params.newValue : duration
-      );
-      setMissionDurations(updatedDurations);
-    }
-  };
+ // ── Fetch equipment ──
+ const fetchData = async () => {
+ setEquipmentLoading(true);
+ try {
+ const response = await fetch("/api/all_equipments_onship", {
+ method: "POST",
+ body: JSON.stringify({ shipName: currentShip }),
+ headers: { "Content-Type": "application/json", Accept: "application/json" },
+ });
+ const data = await response.json();
+ if (data.code === 1) {
+ setTableData(data.equipments);
+ } else {
+ setSnackBarMessage({ severity: "error", message: data.message, showSnackBar: true });
+ }
+ } catch (error) {
+ console.error("Error fetching data:", error);
+ setSnackBarMessage({ severity: "error", message: "Error fetching data", showSnackBar: true });
+ } finally {
+ setEquipmentLoading(false);
+ }
+ };
 
-  const ImportColumns = [
-    <AgGridColumn
-      field="missionType"
-      headerName="Phase"
-      headerTooltip="Phase"
-      cellEditor="agSelectCellEditor"
-      checkboxSelection={true}
-      cellEditorParams={{
-        values: [
-          "",
-          "Harbour",
-          "Entry Leaving Harbour",
-          "Cruise",
-          "Defense Station",
-          "Action Station",
-        ],
-      }}
-      width="220"
-      editable={true}
-    />,
-    <AgGridColumn
-      field="duration"
-      headerName="Duration"
-      headerTooltip="Duration"
-      type="number"
-      width={100}
-      editable={true}
-      onCellValueChanged={onCellValueChanged}
-    />,
-  ];
+ 
+ const handleops = (row, enable) => {
+ setPendingChanges((prev) => ({
+ ...prev,
+ [row.nomenclature]: { ...row, is_ops: enable },
+ }));
+ setTableData((prev) =>
+ prev.map((eq) =>
+ eq.nomenclature === row.nomenclature ? { ...eq, is_ops: enable } : eq
+ )
+ );
+ };
 
-  const compColumns = [
-    <AgGridColumn
-      field="missionType"
-      headerName="Phase"
-      headerTooltip="Phase"
-      cellEditor="agSelectCellEditor"
-      checkboxSelection={true}
-      cellEditorParams={{
-        values: [
-          "",
-          "Harbour",
-          "Entry Leaving Harbour",
-          "Cruise",
-          "Defense Station",
-          "Action Station",
-        ],
-      }}
-      width="220"
-      editable={true}
-    />,
-    <AgGridColumn
-      field="component"
-      headerName="Select Component for Phase"
-      headerTooltip="Select Component for Phase"
-      cellEditorFramework={RenderMultipleComponent}
-      cellEditorParams={{
-        setParallelIds: setParallelIds,
-        label: "Select Component for Phase",
-        isMultiple: true,
-        currentTask: selectedTaskName,
-        // ✅ CHANGED: pass nonOpsEquipment instead of opsEquipment
-        opsEquipment: nonOpsEquipment,
-      }}
-      width="300"
-      editable={true}
-    />,
-  ];
+ // ── Save Changes — commit all pending changes to API ──
+ const handleSaveChanges = async () => {
+ const changes = Object.values(pendingChanges);
+ if (changes.length === 0) {
+ setSnackBarMessage({ severity: "error", message: "No changes to save.", showSnackBar: true });
+ return;
+ }
+ setIsSaving(true);
+ try {
+ await Promise.all(
+ changes.map((row) =>
+ fetch("/api/set_equip_ops", {
+ method: "POST",
+ body: JSON.stringify({
+ shipName: currentShip,
+ nomenclature: row.nomenclature,
+ enabled: row.is_ops,
+ }),
+ headers: { "Content-Type": "application/json", Accept: "application/json" },
+ })
+ )
+ );
+ setPendingChanges({});
+ setSnackBarMessage({ severity: "success", message: "Changes saved successfully!", showSnackBar: true });
+ fetchData();
+ } catch (error) {
+ console.error("Error saving changes:", error);
+ setSnackBarMessage({ severity: "error", message: "Error saving changes.", showSnackBar: true });
+ } finally {
+ setIsSaving(false);
+ }
+ };
 
-  const AddRow = () => {
-    const defaultRow = [
-      {
-        id: uuidv4(),
-        duration: 0,
-        missionType: "",
-      },
-    ];
-    setMissionDurations((prevDurations) => [
-      ...prevDurations,
-      defaultRow.duration,
-    ]);
-    gridApi.applyTransaction({
-      add: defaultRow,
-    });
-  };
+ // ── Open modal ──
+ const handleOpenOpsModal = () => {
+ if (!currentShip) {
+ setSnackBarMessage({ severity: "error", message: "Please select a Ship first!", showSnackBar: true });
+ return;
+ }
+ setSearchKeyword("");
+ setTableData([]);
+ setPendingChanges({});
+ setOpsModalOpen(true);
+ fetchData();
+ };
 
-  const updateCompTable = () => {
-    setIsLoading(true);
-    console.log(currentTaskName);
+ // ── Filtered equipment ──
+ const filteredTableData = tableData
+ .filter(
+ (row, index, self) =>
+ index === self.findIndex(
+ (r) => r.component_name === row.component_name && r.nomenclature === row.nomenclature
+ )
+ )
+ .filter((row) => {
+ const searchString = searchKeyword.toLowerCase();
+ const matchesComponentName = row.component_name.toLowerCase().includes(searchString);
+ const matchesNomenclature = row.nomenclature.toLowerCase().includes(searchString);
+ return matchesComponentName || (!matchesComponentName && matchesNomenclature);
+ });
 
-    let allRowData = [];
-    gridApi.forEachNode((node) => allRowData.push(node.data));
+ const onCellValueChanged = (params) => {
+ if (params.colDef.field === "duration") {
+ const updatedDurations = missionDurations.map((duration, index) =>
+ index === params.node.rowIndex ? params.newValue : duration
+ );
+ setMissionDurations(updatedDurations);
+ }
+ };
 
-    if (allRowData.length === 0) {
-      setSnackBarMessage({
-        severity: "error",
-        message: "Please add mission phases before recommending a solution.",
-        showSnackBar: true,
-      });
-      setIsLoading(false);
-      return;
-    }
+ const agHeaderStyle = { backgroundColor: "#1976d2", color: "#fff" };
 
-    const mission_phases_data = allRowData.map((item) => ({
-      ...item,
-      duration: parseFloat(item.duration) || 0,
-    }));
+ const ImportColumns = [
+ <AgGridColumn
+ field="missionType" headerName="Phase" headerTooltip="Phase"
+ cellEditor="agSelectCellEditor" checkboxSelection={true}
+ cellEditorParams={{ values: ["", "Harbour", "Entry Leaving Harbour", "Cruise", "Defense Station", "Action Station"] }}
+ width="220" editable={true} headerStyle={agHeaderStyle}
+ />,
+ <AgGridColumn
+ field="duration" headerName="Duration" headerTooltip="Duration"
+ type="number" width={100} editable={true} onCellValueChanged={onCellValueChanged}
+ headerStyle={agHeaderStyle}
+ />,
+ ];
 
-    console.log("Sending phases:", mission_phases_data);
+ const compColumns = [
+ <AgGridColumn
+ field="missionType" headerName="Phase" headerTooltip="Phase"
+ cellEditor="agSelectCellEditor" checkboxSelection={true}
+ cellEditorParams={{ values: ["", "Harbour", "Entry Leaving Harbour", "Cruise", "Defense Station", "Action Station"] }}
+ width="220" editable={true} headerStyle={agHeaderStyle}
+ />,
+ <AgGridColumn
+ field="component"
+ headerName="Select Component for Phase"
+ headerTooltip="Select Component for Phase"
+ cellEditorFramework={RenderMultipleComponent}
+ cellEditorParams={{ setParallelIds, label: "Select Component for Phase", isMultiple: true, currentTask: selectedTaskName, opsEquipment: opsEquipment }}
+ width="300" editable={true} headerStyle={agHeaderStyle}
+ />,
+ ];
 
-    fetch("/api/phase_json", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        phases: mission_phases_data,
-        shipName: currentShip,
-        task_name: currentTaskName,
-      }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("API response:", data);
+ const AddRow = () => {
+ const defaultRow = [{ id: uuidv4(), duration: 0, missionType: "" }];
+ setMissionDurations((prev) => [...prev, defaultRow.duration]);
+ gridApi.applyTransaction({ add: defaultRow });
+ };
 
-        if (data.code) {
-          const rec = data.recommedation;
-          if (!rec) {
-            console.error("No recommedation field in response:", data);
-            setSnackBarMessage({
-              severity: "error",
-              message: "Unexpected response from server. Missing recommendation data.",
-              showSnackBar: true,
-            });
-            setIsLoading(false);
-            return;
-          }
+ const updateCompTable = () => {
+ setIsLoading(true);
+ let allRowData = [];
+ gridApi.forEachNode((node) => allRowData.push(node.data));
 
-          // ✅ CHANGED: store ops_equipment (now non-ops) into nonOpsEquipment state
-          if (data.ops_equipment) {
-            setNonOpsEquipment(data.ops_equipment);
-          }
+ if (allRowData.length === 0) {
+ setSnackBarMessage({ severity: "error", message: "Please add mission phases before recommending a solution.", showSnackBar: true });
+ setIsLoading(false);
+ return;
+ }
 
-          const recommendation_array = rec.results;
-          const results = mission_phases_data.map((item) => {
-            if (recommendation_array.hasOwnProperty(item["id"])) {
-              const recData = recommendation_array[item["id"]];
+ const mission_phases_data = allRowData.map((item) => ({ ...item, duration: parseFloat(item.duration) || 0 }));
 
-              console.log("recData:", recData);
+ fetch("/api/phase_json", {
+ method: "POST",
+ headers: { "Content-Type": "application/json" },
+ body: JSON.stringify({ phases: mission_phases_data, shipName: currentShip, task_name: currentTaskName }),
+ })
+ .then((res) => res.json())
+ .then((data) => {
+ if (data.code) {
+ const rec = data.recommedation;
+ if (!rec) {
+ setSnackBarMessage({ severity: "error", message: "Unexpected response from server. Missing recommendation data.", showSnackBar: true });
+ setIsLoading(false);
+ return;
+ }
+ if (data.ops_equipment) setNonOpsEquipment(data.Non_ops_equipment);
+ const results = mission_phases_data.map((item) => {
+ const recData = rec.results[item["id"]];
+ return { ...item, components: recData && Array.isArray(recData.components) ? recData.components : [] };
+ });
+ setRecommedation(results);
+ setTotalReliability(rec.rel.toFixed(precision));
+ setNonOpsEquipment(data.Non_ops_equipment);
+ setOpsEquipment(data.ops_equipment)
+ setSnackBarMessage({ severity: "success", message: data.message, showSnackBar: true });
+ setIsLoading(false);
+ setShowPaper(!showPaper);
+ } else {
+ setSnackBarMessage({ severity: "error", message: data.message, showSnackBar: true });
+ setIsLoading(false);
+ }
+ })
+ .catch((error) => {
+ setIsLoading(false);
+ setSnackBarMessage({ severity: "error", message: "Network error: " + error.message, showSnackBar: true });
+ });
 
-              return {
-                ...item,
-                // ✅ FIX: recData is {components, ops_components, updated_k, updated_n}
-                // extract recData.components (the array) not the whole object
-                components: Array.isArray(recData.components) ? recData.components : [],
-              };
-            }
+ setCompRows(allRowData.map((d) => ({ missionType: d["missionType"], component: "", id: d["id"] })));
+ };
 
-            return {
-              ...item,
-              components: [],
-            };
-          });
-          console.log("Mapped results:", results);
-          setRecommedation(results);
-          setTotalReliability(data.recommedation.rel);
-          // ✅ CHANGED: store into nonOpsEquipment
-          setNonOpsEquipment(data.ops_equipment);
-          setSnackBarMessage({
-            severity: "Success",
-            message: data.message,
-            showSnackBar: true,
-          });
+ const saveTaskReset = () => {
+ debugger;
+ try {
+ setShowPaper(false);
+ let allRowData = [], allRowCData = [];
+ gridApi.forEachNode((node) => allRowData.push(node.data));
+ gridCompApi.forEachNode((node) => allRowCData.push(node.data));
 
-          const reliabilityValue = rec.rel;
-          setTotalReliability(reliabilityValue.toFixed(precision));
-          setRecommedation(results);
-          setIsLoading(false);
-          setShowPaper(!showPaper);
-        } else {
-          setSnackBarMessage({
-            severity: "error",
-            message: data.message,
-            showSnackBar: true,
-          });
-          setIsLoading(false);
-        }
-      })
-      .catch((error) => {
-        setIsLoading(false);
-        console.error("Error:", error);
-        setSnackBarMessage({
-          severity: "error",
-          message: "Network error: " + error.message,
-          showSnackBar: true,
-        });
-      });
+ const mainData = allRowData.map((d, index) => ({
+ id: d["id"], missionType: d["missionType"],
+ duration: d["duration"], components: allRowCData[index]["components"],
+ }));
 
-    let newData = [];
-    allRowData.forEach((d) => {
-      newData.push({
-        missionType: d["missionType"],
-        component: "",
-        id: d["id"],
-      });
-    });
-    console.log("Comp rows:", newData);
-    setCompRows(newData);
-  };
+ setPhaseData(mainData);
+ localStorage.setItem(`${currentShip}_${currentTaskName}`, JSON.stringify({ shipName: currentShip, taskName: currentTaskName, data: mainData, cal_rel: totalReliability }));
 
-  const saveTaskReset = () => {
-    console.log(totalReliability, "tOTAL rekl");
-    debugger;
-    try {
-      setShowPaper(false);
-      let allRowData = [];
-      gridApi.forEachNode((node) => allRowData.push(node.data));
-      let allRowCData = [];
-      gridCompApi.forEachNode((node) => allRowCData.push(node.data));
+ gridApi.selectAll(); gridApi.applyTransaction({ remove: gridApi.getSelectedRows() });
+ gridCompApi.selectAll(); gridCompApi.applyTransaction({ remove: gridCompApi.getSelectedRows() });
 
-      let mainData = [];
-      allRowData.forEach((d, index) => {
-        mainData.push({
-          id: allRowData[index]["id"],
-          missionType: allRowData[index]["missionType"],
-          duration: allRowData[index]["duration"],
-          components: allRowCData[index]["components"],
-        });
-      });
+ setMissionData([]); setRecommedation([]); settaskTableData([]); settaskMissionTableData([]);
+ setSnackBarMessage({ severity: "success", message: "Task added for comparison successfully!", showSnackBar: true });
+ } catch (error) {
+ setSnackBarMessage({ severity: "error", message: "Please Select data and Enter Mission Phase Data!!", showSnackBar: true });
+ }
+ };
 
-      let localData = {
-        shipName: currentShip,
-        taskName: currentTaskName,
-        data: mainData,
-        cal_rel: totalReliability,
-      };
+ const deleteRows = () => {
+ debugger;
+ gridApi.applyTransaction({ remove: gridApi.getSelectedRows() });
+ let allRowData = [];
+ gridApi.forEachNode((node) => allRowData.push(node.data));
+ setMissionData(allRowData);
+ };
 
-      console.log(localData, "local Data");
-      setPhaseData(mainData);
+ const resetGrids = () => {
+ if (gridApi) { gridApi.setRowData([]); gridApi.refreshCells(); }
+ if (gridCompApi) { gridCompApi.setRowData([]); gridCompApi.refreshCells(); }
+ };
 
-      localStorage.setItem(
-        `${currentShip}_${currentTaskName}`,
-        JSON.stringify(localData)
-      );
+ useEffect(() => {
+ fetch("/api/task_dash_populate", { method: "GET", headers: { "Content-Type": "application/json", Accept: "application/json" } })
+ .then((res) => res.json())
+ .then((data) => {
+ setentireData(data);
+ settaskShipNameOption(data["ship_name"]);
+ dispatch(taskActions.onLoad({ taskData: data }));
+ });
+ 
+ }, []);
 
-      gridApi.selectAll();
-      const selectedRows = gridApi.getSelectedRows();
-      gridApi.applyTransaction({ remove: selectedRows });
+ const onResetMissionHandler = () => {
+ resetGrids(); setShowPaper(false); setRecommedation([]);
+ Object.entries(localStorage).forEach(([key]) => {
+ if (key !== "settings" && key !== "login" && key !== "userData") localStorage.removeItem(key);
+ });
+ setSnackBarMessage({ severity: "success", message: "Data Cleared", showSnackBar: true });
+ settaskTableData([]); settaskMissionTableData([]);
+ };
 
-      gridCompApi.selectAll();
-      const selectedCompRows = gridCompApi.getSelectedRows();
-      gridCompApi.applyTransaction({ remove: selectedCompRows });
+ const [isCalculating, setIsCalculating] = useState(false);
 
-      allRowData = [];
-      setMissionData(allRowData);
-      setRecommedation([]);
-      settaskTableData([]);
-      settaskMissionTableData([]);
-      setSnackBarMessage({
-        severity: "success",
-        message: "Task added for comparison successfully!",
-        showSnackBar: true,
-      });
-    } catch (error) {
-      setSnackBarMessage({
-        severity: "error",
-        message: "Please Select data and Enter Mission Phase Data!!",
-        showSnackBar: true,
-      });
-    }
-  };
+ const onSubmitHandler = () => {
+ const fData = Object.entries(localStorage)
+ .filter(([name]) => !["settings", "login", "userData"].includes(name))
+ .map(([, val]) => JSON.parse(val));
 
-  console.log("missiondata", missionProfileData);
+ if (fData.length > 0) {
+ setIsCalculating(true);
+ fetch("/api/task_rel", { method: "POST", body: JSON.stringify(fData), headers: { "Content-Type": "application/json", Accept: "application/json" } })
+ .then((res) => res.json())
+ .then((d) => {
+ let taskData = [], taskMissionData = [];
+ d.forEach((tData) => {
+ tData["data"].forEach((pTD) => {
+ taskMissionData.push({ shipName: tData["shipName"], taskName: tData["taskName"], rel: parseFloat(pTD["rel"]).toFixed(precision), missionType: pTD["missionName"], ComponentMission: pTD["missionName"] });
+ pTD["comp_rel"].forEach((cTD) => taskMissionData.push({ shipName: tData["shipName"], taskName: tData["taskName"], rel: parseFloat(cTD["rel"]).toFixed(precision), missionType: pTD["missionName"], ComponentMission: cTD["compName"] }));
+ });
+ taskData.push({ shipName: tData["shipName"], taskName: tData["taskName"], rel: parseFloat(tData["rel"]).toFixed(precision), cal_rel: parseFloat(tData["cal_rel"]).toFixed(precision) });
+ });
+ setIsCalculating(false); settaskTableData(taskData); settaskMissionTableData(taskMissionData);
+ });
+ } else {
+ setSnackBarMessage({ severity: "error", message: "Please Select data and Enter Mission Phase Data!!", showSnackBar: true });
+ }
+ setShowInputTables(false);
+ };
 
-  const deleteRows = () => {
-    debugger;
-    const selectedRows = gridApi.getSelectedRows();
-    gridApi.applyTransaction({ remove: selectedRows });
-    let allRowData = [];
-    gridApi.forEachNode((node) => allRowData.push(node.data));
-    setMissionData(allRowData);
-  };
+ const onHandleSnackClose = () => setSnackBarMessage((prev) => ({ ...prev, showSnackBar: false }));
+ const updateFinalRowData = (d) => setMissionData(d);
 
-  const resetGrids = () => {
-    if (gridApi) {
-      gridApi.setRowData([]);
-      gridApi.refreshCells();
-    }
-    if (gridCompApi) {
-      gridCompApi.setRowData([]);
-      gridCompApi.refreshCells();
-    }
-  };
+ const shipNameChange = (event, value) => {
+ debugger;
+ const tt = entireData;
+ if (tt && tt["task_ship_name"] && (Array.isArray(value) ? value.length > 0 && value[0]?.name : value?.name)) {
+ const selectedShipName = Array.isArray(value) ? value[0].name : value.name;
+ if (tt["task_ship_name"].hasOwnProperty(selectedShipName)) {
+ settaskOption(tt["task_ship_name"][selectedShipName].map((s) => ({ name: s })));
+ dispatch(taskActions.updateCurrentShip({ ship: selectedShipName }));
+ }
+ }
+ };
 
-  console.log(taskMissionTableData, "taskMissionTableData");
+ const TaskNameChange = (event, value) => {
+ if (value && typeof value === "object" && value.name)
+ dispatch(taskActions.updateCurrentTask({ task: value.name }));
+ };
 
-  useEffect(() => {
-    fetch("/api/task_dash_populate", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        const task_ship_name = data["ship_name"];
-        setentireData(data);
-        settaskShipNameOption(task_ship_name);
-        dispatch(taskActions.onLoad({ taskData: data }));
-      });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+ return (
+ <AccessControl allowedLevels={["L0", "L1", "L2", "L3", "L4", "L5"]}>
+ <MuiPickersUtilsProvider utils={MomentUtils}>
+ <Navigation />
+ <div className={styles.body}>
+ <div className={styles.mprofile}>
+ <div style={{ display: "flex", justifyContent: "flex-start", gap: "10rem", width: "100%" }}>
+ <div style={{ width: "250px" }}>
+ <InputLabel style={{ fontWeight: "bold", color: "black", fontSize: "16px", marginBottom: "10px" }}>
+ <Typography variant="h5">Ship Name</Typography>
+ </InputLabel>
+ <Autocomplete classes={classes} id="ship-select" options={taskShipNameOption} getOptionLabel={(o) => o.name} onChange={shipNameChange}
+ renderInput={(params) => <TextField {...params} InputProps={{ ...params.InputProps, disableUnderline: true }} variant="standard" />}
+ />
+ </div>
+ <div style={{ width: "300px" }}>
+ <InputLabel style={{ fontWeight: "bold", color: "black", fontSize: "16px", marginBottom: "10px" }}>
+ <Typography variant="h5">Task Name</Typography>
+ </InputLabel>
+ <Autocomplete classes={classes} id="task-select" options={taskOption} getOptionLabel={(o) => o.name} onChange={TaskNameChange}
+ renderInput={(params) => <TextField {...params} InputProps={{ ...params.InputProps, disableUnderline: true }} variant="standard" />}
+ />
+ </div>
+ </div>
+ <Button variant="contained" color="primary" style={{ marginTop: "2rem" }} onClick={onResetMissionHandler}>
+ Reset Screen
+ </Button>
+ </div>
 
-  const classes = dropDownStyle();
+ {!showInputTables && (
+ <Button variant="contained" color="secondary" className={classes.closeButton} onClick={() => setShowInputTables(true)}>X</Button>
+ )}
 
-  const onResetMissionHandler = () => {
-    resetGrids();
-    setShowPaper(false);
-    setRecommedation([]);
-    let storedData = Object.entries(localStorage);
-    storedData.forEach((ele) => {
-      let key = ele[0];
-      if (key !== "settings" && key !== "login" && key !== "userData") {
-        localStorage.removeItem(key);
-      }
-      setSnackBarMessage({
-        severity: "Success",
-        message: "Data Cleared",
-        showSnackBar: true,
-      });
-      settaskTableData([]);
-      settaskMissionTableData([]);
-    });
-  };
+ <div className={classes.uiContainer}>
+ {showInputTables && (
+ <>
+ <div className={styles.table}>
+ <DataManagerTable columnDefs={ImportColumns} setGrid={setGridApi} gridApi={gridApi} rowData={rowState} tableUpdate={updateFinalRowData} tableSize={250} />
+ </div>
 
-  const [isCalculating, setIsCalculating] = useState(false);
+ <div className={styles.tableFooter}>
+ <Button variant="contained" startIcon={<AddIcon />} color="secondary" onClick={AddRow}>Add Row</Button>
+ <Button variant="contained" startIcon={<DeleteIcon />} color="secondary" onClick={deleteRows}>Delete Rows</Button>
+ <Button variant="contained" color="secondary" onClick={handleOpenOpsModal}>Ops / Non-Ops</Button>
+ <Button variant="contained" color="secondary" onClick={updateCompTable}>Recommend Solution</Button>
+ 
+ </div>
 
-  const onSubmitHandler = () => {
-    let storedData = Object.entries(localStorage);
-    console.log("Localy data", storedData);
+ <div>
+ {isLoading ? (
+ <CircularProgress size={24} style={{ width: "100%", display: "flex", justifyContent: "center" }} />
+ ) : showPaper ? (
+ <PaperTable response={recommedation} rel={totalReliability} Non_ops_equipment={nonOpsEquipment} />
+ ) : null}
+ </div>
 
-    let fData = [];
-    storedData.forEach((ele) => {
-      let name = ele[0];
-      if (name !== "settings" && name !== "login" && name !== "userData") {
-        fData.push(JSON.parse(ele[1]));
-      }
-    });
+ <div className={styles.table}>
+ <DataManagerTable columnDefs={compColumns} setGrid={setGridCompApi} gridApi={gridCompApi} rowData={rowCompState} tableUpdate={updateFinalRowData} tableSize={250} />
+ </div>
 
-    console.log(fData);
+ <div className={styles.tableFooter}>
+ <Button variant="contained" startIcon={<AddIcon />} color="secondary" onClick={saveTaskReset}>Add this Task for Comparison</Button>
+ <Button variant="contained" color="secondary" onClick={onSubmitHandler}>Calculate Reliability</Button>
+ </div>
+ </>
+ )}
 
-    if (fData.length > 0) {
-      setIsCalculating(true);
-      fetch("/api/task_rel", {
-        method: "POST",
-        body: JSON.stringify(fData),
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-      })
-        .then((res) => res.json())
-        .then((d) => {
-          let taskData = [];
-          let taskMissionData = [];
+ {!showInputTables && (
+ <>
+ {isCalculating ? (
+ <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", marginTop: "5rem", gap: "1rem" }}>
+ <CircularProgress size={60} />
+ <Typography variant="h6">Calculating Reliability...</Typography>
+ </div>
+ ) : taskTableData.length > 0 ? (
+ <>
+ <div className={styles.table}>
+ <DataManagerTable columnDefs={taskTableColumns} setGrid={setGriTaskdApi} gridApi={gridTaskApi} rowData={taskTableData} tableUpdate={() => {}} tableSize={250} />
+ </div>
+ <div className={styles.table}>
+ <CollapsibleTable tableData={taskMissionTableData} />
+ </div>
+ </>
+ ) : (
+ <div style={{ textAlign: "center", marginTop: "5rem" }}>
+ <Typography variant="h6">No data available</Typography>
+ </div>
+ )}
+ </>
+ )}
+ </div>
 
-          d.forEach((tData) => {
-            let perMData = tData["data"];
+ <Dialog
+ open={opsModalOpen}
+ onClose={() => setOpsModalOpen(false)}
+ classes={{ paper: classes.dialogPaper }}
+ maxWidth="md"
+ fullWidth
+ >
+ <div className={classes.modalTitleBar}>
+ <Typography className={classes.modalTitleText}>
+ Equipment — Ops / Non-Ops Status
+ </Typography>
+ <IconButton className={classes.modalCloseBtn} size="small" onClick={() => setOpsModalOpen(false)}>
+ <CloseIcon />
+ </IconButton>
+ </div>
 
-            perMData.forEach((pTD) => {
-              taskMissionData.push({
-                shipName: tData["shipName"],
-                taskName: tData["taskName"],
-                rel: parseFloat(pTD["rel"]).toFixed(precision),
-                missionType: pTD["missionName"],
-                ComponentMission: pTD["missionName"],
-              });
+ <DialogContent>
+ <TextField
+ variant="outlined"
+ size="small"
+ fullWidth
+ label="Search"
+ value={searchKeyword}
+ onChange={(e) => setSearchKeyword(e.target.value)}
+ style={{ marginBottom: 12 }}
+ />
 
-              let componentRelData = pTD["comp_rel"];
-              componentRelData.forEach((cTD) => {
-                taskMissionData.push({
-                  shipName: tData["shipName"],
-                  taskName: tData["taskName"],
-                  rel: parseFloat(cTD["rel"]).toFixed(precision),
-                  missionType: pTD["missionName"],
-                  ComponentMission: cTD["compName"],
-                });
-              });
-            });
+ <div style={{ maxHeight: 420, overflowY: "auto" }}>
+ {equipmentLoading ? (
+ <div style={{ display: "flex", justifyContent: "center", padding: "40px 0" }}>
+ <CircularProgress size={36} />
+ </div>
+ ) : (
+ <Table>
+ <TableHead>
+ <TableRow className={classes.tableHeaderRow}>
+ <TableCell>Equipment Name</TableCell>
+ <TableCell>Nomenclature</TableCell>
+ <TableCell>Ops</TableCell>
+ </TableRow>
+ </TableHead>
+ <TableBody>
+ {filteredTableData.map((row) => (
+ <TableRow key={row.nomenclature}>
+ <TableCell>{row.component_name}</TableCell>
+ <TableCell>{row.nomenclature}</TableCell>
+ <TableCell>
+ <Checkbox
+ checked={!!row.is_ops}
+ onChange={(e) => handleops(row, e.target.checked)}
+ color="secondary"
+ />
+ </TableCell>
+ </TableRow>
+ ))}
+ </TableBody>
+ </Table>
+ )}
+ </div>
+ </DialogContent>
 
-            taskData.push({
-              shipName: tData["shipName"],
-              taskName: tData["taskName"],
-              rel: parseFloat(tData["rel"]).toFixed(precision),
-              cal_rel: parseFloat(tData["cal_rel"]).toFixed(precision),
-            });
-          });
+ <DialogActions style={{ padding: "12px 20px", borderTop: "1px solid #e0e0e0" }}>
+ <Button onClick={() => setOpsModalOpen(false)} variant="contained" color="secondary">
+ Close
+ </Button>
+ <Button onClick={fetchData} variant="contained" color="secondary">
+ Refresh
+ </Button>
+ <Button
+ onClick={handleSaveChanges}
+ variant="contained"
+ color="secondary"
+ disabled={isSaving || Object.keys(pendingChanges).length === 0}
+ >
+ {isSaving
+ ? <CircularProgress size={20} style={{ color: "#fff" }} />
+ : `Save Changes${Object.keys(pendingChanges).length > 0 ? ` (${Object.keys(pendingChanges).length})` : ""}`}
+ </Button>
+ </DialogActions>
+ </Dialog>
 
-          setIsCalculating(false);
-          settaskTableData(taskData);
-          settaskMissionTableData(taskMissionData);
-        });
-    } else {
-      setSnackBarMessage({
-        severity: "error",
-        message: "Please Select data and Enter Mission Phase Data!!",
-        showSnackBar: true,
-      });
-    }
-
-    setShowInputTables(false);
-  };
-
-  const onHandleSnackClose = () => {
-    setSnackBarMessage({
-      severity: "error",
-      message: "Please Add Systemss",
-      showSnackBar: false,
-    });
-  };
-
-  const updateFinalRowData = (d) => {
-    console.log(d);
-    setMissionData(d);
-  };
-
-  const shipNameChange = (event, value) => {
-    debugger;
-    let tt = entireData;
-    console.log(tt);
-    console.log(value);
-    if (
-      tt &&
-      tt["task_ship_name"] &&
-      (Array.isArray(value) || typeof value === "object") &&
-      (Array.isArray(value) ? value.length > 0 && value[0]?.name : value?.name)
-    ) {
-      const selectedShipName = Array.isArray(value)
-        ? value[0].name
-        : value.name;
-      console.log("Selected Ship Name:", selectedShipName);
-
-      if (tt["task_ship_name"].hasOwnProperty(selectedShipName)) {
-        const sNames = tt["task_ship_name"][selectedShipName];
-        const fNames = sNames.map((s) => ({ name: s }));
-        settaskOption(fNames);
-        dispatch(taskActions.updateCurrentShip({ ship: selectedShipName }));
-      } else {
-        console.log(`No task_ship_name data found for ship: ${selectedShipName}`);
-      }
-    } else {
-      console.log("Invalid data or value array in shipNameChange function.");
-    }
-  };
-
-  const TaskNameChange = (event, value) => {
-    console.log(value);
-    if (value && typeof value === "object" && value.name) {
-      dispatch(taskActions.updateCurrentTask({ task: value.name }));
-    }
-  };
-
-  console.log(taskOption);
-
-  return (
-    <AccessControl allowedLevels={["L0", "L1", "L2", "L3", "L4", "L5"]}>
-      <MuiPickersUtilsProvider utils={MomentUtils}>
-        <Navigation />
-        <div className={styles.body}>
-          <div className={styles.mprofile}>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "flex-start",
-                gap: "10rem",
-                width: "100%",
-              }}
-            >
-              <div style={{ width: "250px" }}>
-                <InputLabel
-                  style={{
-                    fontWeight: "bold",
-                    color: "black",
-                    fontSize: "16px",
-                    marginBottom: "10px",
-                  }}
-                >
-                  <Typography variant="h5">Ship Name</Typography>
-                </InputLabel>
-                <Autocomplete
-                  classes={classes}
-                  id="tags-standard"
-                  options={taskShipNameOption}
-                  getOptionLabel={(option) => option.name}
-                  onChange={shipNameChange}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      InputProps={{
-                        ...params.InputProps,
-                        disableUnderline: true,
-                      }}
-                      variant="standard"
-                    />
-                  )}
-                />
-              </div>
-              <div style={{ width: "300px" }}>
-                <InputLabel
-                  style={{
-                    fontWeight: "bold",
-                    color: "black",
-                    fontSize: "16px",
-                    marginBottom: "10px",
-                  }}
-                >
-                  <Typography variant="h5">Task Name</Typography>
-                </InputLabel>
-                <Autocomplete
-                  classes={classes}
-                  id="tags-standard"
-                  options={taskOption}
-                  getOptionLabel={(option) => option.name}
-                  onChange={TaskNameChange}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      InputProps={{
-                        ...params.InputProps,
-                        disableUnderline: true,
-                      }}
-                      variant="standard"
-                    />
-                  )}
-                />
-              </div>
-            </div>
-            <Button
-              variant="contained"
-              color="primary"
-              style={{ marginTop: "2rem" }}
-              onClick={onResetMissionHandler}
-            >
-              Reset Screen
-            </Button>
-          </div>
-
-          {!showInputTables && (
-            <Button
-              variant="contained"
-              color="secondary"
-              className={classes.closeButton}
-              onClick={() => setShowInputTables(true)}
-            >
-              X
-            </Button>
-          )}
-
-          <div className={classes.uiContainer}>
-            {showInputTables && (
-              <>
-                <div className={styles.table}>
-                  <Table
-                    columnDefs={ImportColumns}
-                    setGrid={setGridApi}
-                    gridApi={gridApi}
-                    rowData={rowState}
-                    tableUpdate={updateFinalRowData}
-                    tableSize={250}
-                  />
-                </div>
-
-                <div className={styles.tableFooter}>
-                  <Button
-                    variant="contained"
-                    startIcon={<AddIcon />}
-                    color="secondary"
-                    onClick={() => AddRow()}
-                  >
-                    Add Row
-                  </Button>
-                  <Button
-                    variant="contained"
-                    startIcon={<DeleteIcon />}
-                    color="secondary"
-                    onClick={() => deleteRows()}
-                  >
-                    Delete Rows
-                  </Button>
-                  <Button
-                    variant="contained"
-                    color="secondary"
-                    onClick={() => updateCompTable()}
-                  >
-                    Recommend Solution
-                  </Button>
-                </div>
-
-                <div>
-                  {isLoading ? (
-                    <CircularProgress
-                      size={24}
-                      style={{
-                        width: "100%",
-                        display: "flex",
-                        justifyContent: "center",
-                      }}
-                    />
-                  ) : showPaper ? (
-                    <PaperTable
-                      response={recommedation}
-                      rel={totalReliability}
-                      // ✅ CHANGED: pass nonOpsEquipment — now contains non-ops equipment
-                      opsEquipment={nonOpsEquipment}
-                    />
-                  ) : null}
-                </div>
-
-                <div className={styles.table}>
-                  <Table
-                    columnDefs={compColumns}
-                    setGrid={setGridCompApi}
-                    gridApi={gridCompApi}
-                    rowData={rowCompState}
-                    tableUpdate={updateFinalRowData}
-                    tableSize={250}
-                  />
-                </div>
-
-                <div className={styles.tableFooter}>
-                  <Button
-                    variant="contained"
-                    startIcon={<AddIcon />}
-                    color="secondary"
-                    onClick={() => saveTaskReset()}
-                  >
-                    Add this Task for Comparison
-                  </Button>
-                  <Button
-                    variant="contained"
-                    color="secondary"
-                    onClick={onSubmitHandler}
-                  >
-                    Calculate Reliability
-                  </Button>
-                </div>
-              </>
-            )}
-
-            {!showInputTables && (
-              <>
-                {isCalculating ? (
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      marginTop: "5rem",
-                      gap: "1rem",
-                    }}
-                  >
-                    <CircularProgress size={60} />
-                    <Typography variant="h6">
-                      Calculating Reliability...
-                    </Typography>
-                  </div>
-                ) : taskTableData.length > 0 ? (
-                  <>
-                    <div className={styles.table}>
-                      <Table
-                        columnDefs={taskTableColumns}
-                        setGrid={setGriTaskdApi}
-                        gridApi={gridTaskApi}
-                        rowData={taskTableData}
-                        tableUpdate={() => {}}
-                        tableSize={250}
-                      />
-                    </div>
-                    <div className={styles.table}>
-                      <CollapsibleTable tableData={taskMissionTableData} />
-                    </div>
-                  </>
-                ) : (
-                  <div style={{ textAlign: "center", marginTop: "5rem" }}>
-                    <Typography variant="h6">No data available</Typography>
-                  </div>
-                )}
-              </>
-            )}
-          </div>
-
-          {SnackBarMessage.showSnackBar && (
-            <CustomizedSnackbars
-              message={SnackBarMessage}
-              onHandleClose={onHandleSnackClose}
-            />
-          )}
-        </div>
-      </MuiPickersUtilsProvider>
-    </AccessControl>
-  );
+ {SnackBarMessage.showSnackBar && (
+ <CustomizedSnackbars message={SnackBarMessage} onHandleClose={onHandleSnackClose} />
+ )}
+ </div>
+ </MuiPickersUtilsProvider>
+ </AccessControl>
+ );
 };
 
 export default TaskDashboard;

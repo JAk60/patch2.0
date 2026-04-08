@@ -162,6 +162,25 @@ class Data_Administrator:
         except Exception as e:
             return {"code": 0, "message": f"Error fetching equipments on {shipName}: {str(e)}"}
 
+    def get_all_equipments_onship(self, data):
+        try:
+            shipName = data["shipName"]
+            print(shipName)
+            equpQ = '''SELECT component_name, nomenclature,is_ops
+                        FROM system_configuration 
+                        WHERE ship_name = ? '''
+            cursor.execute(equpQ, (shipName))
+            result = cursor.fetchall()
+            equipments = [{"component_name": row[0],
+                           "nomenclature": row[1], "is_ops": row[2]} for row in result]
+            return {"code": 1, "equipments": equipments}
+
+        except KeyError:
+            return {"status": "error", "message": "Missing 'shipName' in request data"}
+
+        except Exception as e:
+            return {"code": 0, "message": f"Error fetching equipments on {shipName}: {str(e)}"}
+
     def register_equipment(self, data):
         try:
             print("datalll",data)

@@ -1016,6 +1016,12 @@ def equipment_onship():
     inst = Data_Administrator()
     return inst.get_equipments_onship(data)
 
+@api.route('/all_equipments_onship', methods=['POST'])
+def all_equipment_onship():
+    data = request.get_json(force=True)
+    inst = Data_Administrator()
+    return inst.get_all_equipments_onship(data)
+
 
 @api.route('/delspecific', methods=['POST'])
 def delspecific():
