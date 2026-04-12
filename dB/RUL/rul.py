@@ -84,16 +84,16 @@ class RUL_dB:
                 return self.error_return
             p, f = pf_result
             query = '''
-                SELECT operating_hours, value from parameter_data WHERE name = ? and component_id = ?
+                SELECT operating_hours, value from parameter_data WHERE name = ? and component_id = ? ORDER BY date ASC
             '''
             cursor.execute(query, parameter, equipment_id)
             data = cursor.fetchall()
             data = [(x, float(y)) for x, y in data]
 
             # Extract input values from JSON data
-            vc = data[-1][0]  # Sensor value
-            t0 = data[-2][1]  # Current time
-            tp = data[-1][1]
+            vc = data[-1][1]  # Sensor value
+            t0 = data[-2][0]  # Current time
+            tp = data[-1][0]
 
             confidence_levels = [0.8, 0.85, 0.9, 0.95]
             threshold = f
