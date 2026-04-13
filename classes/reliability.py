@@ -336,7 +336,7 @@ class Reliability:
             #     raise ValueError(f"corrective maintenance dates are missing for: {self.__component_name}")
             
             main_query = """SELECT * FROM data_manager_overhaul_maint_data 
-                        WHERE component_id = ? ORDER BY cmms_running_age
+                        WHERE component_id = ? ORDER BY date asc
                 """
             cursor.execute(main_query, (component_id,))
             data = cursor.fetchall()

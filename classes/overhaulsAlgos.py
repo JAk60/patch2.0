@@ -269,21 +269,26 @@ class OverhaulsAlgos:
 
     def equipment_failure_times(self, input_data):
         failure_times = []
-        # overhaul_data = {}
-        present_overhaul_data = []
+        current_cycle = []
+
         for data in input_data:
             if data is None:
                 continue
+
+            if data["maintenanceType"] == "Overhaul":
+                # close cycle — overhaul age is NOT a failure, discard it
+                if current_cycle:
+                    failure_times.append(current_cycle)
+                current_cycle = []
             else:
-                if data["maintenanceType"] == "Overhaul":
-                    present_overhaul_data.append(float(data["totalRunAge"]))
-                    failure_times.append(present_overhaul_data)
-                    present_overhaul_data = []
-                else:
-                    present_overhaul_data.append(float(data["totalRunAge"]))
-                    
-        if(len(present_overhaul_data)  != 0):
-            failure_times.append(present_overhaul_data)
+                age = float(data["totalRunAge"])
+                if age > 0:
+                    current_cycle.append(age)
+
+        # ongoing cycle (no overhaul yet)
+        if current_cycle:
+            failure_times.append(current_cycle)
+
         return failure_times
 
         # for data in input_data:
