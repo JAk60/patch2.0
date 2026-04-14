@@ -11,7 +11,6 @@ import {
 import styles from "./CDashboard.module.css";
 
 const CGraph = ({ graphData, selectedParameterNames }) => {
-  console.log("selectedParameterNames", selectedParameterNames);
   const groupedData = graphData.reduce((acc, cur) => {
     if (!acc[cur.nomenclature]) {
       acc[cur.nomenclature] = {
@@ -23,8 +22,6 @@ const CGraph = ({ graphData, selectedParameterNames }) => {
     acc[cur.nomenclature].data.push(cur);
     return acc;
   }, {});
-  console.log("groupedData", groupedData);
-  const paramChartData = Object.values(groupedData);
 
   const manipulatedData = {};
 
@@ -51,48 +48,39 @@ const CGraph = ({ graphData, selectedParameterNames }) => {
     }
   }
 
-  console.log("GG", manipulatedData);
-
-  debugger;
   const parseDate = (dateString) => {
-    const dateParts = dateString.split(", ")[0].split("/");
-    const timeParts = dateString.split(", ")[1].split(":");
-    const year = parseInt(dateParts[2], 10);
-    const month = parseInt(dateParts[1], 10) - 1;
-    const day = parseInt(dateParts[0], 10);
-    const hour = parseInt(timeParts[0], 10);
-    const minute = parseInt(timeParts[1], 10);
-    const second = parseInt(timeParts[2], 10);
-    return new Date(year, month, day, hour, minute, second);
+    if (!dateString) return new Date(0);
+
+    // Try native Date first — handles ISO, "YYYY-MM-DD HH:MM:SS", RFC, etc.
+    const d = new Date(dateString);
+    if (!isNaN(d)) return d;
+
+    // Fallback: "DD/MM/YYYY, HH:MM:SS" (non-standard, JS can't parse natively)
+    const match = dateString.match(
+      /^(\d{1,2})\/(\d{1,2})\/(\d{4}),?\s+(\d{2}):(\d{2}):(\d{2})/
+    );
+    if (match) {
+      const [, day, month, year, hour, minute, second] = match;
+      const fallback = new Date(year, month - 1, day, hour, minute, second);
+      if (!isNaN(fallback)) return fallback;
+    }
+
+    console.warn("Could not parse date:", dateString);
+    return new Date(0);
   };
+
   const getDomainByUnit = (unit, minThreshold, maxThreshold) => {
-    // Calculate padding as 20% of the range
     const range = maxThreshold - minThreshold;
     const padding = range * 0.2;
-
-    const adjustedMin = minThreshold - padding;
-    const adjustedMax = maxThreshold + padding;
-
-    // Round to 2 decimal places to avoid floating-point precision issues
-    const roundedMin = Math.round(adjustedMin * 100) / 100;
-    const roundedMax = Math.round(adjustedMax * 100) / 100;
-
-    switch (unit) {
-      case "RMS":
-      case "kg":
-      case "deg C":
-        return [roundedMin, roundedMax];
-      default:
-        return [roundedMin, roundedMax];
-    }
+    const roundedMin = Math.round((minThreshold - padding) * 100) / 100;
+    const roundedMax = Math.round((maxThreshold + padding) * 100) / 100;
+    return [roundedMin, roundedMax];
   };
 
   const sortDataByDate = (data) => {
-    return data.sort((a, b) => {
-      const dateA = parseDate(a.date);
-      const dateB = parseDate(b.date);
-      return dateA - dateB;
-    });
+    return data
+      .filter((entry) => entry?.date != null)   // ← drop entries missing date
+      .sort((a, b) => parseDate(a.date) - parseDate(b.date));
   };
 
   return (
@@ -100,18 +88,17 @@ const CGraph = ({ graphData, selectedParameterNames }) => {
       {selectedParameterNames.map((param) => {
         const { name, nomenclature } = param;
         const paramData = manipulatedData[nomenclature]?.data[name] || [];
-        console.log(paramData);
+
         if (paramData.length === 0) {
           return null;
         }
 
         const sortedData = sortDataByDate(paramData);
-        console.log(sortedData);
         const minThreshold = parseInt(sortedData[0]?.min_value, 10);
         const maxThreshold = parseInt(sortedData[0]?.max_value, 10);
+        const lastValue = sortedData[sortedData.length - 1]?.value;
         const crossingThreshold =
-          sortedData[sortedData.length - 1]?.value < minThreshold ||
-          sortedData[sortedData.length - 1]?.value > maxThreshold;
+          lastValue < minThreshold || lastValue > maxThreshold;
 
         const unit = sortedData[0]?.unit;
         const yDomain = getDomainByUnit(unit, minThreshold, maxThreshold);
@@ -123,7 +110,6 @@ const CGraph = ({ graphData, selectedParameterNames }) => {
                 }`}
             >
               <div>
-                {crossingThreshold}
                 <h1
                   x={550 / 2}
                   y={10}
@@ -146,7 +132,7 @@ const CGraph = ({ graphData, selectedParameterNames }) => {
                   }}
                   height={45}
                   tickFormatter={(dateString) => {
-                    const dateObject = new Date(dateString);
+                    const dateObject = parseDate(dateString);
                     return dateObject.toLocaleDateString();
                   }}
                 />
@@ -194,9 +180,7 @@ const CGraph = ({ graphData, selectedParameterNames }) => {
                 <Tooltip
                   labelFormatter={(label) => {
                     const dateObject = parseDate(label);
-                    const formattedDate = dateObject.toLocaleDateString();
-                    const formattedTime = dateObject.toLocaleTimeString();
-                    return `${formattedDate} ${formattedTime}`;
+                    return `${dateObject.toLocaleDateString()} ${dateObject.toLocaleTimeString()}`;
                   }}
                 />
               </LineChart>
