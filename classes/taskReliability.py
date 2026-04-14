@@ -33,18 +33,72 @@ class TaskReliability:
 
     mission_json = None
 
+    def get_curr_age(self):
+        query = '''
+            SELECT TOP 1 
+                maintenance_type,
+                running_age
+            FROM data_manager_overhaul_maint_data
+            WHERE component_id = ?
+            ORDER BY [date] DESC
+        '''
+
+        cursor.execute(query, self.__component_id)
+        row = cursor.fetchone()
+
+        if row is None:
+            return None
+
+        maintenance_type, running_age = row
+
+        # If latest maintenance is Overhaul → reset age
+        if maintenance_type == "Overhaul":
+            return 0.0
+
+        if running_age is None:
+            return None  # add errror clause text ""
+
+        return float(running_age)
+
+    def get_curr_age_with_component_id(self, component_id):
+        query = '''
+            SELECT TOP 1 
+                maintenance_type,
+                running_age
+            FROM data_manager_overhaul_maint_data
+            WHERE component_id = ?
+            ORDER BY [date] DESC
+        '''
+
+        cursor.execute(query, (component_id,))
+        row = cursor.fetchone()
+
+        if row is None:
+            return None
+
+        maintenance_type, running_age = row
+
+        # If latest maintenance is Overhaul → reset age
+        if maintenance_type == "Overhaul":
+            return 0.0
+
+        if running_age is None:
+            return None  # add errror clause text ""
+
+        return float(running_age)
+
     def lmu_rel(self, mission_name, system, platform, total_dur, c_age=0):
         sys_lmus = []
 
         system_config = '''select * from system_configuration where ship_name=? and nomenclature=?'''
-        
+
         # TRY ALPHA_BETA FIRST
         alpha_beta = '''select * from alpha_beta inner join system_configuration sc on 
                     alpha_beta.component_id = sc.component_id
                     where sc.nomenclature = ? and sc.ship_name = ?'''
         cursor.execute(alpha_beta, system, platform)
         alpha_beta_data = cursor.fetchall()
-        
+
         # ONLY IF ALPHA_BETA IS EMPTY, TRY ETA_BETA
         eta_beta_data = []
         if len(alpha_beta_data) == 0:
@@ -52,12 +106,12 @@ class TaskReliability:
                             where sc.nomenclature = ? and sc.ship_name = ?'''
             cursor.execute(eta_beta, system, platform)
             eta_beta_data = cursor.fetchall()
-        
+
         cursor.execute(system_config, platform, system)
         sys_data = cursor.fetchall()
 
         lmus_rel = []
-        
+
         # PROCESS ALPHA_BETA DATA (IF AVAILABLE)
         if len(alpha_beta_data) > 0:
             for lmu in alpha_beta_data:
@@ -66,7 +120,7 @@ class TaskReliability:
                 rel = self.calculate_rel_by_power_law(alpha, beta, total_dur)
                 lmus_rel.append(
                     {'name': lmu[5], 'id': lmu[4], 'rel': rel, 'parent_name': lmu[9], 'parent_id': lmu[6]})
-        
+
         # ONLY PROCESS ETA_BETA IF ALPHA_BETA WAS EMPTY
         else:
             for lmu in eta_beta_data:
@@ -102,10 +156,10 @@ class TaskReliability:
                 rel = float(rel_num) / float(rel_deno)
                 lmus_rel.append(
                     {'name': lmu[6], 'id': lmu[5], 'rel': rel, 'parent_name': lmu[10], 'parent_id': lmu[7]})
-        
+
         sys_lmus.append({system+'_'+platform: lmus_rel})
         return sys_lmus, sys_data
-    
+
     def system_rel(self, mission_name, system, platform, total_dur, c_age=0):
         sys_lmus, sys_data = self.lmu_rel(
             mission_name, system, platform, total_dur, c_age)
@@ -223,30 +277,49 @@ class TaskReliability:
                         max_total_durr = max_total_durr + float(split_stage[1])
                 if min_total_durr != max_total_durr:
                     run_simulation = True
+
+            # FIX: Compute mission reliability as product of system reliabilities
+            mission_system_reliabilities = []
             for sys in eqData:
                 system = sys['name']
                 platform = sys['parent']
                 # call the method and save it to a variable
                 single_rel_duration = (min_total_durr+max_total_durr)/2
                 rel = self.system_rel(m, system, platform, single_rel_duration)
-                estimation_ach = 0
-                if run_simulation:
-                    count = 0
-                    for index in range(0, 100):
-                        random_durr = np.random.uniform(
-                            min_total_durr, max_total_durr)
-                        rel = self.system_rel(m, system, platform, random_durr)
-                        if rel['rel']*100 >= target_rel:
-                            count = count + 1
-                    estimation_ach = (count/100)
+                # Fix: Don't overwrite rel['rel'] if it's already computed correctly
+                if 'rel' in rel and rel['rel'] != 1:
+                    mission_system_reliabilities.append(rel['rel'])
                 else:
-                    if rel['rel'] > target_rel:
-                        estimation_ach = 1
-                rel['prob_ac'] = estimation_ach
+                    mission_system_reliabilities.append(1)  # fallback value
+
+            # Compute mission reliability as product of all system reliabilities
+            mission_rel = np.prod(mission_system_reliabilities)
+
+            # For probability calculation, use the correct mission reliability
+            if run_simulation:
+                count = 0
+                for index in range(0, 100):
+                    random_durr = np.random.uniform(
+                        min_total_durr, max_total_durr)
+                    rel = self.system_rel(m, system, platform, random_durr)
+                    if rel['rel']*100 >= target_rel:
+                        count = count + 1
+                estimation_ach = (count/100)
+            else:
+                if mission_rel >= target_rel:
+                    estimation_ach = 1
+                else:
+                    estimation_ach = 0
+
+            # Store system-level reliability data for display (using actual computed values)
+            for sys, sys_rel in zip(eqData, mission_system_reliabilities):
+                system = sys['name']
+                platform = sys['parent']
                 if platform not in data:
                     data[platform] = []
-                data[platform].append({system: rel})
-                pass
+                data[platform].append(
+                    {system: {'rel': sys_rel, 'prob_ac': estimation_ach}})
+
             final_data.append({m: data})
         return final_data
 
@@ -302,43 +375,6 @@ class TaskReliability:
         #     final_data.append({m: data})
         # return final_data
 
-    def get_curr_ages(self):
-
-        query1 = "SELECT MAX(date) AS last_overhaul_date FROM data_manager_overhaul_maint_data WHERE maintenance_type = 'Corrective Maintenance' and component_id= ?"
-        cursor.execute(query1, self.__component_id)
-        result1 = cursor.fetchone()
-
-        if result1 is None or result1[0] is None:
-            return None, "No data found for the first query."
-
-        last_overhaul_date_str = result1[0]
-        last_overhaul_date = datetime.strptime(
-            str(last_overhaul_date_str), '%Y-%m-%d')
-        formatted_date = f"{last_overhaul_date.year}-{last_overhaul_date.month:02d}-01"
-
-        query2 = "SELECT SUM(average_running) AS sum_of_average_running FROM operational_data WHERE operation_date <= ? and component_id=?"
-        cursor.execute(query2, formatted_date, self.__component_id)
-        result2 = cursor.fetchone()
-
-        if result2 is None or result2[0] is None:
-            return None, "No data found for the second query."
-
-        sum_of_average_running = result2[0]
-        return sum_of_average_running, None
-    
-    def get_default_current_age(self, component_id):
-            query = '''
-                SELECT TOP 1 default_curr_age
-                FROM data_manager_default_curr_age
-                WHERE component_id = ?
-                ORDER BY record_date DESC;
-            '''
-            cursor.execute(query, component_id)
-            row = cursor.fetchone()
-
-            # If no data yet, return 0 safely
-            return row[0] if row else 0
-
     def estimate_alpha_beta(self, component_id, component_name):
         '''CODE TO RE-ESTIMATE ALPHA BETA'''
         subData = []
@@ -370,7 +406,7 @@ class TaskReliability:
             #     raise ValueError(f"corrective maintenance dates are missing for: {component_name}")
 
             main_query = """SELECT * FROM data_manager_overhaul_maint_data 
-                        WHERE component_id = ? ORDER BY cmms_running_age
+                        WHERE component_id = ? ORDER BY date ASC
                 """
             cursor.execute(main_query, (component_id,))
             data = cursor.fetchall()
@@ -396,19 +432,6 @@ class TaskReliability:
                 raise
             pass
 
-    def get_default_current_age(self,component_id):
-            query = '''
-                SELECT TOP 1 default_curr_age
-                FROM data_manager_default_curr_age
-                WHERE component_id = ?
-                ORDER BY record_date DESC;
-            '''
-            cursor.execute(query,component_id)
-            row = cursor.fetchone()
-
-            # If no data yet, return 0 safely
-            return row[0] if row else 0
-
     def calculate_rel_by_power_law(self, alpha, beta, duration):
         query = '''
             SELECT component_id
@@ -422,10 +445,10 @@ class TaskReliability:
         self.__component_id = result[0]
         self.estimate_alpha_beta(
             component_id=self.__component_id, component_name=self.__component_name)
-        sum_of_average_running, error_message = self.get_curr_ages()
-        if error_message:
-            # print(error_message)
-            curr_age = self.get_default_current_age(self.__component_id)
+        sum_of_average_running = self.get_curr_age()
+        if sum_of_average_running is None:
+            self.error_return = {
+                "message": f"Operational data is missing for: {self.__component_name}", "code": 0}
         else:
             curr_age = sum_of_average_running
 
@@ -743,29 +766,6 @@ class TaskReliability:
         result = cursor.fetchone()
         return result[0], result[1]
 
-    def get_curr_age(self, component_id):
-
-        query1 = "SELECT MAX(date) AS last_overhaul_date FROM data_manager_overhaul_maint_data WHERE maintenance_type = 'Corrective Maintenance' and component_id= ?"
-        cursor.execute(query1, component_id)
-        result1 = cursor.fetchone()
-
-        if result1 is None or result1[0] is None:
-            return 0
-        last_overhaul_date_str = result1[0]
-        last_overhaul_date = datetime.strptime(
-            str(last_overhaul_date_str), '%Y-%m-%d')
-        formatted_date = f"{last_overhaul_date.year}-{last_overhaul_date.month:02d}-01"
-
-        query2 = "SELECT SUM(average_running) AS sum_of_average_running FROM operational_data WHERE operation_date <= ? and component_id=?"
-        cursor.execute(query2, formatted_date, component_id)
-        result2 = cursor.fetchone()
-
-        if result2 is None or result2[0] is None:
-            return 0
-
-        sum_of_average_running = result2[0]
-        return sum_of_average_running
-
     def task_formatter(self, json_data):
         pass
 
@@ -866,11 +866,10 @@ class TaskReliability:
                             print("sjdkhaidhiadijasdja", equipment_id)
                             equipment_ids[label] = self.fetch_alpha_beta(
                                 equipment_id)
-                            running_ages[label] = self.get_curr_age(
+                            running_ages[label] = self.get_curr_age_with_component_id(
                                 equipment_id)
                             if running_ages[label] == 0:
-                                running_ages[label] = self.get_default_current_age(
-                                    equipment_id)
+                                running_ages[label] = self.error_return["message"]
 
                 response_data = {
                     "data": data_list,
@@ -986,7 +985,11 @@ class TaskReliability:
                                 results[phase_id] = list(set(group_equip))
                             else:
                                 results[phase_id].extend(set(group_equip))
+                            print(f"pre Reliability: {rel}")
                             rel = rel * Rel
+                            print(
+                                f"Phase: {phase_name}, Group: {groups[i][j][1]}, Reliability: {Rel}")
+                            print(f"Final Reliability: {rel}")
                             try:
                                 for k in max_rel_equip_index:
                                     for l in range(total_phase):
@@ -1001,6 +1004,7 @@ class TaskReliability:
                     "results": {phase_id: sorted(group_equip) for phase_id, group_equip in results.items()},
                     "rel": rel
                 }
+                print("final reliability", rel)
                 # print(self.success_return)
                 return self.success_return
         except Exception as e:

@@ -382,7 +382,7 @@ class OverhaulsAlgos:
 
     
     def _get_interpolated_cmms_running_age(self, date, component_id):
-        query = "SELECT SUM(average_running) FROM operational_data WHERE operation_date<?  AND component_id = ?"
+        query = "SELECT SUM(average_running) FROM operational_data WHERE operation_date<=?  AND component_id = ?"
         cursor.execute(query, date, component_id)
         cumulative_age = cursor.fetchone()[0]
         from datetime import datetime
