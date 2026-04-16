@@ -51,3 +51,34 @@ class TaskRelCode:
             for i in group_equi_rel:
                 Rel = Rel * i
         return (group_equi_rel , max_rel_equip , [group_equip[i] for i in max_rel_equip_index], Rel, max_rel_equip_index)
+    
+    def user_group_rel(self, group_alpha, group_bta, group_t, D, k, n):
+        group_equi_rel = []
+        group_FR = []
+        for i in range(n):
+            rel, FR = self.equipment_reliability(
+                group_alpha[i],
+                group_bta[i],
+                group_t[i],
+                D
+            )
+            group_equi_rel.append(rel)
+            group_FR.append(FR)
+
+        if k < n:
+            sorted_indices = sorted(range(n), key=lambda i: group_FR[i])
+            max_rel_equip_index = sorted_indices[:k]
+            not_max_equip_index = sorted_indices[k:]
+
+            FR_sum = sum(group_FR[i] for i in max_rel_equip_index)
+            lamda = FR_sum / k
+            Rel = (math.e ** -(k * lamda * D)) * sum(((k * lamda * D) ** i) / math.factorial(i) for i in range(len(not_max_equip_index)))
+
+        else:
+            Rel = 1
+            for r in group_equi_rel:
+                Rel *= r
+
+            max_rel_equip_index = list(range(n))
+
+        return Rel, group_equi_rel

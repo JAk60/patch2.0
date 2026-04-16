@@ -10,8 +10,6 @@ from dB.mission_profile import MissionProfile
 from flask import jsonify
 from datetime import datetime
 import copy
-import numpy as np
-import pandas as pd
 import math
 from backend.Mission_reliability_dashboard.taskRelcode import TaskRelCode
 from backend.Mission_reliability_dashboard import query
@@ -34,7 +32,6 @@ class TaskReliability:
         return {"message": "Some Error Occurred, Please try again.", "code": 0}
 
     def lmu_rel(self, mission_name, system, platform, total_dur, c_age=0):
-
         sys_lmus = []
         cursor.execute(query.GET_ALPHA_BETA_JOIN, (system, platform))
         alpha_beta_data = cursor.fetchall()
@@ -54,9 +51,7 @@ class TaskReliability:
                 beta = lmu[2]
                 self.__ship_name = platform
                 self.__component_name = system
-
                 rel = self.calculate_rel_by_power_law(alpha, beta, total_dur)
-
                 lmus_rel.append({
                     "name": lmu[5],
                     "id": lmu[4],
@@ -64,7 +59,6 @@ class TaskReliability:
                     "parent_name": lmu[9],
                     "parent_id": lmu[6]
                 })
-
         else:
             for lmu in eta_beta_data:
                 cursor.execute(query.GET_LAST_MAINT_DATE, (lmu[5],))
@@ -109,7 +103,6 @@ class TaskReliability:
     def fetch_equipment_parameters(self, json_data):
         equipment_ids = {}
         running_ages = {}
-
         for item in json_data:
             if 'data' in item and 'label' in item['data']:
                 label = item['data']['label']
@@ -117,7 +110,6 @@ class TaskReliability:
                     equipment_id = item['equipementId']
                     equipment_ids[label] = self.fetch_alpha_beta(equipment_id)
                     running_ages[label] = self.get_curr_age(equipment_id)
-
         return equipment_ids, running_ages
 
     def calculate_rel_by_power_law(self, alpha, beta, duration):
@@ -168,47 +160,135 @@ class TaskReliability:
         cursor.execute(query.GET_QUERY_OPS, (ship_name,))
         rows = cursor.fetchall()
         return {row[0]: row[1] for row in rows}
-    
-    def json_parser(self, APP_ROOT, phases, curr_task, ship_name):
+
+    # ─────────────────────────────────────────────────────────────────────────
+    # SHARED CORE: builds groups from JSON exactly once, used by both functions
+    # ─────────────────────────────────────────────────────────────────────────
+    def _build_groups(self, APP_ROOT, task_name):
+        """
+        Loads the task JSON and returns (groups, phase_array, phase_index_map).
+        groups[i][j] = [phase_name, components, alpha_beta, running_age, extra_data, k]
+        This is the single source of truth for both json_parser and task_new_rel.
+        """
         Taskjson = TaskJsonParser()
-        self.__phase_used_components = {}
+        json_data = Taskjson.load_json(APP_ROOT, task_name)
+        objects_array = Taskjson.extract_components(json_data)
+        data = Taskjson.build_label_groups(objects_array)
+        data_list = Taskjson.convert_dataframe_to_list(data)
+        equipment_ids, running_ages = self.fetch_equipment_parameters(json_data)
+        group_inputs = Taskjson.prepare_group_inputs(data_list, equipment_ids, running_ages)
 
-        try:
-            json_data = Taskjson.load_json(APP_ROOT, curr_task)
-            objects_array = Taskjson.extract_components(json_data)
-            data = Taskjson.build_label_groups(objects_array)
-            data_list = Taskjson.convert_dataframe_to_list(data)
-            equipment_ids, running_ages = self.fetch_equipment_parameters(json_data)
-            group_inputs = Taskjson.prepare_group_inputs(
-                data_list,
-                equipment_ids,
-                running_ages
+        grouped_result = {}
+        for sublist in group_inputs:
+            label_group = tuple(sublist[1])
+            grouped_result.setdefault(label_group, []).append(sublist)
+        final_result = list(grouped_result.values())
+
+        phase_array = [
+            "Harbour",
+            "Entry Leaving Harbour",
+            "Cruise",
+            "Defense Station",
+            "Action Station"
+        ]
+        phase_index_map = {name: i for i, name in enumerate(phase_array)}
+
+        sorted_data = []
+        for sublist in final_result:
+            sorted_sublist = sorted(
+                sublist,
+                key=lambda x: phase_index_map.get(x[0], 0)
             )
+            sorted_data.append(sorted_sublist)
 
-            grouped_result = {}
-            for sublist in group_inputs:
-                label_group = tuple(sublist[1])
-                grouped_result.setdefault(label_group, []).append(sublist)
-            final_result = list(grouped_result.values())
-            phase_array = [
-                "Harbour",
-                "Entry Leaving Harbour",
-                "Cruise",
-                "Defense Station",
-                "Action Station"
+        return sorted_data, phase_array, phase_index_map
+
+    # ─────────────────────────────────────────────────────────────────────────
+    # SHARED CORE: ops filtering logic, identical for both functions
+    # ─────────────────────────────────────────────────────────────────────────
+    def _resolve_ops_sets(self, ops_map):
+        """
+        DB values are 0/1/None — not Python True/False.
+        Returns (active_set, non_active_set) using truthiness checks.
+        """
+        has_any_true = any(v for v in ops_map.values() if v is not None)
+        if not has_any_true:
+            return set(ops_map.keys()), set()
+        active_set = {k for k, v in ops_map.items() if v}
+        non_active_set = {k for k, v in ops_map.items() if not v}
+        return active_set, non_active_set
+
+    # ─────────────────────────────────────────────────────────────────────────
+    # SHARED CORE: filter a single group entry down to only allowed components.
+    #
+    # allowed_names: set of component names to keep.
+    #   - For json_parser  → active_set (ops equipment from DB)
+    #   - For task_new_rel → user_selected_set ∩ active_set
+    #
+    # Returns filtered lists + active_indices so age updates map back correctly.
+    # ─────────────────────────────────────────────────────────────────────────
+    def _filter_group_entry(self, group_entry, allowed_names, phase_array, phase_index):
+        """
+        group_entry = groups[i][j]  (a single [phase, comps, ab, ra, extra, k] list)
+
+        Returns:
+            active_components, active_alpha, active_beta,
+            active_running_age, active_indices, non_ops_in_group,
+            original_n, new_n, original_k
+        """
+        components  = group_entry[1]
+        alpha_beta  = group_entry[2]
+        running_age = group_entry[3]
+        extra_data  = group_entry[4]
+        original_k  = group_entry[5]
+
+        active_components  = []
+        active_alpha_beta  = []
+        active_running_age = []
+        active_indices     = []
+        non_ops_in_group   = []
+
+        for idx_c, comp in enumerate(components):
+            if comp in allowed_names:
+                active_indices.append(idx_c)
+                active_components.append(comp)
+                active_alpha_beta.append(alpha_beta[idx_c])
+                active_running_age.append(running_age[idx_c])
+            else:
+                non_ops_in_group.append(comp)
+
+        original_n = len(components)
+        new_n = len(active_components)
+
+        # Unpack alpha/beta correctly regardless of format
+        if active_alpha_beta and isinstance(active_alpha_beta[0], (list, tuple)):
+            active_alpha = [ab[0] if ab[0] is not None else 0.0 for ab in active_alpha_beta]
+            active_beta  = [ab[1] if ab[1] is not None else 1.0 for ab in active_alpha_beta]
+        else:
+            active_alpha = [a if a is not None else 0.0 for a in active_alpha_beta]
+            active_beta  = [b if b is not None else 1.0 for b in active_running_age]
+            active_running_age = [
+                extra_data[idx_c] if idx_c < len(extra_data) else 0.0
+                for idx_c in active_indices
             ]
 
-            phase_index_map = {name: i for i, name in enumerate(phase_array)}
-            sorted_data = []
-            for sublist in final_result:
-                sorted_sublist = sorted(
-                    sublist,
-                    key=lambda x: phase_index_map.get(x[0], 0)
-                )
-                sorted_data.append(sorted_sublist)
-            groups = sorted_data
-            phase_duration = [duration["duration"] for duration in phases]
+        return (
+            active_components, active_alpha, active_beta, active_running_age,
+            active_indices, non_ops_in_group, original_n, new_n, original_k
+        )
 
+    # ─────────────────────────────────────────────────────────────────────────
+    # json_parser — NETRA recommendation (no user selection, ops filter only)
+    # ─────────────────────────────────────────────────────────────────────────
+    def json_parser(self, APP_ROOT, phases, curr_task, ship_name):
+        self.__phase_used_components = {}
+        taskrelcode = TaskRelCode()
+
+        try:
+            # Use shared builder
+            groups, phase_array, phase_index_map = self._build_groups(APP_ROOT, curr_task)
+
+            phase_duration = [phase["duration"] for phase in phases]
             phase_seq = []
             for phase in phases:
                 for idx, j in enumerate(phase_array):
@@ -222,21 +302,9 @@ class TaskReliability:
             ops_map = self.get_ops_map(ship_name)
             print("ops_map raw:", ops_map)
 
-            # ✅ FIX: DB values are 0/1/None, not Python True/False.
-            # 'is False' never matches integer 0, so non_active_set was always empty.
-            # Use truthiness checks instead.
-            has_any_true = any(v for v in ops_map.values() if v is not None)
+            # Use shared ops resolver
+            active_set, non_active_set = self._resolve_ops_sets(ops_map)
 
-            if not has_any_true:
-                # No ops flags set — treat all equipment as active, none as non-ops
-                active_set = set(ops_map.keys())
-                non_active_set = set()
-            else:
-                # ops = truthy (1 / True); non-ops = falsy (0 / False)
-                active_set = {k for k, v in ops_map.items() if v}
-                non_active_set = {k for k, v in ops_map.items() if not v}
-
-            taskrelcode = TaskRelCode()
             results = {}
             rel = 1
 
@@ -244,44 +312,22 @@ class TaskReliability:
                 for idx, j in enumerate(phase_seq):
                     if j >= len(groups[i]):
                         continue
-                    k_val = groups[i][j][5]
-                    if k_val == 0:
+                    if groups[i][j][5] == 0:
                         continue
-                    components = groups[i][j][1]
-                    alpha_beta = groups[i][j][2]
-                    running_age = groups[i][j][3]
-                    extra_data = groups[i][j][4]
-                    original_k = groups[i][j][5]
+
                     phase_name = groups[i][j][0] if groups[i][j][0] else phase_array[j]
 
-                    active_components = []
-                    active_alpha_beta = []
-                    active_running_age = []
-                    active_indices = []
-                    non_ops_in_group = []
+                    # Use shared filter — json_parser filters by ops_set only
+                    (
+                        active_components, active_alpha, active_beta, active_running_age,
+                        active_indices, non_ops_in_group,
+                        original_n, new_n, original_k
+                    ) = self._filter_group_entry(groups[i][j], active_set, phase_array, j)
 
-                    for idx_c, comp in enumerate(components):
-                        if comp in active_set:
-                            active_indices.append(idx_c)
-                            active_components.append(comp)
-                            active_alpha_beta.append(alpha_beta[idx_c])
-                            active_running_age.append(running_age[idx_c])
-                        else:
-                            # comp is non-ops — track it but don't raise
-                            non_ops_in_group.append(comp)
-
-                    original_n = len(components)
-
-                    # ✅ FIX: only raise if an OPS component is missing from the group.
-                    # Non-ops components (is_ops=0) are expected to be absent — don't error.
-                    # If NO ops components exist in this group at all, skip it.
                     if not active_components:
                         print(f"  Skipping group {i} phase {phase_name}: no ops components found")
                         continue
 
-                    new_n = len(active_components)
-                    n_ops = new_n
-                    # ✅ Validate k against new_n — if k > new_n, mission cannot proceed
                     if original_k > new_n:
                         raise ValueError(
                             f"Cannot proceed: k={original_k} exceeds available ops components "
@@ -289,31 +335,18 @@ class TaskReliability:
                             f"Non-ops components in this group: {non_ops_in_group}"
                         )
 
-                    if active_alpha_beta and isinstance(active_alpha_beta[0], (list, tuple)):
-                        active_alpha = [ab[0] if ab[0] is not None else 0.0 for ab in active_alpha_beta]
-                        active_beta  = [ab[1] if ab[1] is not None else 1.0 for ab in active_alpha_beta]
-                    else:
-                        active_alpha = [a if a is not None else 0.0 for a in active_alpha_beta]
-                        active_beta  = [b if b is not None else 1.0 for b in active_running_age]
-                        active_running_age = [extra_data[idx_c] if idx_c < len(extra_data) else 0.0
-                                              for idx_c in active_indices]
-
                     print(f"\n  Phase: {phase_name}")
-                    print(f"  Nomenclature (all):   {components}")
+                    print(f"  Nomenclature (all):   {groups[i][j][1]}")
                     print(f"  Nomenclature (ops):   {active_components}")
                     print(f"  original_n={original_n}, new_n={new_n}, original_k={original_k}")
 
                     if idx >= len(phases):
-                        print(f" Skipping: idx={idx} out of range for phases")
+                        print(f"  Skipping: idx={idx} out of range for phases")
                         continue
 
                     phase_id = phases[idx]["id"]
 
                     try:
-                        # ✅ FIX: pass active_components (not components) so the name
-                        # list length matches active_alpha/beta/running_age lengths.
-                        # Previously passing full `components` caused index mismatches
-                        # and group_equip (preferred equipment) came back empty.
                         group_equi_rel, max_rel_equip, group_equip, Rel, max_rel_equip_index = taskrelcode.group_rel(
                             active_components,
                             active_alpha,
@@ -321,14 +354,14 @@ class TaskReliability:
                             active_running_age,
                             phase_duration[idx],
                             original_k,
-                            original_n
+                            new_n
                         )
                     except Exception as e:
-                        print(f" group_rel failed for group {i}, phase_seq {j}: {e}")
+                        print(f"  group_rel failed for group {i}, phase_seq {j}: {e}")
                         continue
 
                     if group_equip is None:
-                        print(f" group_equip is None for group {i}, skipping")
+                        print(f"  group_equip is None for group {i}, skipping")
                         continue
 
                     rel *= Rel
@@ -338,54 +371,217 @@ class TaskReliability:
                             "components": set(),
                             "ops_components": set(active_components),
                             "updated_k": original_k,
-                            "updated_n": n_ops
+                            "updated_n": new_n
                         }
-
                     results[phase_id]["components"].update(group_equip)
+
+                    # Age accumulation — maps back via active_indices into groups structure
                     try:
                         for k in max_rel_equip_index:
                             if k >= len(active_indices):
                                 continue
                             original_k_index = active_indices[k]
-
                             for l in range(len(groups[i])):
                                 if original_k_index < len(groups[i][l][4]):
                                     groups[i][l][4][original_k_index] += phase_duration[idx]
-
                     except Exception as e:
-                        print(" Error in update block:", e)
+                        print("  Error in update block:", e)
 
-            success_response = {
+            return {
                 "message": "Solution Recommended",
                 "code": 1,
-                # ✅ CHANGED: now returns non-ops (inactive) equipment instead of ops equipment
                 "Non_ops_equipment": sorted(list(non_active_set)),
                 "ops_equipment": sorted(list(active_set)),
                 "recommedation": {
                     "results": {
-                            pid: {
-                                "components": sorted(list(data["components"])),
-                                "ops_components": sorted(list(data["ops_components"])),
-                                "updated_k": data["updated_k"],
-                                "updated_n": data["updated_n"]
-                            }
-                            for pid, data in results.items()
-                        },
+                        pid: {
+                            "components": sorted(list(data["components"])),
+                            "ops_components": sorted(list(data["ops_components"])),
+                            "updated_k": data["updated_k"],
+                            "updated_n": data["updated_n"]
+                        }
+                        for pid, data in results.items()
+                    },
                     "rel": float(rel)
                 }
             }
-
-            print("Returning success response with rel:", rel)
-            return success_response
 
         except Exception as e:
             import traceback
             traceback.print_exc()
             print("ERROR:", str(e))
-            return {
-                "message": str(e),
-                "code": 0
-            }
+            return {"message": str(e), "code": 0}
+
+    def task_new_rel(self, task_name, missionName, missionDataDuration,
+                     APP_ROOT, parent, user_selected_names=None):
+        """
+        Parameters
+        ----------
+        user_selected_names : list or set of str, optional
+            Component names the user has chosen to include.
+            If None or empty, falls back to ops_map active_set (same as json_parser).
+        """
+        taskrelcode = TaskRelCode()
+        self.__phase_used_components = {}
+
+        try:
+            # Step 1: resolve ops active set (shared logic)
+            ops_map = self.get_ops_map(parent)
+            print("ops_map raw:", ops_map)
+            active_set, non_active_set = self._resolve_ops_sets(ops_map)
+            print("active_set:", active_set)
+
+            # Step 2: determine allowed names for this call
+            # Always gate by active_set (non-ops equipment can never be selected)
+            if user_selected_names and len(user_selected_names) > 0:
+                if isinstance(user_selected_names, list):
+                    cleaned = []
+                    for item in user_selected_names:
+                        if isinstance(item, dict):
+                            cleaned.append(item.get("label") or item.get("name"))
+                        else:
+                            cleaned.append(item)
+                    user_set = set(cleaned)
+                else:
+                    user_set = set()
+                # Reject if user tries to include non-ops equipment
+                invalid = user_set - active_set
+                if invalid:
+                    raise ValueError(
+                        f"Cannot proceed: user selected non-ops (inactive) equipment: "
+                        f"{sorted(invalid)}. These components are marked non-operational."
+                    )
+                allowed_names = user_set  # user's valid selection
+            else:
+                # No user selection → behave exactly like json_parser (ops set only)
+                allowed_names = active_set
+
+            print("allowed_names (effective selection):", allowed_names)
+
+            # Step 3: build groups using shared pipeline (identical to json_parser)
+            groups, phase_array, phase_index_map = self._build_groups(APP_ROOT, task_name)
+
+            phase_duration = [float(phase["duration"]) for phase in missionDataDuration]
+            phase_seq = []
+            for phase in missionDataDuration:
+                for idx, j in enumerate(phase_array):
+                    if j == phase["missionType"]:
+                        phase_seq.append(idx)
+
+            print("phase_seq:", phase_seq)
+            print("groups length:", len(groups))
+            print("parent:", parent)
+
+            rel = 1
+            phase_rel_accumulator = {}
+
+            for i in range(len(groups)):
+                for idx, j in enumerate(phase_seq):
+                    if j >= len(groups[i]):
+                        continue
+                    if groups[i][j][5] == 0:
+                        continue
+
+                    phase_name = groups[i][j][0] if groups[i][j][0] else phase_array[j]
+
+                    # Step 4: filter using shared helper with allowed_names
+                    (
+                        active_components, active_alpha, active_beta, active_running_age,
+                        active_indices, non_ops_in_group,
+                        original_n, new_n, original_k
+                    ) = self._filter_group_entry(groups[i][j], allowed_names, phase_array, j)
+
+                    if not active_components:
+                        print(f"  Skipping group {i} phase {phase_name}: no allowed components found")
+                        continue
+
+                    # Step 5: k validation — same rule as json_parser
+                    if original_k > new_n:
+                        raise ValueError(
+                            f"Cannot proceed: k={original_k} exceeds available selected components "
+                            f"n={new_n} in phase '{phase_name}'. "
+                            f"You must select at least {original_k} components from this group. "
+                            f"Excluded components: {non_ops_in_group}"
+                        )
+
+                    print(f"\n  Phase: {phase_name}")
+                    print(f"  Nomenclature (all):   {groups[i][j][1]}")
+                    print(f"  Nomenclature (allowed): {active_components}")
+                    print(f"  original_n={original_n}, new_n={new_n}, original_k={original_k}")
+                    print("USER SELECTED:", active_components)
+                    if idx >= len(missionDataDuration):
+                        print(f"  Skipping: idx={idx} out of range for missionDataDuration")
+                        continue
+
+                    
+                    try:
+                        if user_selected_names:
+                            Rel,group_equi_rel=taskrelcode.user_group_rel(
+                                        active_alpha,
+                                        active_beta,
+                                        active_running_age,
+                                        phase_duration[idx],
+                                        original_k,
+                                        new_n
+                            )
+                            group_equip = active_components
+                            max_rel_equip_index = list(range(len(active_components)))
+
+ 
+                    except Exception as e:
+                        print(f"  group_rel failed for group {i}, phase {phase_name}: {e}")
+                        continue
+
+                    if group_equip is None:
+                        print(f"  group_equip is None for group {i}, skipping")
+                        continue
+
+                    rel *= Rel
+
+                    
+                    phase_key = missionDataDuration[idx]["missionType"]
+                    if phase_key not in phase_rel_accumulator:
+                        phase_rel_accumulator[phase_key] = {"rel": 1.0, "comp_rel": []}
+                    phase_rel_accumulator[phase_key]["rel"] *= Rel
+                    for ci, name in enumerate(active_components):
+                        phase_rel_accumulator[phase_key]["comp_rel"].append({
+                            "child":    [],
+                            "prob_ac":  0,
+                            "rel":      group_equi_rel[ci] if ci < len(group_equi_rel) else 0,
+                            "compName": name
+                        })
+
+                    # Step 7: age accumulation — identical mechanism to json_parser
+                        print("GROUP REL OUTPUT:", group_equip)
+                    try:
+                        for k in max_rel_equip_index:
+                            if k >= len(active_indices):
+                                continue
+                            original_k_index = active_indices[k]
+                            for l in range(len(groups[i])):
+                                if original_k_index < len(groups[i][l][4]):
+                                    groups[i][l][4][original_k_index] += phase_duration[idx]
+                    except Exception as e:
+                        print(f"  Age accumulation error in group {i}, phase {phase_name}: {e}")
+
+            all_mission_rel = [
+                {
+                    "missionName": phase_key,
+                    "rel":         data["rel"],
+                    "comp_rel":    data["comp_rel"]
+                }
+                for phase_key, data in phase_rel_accumulator.items()
+            ]
+
+            print("Returning task_new_rel with rel:", rel)
+            return {"task_rel": float(rel), "all_missionRel": all_mission_rel}
+
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
+            print("ERROR in task_new_rel:", str(e))
+            return {"task_rel": 0, "all_missionRel": [], "error": str(e)}
+
 
     def system_rel(self, mission_name, system, platform, total_dur, c_age=0):
         sys_lmus, sys_data = self.lmu_rel(mission_name, system, platform, total_dur, c_age)
@@ -514,130 +710,6 @@ class TaskReliability:
             print("Error in attach_components:", str(e))
             return phases
 
-    def task_new_rel(self, task_name, missionName, missionDataDuration, APP_ROOT, parent):
-        all_mission_rel = []
-        taskrelcode = TaskRelCode()
-        comp_accumulated_age = {}
-        ops_map = self.get_ops_map(parent)
-        print("ops_map raw:", ops_map)
-
-        # ✅ FIX: DB values are 0/1/None, not Python True/False.
-        # 'is not False' matches everything (including 0), so active_set was always all keys.
-        # Use truthiness checks instead.
-        has_any_true = any(v for v in ops_map.values() if v is not None)
-
-        if not has_any_true:
-            # No ops flags set — treat all equipment as active
-            active_set = set(ops_map.keys())
-        else:
-            # ops = truthy (1 / True); non-ops = falsy (0 / False)
-            active_set = {k for k, v in ops_map.items() if v}
-        print("active_set:", active_set)
-
-        try:
-            for index, mission in enumerate(missionDataDuration):
-                missionTypeName = mission["missionType"]
-                duration = float(mission["duration"])
-                components = mission.get("components", [])
-
-                if not components:
-                    print(f" No components for mission: {missionTypeName}")
-                    continue
-
-                group_equip = []
-                group_alpha = []
-                group_beta  = []
-                group_t     = []
-                rel_final   = []
-                active_indices = []
-
-                for orig_idx, comp in enumerate(components):
-                    compName = comp["name"]
-                    compId   = comp["EquipmentId"]
-
-                    # ✅ CHANGED: raise error if any component is not in active_set,
-                    # matching json_parser behaviour — reliability is only calculated
-                    # when ALL components are ops (active).
-                    if compName not in active_set:
-                        raise ValueError(
-                            f"All components are Not active, expected All Equipments "
-                            f"to be active to proceed mission Further. "
-                            f"Inactive component: '{compName}' in mission '{missionTypeName}'."
-                        )
-
-                    self.__component_name = compName
-                    self.__ship_name      = parent
-                    self.__component_id   = compId
-                    alpha, beta = self.fetch_alpha_beta(compId)
-
-                    if compId not in comp_accumulated_age:
-                        db_age = self.get_curr_age(compId) or 0.0
-                        comp_accumulated_age[compId] = db_age
-
-                    age = comp_accumulated_age[compId]
-                    group_equip.append(compName)
-                    group_alpha.append(alpha if alpha is not None else 0.0)
-                    group_beta.append(beta   if beta  is not None else 1.0)
-                    group_t.append(age)
-                    active_indices.append(orig_idx)
-
-                if not group_equip:
-                    print(f" No active components for mission: {missionTypeName}")
-                    continue
-
-                original_n = len(components)
-                new_n      = len(group_equip)
-                original_k = mission.get("k", original_n)
-                ratio = original_k / original_n if original_n > 0 else 1
-                original_k = min(max(1, round(ratio * new_n)), new_n)
-
-                try:
-                    group_equi_rel, max_rel_equip, group_equip_used, Rel, max_rel_equip_index = taskrelcode.group_rel(
-                        group_equip,
-                        group_alpha,
-                        group_beta,
-                        group_t,
-                        duration,
-                        original_k,
-                        new_n
-                    )
-                except Exception as e:
-                    print(f" group_rel failed for mission {missionTypeName}: {e}")
-                    continue
-
-                try:
-                    for sel_idx in max_rel_equip_index:
-                        if sel_idx < len(active_indices):
-                            compId = components[active_indices[sel_idx]]["EquipmentId"]
-                            comp_accumulated_age[compId] += duration
-                except Exception as e:
-                    print(f" Age accumulation failed for mission {missionTypeName}: {e}")
-
-                for i, name in enumerate(group_equip):
-                    rel_final.append({
-                        "child":    [],
-                        "prob_ac":  0,
-                        "rel":      group_equi_rel[i] if i < len(group_equi_rel) else 0,
-                        "compName": name
-                    })
-
-                all_mission_rel.append({
-                    "missionName": missionTypeName,
-                    "rel":         Rel,
-                    "comp_rel":    rel_final
-                })
-
-            fRel = 1
-            for mission in all_mission_rel:
-                fRel = fRel * mission["rel"]
-            return {"task_rel": fRel, "all_missionRel": all_mission_rel}
-
-        except Exception as e:
-            import traceback
-            traceback.print_exc()
-            print("ERROR in task_new_rel:", str(e))
-            return {"task_rel": 0, "all_missionRel": [], "error": str(e)}
-        
     def get_task_dropdown_data(self, APP_ROOT):
         target_path = os.path.join(APP_ROOT, 'tasks/')
         files = os.listdir(target_path)

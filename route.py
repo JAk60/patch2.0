@@ -597,9 +597,11 @@ def task_rel():
                 taskName = d["taskName"]
                 missionDataDuration = d["data"]
                 cal_rel = d["cal_rel"]
+                user_selection_data=d.get("selected_components", {})
+                print("user selected:", user_selection_data)
                 missionName = "A"
                 rel = trel_inst.task_new_rel(
-                    taskName, missionName, missionDataDuration, APP_ROOT, shipname
+                    taskName, missionName, missionDataDuration, APP_ROOT, shipname,user_selected_names=user_selection_data
                 )
                
                 final_return_data.append(

@@ -334,14 +334,24 @@ const TaskDashboard = () => {
  let allRowData = [], allRowCData = [];
  gridApi.forEachNode((node) => allRowData.push(node.data));
  gridCompApi.forEachNode((node) => allRowCData.push(node.data));
-
+const selectedComponents = [
+  ...new Set(
+    allRowCData.flatMap(row =>
+      (row.components || []).map(c =>
+        typeof c === "object"
+          ? (c.label || c.name)
+          : c
+      )
+    )
+  )
+];
  const mainData = allRowData.map((d, index) => ({
  id: d["id"], missionType: d["missionType"],
  duration: d["duration"], components: allRowCData[index]["components"],
  }));
 
  setPhaseData(mainData);
- localStorage.setItem(`${currentShip}_${currentTaskName}`, JSON.stringify({ shipName: currentShip, taskName: currentTaskName, data: mainData, cal_rel: totalReliability }));
+ localStorage.setItem(`${currentShip}_${currentTaskName}`, JSON.stringify({ shipName: currentShip, taskName: currentTaskName, data: mainData, cal_rel: totalReliability ,selected_components: selectedComponents}));
 
  gridApi.selectAll(); gridApi.applyTransaction({ remove: gridApi.getSelectedRows() });
  gridCompApi.selectAll(); gridCompApi.applyTransaction({ remove: gridCompApi.getSelectedRows() });
