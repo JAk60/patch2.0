@@ -187,7 +187,7 @@ class Data_Administrator:
             register_all = data['registerAll']
             print(register_all)
             if register_all:
-                # Run a query for registerAll being True
+                ship_name = data['shipName']
                 query = '''
                     SELECT 
                         EquipmentName as component_name,
@@ -258,7 +258,9 @@ class Data_Administrator:
                         ship_name, ship_category, ship_class,
                         command, department, nomenclature))
                     cursor.commit()
+                    return jsonify({'code': 1, 'message': 'All equipment registered successfully'})
             else:
+                all_fetched_data = []
                 for nomenclature_entry in data['nomenclature']:
                     ship_name = data['shipName']
                     nomenclature = nomenclature_entry['value']
@@ -293,12 +295,11 @@ class Data_Administrator:
                         '''
                     # Execute the query using the pointer object
                     pointer.execute(query, (ship_name, nomenclature))
+                    result=pointer.fetchall()
+                    all_fetched_data.extend(result)
+                print(all_fetched_data)
 
-                # Fetch the data
-                fetched_data = pointer.fetchall()
-                print(fetched_data)
-
-                for data_point in fetched_data:
+                for data_point in all_fetched_data:
                     # Extract data from the result
                     component_name, CMMS_EquipmentCode, ship_name, ship_category, ship_class, command, department, nomenclature = data_point
 
