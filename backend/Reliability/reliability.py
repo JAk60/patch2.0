@@ -4,7 +4,7 @@ from itertools import groupby
 from operator import itemgetter
 import pandas as pd
 from backend.Reliability.alpha_beta import AlphaBeta
-from backend.Reliability import query as q
+from dB.Reliability import query as q
 
 
 class Reliability:

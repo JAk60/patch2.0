@@ -9,7 +9,7 @@ from reportlab.lib.pagesizes import  inch, A3, landscape
 from reportlab.platypus import Image, SimpleDocTemplate, Table, PageBreak, Spacer, Paragraph
 from reportlab.lib.styles import getSampleStyleSheet
 # from db.RCM.report_gen import ReportGeneration
-from dB.RCM.report_gen import ReportGeneration
+from backend.RCM.report_gen import ReportGeneration
 
 class RCMDB():
     def __init__(self):

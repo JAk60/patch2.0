@@ -1,31 +1,26 @@
 from dB.dB_connection import pointer, cnxn, cursor
 from flask import jsonify
 import pyodbc
+from dB.user_selection.user_selection_queries import (
+    FETCH_USER_SELECTION,
+    FETCH_SYSTEM_CONFIGURATION,
+    FETCH_UNIQUE_SYSTEM_IDS,
+    FETCH_CMMS_SELECTION,
+)
 
 
 class Custom_Settings():
     def fetch_user_selection(self, toJson=True):
         try:
-            sql = '''select * from user_selection'''
-            systemSql = '''select ship_name, ship_category, ship_class, command, department, 
-            component_name, nomenclature from system_configuration where parent_id is null'''
-
-            # Fetching user_selection data
-            cursor.execute(sql)
+            cursor.execute(FETCH_USER_SELECTION)
             data = cursor.fetchall()
 
-            # Fetching system_configuration data
-            cursor.execute(systemSql)
+            cursor.execute(FETCH_SYSTEM_CONFIGURATION)
             eqData = cursor.fetchall()
 
-            # Fetching unique_system_id data
-            unique_system_id_sql = '''select distinct ship_name, component_id, component_name, nomenclature
-                from system_configuration where parent_id is null
-            '''
-            cursor.execute(unique_system_id_sql)
+            cursor.execute(FETCH_UNIQUE_SYSTEM_IDS)
             uniq_eq_data = cursor.fetchall()
 
-            # Processing data into desired format
             eqData = [{
                 'shipName': r[0],
                 'shipCategory': r[1],
@@ -56,43 +51,15 @@ class Custom_Settings():
             return fData
 
         except pyodbc.Error as ex:
-            # Print or log the actual error
             print(f"Error: {ex}")
-            # Optionally, re-raise the exception to propagate it further
             raise
 
     def fetch_cmms_selection(self):
-        query = '''
-             SELECT 
-                        EquipmentName as component_name,
-                        M_Equipment.EquipmentCode as CMMS_EquipmentCode,
-                        ShipName as ship_name,
-                        M_ShipCategory.ShipCategoryName as ship_category,
-                        M_ShipClass.Description as ship_class,
-                        CommandName as command,
-                        M_Department.Description as department,
-                        Nomenclature as nomenclature
-                    FROM 
-                        T_EquipmentShipDetail WITH(NOLOCK) 
-                        INNER JOIN M_Equipment WITH(NOLOCK) ON T_EquipmentShipDetail.Universal_ID_M_Equipment = M_Equipment.Universal_ID_M_Equipment
-                        INNER JOIN M_Ship WITH(NOLOCK) ON T_EquipmentShipDetail.Universal_ID_M_Ship = M_Ship.Universal_ID_M_Ship
-                        INNER JOIN M_ShipClass WITH(NOLOCK) ON M_Ship.Universal_ID_M_ShipClass = M_ShipClass.Universal_ID_M_ShipClass
-                        INNER JOIN M_ShipCategory WITH(NOLOCK) ON M_Ship.Universal_ID_M_ShipCategory = M_ShipCategory.Universal_ID_M_ShipCategory
-                        INNER JOIN M_Command WITH(NOLOCK)  ON M_Ship.Universal_ID_M_Command = M_Command.Universal_ID_M_Command 
-                        INNER JOIN M_Department WITH(NOLOCK) ON T_EquipmentShipDetail.Universal_ID_M_Department = M_Department.Universal_ID_M_Department
-                    WHERE 
-                        T_EquipmentShipDetail.Active = 1 
-                        AND RemovalDate IS NULL 
-                        AND M_Ship.Active = 1
-                        AND M_Ship.DecommissionDate IS NULL 
-                        AND M_ShipClass.Active = 1;
-        '''
-
-        pointer.execute(query)
+        pointer.execute(FETCH_CMMS_SELECTION)
         fetched_data = pointer.fetchall()
         print(fetched_data)
         results = []
-        
+
         for row in fetched_data:
             result_dict = {
                 'component_name': row[0],

@@ -12,6 +12,7 @@ import styles from "./CDashboard.module.css";
 
 const CGraph = ({ graphData, selectedParameterNames }) => {
   console.log("selectedParameterNames", selectedParameterNames);
+
   const groupedData = graphData.reduce((acc, cur) => {
     if (!acc[cur.nomenclature]) {
       acc[cur.nomenclature] = {
@@ -23,8 +24,8 @@ const CGraph = ({ graphData, selectedParameterNames }) => {
     acc[cur.nomenclature].data.push(cur);
     return acc;
   }, {});
+
   console.log("groupedData", groupedData);
-  const paramChartData = Object.values(groupedData);
 
   const manipulatedData = {};
 
@@ -51,48 +52,28 @@ const CGraph = ({ graphData, selectedParameterNames }) => {
     }
   }
 
-  console.log("GG", manipulatedData);
+  console.log("manipulatedData", manipulatedData);
 
-  debugger;
+  // Handles API format: "2024-01-09 22:00:00"
   const parseDate = (dateString) => {
-    const dateParts = dateString.split(", ")[0].split("/");
-    const timeParts = dateString.split(", ")[1].split(":");
-    const year = parseInt(dateParts[2], 10);
-    const month = parseInt(dateParts[1], 10) - 1;
-    const day = parseInt(dateParts[0], 10);
-    const hour = parseInt(timeParts[0], 10);
-    const minute = parseInt(timeParts[1], 10);
-    const second = parseInt(timeParts[2], 10);
-    return new Date(year, month, day, hour, minute, second);
+    if (!dateString) return new Date(0);
+    // Replace space with T so it's a valid ISO string in all browsers
+    const normalized = String(dateString).replace(" ", "T");
+    const parsed = new Date(normalized);
+    // Fall back to raw construction if still invalid
+    return isNaN(parsed.getTime()) ? new Date(dateString) : parsed;
   };
+
   const getDomainByUnit = (unit, minThreshold, maxThreshold) => {
-    // Calculate padding as 20% of the range
     const range = maxThreshold - minThreshold;
     const padding = range * 0.2;
-
-    const adjustedMin = minThreshold - padding;
-    const adjustedMax = maxThreshold + padding;
-
-    // Round to 2 decimal places to avoid floating-point precision issues
-    const roundedMin = Math.round(adjustedMin * 100) / 100;
-    const roundedMax = Math.round(adjustedMax * 100) / 100;
-
-    switch (unit) {
-      case "RMS":
-      case "kg":
-      case "deg C":
-        return [roundedMin, roundedMax];
-      default:
-        return [roundedMin, roundedMax];
-    }
+    const roundedMin = Math.round((minThreshold - padding) * 100) / 100;
+    const roundedMax = Math.round((maxThreshold + padding) * 100) / 100;
+    return [roundedMin, roundedMax];
   };
 
   const sortDataByDate = (data) => {
-    return data.sort((a, b) => {
-      const dateA = parseDate(a.date);
-      const dateB = parseDate(b.date);
-      return dateA - dateB;
-    });
+    return [...data].sort((a, b) => parseDate(a.date) - parseDate(b.date));
   };
 
   return (
@@ -100,18 +81,19 @@ const CGraph = ({ graphData, selectedParameterNames }) => {
       {selectedParameterNames.map((param) => {
         const { name, nomenclature } = param;
         const paramData = manipulatedData[nomenclature]?.data[name] || [];
-        console.log(paramData);
+
+        console.log(`Rendering param: ${name} | nomenclature: ${nomenclature} | records: ${paramData.length}`);
+
         if (paramData.length === 0) {
           return null;
         }
 
         const sortedData = sortDataByDate(paramData);
-        console.log(sortedData);
         const minThreshold = parseInt(sortedData[0]?.min_value, 10);
         const maxThreshold = parseInt(sortedData[0]?.max_value, 10);
+        const lastValue = parseFloat(sortedData[sortedData.length - 1]?.value);
         const crossingThreshold =
-          sortedData[sortedData.length - 1]?.value < minThreshold ||
-          sortedData[sortedData.length - 1]?.value > maxThreshold;
+          lastValue < minThreshold || lastValue > maxThreshold;
 
         const unit = sortedData[0]?.unit;
         const yDomain = getDomainByUnit(unit, minThreshold, maxThreshold);
@@ -119,11 +101,11 @@ const CGraph = ({ graphData, selectedParameterNames }) => {
         return (
           <div className={`${styles.rchart}`} key={`${name}-${nomenclature}`}>
             <div
-              className={`${styles.content} ${crossingThreshold ? styles.blinkingChart : ""
-                }`}
+              className={`${styles.content} ${
+                crossingThreshold ? styles.blinkingChart : ""
+              }`}
             >
               <div>
-                {crossingThreshold}
                 <h1
                   x={550 / 2}
                   y={10}
@@ -145,10 +127,9 @@ const CGraph = ({ graphData, selectedParameterNames }) => {
                     dy: 10,
                   }}
                   height={45}
-                  tickFormatter={(dateString) => {
-                    const dateObject = new Date(dateString);
-                    return dateObject.toLocaleDateString();
-                  }}
+                  tickFormatter={(dateString) =>
+                    parseDate(dateString).toLocaleDateString()
+                  }
                 />
                 <YAxis
                   domain={yDomain}
@@ -159,7 +140,6 @@ const CGraph = ({ graphData, selectedParameterNames }) => {
                     position: "center",
                     dx: -30,
                     dy: -10,
-                    paddingRight: "20px",
                   }}
                   width={80}
                 />
@@ -168,13 +148,14 @@ const CGraph = ({ graphData, selectedParameterNames }) => {
                   layout="horizontal"
                   dataKey="value"
                   stroke={crossingThreshold ? "red" : "green"}
+                  dot={false}
                 />
                 <ReferenceLine
                   y={minThreshold}
                   stroke="gray"
                   strokeDasharray="6 6"
                   label={{
-                    value: `Min Value: ${minThreshold}`,
+                    value: `Min: ${minThreshold}`,
                     position: "right",
                     fill: "gray",
                     fontSize: "12px",
@@ -185,7 +166,7 @@ const CGraph = ({ graphData, selectedParameterNames }) => {
                   stroke="gray"
                   strokeDasharray="6 6"
                   label={{
-                    value: `Max Value: ${maxThreshold}`,
+                    value: `Max: ${maxThreshold}`,
                     position: "right",
                     fill: "gray",
                     fontSize: "12px",
@@ -193,10 +174,8 @@ const CGraph = ({ graphData, selectedParameterNames }) => {
                 />
                 <Tooltip
                   labelFormatter={(label) => {
-                    const dateObject = parseDate(label);
-                    const formattedDate = dateObject.toLocaleDateString();
-                    const formattedTime = dateObject.toLocaleTimeString();
-                    return `${formattedDate} ${formattedTime}`;
+                    const d = parseDate(label);
+                    return `${d.toLocaleDateString()} ${d.toLocaleTimeString()}`;
                   }}
                 />
               </LineChart>

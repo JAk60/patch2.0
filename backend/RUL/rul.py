@@ -4,6 +4,13 @@ from scipy.stats import weibull_min
 import numpy as np
 import math
 from mpmath import mp
+from dB.Rul_queries.Rul_queries import (
+    FETCH_PF_VALUES,
+    FETCH_PF_BY_COMPONENT_AND_PARAM,
+    FETCH_OPERATING_HOURS_AND_VALUE,
+    FETCH_SENSORS_BY_COMPONENT,
+    FETCH_SENSOR_NAMES_BY_COMPONENT,
+)
 
 
 class RUL_dB:
@@ -16,51 +23,11 @@ class RUL_dB:
         self.error_return = {
             "message": "Some Error Occurred, Please try again.", "code": 0}
 
-    # def get_prev_rul(self, p, equipment_id):
-    #     try:
-    #         # RUL_dB.component_id = equipment_id
-    #         sql = "SELECT TOP 1 * FROM parameter_data WHERE name = ? and component_id= ?  ORDER BY date desc"
-    #         cursor.execute(sql, p, equipment_id)
-    #         # RUL_dB.parameter = p
-    #         data = cursor.fetchone()
-
-    #         if data:
-    #             # Extract the desired columns from the result row
-    #             data_value = data[3]  # Assuming data_value is the first column
-    #             name = data[4]        # Assuming name is the second column
-    #             operating_hours = data[6]  # Assuming operating_hours is the third column
-
-    #             # Return the retrieved data in a dictionary format
-    #             return {
-    #                 "data_value": data_value,
-    #                 "name": name,
-    #                 "operating_hours": operating_hours,
-    #             }
-    #         else:
-    #             # Return an error message if no data is found
-    #             self.error_return['message'] = str(e)
-    #             return self.error_return
-    #     except Exception as e:
-    #         # Handle any exceptions and return an error message
-    #         self.error_return['message'] = str(e)
-    #         return self.error_return
-
     def fetch_PF(self, name, equipment_id):
         try:
-            # SQL query
-            sql_query = '''
-                SELECT P, F
-                FROM sensor_based_data
-                WHERE name = ? and component_id= ?
-            '''
-
-            # Execute the query
-            cursor.execute(sql_query, name, equipment_id)
-
-            # Fetch all rows
+            cursor.execute(FETCH_PF_VALUES, name, equipment_id)
             data = cursor.fetchall()
 
-            # Convert the data to a list of dictionaries
             result = []
             for row in data:
                 result.append({'P': row[0], 'F': row[1]})
@@ -69,30 +36,25 @@ class RUL_dB:
             return self.success_return
 
         except Exception as e:
-            # Handle any exceptions that might occur during the execution
             self.error_return["messege"] = str(e)
             self.error_return
 
     def rul_code(self, equipment_id, parameter):
         req_data = request.get_json()
         try:
-            pfqry = '''select P,F from sensor_based_data where component_id= ? and name= ?'''
-            cursor.execute(pfqry, equipment_id, parameter)
+            cursor.execute(FETCH_PF_BY_COMPONENT_AND_PARAM, equipment_id, parameter)
             pf_result = cursor.fetchone()
             if pf_result is None:
                 self.error_return["message"] = "P and F values not found in the database"
                 return self.error_return
             p, f = pf_result
-            query = '''
-                SELECT operating_hours, value from parameter_data WHERE name = ? and component_id = ?
-            '''
-            cursor.execute(query, parameter, equipment_id)
+
+            cursor.execute(FETCH_OPERATING_HOURS_AND_VALUE, parameter, equipment_id)
             data = cursor.fetchall()
             data = [(x, float(y)) for x, y in data]
 
-            # Extract input values from JSON data
-            vc = data[-1][0]  # Sensor value
-            t0 = data[-2][1]  # Current time
+            vc = data[-1][0]
+            t0 = data[-2][1]
             tp = data[-1][1]
 
             confidence_levels = [0.8, 0.85, 0.9, 0.95]
@@ -109,10 +71,8 @@ class RUL_dB:
                     result.append(current_group)
                     current_group = [item]
 
-            # Append the last group
             result.append(current_group)
 
-            # Store operating hours where threshold is first reached in another array
             operating_hours_threshold_reached = []
 
             for group in result:
@@ -123,13 +83,11 @@ class RUL_dB:
                         threshold_reached = True
                         break
 
-            # # Estimate beta and eta using MLE
             if len(operating_hours_threshold_reached) == 0:
                 self.error_return["message"] = "Not enough datasets"
                 return self.error_return
             params = weibull_min.fit(operating_hours_threshold_reached, floc=0)
 
-            # # Unpack the estimated parameters
             beta, eta = params[0], params[2]
             remaining_life_results = []
 
@@ -144,7 +102,6 @@ class RUL_dB:
                          ** (1 / beta)) - t0
                     return t
 
-                # tp = t0 - 100
                 if (vc < p):
                     rulp = rul(eta, beta, tp)
                     rulc = rul(eta, beta, t0)
@@ -154,11 +111,9 @@ class RUL_dB:
                     rulp = rul(etac, beta, tp)
                     rulc = rul(etac, beta, t0)
 
-                # if rulc is less than rulp then take rulc else rulp
                 remaining_life = rulc if rulc < rulp else rulp
                 remaining_life_results.append(remaining_life)
 
-            # Return the result as JSON
             self.success_return["results"] = {
                 "P": p,
                 "F": f,
@@ -181,27 +136,23 @@ class RUL_dB:
     def rul_equipment_level(self):
         req_data = request.get_json()
         try:
-            query = '''
-                SELECT id, name, P, F from sensor_based_data WHERE component_id = ?
-            '''
-
-            sensor_data_sql = '''
-                SELECT operating_hours, value from parameter_data WHERE name = ? and component_id = ?
-            '''
             equipment_id = req_data["equipmentId"]
-            cursor.execute(query, equipment_id)
+
+            cursor.execute(FETCH_SENSORS_BY_COMPONENT, equipment_id)
             remaining_life_results = {}
             data = cursor.fetchall()
+
             for id, name, p, f in data:
-                cursor.execute(sensor_data_sql, name, equipment_id)
+                cursor.execute(FETCH_OPERATING_HOURS_AND_VALUE, name, equipment_id)
                 sensor_data = cursor.fetchall()
                 sensor_data = [(x, float(y)) for x, y in sensor_data]
-                vc = sensor_data[-1][0]  # Sensor value
-                t0 = sensor_data[-2][1]  # Current time
+                vc = sensor_data[-1][0]
+                t0 = sensor_data[-2][1]
                 tp = sensor_data[-1][1]
                 rul_data = self.rul_code(equipment_id, name)
                 if rul_data["code"] == 1:
                     remaining_life_results[name] = rul_data["results"]["remaining_life"][-2]
+
             self.success_return["results"] = remaining_life_results
             print(self.success_return)
             return self.success_return
@@ -212,11 +163,7 @@ class RUL_dB:
 
     def fetch_specific_sensors(self, data):
         print(data)
-        SEql = '''select name from sensor_based_data where component_id= ? '''
-        cursor.execute(SEql, (data,))
+        cursor.execute(FETCH_SENSOR_NAMES_BY_COMPONENT, (data,))
         sensor_data = cursor.fetchall()
-
-        # Convert the Row object to a list of dictionaries
         sensor_data = [row.name for row in sensor_data]
-
         return jsonify(sensor_data)

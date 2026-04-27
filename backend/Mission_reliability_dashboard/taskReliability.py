@@ -12,7 +12,7 @@ from datetime import datetime
 import copy
 import math
 from backend.Mission_reliability_dashboard.taskRelcode import TaskRelCode
-from backend.Mission_reliability_dashboard import query
+from dB.mission_reliability_dashboard import query
 from backend.Mission_reliability_dashboard.json_parser import TaskJsonParser
 
 

@@ -12,7 +12,7 @@ import copy
 import numpy as np
 import pandas as pd
 import math
-from backend.Mission_reliability_dashboard import query 
+from dB.mission_reliability_dashboard import query 
 
 class TaskJsonParser:
 

@@ -3,7 +3,7 @@ from backend.Reliability.overhaul_algos import OverhaulsAlgos
 import uuid
 import math
 from decimal import Decimal
-from backend.Reliability import query
+from dB.Reliability import query
 
 
 class AlphaBeta:

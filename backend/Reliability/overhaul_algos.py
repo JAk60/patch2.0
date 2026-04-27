@@ -2,7 +2,7 @@ from dB.dB_connection import cursor, cnxn
 from datetime import datetime, timedelta
 import uuid
 from dB.Data_Adminstrator.data_adminstrator import Data_Administrator
-from backend.Reliability import query as q
+from dB.Reliability import query as q
 
 
 class OverhaulsAlgos:

@@ -4,7 +4,7 @@ from os import execlp
 from depricated_stuff.MLE import Mle
 from dB.dB_connection import cursor, cnxn
 from dB.data_manager.data_manager_dB import DataManagerDB
-from classes.overhaulsAlgos import OverhaulsAlgos
+from backend.Reliability.overhaul_algos import OverhaulsAlgos
 import numpy as np
 from statistics import mean
 from scipy.optimize import fsolve

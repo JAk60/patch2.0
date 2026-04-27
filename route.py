@@ -23,10 +23,10 @@ from backend.user_selection.user_selection import Custom_Settings
 from backend.Reliability.reliability import Reliability
 from backend.sytem_configuration.system_configuration import System_Configuration_N
 from backend.Mission_reliability_dashboard.taskReliability import TaskReliability
-from dB.Authentication.signin import Authentication
-from dB.condition_monitoring.cgraph import GraphDashBoard
-from dB.condition_monitoring.condition_monitoring import conditionMonitoring_dB
-from dB.Dashboard.DashBoard import DashBoard
+from backend.Authentication.signin import Authentication
+from backend.condition_monitioring.cgraph import GraphDashBoard
+from backend.condition_monitioring.condition_monitoring import conditionMonitoring_dB
+from backend.Dashboard.DashBoard import DashBoard
 from dB.Data_Adminstrator.data_adminstrator import Data_Administrator
 from dB.data_manager.data_manager import Data_Manager
 from dB.data_manager.data_manager_dB import DataManagerDB
@@ -37,11 +37,11 @@ from dB.hep.hep_dB import Hep_dB
 from dB.maintenance_allocation.maintenanceAllocation import maintenanceAllocation_dB
 from dB.mission_profile import MissionProfile
 from dB.Oem_Upload.oem import OEMData
-from dB.password_reset.passwordReset import EmailSender
+from backend.password_reset.passwordReset import EmailSender
 from dB.phase_manager.phase_manager_dB import Phase_Manager_dB
-from dB.PM.optimize import optimizer
+from backend.PM.optimize import optimizer
 from dB.RCM.rcmDB import RCMDB
-from dB.RUL.rul import RUL_dB
+from backend.RUL.rul import RUL_dB
 from dB.system_configuration.system_configurationdB_table import SystemConfigurationdBTable
 from dB.task_configuration.task_configuration import taskConfiguration_dB
 
@@ -76,7 +76,7 @@ app.config['MAIL_USE_SSL'] = False
 mail = Mail(app)
 
 
-with app.open_resource("./dB/password_reset/netra.png") as fp:
+with app.open_resource("./backend/password_reset/netra.png") as fp:
     logo_data = fp.read()
 
 UPLOAD_FOLDER = "uploads"
