@@ -6,7 +6,7 @@ from operator import itemgetter
 import pandas as pd
 import json
 import os
-from dB.mission_profile import MissionProfile
+from backend.Mission_reliability_dashboard.mission_profile import MissionProfile
 from flask import jsonify
 from datetime import datetime
 import copy

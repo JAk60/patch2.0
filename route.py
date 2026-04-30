@@ -18,8 +18,9 @@ from flask_mail import Mail, Message
 from werkzeug.utils import secure_filename
 
 
+from backend.mission_configuration.mission_config import TaskService
 import middleware
-from backend.user_selection.user_selection import Custom_Settings
+from backend.View_update.user_selection.user_selection import Custom_Settings
 from backend.Reliability.reliability import Reliability
 from backend.sytem_configuration.system_configuration import System_Configuration_N
 from backend.Mission_reliability_dashboard.taskReliability import TaskReliability
@@ -27,19 +28,19 @@ from backend.Authentication.signin import Authentication
 from backend.condition_monitioring.cgraph import GraphDashBoard
 from backend.condition_monitioring.condition_monitoring import conditionMonitoring_dB
 from backend.Dashboard.DashBoard import DashBoard
-from dB.Data_Adminstrator.data_adminstrator import Data_Administrator
-from dB.data_manager.data_manager import Data_Manager
+from backend.View_update.CMMSTONETRA.data_adminstrator import Data_Administrator
+from backend.View_update.data_manager.data_manager import Data_Manager
 from dB.data_manager.data_manager_dB import DataManagerDB
 from dB.dB_connection import cnxn, cursor
-from dB.dB_utility import add_user_selection_data
+from backend.View_update.add_new_ship.new_ship import add_user_selection_data
 from dB.ETL.sourceData import ETL
 from dB.hep.hep_dB import Hep_dB
 from dB.maintenance_allocation.maintenanceAllocation import maintenanceAllocation_dB
-from dB.mission_profile import MissionProfile
+from backend.Mission_reliability_dashboard.mission_profile import MissionProfile
 from dB.Oem_Upload.oem import OEMData
-from backend.password_reset.passwordReset import EmailSender
+from backend.Authentication.password_reset.passwordReset import EmailSender
 from dB.phase_manager.phase_manager_dB import Phase_Manager_dB
-from backend.PM.optimize import optimizer
+from backend.Maintenance_Allocation.RCM.PM.optimize import optimizer
 from dB.RCM.rcmDB import RCMDB
 from backend.RUL.rul import RUL_dB
 from dB.system_configuration.system_configurationdB_table import SystemConfigurationdBTable
@@ -76,7 +77,7 @@ app.config['MAIL_USE_SSL'] = False
 mail = Mail(app)
 
 
-with app.open_resource("./backend/password_reset/netra.png") as fp:
+with app.open_resource("./backend/Authentication/password_reset/netra.png") as fp:
     logo_data = fp.read()
 
 UPLOAD_FOLDER = "uploads"
@@ -501,77 +502,33 @@ def fetch_tasks():
     if request.method == "GET":
         path = "./tasks"
         taskfiles = [f for f in listdir(path) if isfile(join(path, f))]
-
         tasks_info = []
-
         for file in taskfiles:
             task_name = file.split(".")[0]
-
             with open(join(path, file), 'r') as f:
                 task_data = json.load(f)  
                 if isinstance(task_data, list) and task_data:
                     last_object = task_data[-1]
                     author_name = last_object.get("shipName")
-
                     task_info = {
                         "taskname": task_name,
                         "ship_name": author_name
                     }
-
                     tasks_info.append(task_info)
         return jsonify(tasks_info)
 
 
 @api.route("/save_task_configuration", methods=["POST"])
 def save_task_configuration():
-    if request.method == "POST":
-        tc_inst = TaskReliability()
+    try:
+        task_service = TaskService()
         data = request.get_json(force=True)
-        taskData = data["taskData"]
-        taskDataf = filter(lambda x: x["type"] == "component", taskData)
-        taskDataf = map(tc_inst.get_eq_id, taskDataf)
-        taskDataNC = filter(lambda x: x["type"] != "component", taskData)
-        taskData = list(taskDataNC) + list(taskDataf)
-
-        invalid_tasks = []
-        for item in taskData:
-            if item["type"] == "component" and "n" in item["data"]:
-                exceeded_k_values = [
-                    k_key
-                    for k_key in ["k", "k_as", "k_c", "k_ds", "k_elh"]
-                    if k_key in item["data"] and item["data"][k_key] > item["data"]["n"]
-                ]
-                if exceeded_k_values:
-                    invalid_tasks.append(
-                        (item["data"]["label"], exceeded_k_values))
-
-        if invalid_tasks:
-            messages = []
-            for task_label, exceeded_k_values in invalid_tasks:
-                message = f"Equipment '{task_label}' has exceeded the n value for the following k values: {', '.join(exceeded_k_values)}."
-                messages.append(message)
-            res = {"message": " ".join(messages), "code": 0}
-            return jsonify({"error": res}), 400
-        else:
-            try:
-               
-                json_object = json.dumps(taskData, indent=4)
-                directory = "./tasks/"
-                filename = taskData[0]["data"]["label"] + ".json"
-                file_path = os.path.join(directory, filename)
-                if not os.path.isdir(directory):
-                    os.mkdir(directory)
-                with open(file_path, "w") as file:
-                    file.write(json_object)
-
-                res = {"message": "Data Saved Successfully.", "code": 1}
-            except Exception as e:
-                res = {"message": str(e), "code": 0}
-    else:
-        res = {"message": "Invalid request method.", "code": 0}
-
-    return jsonify(res)
-
+        result = task_service.save_task_configuration(data)
+        return jsonify(result), 200
+    except ValueError as ve:
+        return jsonify({"error": str(ve), "code": 0}), 400
+    except Exception as e:
+        return jsonify({"error": str(e), "code": 0}), 500
 
 @api.route("/load_task_configuration", methods=["POST", "GET"])
 def load_task_configuration():

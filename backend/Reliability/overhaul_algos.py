@@ -1,7 +1,7 @@
 from dB.dB_connection import cursor, cnxn
 from datetime import datetime, timedelta
 import uuid
-from dB.Data_Adminstrator.data_adminstrator import Data_Administrator
+from backend.View_update.CMMSTONETRA.data_adminstrator import Data_Administrator
 from dB.Reliability import query as q
 
 

@@ -2,7 +2,7 @@ from datetime import datetime
 import logging
 from dB.dB_connection import pointer, cnxn, cursor
 from flask import Flask, jsonify
-from dB.data_manager.data_manager import Data_Manager
+from backend.View_update.data_manager.data_manager import Data_Manager
 import uuid
 
 
