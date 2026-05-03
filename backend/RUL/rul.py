@@ -12,7 +12,6 @@ from dB.Rul_queries.Rul_queries import (
     FETCH_SENSOR_NAMES_BY_COMPONENT,
 )
 
-
 class RUL_dB:
     parameter = None
     component_id = None
