@@ -22,9 +22,6 @@ def rel_dashboard():
     })
 
 
-
-
-
 @reliability_bp.route('/rel_estimate_EQ', methods=['POST'])
 def rel_estimate_eq():
     data = request.get_json(force=True)['data']

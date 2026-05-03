@@ -8,8 +8,7 @@ def home():
     return jsonify('Hello, This is new. We have connected ports!!')
 
 
-# NOTE: /add_data and /change appear to be debug/test routes.
-# Review and remove before production deployment.
+
 
 @misc_bp.route('/add_data', methods=['POST'])
 def add_data():
