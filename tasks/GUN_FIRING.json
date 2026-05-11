@@ -1,10 +1,10 @@
 [
     {
-        "id": "0a4fb813-8b2f-4cb0-b2f0-3e4d51ccc031",
+        "id": "2b6e191f-f3fd-4b3a-939c-d34e0949077d",
         "type": "systemNode",
         "position": {
             "x": 86,
-            "y": 3114
+            "y": 620
         },
         "data": {
             "label": "GUN_FIRING"
@@ -15,176 +15,176 @@
         "sourcePosition": "right"
     },
     {
-        "id": "a8bef273-2cec-401f-be09-fda7beab17a5",
+        "id": "3377c058-d6ee-4641-bcd8-8da5f798e3a9",
         "type": "smoothstep",
-        "source": "0a4fb813-8b2f-4cb0-b2f0-3e4d51ccc031",
-        "target": "147c6592-273e-4782-ace7-8cc367226293",
+        "source": "2b6e191f-f3fd-4b3a-939c-d34e0949077d",
+        "target": "e028a5de-66f2-41a4-8db4-14c6e85be805",
         "dtype": "edge",
         "style": {
-            "stroke": "rgb(130, 209, 12)"
+            "stroke": "rgb(58, 173, 196)"
         },
         "animated": false
     },
     {
-        "id": "67d04b45-2fcc-42a4-b712-37f8b787ffc6",
+        "id": "c1bfd614-30b2-4d98-afe6-d3a48acf7dfb",
         "type": "smoothstep",
-        "source": "0a4fb813-8b2f-4cb0-b2f0-3e4d51ccc031",
-        "target": "26961823-e365-4248-a50f-3a401243928b",
+        "source": "2b6e191f-f3fd-4b3a-939c-d34e0949077d",
+        "target": "926d0a4b-d109-4341-8ef4-6b8c784c4fec",
         "dtype": "edge",
         "style": {
-            "stroke": "rgb(130, 209, 12)"
+            "stroke": "rgb(58, 173, 196)"
         },
         "animated": false
     },
     {
-        "id": "136e4733-32cf-4b12-82a8-e8e674189945",
+        "id": "f907ff57-70e8-4a77-a2c0-d17c4fe68ecd",
         "type": "smoothstep",
-        "source": "0a4fb813-8b2f-4cb0-b2f0-3e4d51ccc031",
-        "target": "9fd8a1bc-04b4-4f48-a337-a17c1cd54b85",
+        "source": "2b6e191f-f3fd-4b3a-939c-d34e0949077d",
+        "target": "389b3ca5-9811-4248-92e0-875282481914",
         "dtype": "edge",
         "style": {
-            "stroke": "rgb(130, 209, 12)"
+            "stroke": "rgb(58, 173, 196)"
         },
         "animated": false
     },
     {
-        "id": "61446c0d-2bb4-43bd-a2ac-83af0a82f892",
+        "id": "7369bb02-c3d9-4d32-8159-90146a7d2b3f",
         "type": "smoothstep",
-        "source": "0a4fb813-8b2f-4cb0-b2f0-3e4d51ccc031",
-        "target": "d865b71b-f92d-4108-b021-bb8f917f3033",
+        "source": "2b6e191f-f3fd-4b3a-939c-d34e0949077d",
+        "target": "b0c99352-1913-4846-aa2f-4e711a557082",
         "dtype": "edge",
         "style": {
-            "stroke": "rgb(39, 170, 48)"
+            "stroke": "rgb(58, 173, 196)"
         },
         "animated": false
     },
     {
-        "id": "722bd49d-e2ad-4a2b-9c26-cd8b40796ff6",
+        "id": "d5942e5b-5039-4b2a-ab24-c427ba32adba",
         "type": "smoothstep",
-        "source": "0a4fb813-8b2f-4cb0-b2f0-3e4d51ccc031",
-        "target": "4c709e20-dccf-4a64-98d9-94be22a642e9",
+        "source": "2b6e191f-f3fd-4b3a-939c-d34e0949077d",
+        "target": "a8c322cf-20f6-462d-9d7f-110d749cae5d",
         "dtype": "edge",
         "style": {
-            "stroke": "rgb(130, 209, 12)"
+            "stroke": "rgb(27, 252, 110)"
         },
         "animated": false
     },
     {
-        "id": "98b3f608-5eb0-4f7c-ba9c-defe925eb7b7",
+        "id": "e05eb81a-621c-4168-aba7-ab2c20049390",
         "type": "smoothstep",
-        "source": "0a4fb813-8b2f-4cb0-b2f0-3e4d51ccc031",
-        "target": "24c619c7-9353-4918-ad60-190265712dcf",
+        "source": "2b6e191f-f3fd-4b3a-939c-d34e0949077d",
+        "target": "9496dc66-401e-4591-800c-379894a1f05d",
         "dtype": "edge",
         "style": {
-            "stroke": "rgb(39, 170, 48)"
+            "stroke": "rgb(27, 252, 110)"
         },
         "animated": false
     },
     {
-        "id": "a4fa1277-c6ed-4833-9b10-6fcc5f368cfc",
+        "id": "41d270a8-e134-4026-b7cc-eee0b51921d4",
         "type": "smoothstep",
-        "source": "0a4fb813-8b2f-4cb0-b2f0-3e4d51ccc031",
-        "target": "a461aca9-f684-430c-abf1-19eaa448e2c8",
+        "source": "2b6e191f-f3fd-4b3a-939c-d34e0949077d",
+        "target": "95be0d41-481a-47e1-b1c7-0166b2f603e5",
         "dtype": "edge",
         "style": {
-            "stroke": "rgb(39, 170, 48)"
+            "stroke": "rgb(27, 252, 110)"
         },
         "animated": false
     },
     {
-        "id": "d17b8788-6fe4-42ea-90de-207aac590ae9",
+        "id": "8dfe9874-77fa-49f0-ae3e-4e807f5baf08",
         "type": "smoothstep",
-        "source": "0a4fb813-8b2f-4cb0-b2f0-3e4d51ccc031",
-        "target": "b816e9b5-0982-4908-a6a7-f678bd50398e",
+        "source": "2b6e191f-f3fd-4b3a-939c-d34e0949077d",
+        "target": "21a9183e-815c-4e57-bdc2-269980f951ea",
         "dtype": "edge",
         "style": {
-            "stroke": "rgb(39, 170, 48)"
+            "stroke": "rgb(27, 252, 110)"
         },
         "animated": false
     },
     {
-        "id": "c9fe4a53-a2ef-42e7-9dc5-31d86307642c",
+        "id": "c116a9a6-27f6-4397-a3db-46562973a1e8",
         "type": "smoothstep",
-        "source": "0a4fb813-8b2f-4cb0-b2f0-3e4d51ccc031",
-        "target": "8e810a71-99f7-4e9a-92fe-e5dbe99886d6",
+        "source": "2b6e191f-f3fd-4b3a-939c-d34e0949077d",
+        "target": "74da524b-2e53-46eb-8c7e-3eeae6618184",
         "dtype": "edge",
         "style": {
-            "stroke": "rgb(209, 94, 120)"
+            "stroke": "rgb(75, 133, 221)"
         },
         "animated": false
     },
     {
-        "id": "f579cc21-e99c-42df-85c0-d505ef913d1f",
+        "id": "c73ec489-1d04-4fb7-8917-d71f859ff515",
         "type": "smoothstep",
-        "source": "0a4fb813-8b2f-4cb0-b2f0-3e4d51ccc031",
-        "target": "6295ced5-b984-4b0b-987c-f39e1f4d5a59",
+        "source": "2b6e191f-f3fd-4b3a-939c-d34e0949077d",
+        "target": "8c494346-8e4d-4881-8ea1-aaf619204b1b",
         "dtype": "edge",
         "style": {
-            "stroke": "rgb(209, 94, 120)"
+            "stroke": "rgb(75, 133, 221)"
         },
         "animated": false
     },
     {
-        "id": "ed654c65-2955-450c-a09d-c22a5f0556b4",
+        "id": "75cc8c65-9371-4228-9401-04fa0935d77c",
         "type": "smoothstep",
-        "source": "0a4fb813-8b2f-4cb0-b2f0-3e4d51ccc031",
-        "target": "d41859eb-1718-4b11-83d1-8d0d32da6d55",
+        "source": "2b6e191f-f3fd-4b3a-939c-d34e0949077d",
+        "target": "4a6627a9-ff90-4450-b9e9-618e49149a32",
         "dtype": "edge",
         "style": {
-            "stroke": "rgb(209, 94, 120)"
+            "stroke": "rgb(75, 133, 221)"
         },
         "animated": false
     },
     {
-        "id": "b3b4ea09-c0c5-402a-b56d-c87a5ad82b38",
+        "id": "64c650a0-36d4-4666-8aff-a4c4116a8656",
         "type": "smoothstep",
-        "source": "0a4fb813-8b2f-4cb0-b2f0-3e4d51ccc031",
-        "target": "2ca6c312-9aba-4e03-850e-fe1972e5ee1f",
+        "source": "2b6e191f-f3fd-4b3a-939c-d34e0949077d",
+        "target": "98fc7ccb-5a6d-4fb4-9975-b5fac6212ab6",
         "dtype": "edge",
         "style": {
-            "stroke": "rgb(209, 94, 120)"
+            "stroke": "rgb(75, 133, 221)"
         },
         "animated": false
     },
     {
-        "id": "13da299b-ebaf-49e5-9b52-93d8728a11f6",
+        "id": "5a108793-f54e-4029-8c56-362daa08912e",
         "type": "smoothstep",
-        "source": "0a4fb813-8b2f-4cb0-b2f0-3e4d51ccc031",
-        "target": "9bc6da44-7e52-45bd-a011-2495d4569ba4",
+        "source": "2b6e191f-f3fd-4b3a-939c-d34e0949077d",
+        "target": "8fbebe1b-3f71-4da9-bc0b-219bccdfc848",
         "dtype": "edge",
         "style": {
-            "stroke": "rgb(209, 94, 120)"
+            "stroke": "rgb(75, 133, 221)"
         },
         "animated": false
     },
     {
-        "id": "2f71861c-aa99-433e-be5d-620af4839d43",
+        "id": "7c53a9fc-32ac-498b-9c49-767b791e5f29",
         "type": "smoothstep",
-        "source": "0a4fb813-8b2f-4cb0-b2f0-3e4d51ccc031",
-        "target": "808b5d4a-19fb-4c11-95db-1f530dc8b663",
+        "source": "2b6e191f-f3fd-4b3a-939c-d34e0949077d",
+        "target": "4f33aae0-876f-495d-9f7e-d1bd1216f23a",
         "dtype": "edge",
         "style": {
-            "stroke": "rgb(209, 94, 120)"
+            "stroke": "rgb(75, 133, 221)"
         },
         "animated": false
     },
     {
-        "id": "4de612c4-18ac-431f-b669-5fcacc58fddb",
+        "id": "71a62bee-6154-43db-855f-5e9d4310041e",
         "type": "smoothstep",
-        "source": "0a4fb813-8b2f-4cb0-b2f0-3e4d51ccc031",
-        "target": "e476b677-d1a3-42c7-b680-fde302ff0ce0",
+        "source": "2b6e191f-f3fd-4b3a-939c-d34e0949077d",
+        "target": "6cb9a003-7b9f-427b-a4c7-5e9bb1ef414c",
         "dtype": "edge",
         "style": {
-            "stroke": "rgb(73, 61, 175)"
+            "stroke": "rgb(237, 97, 108)"
         },
         "animated": false
     },
     {
-        "id": "147c6592-273e-4782-ace7-8cc367226293",
+        "id": "e028a5de-66f2-41a4-8db4-14c6e85be805",
         "type": "component",
         "position": {
             "x": 308,
-            "y": 2512
+            "y": 18
         },
         "data": {
             "label": "GT1",
@@ -196,22 +196,22 @@
             "n": 4,
             "parallel_comp": [
                 {
-                    "value": "26961823-e365-4248-a50f-3a401243928b",
+                    "value": "926d0a4b-d109-4341-8ef4-6b8c784c4fec",
                     "label": "GT2"
                 },
                 {
-                    "value": "4c709e20-dccf-4a64-98d9-94be22a642e9",
+                    "value": "389b3ca5-9811-4248-92e0-875282481914",
                     "label": "GT3"
                 },
                 {
-                    "value": "9fd8a1bc-04b4-4f48-a337-a17c1cd54b85",
+                    "value": "b0c99352-1913-4846-aa2f-4e711a557082",
                     "label": "GT4"
                 }
             ]
         },
         "dtype": "node",
         "style": {
-            "background": "rgb(130, 209, 12)",
+            "background": "rgb(58, 173, 196)",
             "border": "1px solid black",
             "borderRadius": "5px",
             "borderColor": "black",
@@ -230,14 +230,14 @@
         },
         "targetPosition": "left",
         "sourcePosition": "right",
-        "equipementId": "57A9D140-89E7-4964-97C9-4039749B49DD"
+        "equipementId": "47900329-826A-4B89-BE9C-51D098B58EC8"
     },
     {
-        "id": "26961823-e365-4248-a50f-3a401243928b",
+        "id": "926d0a4b-d109-4341-8ef4-6b8c784c4fec",
         "type": "component",
         "position": {
             "x": 308,
-            "y": 2598
+            "y": 104
         },
         "data": {
             "label": "GT2",
@@ -249,22 +249,22 @@
             "n": 4,
             "parallel_comp": [
                 {
-                    "value": "4c709e20-dccf-4a64-98d9-94be22a642e9",
+                    "value": "389b3ca5-9811-4248-92e0-875282481914",
                     "label": "GT3"
                 },
                 {
-                    "value": "9fd8a1bc-04b4-4f48-a337-a17c1cd54b85",
+                    "value": "b0c99352-1913-4846-aa2f-4e711a557082",
                     "label": "GT4"
                 },
                 {
-                    "value": "147c6592-273e-4782-ace7-8cc367226293",
+                    "value": "e028a5de-66f2-41a4-8db4-14c6e85be805",
                     "label": "GT1"
                 }
             ]
         },
         "dtype": "node",
         "style": {
-            "background": "rgb(130, 209, 12)",
+            "background": "rgb(58, 173, 196)",
             "border": "1px solid black",
             "borderRadius": "5px",
             "borderColor": "black",
@@ -283,120 +283,14 @@
         },
         "targetPosition": "left",
         "sourcePosition": "right",
-        "equipementId": "E1052BEF-9B7E-4D31-82F5-209551EF9888"
+        "equipementId": "B1C32E0F-F6A0-4B69-A2E1-05DAD7D4DEB2"
     },
     {
-        "id": "9fd8a1bc-04b4-4f48-a337-a17c1cd54b85",
+        "id": "389b3ca5-9811-4248-92e0-875282481914",
         "type": "component",
         "position": {
             "x": 308,
-            "y": 2684
-        },
-        "data": {
-            "label": "GT4",
-            "k": 2,
-            "k_elh": 2,
-            "k_c": 1,
-            "k_ds": 2,
-            "k_as": 2,
-            "n": 4,
-            "parallel_comp": [
-                {
-                    "value": "26961823-e365-4248-a50f-3a401243928b",
-                    "label": "GT2"
-                },
-                {
-                    "value": "4c709e20-dccf-4a64-98d9-94be22a642e9",
-                    "label": "GT3"
-                },
-                {
-                    "value": "147c6592-273e-4782-ace7-8cc367226293",
-                    "label": "GT1"
-                }
-            ]
-        },
-        "dtype": "node",
-        "style": {
-            "background": "rgb(130, 209, 12)",
-            "border": "1px solid black",
-            "borderRadius": "5px",
-            "borderColor": "black",
-            "padding": "20px"
-        },
-        "shipName": "INS ONE",
-        "metaData": {
-            "shipName": "INS ONE",
-            "shipCategory": "DESTROYER AND FRIGATES",
-            "shipClass": "KOLKATA (P-15A)",
-            "command": "Western Naval Command",
-            "department": "Engineering",
-            "equipmentName": "",
-            "equipmentCode": "",
-            "nomenclature": ""
-        },
-        "targetPosition": "left",
-        "sourcePosition": "right",
-        "equipementId": "D1C45569-031A-4109-A6D7-7A1C6BD2D794"
-    },
-    {
-        "id": "d865b71b-f92d-4108-b021-bb8f917f3033",
-        "type": "component",
-        "position": {
-            "x": 308,
-            "y": 2770
-        },
-        "data": {
-            "label": "GTG4",
-            "k": 2,
-            "k_elh": 2,
-            "k_c": 1,
-            "k_ds": 2,
-            "k_as": 2,
-            "n": 4,
-            "parallel_comp": [
-                {
-                    "value": "a461aca9-f684-430c-abf1-19eaa448e2c8",
-                    "label": "GTG2"
-                },
-                {
-                    "value": "b816e9b5-0982-4908-a6a7-f678bd50398e",
-                    "label": "GTG3"
-                },
-                {
-                    "value": "24c619c7-9353-4918-ad60-190265712dcf",
-                    "label": "GTG1"
-                }
-            ]
-        },
-        "dtype": "node",
-        "style": {
-            "background": "rgb(39, 170, 48)",
-            "border": "1px solid black",
-            "borderRadius": "5px",
-            "borderColor": "black",
-            "padding": "20px"
-        },
-        "shipName": "INS ONE",
-        "metaData": {
-            "shipName": "INS ONE",
-            "shipCategory": "DESTROYER AND FRIGATES",
-            "shipClass": "KOLKATA (P-15A)",
-            "command": "Western Naval Command",
-            "department": "Engineering",
-            "equipmentName": "",
-            "equipmentCode": "",
-            "nomenclature": ""
-        },
-        "targetPosition": "left",
-        "sourcePosition": "right",
-        "equipementId": "7F1DEDAD-85EA-486D-B3A4-42FB9B8B0420"
-    },
-    {
-        "id": "4c709e20-dccf-4a64-98d9-94be22a642e9",
-        "type": "component",
-        "position": {
-            "x": 308,
-            "y": 2856
+            "y": 190
         },
         "data": {
             "label": "GT3",
@@ -408,22 +302,22 @@
             "n": 4,
             "parallel_comp": [
                 {
-                    "value": "26961823-e365-4248-a50f-3a401243928b",
+                    "value": "926d0a4b-d109-4341-8ef4-6b8c784c4fec",
                     "label": "GT2"
                 },
                 {
-                    "value": "9fd8a1bc-04b4-4f48-a337-a17c1cd54b85",
+                    "value": "b0c99352-1913-4846-aa2f-4e711a557082",
                     "label": "GT4"
                 },
                 {
-                    "value": "147c6592-273e-4782-ace7-8cc367226293",
+                    "value": "e028a5de-66f2-41a4-8db4-14c6e85be805",
                     "label": "GT1"
                 }
             ]
         },
         "dtype": "node",
         "style": {
-            "background": "rgb(130, 209, 12)",
+            "background": "rgb(58, 173, 196)",
             "border": "1px solid black",
             "borderRadius": "5px",
             "borderColor": "black",
@@ -442,14 +336,67 @@
         },
         "targetPosition": "left",
         "sourcePosition": "right",
-        "equipementId": "76A1CF89-249F-4BB0-8BED-8A24FC601EE1"
+        "equipementId": "570A1879-8061-4DB5-8E45-CBBCFFB7F03B"
     },
     {
-        "id": "24c619c7-9353-4918-ad60-190265712dcf",
+        "id": "b0c99352-1913-4846-aa2f-4e711a557082",
         "type": "component",
         "position": {
             "x": 308,
-            "y": 2942
+            "y": 276
+        },
+        "data": {
+            "label": "GT4",
+            "k": 2,
+            "k_elh": 2,
+            "k_c": 1,
+            "k_ds": 2,
+            "k_as": 2,
+            "n": 4,
+            "parallel_comp": [
+                {
+                    "value": "926d0a4b-d109-4341-8ef4-6b8c784c4fec",
+                    "label": "GT2"
+                },
+                {
+                    "value": "389b3ca5-9811-4248-92e0-875282481914",
+                    "label": "GT3"
+                },
+                {
+                    "value": "e028a5de-66f2-41a4-8db4-14c6e85be805",
+                    "label": "GT1"
+                }
+            ]
+        },
+        "dtype": "node",
+        "style": {
+            "background": "rgb(58, 173, 196)",
+            "border": "1px solid black",
+            "borderRadius": "5px",
+            "borderColor": "black",
+            "padding": "20px"
+        },
+        "shipName": "INS ONE",
+        "metaData": {
+            "shipName": "INS ONE",
+            "shipCategory": "DESTROYER AND FRIGATES",
+            "shipClass": "KOLKATA (P-15A)",
+            "command": "Western Naval Command",
+            "department": "Engineering",
+            "equipmentName": "",
+            "equipmentCode": "",
+            "nomenclature": ""
+        },
+        "targetPosition": "left",
+        "sourcePosition": "right",
+        "equipementId": "5CDF5606-D948-4154-A702-E1CDAB4E1EDF"
+    },
+    {
+        "id": "a8c322cf-20f6-462d-9d7f-110d749cae5d",
+        "type": "component",
+        "position": {
+            "x": 308,
+            "y": 362
         },
         "data": {
             "label": "GTG1",
@@ -461,22 +408,22 @@
             "n": 4,
             "parallel_comp": [
                 {
-                    "value": "a461aca9-f684-430c-abf1-19eaa448e2c8",
+                    "value": "9496dc66-401e-4591-800c-379894a1f05d",
                     "label": "GTG2"
                 },
                 {
-                    "value": "b816e9b5-0982-4908-a6a7-f678bd50398e",
+                    "value": "95be0d41-481a-47e1-b1c7-0166b2f603e5",
                     "label": "GTG3"
                 },
                 {
-                    "value": "d865b71b-f92d-4108-b021-bb8f917f3033",
+                    "value": "21a9183e-815c-4e57-bdc2-269980f951ea",
                     "label": "GTG4"
                 }
             ]
         },
         "dtype": "node",
         "style": {
-            "background": "rgb(39, 170, 48)",
+            "background": "rgb(27, 252, 110)",
             "border": "1px solid black",
             "borderRadius": "5px",
             "borderColor": "black",
@@ -495,14 +442,14 @@
         },
         "targetPosition": "left",
         "sourcePosition": "right",
-        "equipementId": "4A5F2F20-3406-4D99-917D-97FB80A2C8E9"
+        "equipementId": "3A56BFD5-2CD9-453F-B1BC-8DB25F674C76"
     },
     {
-        "id": "a461aca9-f684-430c-abf1-19eaa448e2c8",
+        "id": "9496dc66-401e-4591-800c-379894a1f05d",
         "type": "component",
         "position": {
             "x": 308,
-            "y": 3028
+            "y": 448
         },
         "data": {
             "label": "GTG2",
@@ -514,22 +461,22 @@
             "n": 4,
             "parallel_comp": [
                 {
-                    "value": "b816e9b5-0982-4908-a6a7-f678bd50398e",
+                    "value": "95be0d41-481a-47e1-b1c7-0166b2f603e5",
                     "label": "GTG3"
                 },
                 {
-                    "value": "d865b71b-f92d-4108-b021-bb8f917f3033",
+                    "value": "21a9183e-815c-4e57-bdc2-269980f951ea",
                     "label": "GTG4"
                 },
                 {
-                    "value": "24c619c7-9353-4918-ad60-190265712dcf",
+                    "value": "a8c322cf-20f6-462d-9d7f-110d749cae5d",
                     "label": "GTG1"
                 }
             ]
         },
         "dtype": "node",
         "style": {
-            "background": "rgb(39, 170, 48)",
+            "background": "rgb(27, 252, 110)",
             "border": "1px solid black",
             "borderRadius": "5px",
             "borderColor": "black",
@@ -548,14 +495,14 @@
         },
         "targetPosition": "left",
         "sourcePosition": "right",
-        "equipementId": "3447D0C8-21FD-4BA7-9754-2E3E67A1052C"
+        "equipementId": "610985F8-98BE-4DD9-AAAF-4771CB31E275"
     },
     {
-        "id": "b816e9b5-0982-4908-a6a7-f678bd50398e",
+        "id": "95be0d41-481a-47e1-b1c7-0166b2f603e5",
         "type": "component",
         "position": {
             "x": 308,
-            "y": 3114
+            "y": 534
         },
         "data": {
             "label": "GTG3",
@@ -567,22 +514,22 @@
             "n": 4,
             "parallel_comp": [
                 {
-                    "value": "a461aca9-f684-430c-abf1-19eaa448e2c8",
+                    "value": "9496dc66-401e-4591-800c-379894a1f05d",
                     "label": "GTG2"
                 },
                 {
-                    "value": "d865b71b-f92d-4108-b021-bb8f917f3033",
+                    "value": "21a9183e-815c-4e57-bdc2-269980f951ea",
                     "label": "GTG4"
                 },
                 {
-                    "value": "24c619c7-9353-4918-ad60-190265712dcf",
+                    "value": "a8c322cf-20f6-462d-9d7f-110d749cae5d",
                     "label": "GTG1"
                 }
             ]
         },
         "dtype": "node",
         "style": {
-            "background": "rgb(39, 170, 48)",
+            "background": "rgb(27, 252, 110)",
             "border": "1px solid black",
             "borderRadius": "5px",
             "borderColor": "black",
@@ -601,14 +548,67 @@
         },
         "targetPosition": "left",
         "sourcePosition": "right",
-        "equipementId": "094E8D4F-DA36-43DF-9DBB-968BC4F0F977"
+        "equipementId": "4FC5F6BC-08A1-406C-99A2-C65A20BF37FD"
     },
     {
-        "id": "8e810a71-99f7-4e9a-92fe-e5dbe99886d6",
+        "id": "21a9183e-815c-4e57-bdc2-269980f951ea",
         "type": "component",
         "position": {
             "x": 308,
-            "y": 3200
+            "y": 620
+        },
+        "data": {
+            "label": "GTG4",
+            "k": 2,
+            "k_elh": 2,
+            "k_c": 1,
+            "k_ds": 2,
+            "k_as": 2,
+            "n": 4,
+            "parallel_comp": [
+                {
+                    "value": "9496dc66-401e-4591-800c-379894a1f05d",
+                    "label": "GTG2"
+                },
+                {
+                    "value": "95be0d41-481a-47e1-b1c7-0166b2f603e5",
+                    "label": "GTG3"
+                },
+                {
+                    "value": "a8c322cf-20f6-462d-9d7f-110d749cae5d",
+                    "label": "GTG1"
+                }
+            ]
+        },
+        "dtype": "node",
+        "style": {
+            "background": "rgb(27, 252, 110)",
+            "border": "1px solid black",
+            "borderRadius": "5px",
+            "borderColor": "black",
+            "padding": "20px"
+        },
+        "shipName": "INS ONE",
+        "metaData": {
+            "shipName": "INS ONE",
+            "shipCategory": "DESTROYER AND FRIGATES",
+            "shipClass": "KOLKATA (P-15A)",
+            "command": "Western Naval Command",
+            "department": "Engineering",
+            "equipmentName": "",
+            "equipmentCode": "",
+            "nomenclature": ""
+        },
+        "targetPosition": "left",
+        "sourcePosition": "right",
+        "equipementId": "6DE1EFE2-CC82-4FCD-86FC-7065AF2B0351"
+    },
+    {
+        "id": "74da524b-2e53-46eb-8c7e-3eeae6618184",
+        "type": "component",
+        "position": {
+            "x": 308,
+            "y": 706
         },
         "data": {
             "label": "AC4",
@@ -620,30 +620,30 @@
             "n": 6,
             "parallel_comp": [
                 {
-                    "value": "9bc6da44-7e52-45bd-a011-2495d4569ba4",
+                    "value": "4a6627a9-ff90-4450-b9e9-618e49149a32",
                     "label": "AC2"
                 },
                 {
-                    "value": "808b5d4a-19fb-4c11-95db-1f530dc8b663",
+                    "value": "98fc7ccb-5a6d-4fb4-9975-b5fac6212ab6",
                     "label": "AC3"
                 },
                 {
-                    "value": "d41859eb-1718-4b11-83d1-8d0d32da6d55",
+                    "value": "8fbebe1b-3f71-4da9-bc0b-219bccdfc848",
                     "label": "AC5"
                 },
                 {
-                    "value": "6295ced5-b984-4b0b-987c-f39e1f4d5a59",
+                    "value": "4f33aae0-876f-495d-9f7e-d1bd1216f23a",
                     "label": "AC6"
                 },
                 {
-                    "value": "2ca6c312-9aba-4e03-850e-fe1972e5ee1f",
+                    "value": "8c494346-8e4d-4881-8ea1-aaf619204b1b",
                     "label": "AC1"
                 }
             ]
         },
         "dtype": "node",
         "style": {
-            "background": "rgb(209, 94, 120)",
+            "background": "rgb(75, 133, 221)",
             "border": "1px solid black",
             "borderRadius": "5px",
             "borderColor": "black",
@@ -662,136 +662,14 @@
         },
         "targetPosition": "left",
         "sourcePosition": "right",
-        "equipementId": "22FE1833-CFC1-432D-A510-B068AACD941C"
+        "equipementId": "4B5E7E49-FB66-4196-A374-1EC5F47BCF84"
     },
     {
-        "id": "6295ced5-b984-4b0b-987c-f39e1f4d5a59",
+        "id": "8c494346-8e4d-4881-8ea1-aaf619204b1b",
         "type": "component",
         "position": {
             "x": 308,
-            "y": 3286
-        },
-        "data": {
-            "label": "AC6",
-            "k": 4,
-            "k_elh": 2,
-            "k_c": 3,
-            "k_ds": 4,
-            "k_as": 4,
-            "n": 6,
-            "parallel_comp": [
-                {
-                    "value": "9bc6da44-7e52-45bd-a011-2495d4569ba4",
-                    "label": "AC2"
-                },
-                {
-                    "value": "808b5d4a-19fb-4c11-95db-1f530dc8b663",
-                    "label": "AC3"
-                },
-                {
-                    "value": "8e810a71-99f7-4e9a-92fe-e5dbe99886d6",
-                    "label": "AC4"
-                },
-                {
-                    "value": "d41859eb-1718-4b11-83d1-8d0d32da6d55",
-                    "label": "AC5"
-                },
-                {
-                    "value": "2ca6c312-9aba-4e03-850e-fe1972e5ee1f",
-                    "label": "AC1"
-                }
-            ]
-        },
-        "dtype": "node",
-        "style": {
-            "background": "rgb(209, 94, 120)",
-            "border": "1px solid black",
-            "borderRadius": "5px",
-            "borderColor": "black",
-            "padding": "20px"
-        },
-        "shipName": "INS ONE",
-        "metaData": {
-            "shipName": "INS ONE",
-            "shipCategory": "DESTROYER AND FRIGATES",
-            "shipClass": "KOLKATA (P-15A)",
-            "command": "Western Naval Command",
-            "department": "Electrical",
-            "equipmentName": "",
-            "equipmentCode": "",
-            "nomenclature": ""
-        },
-        "targetPosition": "left",
-        "sourcePosition": "right",
-        "equipementId": "3CA4DD6F-36FE-497B-B710-19F46565066B"
-    },
-    {
-        "id": "d41859eb-1718-4b11-83d1-8d0d32da6d55",
-        "type": "component",
-        "position": {
-            "x": 308,
-            "y": 3372
-        },
-        "data": {
-            "label": "AC5",
-            "k": 4,
-            "k_elh": 2,
-            "k_c": 3,
-            "k_ds": 4,
-            "k_as": 4,
-            "n": 6,
-            "parallel_comp": [
-                {
-                    "value": "9bc6da44-7e52-45bd-a011-2495d4569ba4",
-                    "label": "AC2"
-                },
-                {
-                    "value": "808b5d4a-19fb-4c11-95db-1f530dc8b663",
-                    "label": "AC3"
-                },
-                {
-                    "value": "8e810a71-99f7-4e9a-92fe-e5dbe99886d6",
-                    "label": "AC4"
-                },
-                {
-                    "value": "6295ced5-b984-4b0b-987c-f39e1f4d5a59",
-                    "label": "AC6"
-                },
-                {
-                    "value": "2ca6c312-9aba-4e03-850e-fe1972e5ee1f",
-                    "label": "AC1"
-                }
-            ]
-        },
-        "dtype": "node",
-        "style": {
-            "background": "rgb(209, 94, 120)",
-            "border": "1px solid black",
-            "borderRadius": "5px",
-            "borderColor": "black",
-            "padding": "20px"
-        },
-        "shipName": "INS ONE",
-        "metaData": {
-            "shipName": "INS ONE",
-            "shipCategory": "DESTROYER AND FRIGATES",
-            "shipClass": "KOLKATA (P-15A)",
-            "command": "Western Naval Command",
-            "department": "Electrical",
-            "equipmentName": "",
-            "equipmentCode": "",
-            "nomenclature": ""
-        },
-        "targetPosition": "left",
-        "sourcePosition": "right",
-        "equipementId": "8268AC2F-F341-41C1-8F75-8DE80ACD4FFF"
-    },
-    {
-        "id": "2ca6c312-9aba-4e03-850e-fe1972e5ee1f",
-        "type": "component",
-        "position": {
-            "x": 308,
-            "y": 3458
+            "y": 792
         },
         "data": {
             "label": "AC1",
@@ -803,30 +681,30 @@
             "n": 6,
             "parallel_comp": [
                 {
-                    "value": "9bc6da44-7e52-45bd-a011-2495d4569ba4",
-                    "label": "AC2"
-                },
-                {
-                    "value": "808b5d4a-19fb-4c11-95db-1f530dc8b663",
-                    "label": "AC3"
-                },
-                {
-                    "value": "8e810a71-99f7-4e9a-92fe-e5dbe99886d6",
+                    "value": "74da524b-2e53-46eb-8c7e-3eeae6618184",
                     "label": "AC4"
                 },
                 {
-                    "value": "d41859eb-1718-4b11-83d1-8d0d32da6d55",
+                    "value": "4a6627a9-ff90-4450-b9e9-618e49149a32",
+                    "label": "AC2"
+                },
+                {
+                    "value": "98fc7ccb-5a6d-4fb4-9975-b5fac6212ab6",
+                    "label": "AC3"
+                },
+                {
+                    "value": "8fbebe1b-3f71-4da9-bc0b-219bccdfc848",
                     "label": "AC5"
                 },
                 {
-                    "value": "6295ced5-b984-4b0b-987c-f39e1f4d5a59",
+                    "value": "4f33aae0-876f-495d-9f7e-d1bd1216f23a",
                     "label": "AC6"
                 }
             ]
         },
         "dtype": "node",
         "style": {
-            "background": "rgb(209, 94, 120)",
+            "background": "rgb(75, 133, 221)",
             "border": "1px solid black",
             "borderRadius": "5px",
             "borderColor": "black",
@@ -845,14 +723,14 @@
         },
         "targetPosition": "left",
         "sourcePosition": "right",
-        "equipementId": "A25B5AEA-D29D-48CA-B083-7741B1445616"
+        "equipementId": "696503D8-8988-4368-9ED9-2CF2A01679A5"
     },
     {
-        "id": "9bc6da44-7e52-45bd-a011-2495d4569ba4",
+        "id": "4a6627a9-ff90-4450-b9e9-618e49149a32",
         "type": "component",
         "position": {
             "x": 308,
-            "y": 3544
+            "y": 878
         },
         "data": {
             "label": "AC2",
@@ -864,30 +742,30 @@
             "n": 6,
             "parallel_comp": [
                 {
-                    "value": "808b5d4a-19fb-4c11-95db-1f530dc8b663",
-                    "label": "AC3"
-                },
-                {
-                    "value": "8e810a71-99f7-4e9a-92fe-e5dbe99886d6",
+                    "value": "74da524b-2e53-46eb-8c7e-3eeae6618184",
                     "label": "AC4"
                 },
                 {
-                    "value": "d41859eb-1718-4b11-83d1-8d0d32da6d55",
+                    "value": "98fc7ccb-5a6d-4fb4-9975-b5fac6212ab6",
+                    "label": "AC3"
+                },
+                {
+                    "value": "8fbebe1b-3f71-4da9-bc0b-219bccdfc848",
                     "label": "AC5"
                 },
                 {
-                    "value": "6295ced5-b984-4b0b-987c-f39e1f4d5a59",
+                    "value": "4f33aae0-876f-495d-9f7e-d1bd1216f23a",
                     "label": "AC6"
                 },
                 {
-                    "value": "2ca6c312-9aba-4e03-850e-fe1972e5ee1f",
+                    "value": "8c494346-8e4d-4881-8ea1-aaf619204b1b",
                     "label": "AC1"
                 }
             ]
         },
         "dtype": "node",
         "style": {
-            "background": "rgb(209, 94, 120)",
+            "background": "rgb(75, 133, 221)",
             "border": "1px solid black",
             "borderRadius": "5px",
             "borderColor": "black",
@@ -906,14 +784,14 @@
         },
         "targetPosition": "left",
         "sourcePosition": "right",
-        "equipementId": "AD16A513-DDBD-40C2-A1E2-0F86B2D41EE9"
+        "equipementId": "5B19245A-99BE-460C-AD6C-782616639120"
     },
     {
-        "id": "808b5d4a-19fb-4c11-95db-1f530dc8b663",
+        "id": "98fc7ccb-5a6d-4fb4-9975-b5fac6212ab6",
         "type": "component",
         "position": {
             "x": 308,
-            "y": 3630
+            "y": 964
         },
         "data": {
             "label": "AC3",
@@ -925,30 +803,30 @@
             "n": 6,
             "parallel_comp": [
                 {
-                    "value": "9bc6da44-7e52-45bd-a011-2495d4569ba4",
-                    "label": "AC2"
-                },
-                {
-                    "value": "8e810a71-99f7-4e9a-92fe-e5dbe99886d6",
+                    "value": "74da524b-2e53-46eb-8c7e-3eeae6618184",
                     "label": "AC4"
                 },
                 {
-                    "value": "d41859eb-1718-4b11-83d1-8d0d32da6d55",
+                    "value": "4a6627a9-ff90-4450-b9e9-618e49149a32",
+                    "label": "AC2"
+                },
+                {
+                    "value": "8fbebe1b-3f71-4da9-bc0b-219bccdfc848",
                     "label": "AC5"
                 },
                 {
-                    "value": "6295ced5-b984-4b0b-987c-f39e1f4d5a59",
+                    "value": "4f33aae0-876f-495d-9f7e-d1bd1216f23a",
                     "label": "AC6"
                 },
                 {
-                    "value": "2ca6c312-9aba-4e03-850e-fe1972e5ee1f",
+                    "value": "8c494346-8e4d-4881-8ea1-aaf619204b1b",
                     "label": "AC1"
                 }
             ]
         },
         "dtype": "node",
         "style": {
-            "background": "rgb(209, 94, 120)",
+            "background": "rgb(75, 133, 221)",
             "border": "1px solid black",
             "borderRadius": "5px",
             "borderColor": "black",
@@ -967,14 +845,136 @@
         },
         "targetPosition": "left",
         "sourcePosition": "right",
-        "equipementId": "A7E8314C-F7CE-4D25-8F87-702A0031BFE0"
+        "equipementId": "5BAFE65D-5659-4C83-8C51-D31E112569A9"
     },
     {
-        "id": "e476b677-d1a3-42c7-b680-fde302ff0ce0",
+        "id": "8fbebe1b-3f71-4da9-bc0b-219bccdfc848",
         "type": "component",
         "position": {
             "x": 308,
-            "y": 3716
+            "y": 1050
+        },
+        "data": {
+            "label": "AC5",
+            "k": 4,
+            "k_elh": 2,
+            "k_c": 3,
+            "k_ds": 4,
+            "k_as": 4,
+            "n": 6,
+            "parallel_comp": [
+                {
+                    "value": "74da524b-2e53-46eb-8c7e-3eeae6618184",
+                    "label": "AC4"
+                },
+                {
+                    "value": "4a6627a9-ff90-4450-b9e9-618e49149a32",
+                    "label": "AC2"
+                },
+                {
+                    "value": "98fc7ccb-5a6d-4fb4-9975-b5fac6212ab6",
+                    "label": "AC3"
+                },
+                {
+                    "value": "4f33aae0-876f-495d-9f7e-d1bd1216f23a",
+                    "label": "AC6"
+                },
+                {
+                    "value": "8c494346-8e4d-4881-8ea1-aaf619204b1b",
+                    "label": "AC1"
+                }
+            ]
+        },
+        "dtype": "node",
+        "style": {
+            "background": "rgb(75, 133, 221)",
+            "border": "1px solid black",
+            "borderRadius": "5px",
+            "borderColor": "black",
+            "padding": "20px"
+        },
+        "shipName": "INS ONE",
+        "metaData": {
+            "shipName": "INS ONE",
+            "shipCategory": "DESTROYER AND FRIGATES",
+            "shipClass": "KOLKATA (P-15A)",
+            "command": "Western Naval Command",
+            "department": "Electrical",
+            "equipmentName": "",
+            "equipmentCode": "",
+            "nomenclature": ""
+        },
+        "targetPosition": "left",
+        "sourcePosition": "right",
+        "equipementId": "794DB564-8EF9-4E30-BC88-C0E2DFC35323"
+    },
+    {
+        "id": "4f33aae0-876f-495d-9f7e-d1bd1216f23a",
+        "type": "component",
+        "position": {
+            "x": 308,
+            "y": 1136
+        },
+        "data": {
+            "label": "AC6",
+            "k": 4,
+            "k_elh": 2,
+            "k_c": 3,
+            "k_ds": 4,
+            "k_as": 4,
+            "n": 6,
+            "parallel_comp": [
+                {
+                    "value": "74da524b-2e53-46eb-8c7e-3eeae6618184",
+                    "label": "AC4"
+                },
+                {
+                    "value": "4a6627a9-ff90-4450-b9e9-618e49149a32",
+                    "label": "AC2"
+                },
+                {
+                    "value": "98fc7ccb-5a6d-4fb4-9975-b5fac6212ab6",
+                    "label": "AC3"
+                },
+                {
+                    "value": "8fbebe1b-3f71-4da9-bc0b-219bccdfc848",
+                    "label": "AC5"
+                },
+                {
+                    "value": "8c494346-8e4d-4881-8ea1-aaf619204b1b",
+                    "label": "AC1"
+                }
+            ]
+        },
+        "dtype": "node",
+        "style": {
+            "background": "rgb(75, 133, 221)",
+            "border": "1px solid black",
+            "borderRadius": "5px",
+            "borderColor": "black",
+            "padding": "20px"
+        },
+        "shipName": "INS ONE",
+        "metaData": {
+            "shipName": "INS ONE",
+            "shipCategory": "DESTROYER AND FRIGATES",
+            "shipClass": "KOLKATA (P-15A)",
+            "command": "Western Naval Command",
+            "department": "Electrical",
+            "equipmentName": "",
+            "equipmentCode": "",
+            "nomenclature": ""
+        },
+        "targetPosition": "left",
+        "sourcePosition": "right",
+        "equipementId": "ECDA7051-7A2D-4EE8-AF46-F722031FDE0E"
+    },
+    {
+        "id": "6cb9a003-7b9f-427b-a4c7-5e9bb1ef414c",
+        "type": "component",
+        "position": {
+            "x": 308,
+            "y": 1222
         },
         "data": {
             "label": "SRGM 1",
@@ -988,7 +988,7 @@
         },
         "dtype": "node",
         "style": {
-            "background": "rgb(73, 61, 175)",
+            "background": "rgb(237, 97, 108)",
             "border": "1px solid black",
             "borderRadius": "5px",
             "borderColor": "black",
@@ -1007,6 +1007,6 @@
         },
         "targetPosition": "left",
         "sourcePosition": "right",
-        "equipementId": "8841134D-57B8-4556-8AE0-D30B291EC3A3"
+        "equipementId": "3DA7AE75-E499-4562-A239-2C4EA5EEF4D9"
     }
 ]

@@ -1,12 +1,12 @@
 import os
 from flask import json
-from dB.dB_connection import cursor, cnxn
+from backend.dB.dB_connection import cursor, cnxn
 
 
 import os
 from flask import json
-from dB.dB_connection import cursor
-from dB.Authentication.signin_dB import SignInDB
+from backend.dB.dB_connection import cursor
+from backend.dB.Authentication.signin_dB import SignInDB
 
 class TaskMiddleWare(object):
     def __init__(self, app, APP_ROOT):

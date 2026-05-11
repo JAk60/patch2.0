@@ -18,33 +18,33 @@ from flask_mail import Mail, Message
 from werkzeug.utils import secure_filename
 
 
-from backend.mission_configuration.mission_config import TaskService
+from backend.modules.mission_configuration.mission_config import TaskService
 import middleware
-from backend.View_update.user_selection.user_selection import Custom_Settings
-from backend.Reliability.reliability import Reliability
-from backend.sytem_configuration.system_configuration import System_Configuration_N
-from backend.Mission_reliability_dashboard.taskReliability import TaskReliability
-from backend.Authentication.signin import Authentication
-from backend.condition_monitioring.cgraph import GraphDashBoard
-from backend.condition_monitioring.condition_monitoring import conditionMonitoring_dB
-from backend.Dashboard.DashBoard import DashBoard
-from backend.View_update.CMMSTONETRA.data_adminstrator import Data_Administrator
-from backend.View_update.data_manager.data_manager import Data_Manager
-from dB.data_manager.data_manager_dB import DataManagerDB
-from dB.dB_connection import cnxn, cursor
-from backend.View_update.add_new_ship.new_ship import add_user_selection_data
-from dB.ETL.sourceData import ETL
-from dB.hep.hep_dB import Hep_dB
-from dB.maintenance_allocation.maintenanceAllocation import maintenanceAllocation_dB
-from backend.Mission_reliability_dashboard.mission_profile import MissionProfile
-from dB.Oem_Upload.oem import OEMData
-from backend.Authentication.password_reset.passwordReset import EmailSender
-from dB.phase_manager.phase_manager_dB import Phase_Manager_dB
-from backend.Maintenance_Allocation.RCM.PM.optimize import optimizer
-from dB.RCM.rcmDB import RCMDB
-from backend.RUL.rul import RUL_dB
-from dB.system_configuration.system_configurationdB_table import SystemConfigurationdBTable
-from dB.task_configuration.task_configuration import taskConfiguration_dB
+from backend.modules.View_update.user_selection.user_selection import Custom_Settings
+from backend.modules.Reliability.reliability import Reliability
+from backend.modules.sytem_configuration.system_configuration import System_Configuration_N
+from backend.modules.Mission_reliability_dashboard.taskReliability import TaskReliability
+from backend.modules.Authentication.signin import Authentication
+from backend.modules.condition_monitioring.cgraph import GraphDashBoard
+from backend.modules.condition_monitioring.condition_monitoring import conditionMonitoring_dB
+from backend.modules.Dashboard.DashBoard import DashBoard
+from backend.modules.View_update.CMMSTONETRA.data_adminstrator import Data_Administrator
+from backend.modules.View_update.data_manager.data_manager import Data_Manager
+from backend.dB.data_manager.data_manager_dB import DataManagerDB
+from backend.dB.dB_connection import cnxn, cursor
+from backend.modules.View_update.add_new_ship.new_ship import add_user_selection_data
+from backend.dB.ETL.sourceData import ETL
+from backend.dB.hep.hep_dB import Hep_dB
+from backend.dB.maintenance_allocation.maintenanceAllocation import maintenanceAllocation_dB
+from backend.modules.Mission_reliability_dashboard.mission_profile import MissionProfile
+from backend.dB.Oem_Upload.oem import OEMData
+from backend.modules.Authentication.password_reset.passwordReset import EmailSender
+from backend.dB.phase_manager.phase_manager_dB import Phase_Manager_dB
+from backend.modules.Maintenance_Allocation.RCM.PM.optimize import optimizer
+from backend.dB.RCM.rcmDB import RCMDB
+from backend.modules.RUL.rul import RUL_dB
+from backend.dB.system_configuration.system_configurationdB_table import SystemConfigurationdBTable
+from backend.dB.task_configuration.task_configuration import taskConfiguration_dB
 
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
